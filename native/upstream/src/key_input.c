@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <time.h>
 #include <unistd.h>
 
 struct kev {
@@ -26,6 +27,8 @@ struct kev {
 #define KEY_POWER  116
 
 #define EVIOCGBIT_(ev, len) _IOC(_IOC_READ, 'E', 0x20 + (ev), len)
+#define EVIOCGKEY_(len) _IOC(_IOC_READ, 'E', 0x18, len)
+#define EVIOCSCLOCKID_ _IOW('E', 0xa0, int)
 
 static int test_bit(const unsigned long *arr, int bit)
 {
@@ -46,10 +49,19 @@ static int is_power_key_dev(int fd)
     return test_bit(key, KEY_POWER);
 }
 
+static int power_key_held(int fd)
+{
+    unsigned long key[(KEY_POWER / (8 * sizeof(long))) + 1];
+    memset(key, 0, sizeof(key));
+    if (ioctl(fd, EVIOCGKEY_(sizeof(key)), key) < 0) return -1;
+    return test_bit(key, KEY_POWER);
+}
+
 int key_input_init(key_input_t *k)
 {
     memset(k, 0, sizeof(*k));
     k->fd = -1;
+    tf_key_press_baseline(&k->press, -1);
 
     DIR *dir = opendir("/dev/input");
     if (!dir) return -1;
@@ -74,6 +86,11 @@ int key_input_init(key_input_t *k)
         fprintf(stderr, "key: no KEY_POWER device found\n");
         return -1;
     }
+    /* This ioctl selects timestamps on our read-only fd only. No EVIOCGRAB,
+     * device writes or kernel autorepeat configuration is used. */
+    int clock_id = CLOCK_MONOTONIC;
+    k->monotonic_clock = ioctl(k->fd, EVIOCSCLOCKID_, &clock_id) == 0;
+    tf_key_press_baseline(&k->press, power_key_held(k->fd));
     return 0;
 }
 
@@ -84,25 +101,27 @@ int key_input_poll(key_input_t *k, uint32_t now_ms)
     struct kev ev;
     int result = KEY_EV_NONE;
 
-    while (read(k->fd, &ev, sizeof(ev)) == (ssize_t)sizeof(ev)) {
-        if (ev.type != EV_KEY || ev.code != KEY_POWER) continue;
-        if (ev.value == 1) {                 /* press */
-            k->pressed = 1;
-            k->press_ms = now_ms;
-            k->long_emitted = 0;
-        } else if (ev.value == 0) {          /* release */
-            if (k->pressed && !k->long_emitted &&
-                (now_ms - k->press_ms) < KEY_LONG_MS)
-                result = KEY_EV_SHORT;
-            k->pressed = 0;
+    for (;;) {
+        ssize_t count = read(k->fd, &ev, sizeof(ev));
+        if (count != (ssize_t)sizeof(ev)) {
+            if (count < 0 && errno == EINTR) continue;
+            if (count < 0 && (errno == EAGAIN || errno == EWOULDBLOCK)) break;
+            /* A removed fd, EOF or incomplete record cannot leave a live
+             * hold behind that would later become a phantom LONG. */
+            key_input_close(k);
+            return KEY_EV_NONE;
         }
+        int valid = ev.usec < 1000000UL;
+        uint32_t event_ms = (uint32_t)ev.sec * 1000u + (uint32_t)(ev.usec / 1000u);
+        int edge = tf_key_press_event(&k->press, ev.type, ev.code, ev.value,
+            event_ms, valid, k->monotonic_clock, now_ms);
+        if (k->press.sync_lost) result = KEY_EV_NONE;
+        if (k->press.baseline_needed)
+            tf_key_press_baseline(&k->press, power_key_held(k->fd));
+        if (edge > result) result = edge;
     }
-
-    /* Emit LONG once while still held past the threshold. */
-    if (k->pressed && !k->long_emitted && (now_ms - k->press_ms) >= KEY_LONG_MS) {
-        k->long_emitted = 1;
-        result = KEY_EV_LONG;
-    }
+    int edge = tf_key_press_tick(&k->press, now_ms);
+    if (edge > result) result = edge;
     return result;
 }
 
@@ -110,4 +129,6 @@ void key_input_close(key_input_t *k)
 {
     if (k->fd >= 0) close(k->fd);
     k->fd = -1;
+    k->monotonic_clock = 0;
+    tf_key_press_baseline(&k->press, -1);
 }

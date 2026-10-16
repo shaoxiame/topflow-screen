@@ -1,19 +1,18 @@
 {
-  "version": "0.2.2",
-  "edition": "official-UFI-metadata-and-local-manager",
+  "version": "0.2.3",
+  "edition": "physical-power-key-menu",
   "deviceAccess": false,
   "hardwareVerified": false,
-  "hardwareBoundary": "This release was built and checked on the computer only. Prior user-reported screen operation is historical evidence, not fresh 0.2.2 hardware acceptance.",
+  "hardwareBoundary": "This release was built and checked on the computer only. Prior user-reported 0.2.1 screen operation is historical evidence, not fresh 0.2.3 hardware acceptance.",
   "sourceBuild": {
     "renderer": "aarch64-linux-musl",
     "helper": "public-ABI-link-imports-only",
     "rendererAndHelperRebuilt": true,
-    "nativeRuntimeByteIdenticalToPublic021": [
-      "topflow-screen",
-      "topflow-factory-bus-aarch64",
+    "nativeRuntimeByteIdenticalToPublic022": [
+      "boot-hook.sh",
       "screenctl.sh",
       "supervisor.sh",
-      "boot-hook.sh",
+      "topflow-factory-bus-aarch64",
       "ui/aggregate.html",
       "ui/apps.html",
       "ui/index.html",
@@ -21,6 +20,12 @@
       "ui/settings.html",
       "ui/style.css",
       "ui/subpages/sms.html"
+    ],
+    "changedNativeMembersFromPublic022": [
+      "boot-integrity.sha256",
+      "build-manifest.json",
+      "topflow-screen",
+      "topflow-screen.sha256"
     ]
   },
   "checks": {
@@ -35,8 +40,8 @@
       ]
     },
     "packageJavascript": {
-      "tests": 17,
-      "passed": 17,
+      "tests": 18,
+      "passed": 18,
       "failed": 0
     },
     "migration": {
@@ -58,10 +63,15 @@
         "remove only own shared boot line",
         "interrupted owned uninstall recovery",
         "boot file identity receipt"
-      ]
+      ],
+      "public022": {
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      }
     },
     "officialMetadata": {
-      "filename": "topflow-screen-0.2.2.txt.meta.json",
+      "filename": "topflow-screen-0.2.3.txt.meta.json",
       "device_models": [
         "TOPFLOW"
       ],
@@ -82,8 +92,54 @@
       "boot manifest",
       "manager and CSS hashes bound to release gate",
       "raw TXT below 4MiB",
-      "noncommercial and third-party license payloads"
-    ]
+      "noncommercial and third-party license payloads",
+      "power-key and power-menu root test hashes"
+    ],
+    "nativePowerKeyAndMenu": {
+      "tests": 5,
+      "passed": 5,
+      "skipped": 0,
+      "failed": 0,
+      "suites": [
+        "tests/native-power-key.test.js",
+        "tests/native-power-menu.test.js"
+      ],
+      "mode": "local C harness, production evdev reader cross-compile and main-loop source assertions; synthetic input/HTTP only",
+      "manifestProofs": "rootProofSha256"
+    },
+    "nativeExistingPowerAndExtra": {
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "suite": "tests/native-extra.test.js"
+    },
+    "nativeSmsCancellation": {
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "suite": "tests/native-sms-ufi.test.js",
+      "mode": "local HTTP only"
+    },
+    "nativeRegressionScripts": {
+      "passed": [
+        "native/test-main-lock.ps1",
+        "native/test-soft-lock.ps1",
+        "native/test-interaction.ps1",
+        "native/test-display-runtime.ps1"
+      ],
+      "deviceAccess": false
+    },
+    "desktopPowerLayout": {
+      "screens": 5,
+      "layoutHeight": 480,
+      "viewport": "320x480",
+      "hitTests": 9,
+      "passed": 9,
+      "visualScreenshots": 4,
+      "deviceAccess": false,
+      "reproducibleFromPublicClone": false,
+      "mode": "locally generated power-menu HTML rendered with render-preview.exe and a previously downloaded unredistributed factory font; optional desktop evidence, not device validation"
+    }
   },
   "privateImportReplay": {
     "tests": 4,
@@ -93,13 +149,14 @@
     "reproducibleFromPublicClone": false
   },
   "artifact": {
-    "file": "topflow-screen-0.2.2.txt",
-    "bytes": 1713137,
-    "sha256": "cf04c29381a5aa1b58d3f8efd485bc47427bcf178d0215f893a8e32b961c8e1c",
-    "metadataFile": "topflow-screen-0.2.2.txt.meta.json",
-    "metadataSha256": "ad5661bedee72e66dcaff67b37e45c383915046d191021e13a15fc0f425c80c4",
-    "nativeArchiveSha256": "e05476dd554865daa583ee0e8afe7edf924065e0b1972ea13febf9b2a2d0280b",
-    "nativeRendererSha256": "063ce8523da021841820aff86be9541c1d60f8080c3b9407c97dcf62dd471202",
+    "file": "topflow-screen-0.2.3.txt",
+    "bytes": 1720406,
+    "sha256": "add827c78256ec66b867afe3946ff2cb6f76d953246f4d80f4ed02e78f8e9cae",
+    "metadataFile": "topflow-screen-0.2.3.txt.meta.json",
+    "metadataSha256": "9fc86dbe29bb70622cf63e682854fe5233712acc151e47743b784ef78dcd0338",
+    "nativeArchiveSha256": "7f4205ebe407afaa27a7d63167b8db5cf1c7cf506db4a8d789eb9f2793557272",
+    "nativeRendererSha256": "fd00d9a165bd88c83eb5476b6c64149080a502511f39f42785b45c8eff9b5919",
     "nativeHelperSha256": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28"
-  }
+  },
+  "checkedAt": "2026-10-16T17:24:03.402Z"
 }

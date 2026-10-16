@@ -31,10 +31,11 @@ Copy-Item "$root/toolchain/zig-x86_64-windows-0.14.1/lib/libcxxabi/LICENSE.TXT" 
 Copy-Item "$root/vendor/pinyin/LICENSE" "$payload/licenses/pinyin-data-MIT.txt" -Force
 Copy-Item "$root/vendor/openwrt/LGPL-2.1.txt","$root/vendor/openwrt/openwrt-NOTICE.txt" "$payload/licenses" -Force
 $manifest=@{
- schema=1; version='0.2.2'; target='aarch64-linux-musl'; application='topflow-screen'; hardwareTested=$false
+ schema=1; version='0.2.3'; target='aarch64-linux-musl'; application='topflow-screen'; hardwareTested=$false
  nativeAutostart=@{defaultEnabled=$false;hook='/data/plugins/ufi_tools_boot.sh';readinessSecondsMaximum=120;attemptsPerBoot=1;retry=$false;failure='existing-factory-rollback';disabledCancelsPending=$true;uninstall='remove-owned-hook-and-bounded-state';systemStartupFilesModified=$false;integrity='boot-integrity.sha256';deviceBootVerified=$false}
  defaultViewOnly=$false; physicalScreenProgramSwitch=$false
  nativeControlAuthorization=@{initial='blocked-until-adopt-and-unlock';noPin='hold-to-unlock-local';pin='requires-pin-policy-and-login';sleep='revoked';writes='per-action-confirmation';manualEnableGate=$false}
+ nativePowerKey=@{thresholdMilliseconds=1200;longPress='power-menu-overlay';alreadyAwake='preserve-unlocked-state';asleep='existing-wake-before-menu';locked='menu-visible-actions-disabled';authorization='control_guard';actions=@('device.poweroff','device.reboot');capabilityEndpoint='http://127.0.0.1:9460/capabilities';controlEndpoint='http://127.0.0.1:9460/control';confirmation='second-confirmation-and-capability-recheck';submissionsPerConfirmation=1;automaticRetry=$false;cancel='restore-page-and-scroll';invalidateOldPending=$true;clearOn=@('sleep','resync');hardwareTested=$false}
  nativeSms=@{endpoint='http://127.0.0.1:2333/api/goform/goform_set_cmd_process';action='SEND_SMS';sender='host';encoding='UTF16BE-hex';authorization='existing-UFI-session-with-AD';confirmedResult='UFI-result-success';submitCountPerConfirmation=1;automaticRetry=$false;deviceSendVerified=$false}
  nativeAmbr=@{targets=@('5G','4G1','4G2');source='per-modem-qos';uplink='ambr_ul';downlink='ambr_dl';unit='Mbps';displayOrder=@('tx_speed','rx_speed','qci','ambr_ul','ambr_dl');crossModemFallback=$false;additionalDeviceRequests=0;meaning='network-last-reported-limit';hardwareTested=$false}
  nativeNetwork=@{aggregationStatus='source-aware-plus-owned-factory-tcp-observation';quota='aggregation.traffic.remaining_bytes';today='aggregation.traffic.today_used_bytes';ethernet='kernel-carrier-and-negotiated-speed';carriers='official-nrca-lteca-and-primary';noActiveProbe=$true;deviceAggregationVerified=$false}
@@ -56,6 +57,7 @@ $manifest=@{
  existingRuntimeDependencies=@('/lib/ld-musl-aarch64.so.1','/lib/libubus.so.20230605','/lib/libubox.so.20230523')
  pinyin=(Get-Content -LiteralPath "$root/vendor/pinyin/provenance.json" -Raw | ConvertFrom-Json)
  sourceSha256=@{}
+ rootProofSha256=@{}
  upstream='d1d0856e19d58a2a98104e47afbdcfc51e1dc3d1'
  litehtml='8836bc1bc35ca0cfd71dc0386ef841d5cbc3bd5e'
  freetype='023fd06e3dbe84ab7327ddddd9fe851824fe1ade'
@@ -74,6 +76,8 @@ $manifest.sourceSha256['test-startup-diagnostics.ps1']=(Get-FileHash -LiteralPat
 $manifest.sourceSha256['test-modem-ambr.ps1']=(Get-FileHash -LiteralPath "$root/test-modem-ambr.ps1" -Algorithm SHA256).Hash.ToLowerInvariant()
 $manifest.sourceSha256['test-lockscreen.ps1']=(Get-FileHash -LiteralPath "$root/test-lockscreen.ps1" -Algorithm SHA256).Hash.ToLowerInvariant()
 foreach($publicSource in @('preview/font.js','vendor/openwrt/link-imports.json')){$manifest.sourceSha256[$publicSource]=(Get-FileHash -LiteralPath "$root/$publicSource" -Algorithm SHA256).Hash.ToLowerInvariant()}
+foreach($powerSource in @('upstream/include/key_input.h','upstream/src/key_input.c')){$manifest.sourceSha256[$powerSource]=(Get-FileHash -LiteralPath "$root/$powerSource" -Algorithm SHA256).Hash.ToLowerInvariant()}
+foreach($rootProof in @('tests/native-power-key.test.js','tests/native-power-menu.test.js')){$manifest.rootProofSha256[$rootProof]=(Get-FileHash -LiteralPath (Join-Path (Split-Path $root -Parent) $rootProof) -Algorithm SHA256).Hash.ToLowerInvariant()}
 $manifest.sourceSha256['preview/render-modem-ambr.js']=(Get-FileHash -LiteralPath "$root/preview/render-modem-ambr.js" -Algorithm SHA256).Hash.ToLowerInvariant()
 $manifest.sourceSha256['upstream/include/drm_disp.h']=(Get-FileHash -LiteralPath "$root/upstream/include/drm_disp.h" -Algorithm SHA256).Hash.ToLowerInvariant()
 foreach($uiFile in Get-ChildItem -LiteralPath "$root/ui" -Recurse -File){$relative=$uiFile.FullName.Substring($root.Length+1).Replace('\','/');$manifest.sourceSha256[$relative]=(Get-FileHash -LiteralPath $uiFile.FullName -Algorithm SHA256).Hash.ToLowerInvariant()}

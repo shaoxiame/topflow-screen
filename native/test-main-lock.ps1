@@ -9,7 +9,7 @@ function Extract-FunctionRange([string]$text,[string]$start,[string]$end){
   return $text.Substring($a,$b-$a)
 }
 $lock=Extract-FunctionRange $main 'static void screen_lock(void)' '/* Local no-PIN hold'
-$wake=Extract-FunctionRange $main 'static int runtime_wake(' 'int main('
+$wake=Extract-FunctionRange $main 'static int runtime_wake(' '/* A held power key'
 $read=Extract-FunctionRange $runtime 'static int display_runtime_unlock_policy(void)' 'static void display_runtime_cleanup('
 $source=@'
 #include <assert.h>
@@ -33,6 +33,7 @@ static int display_runtime_fail(void){running=0;return 0;}
 static int vendor_exec(const char*path,char*const*args,const char*input,char*out,size_t cap){assert(!strcmp(path,"/sbin/uci")&&!strcmp(args[0],"uci")&&!strcmp(args[1],"-q")&&!strcmp(args[2],"get")&&!strcmp(args[3],"zwrt_deviceui.Screen.Lock_Screen_PIN_Enable_State")&&!args[4]&&!input);reads++;snprintf(out,cap,"%d\n",raw_pin);return read_failure;}
 READ_FUNCTION
 static void motion_cancel(void){}
+static void power_menu_reset(void){}
 static void form_reset(void){form_calls++;}
 static void sms_forward_cleanup(void){sms_calls++;}
 static void factory_extra_cleanup(void){extra_calls++;}

@@ -16,6 +16,11 @@ $source=@'
 #include "soft_lock.h"
 #define TF_FL_READY 6
 static tf_soft_lock soft_lock;
+static struct{int active;}power_menu;
+static int power_menu_action(const char*a){return 0;}
+static char advanced_html[16];
+static void refresh_tokens(void){}
+static void power_menu_render(void){}
 static struct{int enabled,locked;}pin_policy;
 static struct{int phase,brightness;}factory_lifecycle;
 static int display_runtime_ready=1,on=1,frame_ready=1,theme_dark,controls_enabled,busy_visible;

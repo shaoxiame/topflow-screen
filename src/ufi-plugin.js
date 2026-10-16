@@ -556,6 +556,51 @@
     }
   });
 
+  recoveryArchives.push({
+  "archiveSha256": "e05476dd554865daa583ee0e8afe7edf924065e0b1972ea13febf9b2a2d0280b",
+  "members": [
+    "./",
+    "./boot-hook.sh",
+    "./boot-integrity.sha256",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    "./topflow-factory-bus-aarch64",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+    "./ui/subpages/sms.html",
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/FreeType-gzip-zlib.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    "./licenses/LLVM-libcxxabi.txt",
+    "./licenses/musl-COPYRIGHT.txt",
+    "./licenses/openwrt-NOTICE.txt",
+    "./licenses/pinyin-data-MIT.txt",
+    "./licenses/PolyForm-Noncommercial-1.0.0.txt",
+    "./licenses/u60pro-devui-MIT.txt"
+  ],
+  "files": {
+    "topflow-screen": "063ce8523da021841820aff86be9541c1d60f8080c3b9407c97dcf62dd471202",
+    "topflow-factory-bus-aarch64": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28",
+    "screenctl.sh": "673a2a01bd21b070779254323be90ce71b33db83630bf667a6ec0a100785af08",
+    "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+    "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e"
+  }
+});
   function error(code, message) { var e = new Error(message); e.code = code; return e; }
   function failureMessage(code) {
     var messages = {

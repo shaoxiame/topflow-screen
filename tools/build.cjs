@@ -5,7 +5,7 @@ const crypto = require('node:crypto');
 const zlib = require('node:zlib');
 const vm = require('node:vm');
 const ROOT = path.resolve(__dirname, '..');
-const VERSION = '0.2.2';
+const VERSION = '0.2.3';
 const FACTORY_BINARY_SHA256 = '781e3c6ffa2a9db4d61a3cf1bb38461131dc3faed07499a2c9360bc582040dd2';
 const { managerOnly } = require('./production-manager.cjs');
 const SOURCES = ['ufi-plugin.js'];
@@ -41,6 +41,7 @@ function tarMembers(archive) {
 function verifyNativeSources(manifest, members, readSource = name => fs.readFileSync(path.join(ROOT, 'native', name))) {
   const hashes = manifest.sourceSha256;
   if (!hashes || typeof hashes !== 'object' || Array.isArray(hashes)) throw Error('Missing native source hashes');
+  for(const name of ['key_press.h','power_menu.h','upstream/include/key_input.h','upstream/src/key_input.c'])if(!Object.hasOwn(hashes,name))throw Error('Missing power-key native source hash: '+name);
   for(const name of ['radio_status.h','lockscreen_status.h','lockscreen_chart.h','test-lockscreen.c','test-lockscreen.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing native source hash: '+name);
   for(const name of ['modem_logic.h','modem_pages.h','test-modem-ambr.c','test-modem-ambr.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing native source hash: '+name);
   if(!Object.hasOwn(hashes,'test-wake-sensor.ps1'))throw Error('Missing native source hash: test-wake-sensor.ps1');
@@ -71,6 +72,17 @@ function verifyNativeBinaries(manifest,members){
     if(binary.length<64||binary.subarray(0,4).toString('hex')!=='7f454c46'||binary[4]!==2||binary[5]!==1||binary.readUInt16LE(18)!==183)throw Error('Native binary is not AArch64 ELF64: '+name);
   }
   return {binaryHash:manifest.binarySha256,factoryBusHash:manifest.factoryBusSha256};
+}
+
+function verifyNativeRootProofs(manifest, readSource = name => fs.readFileSync(path.join(ROOT, name))) {
+  const required = ['tests/native-power-key.test.js', 'tests/native-power-menu.test.js'];
+  const hashes = manifest.rootProofSha256;
+  if (!hashes || typeof hashes !== 'object' || Array.isArray(hashes)) throw Error('Missing root native proof hashes');
+  if (JSON.stringify(Object.keys(hashes).sort()) !== JSON.stringify(required)) throw Error('Invalid root native proof paths');
+  for (const name of required) {
+    if (!/^[a-f0-9]{64}$/.test(hashes[name])) throw Error('Invalid root native proof hash: ' + name);
+    if (sha256(readSource(name)) !== hashes[name]) throw Error('Stale root native proof: ' + name);
+  }
 }
 
 function emitPayload(payload) {
@@ -116,6 +128,8 @@ function verifyNativeReleaseContract(manifest, {reviewOnly=false,diagnosticCandi
   if(!diagnosticCandidate && ['unresolvedStartupFailure','startupFailureFixCandidate','startupRootCauseConfirmed','confirmedFailureStage'].some(key=>Object.hasOwn(manifest,key)))throw Error('Stale startup-failure markers must not describe the current adaptation candidate');
   if(!diagnosticCandidate && manifest.version!==VERSION)throw Error('Native package version does not match the current release');
   if(!diagnosticCandidate){
+    const key=manifest.nativePowerKey;
+    if(!key||key.thresholdMilliseconds!==1200||key.longPress!=='power-menu-overlay'||key.alreadyAwake!=='preserve-unlocked-state'||key.asleep!=='existing-wake-before-menu'||key.locked!=='menu-visible-actions-disabled'||key.authorization!=='control_guard'||JSON.stringify(key.actions)!=='["device.poweroff","device.reboot"]'||key.capabilityEndpoint!=='http://127.0.0.1:9460/capabilities'||key.controlEndpoint!=='http://127.0.0.1:9460/control'||key.confirmation!=='second-confirmation-and-capability-recheck'||key.submissionsPerConfirmation!==1||key.automaticRetry!==false||key.cancel!=='restore-page-and-scroll'||key.invalidateOldPending!==true||JSON.stringify(key.clearOn)!=='["sleep","resync"]'||key.hardwareTested!==false)throw Error('Native power-key menu contract is absent or stale');
     const ambr=manifest.nativeAmbr;
     if(!ambr||JSON.stringify(ambr.targets)!=='["5G","4G1","4G2"]'||ambr.source!=='per-modem-qos'||ambr.uplink!=='ambr_ul'||ambr.downlink!=='ambr_dl'||ambr.unit!=='Mbps'||JSON.stringify(ambr.displayOrder)!=='["tx_speed","rx_speed","qci","ambr_ul","ambr_dl"]'||ambr.crossModemFallback!==false||ambr.additionalDeviceRequests!==0||ambr.meaning!=='network-last-reported-limit'||ambr.hardwareTested!==false)throw Error('Native AMBR display contract is absent or stale');
     const sms=manifest.nativeSms,network=manifest.nativeNetwork;
@@ -168,9 +182,10 @@ function diagnosticReadme(summary,outputName){
 }
 function releaseReadme(summary,outputName){
   return [
-    'TopFlow 屏幕 '+summary.version+' — 独立管理页与无遥测版',
-    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false。0.2.2 管理页与移除旧接入已在电脑验证，本轮未新增实机测试。',
-    '用户已确认 0.2.1 实机验收；0.2.2 原生运行文件与公开0.2.1保持一致。现固定三个主页面：首页、网络、功能；普通/聚合共用一个首页位置。',
+    'TopFlow 屏幕 '+summary.version+' — 电源键长按菜单版',
+    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false。0.2.3 电源键长按菜单已在电脑验证，本轮未新增实机测试。',
+    '历史 0.2.1 已由用户实机验收；0.2.3 电源键长按菜单仍待本版实机验收。现固定三个主页面：首页、网络、功能；普通/聚合共用一个首页位置。',
+    '长按实体电源键打开关机/重启菜单；锁定时需先解锁，再次确认并复查能力后只提交一次；取消返回原页面和滚动位置。',
     '首页随设备最新回读的聚合开关状态切换；未启用、未知或过期时显示普通页，已启用但离线仍显示聚合页。',
     '屏幕取消手动模式选择和聚合开关；读取现有设备状态，不新增GPIO读取，也不判断是谁操作了开关。',
     '保留0.1.6跟手拖动：横向翻页与纵向滚动跟随手指；松手后翻页按144毫秒目标收尾，慢帧跳进当前进度。',
@@ -189,7 +204,7 @@ function releaseReadme(summary,outputName){
     '',
     summary.reviewOnly?'此页仅供本地审查，安装和启动已禁用；不要改名当作可上传TXT。':'安装：在已登录UFI的插件管理中选择 '+outputName+'，再点击“提交”保存，等待完成后刷新。',
     '“功能列表”折叠区域外的“TopFlow 屏幕 · 管理”才是操控页；插件列表文件名打开源码，无需编辑。',
-    '更新0.1.0至0.2.1已核验版本：旧屏幕可保持运行，移除旧TopFlow插件记录、点击“提交”保存并刷新，',
+    '更新0.1.0至0.2.2已核验版本：旧屏幕可保持运行，移除旧TopFlow插件记录、点击“提交”保存并刷新，',
     '再导入本包并点击“提交”保存刷新。UFI跳过同名导入，不会覆盖旧记录；不要改名叠加，也不要删除其他插件。',
     '管理器仅识别已交付且列入核验清单的旧归档；固定归属、清单和执行文件哈希匹配后，',
     '顶部检查已导入TXT与设备组件；发现旧版显示“更新到 v'+summary.version+'”，一次确认自动恢复原厂、清理、安装并启动，无需手动来回切换。',
@@ -239,9 +254,10 @@ function build(outputDir, options = {}) {
   verifyNativeReleaseContract(manifest,{reviewOnly,diagnosticCandidate});
   verifyNativeLiveContract(manifest);
   verifyNativeSources(manifest, members);
+  verifyNativeRootProofs(manifest);
   verifyBootIntegrity(manifest, members);
   const {binaryHash,factoryBusHash}=verifyNativeBinaries(manifest,members);
-  const payload = { version: VERSION, defaultViewOnly:manifest.defaultViewOnly, nativeAutostart:manifest.nativeAutostart,nativeControlAuthorization:manifest.nativeControlAuthorization, nativeNetwork:manifest.nativeNetwork,nativeAmbr:manifest.nativeAmbr,nativeSimSource:manifest.nativeSimSource,nativeSms:manifest.nativeSms, nativeManualCell:manifest.nativeManualCell, nativeSoftLock:manifest.nativeSoftLock, nativeBrightness:manifest.nativeBrightness, directSwitch:manifest.displayCompatibility.directSwitch, sensorAfterDrm:manifest.displayCompatibility.sensorAfterDrm, startupOrder:manifest.displayCompatibility.startupOrder,  hardwareTested: false, reviewOnly, diagnosticCandidate, adaptationFixCandidate:manifest.adaptationFixCandidate, aggregationUiFixCandidate:manifest.aggregationUiFixCandidate, homeViewFollowsObservedAggregation:manifest.homeViewFollowsObservedAggregation, nativeHomeNavigation:manifest.nativeHomeNavigation, aggregationPageDefaultVisible:manifest.aggregationPageDefaultVisible, aggregationDeviceVerified:manifest.aggregationDeviceVerified, performanceFixCandidate:manifest.performanceFixCandidate, userConfirmedFunctionalRelease:manifest.userConfirmedFunctionalRelease, devicePerformanceVerified:manifest.devicePerformanceVerified, performanceScope:manifest.performanceScope, nativePerformance:manifest.nativePerformance, nativeBattery:manifest.nativeBattery, confirmedLockCause:manifest.confirmedLockCause, retainedExistingTouchBackend:manifest.retainedExistingTouchBackend, uprightOrientationMatched:manifest.uprightOrientationMatched, factoryPinEnum:manifest.displayCompatibility.pinFactoryEnum, noPinStartup:manifest.displayCompatibility.noPinStartup, noPinWake:manifest.displayCompatibility.noPinWake, userReportedDisplayHandover:manifest.userReportedDisplayHandover, pendingDeviceAcceptance:manifest.pendingDeviceAcceptance, acceptanceStatus:diagnosticCandidate?'DIAGNOSTIC_CANDIDATE':'DEVICE_ACCEPTANCE_PENDING',releaseBlocked: reviewOnly?'REVIEW_ONLY':null, archiveBase64: archive.toString('base64'), archiveSha256: sha256(archive), screenctlSha256: sha256(get('screenctl.sh')), screenctlSource: get('screenctl.sh').toString('utf8'), members: members.map(member => member.name) };
+  const payload = { version: VERSION, defaultViewOnly:manifest.defaultViewOnly, nativeAutostart:manifest.nativeAutostart,nativePowerKey:manifest.nativePowerKey,nativeControlAuthorization:manifest.nativeControlAuthorization, nativeNetwork:manifest.nativeNetwork,nativeAmbr:manifest.nativeAmbr,nativeSimSource:manifest.nativeSimSource,nativeSms:manifest.nativeSms, nativeManualCell:manifest.nativeManualCell, nativeSoftLock:manifest.nativeSoftLock, nativeBrightness:manifest.nativeBrightness, directSwitch:manifest.displayCompatibility.directSwitch, sensorAfterDrm:manifest.displayCompatibility.sensorAfterDrm, startupOrder:manifest.displayCompatibility.startupOrder,  hardwareTested: false, reviewOnly, diagnosticCandidate, adaptationFixCandidate:manifest.adaptationFixCandidate, aggregationUiFixCandidate:manifest.aggregationUiFixCandidate, homeViewFollowsObservedAggregation:manifest.homeViewFollowsObservedAggregation, nativeHomeNavigation:manifest.nativeHomeNavigation, aggregationPageDefaultVisible:manifest.aggregationPageDefaultVisible, aggregationDeviceVerified:manifest.aggregationDeviceVerified, performanceFixCandidate:manifest.performanceFixCandidate, userConfirmedFunctionalRelease:manifest.userConfirmedFunctionalRelease, devicePerformanceVerified:manifest.devicePerformanceVerified, performanceScope:manifest.performanceScope, nativePerformance:manifest.nativePerformance, nativeBattery:manifest.nativeBattery, confirmedLockCause:manifest.confirmedLockCause, retainedExistingTouchBackend:manifest.retainedExistingTouchBackend, uprightOrientationMatched:manifest.uprightOrientationMatched, factoryPinEnum:manifest.displayCompatibility.pinFactoryEnum, noPinStartup:manifest.displayCompatibility.noPinStartup, noPinWake:manifest.displayCompatibility.noPinWake, userReportedDisplayHandover:manifest.userReportedDisplayHandover, pendingDeviceAcceptance:manifest.pendingDeviceAcceptance, acceptanceStatus:diagnosticCandidate?'DIAGNOSTIC_CANDIDATE':'DEVICE_ACCEPTANCE_PENDING',releaseBlocked: reviewOnly?'REVIEW_ONLY':null, archiveBase64: archive.toString('base64'), archiveSha256: sha256(archive), screenctlSha256: sha256(get('screenctl.sh')), screenctlSource: get('screenctl.sh').toString('utf8'), members: members.map(member => member.name) };
   const managerCss = fs.readFileSync(path.join(ROOT, 'src/manager.css'), 'utf8');
   if (/<\/style/i.test(managerCss) || /@import|url\s*\(/i.test(managerCss)) throw Error('Manager stylesheet must be self-contained');
   const modules = SOURCES.map(name => {
@@ -276,7 +292,7 @@ function build(outputDir, options = {}) {
       fs.writeFileSync(path.join(outputDir,filename+'.meta.json'),JSON.stringify(officialMetadata,null,2)+'\n','utf8');
     }
   }
-  const summary = { plugin: name, version: payload.version, defaultViewOnly:payload.defaultViewOnly, nativeAutostart:payload.nativeAutostart,nativeControlAuthorization:payload.nativeControlAuthorization, nativeNetwork:payload.nativeNetwork,nativeAmbr:payload.nativeAmbr,nativeSimSource:payload.nativeSimSource,nativeSms:payload.nativeSms, nativeManualCell:payload.nativeManualCell, nativeSoftLock:payload.nativeSoftLock, nativeBrightness:payload.nativeBrightness, directSwitch:payload.directSwitch, sensorAfterDrm:payload.sensorAfterDrm, startupOrder:payload.startupOrder,  receiptVersion:manifest.displayCompatibility.receiptVersion, factoryBinarySha256:manifest.displayCompatibility.factoryBinarySha256, reviewOnly,diagnosticCandidate,adaptationFixCandidate:payload.adaptationFixCandidate,aggregationUiFixCandidate:payload.aggregationUiFixCandidate,homeViewFollowsObservedAggregation:payload.homeViewFollowsObservedAggregation,nativeHomeNavigation:payload.nativeHomeNavigation,aggregationPageDefaultVisible:payload.aggregationPageDefaultVisible,aggregationDeviceVerified:payload.aggregationDeviceVerified,performanceFixCandidate:payload.performanceFixCandidate,userConfirmedFunctionalRelease:payload.userConfirmedFunctionalRelease,devicePerformanceVerified:payload.devicePerformanceVerified,performanceScope:payload.performanceScope,nativePerformance:payload.nativePerformance,nativeBattery:payload.nativeBattery,confirmedLockCause:payload.confirmedLockCause,retainedExistingTouchBackend:payload.retainedExistingTouchBackend,uprightOrientationMatched:payload.uprightOrientationMatched,factoryPinEnum:payload.factoryPinEnum,noPinStartup:payload.noPinStartup,noPinWake:payload.noPinWake,userReportedDisplayHandover:payload.userReportedDisplayHandover,pendingDeviceAcceptance:payload.pendingDeviceAcceptance,releaseBlocked:payload.releaseBlocked,acceptanceStatus:payload.acceptanceStatus, bytes, maxLineLength, sha256: sha256(txt), nativeArchiveSha256: payload.archiveSha256, nativeBinarySha256: binaryHash, factoryBusSha256:factoryBusHash, hardwareTested: false, sources: SOURCES, nativeMembers: payload.members };
+  const summary = { plugin: name, version: payload.version, defaultViewOnly:payload.defaultViewOnly, nativeAutostart:payload.nativeAutostart,nativePowerKey:payload.nativePowerKey,nativeControlAuthorization:payload.nativeControlAuthorization, nativeNetwork:payload.nativeNetwork,nativeAmbr:payload.nativeAmbr,nativeSimSource:payload.nativeSimSource,nativeSms:payload.nativeSms, nativeManualCell:payload.nativeManualCell, nativeSoftLock:payload.nativeSoftLock, nativeBrightness:payload.nativeBrightness, directSwitch:payload.directSwitch, sensorAfterDrm:payload.sensorAfterDrm, startupOrder:payload.startupOrder,  receiptVersion:manifest.displayCompatibility.receiptVersion, factoryBinarySha256:manifest.displayCompatibility.factoryBinarySha256, reviewOnly,diagnosticCandidate,adaptationFixCandidate:payload.adaptationFixCandidate,aggregationUiFixCandidate:payload.aggregationUiFixCandidate,homeViewFollowsObservedAggregation:payload.homeViewFollowsObservedAggregation,nativeHomeNavigation:payload.nativeHomeNavigation,aggregationPageDefaultVisible:payload.aggregationPageDefaultVisible,aggregationDeviceVerified:payload.aggregationDeviceVerified,performanceFixCandidate:payload.performanceFixCandidate,userConfirmedFunctionalRelease:payload.userConfirmedFunctionalRelease,devicePerformanceVerified:payload.devicePerformanceVerified,performanceScope:payload.performanceScope,nativePerformance:payload.nativePerformance,nativeBattery:payload.nativeBattery,confirmedLockCause:payload.confirmedLockCause,retainedExistingTouchBackend:payload.retainedExistingTouchBackend,uprightOrientationMatched:payload.uprightOrientationMatched,factoryPinEnum:payload.factoryPinEnum,noPinStartup:payload.noPinStartup,noPinWake:payload.noPinWake,userReportedDisplayHandover:payload.userReportedDisplayHandover,pendingDeviceAcceptance:payload.pendingDeviceAcceptance,releaseBlocked:payload.releaseBlocked,acceptanceStatus:payload.acceptanceStatus, bytes, maxLineLength, sha256: sha256(txt), nativeArchiveSha256: payload.archiveSha256, nativeBinarySha256: binaryHash, factoryBusSha256:factoryBusHash, hardwareTested: false, sources: SOURCES, nativeMembers: payload.members };
   summary.pluginMetadata=pluginMetadata;
   summary.storeIntegration={officialDocumentationOnly:true,telemetry:false,remoteSDK:false};
   summary.officialMetadata=officialMetadata;
@@ -287,4 +303,4 @@ function build(outputDir, options = {}) {
   return summary;
 }
 if (require.main === module) console.log(JSON.stringify(build(undefined, {reviewOnly: process.argv.includes('--review-only'),diagnosticCandidate: process.argv.includes('--diagnostic-candidate')}), null, 2));
-module.exports = { build, tarMembers, verifyNativeSources,verifyNativeBinaries,verifyBootIntegrity,verifyNativeReleaseContract,validateReleaseGate,validateProductionScript,verifyNativeLiveContract,emitPayload,diagnosticReadme,releaseReadme };
+module.exports = { build, tarMembers, verifyNativeSources,verifyNativeRootProofs,verifyNativeBinaries,verifyBootIntegrity,verifyNativeReleaseContract,validateReleaseGate,validateProductionScript,verifyNativeLiveContract,emitPayload,diagnosticReadme,releaseReadme };

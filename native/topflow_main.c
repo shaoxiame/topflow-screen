@@ -203,6 +203,7 @@ static void busy_tick(void){if(factory_bus_active){if(!tf_fb_tick(&factory_bus))
 static void show_busy(const char*message){if(!active_display)return;char label[1024],html[4096];esc(label,sizeof label,message);snprintf(html,sizeof html,"<html><head><link rel='stylesheet' href='style.css'></head><body class='%s'><div style='padding:140px 20px 0;min-height:480px'><div class='card' style='height:160px;padding:25px 18px;text-align:center'><h3 style='font-size:17px'>%s</h3><p class='note' style='margin-top:14px'>正在等待现有接口响应</p></div></div></body></html>",theme_dark?"dark":"light",label);html_view_set_scroll(0);if(!paint_frame(active_display,html)){running=0;tf_http_cancelled=1;return;}busy_visible=1;busy_phase=0;busy_last=0;busy_tick();}
 static int control(const char*payload){char body[8192];if(tf_http(9460,"POST","/control",NULL,payload,body,sizeof body)!=200)return-1;return tf_control_success(body,payload)?0:-1;}
 #include "advanced_controls.h"
+#include "power_menu.h"
 #define TF_PIN_BAT_PERCENT (state.valid?state.bat_percent:-1)
 #define TF_PIN_BAT_STATUS (state.valid?state.charging:-1)
 #define TF_PIN_BAT_CONNECTION (state.valid?state.charger_connect:-1)
@@ -232,13 +233,14 @@ static int lock_rate_animation_tick(drm_disp_t*d,uint32_t now){
  }
  return logical_damage(d,32,222,256,36);
 }
-static void screen_lock(void){controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();if(!display_runtime_unlock_policy())return;tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;form_reset();sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
+static void screen_lock(void){power_menu_reset();controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();if(!display_runtime_unlock_policy())return;tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;form_reset();sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
 /* A successful PIN entry alone is not enough: recheck the factory policy and
  * login acknowledgement before enabling confirmed business writes. */
 static int screen_unlock_complete(void){controls_enabled=0;if(pin_policy.locked||soft_lock.locked||!display_runtime_unlock_policy()||!display_runtime_login(1))return 0;controls_enabled=1;return 1;}
 /* Local no-PIN hold is isolated from native PIN authentication and business
  * actions. Return consumption even on the completing/releasing frame. */
 static int screen_soft_input(drm_disp_t*d,uint32_t now,int pressed,int x,int y,int blocked,int*dirty){
+ if(power_menu.active){if(soft_lock.locked)tf_soft_lock_cancel(&soft_lock);return 0;}
  if(pin_policy.enabled){tf_soft_lock_reset(&soft_lock,1);return 0;}
  int consumed=soft_lock.locked||soft_lock.block_release;
  int result=tf_soft_lock_touch(&soft_lock,now,pressed,x,y,!blocked&&display_runtime_ready&&factory_lifecycle.phase==TF_FL_READY&&backlight_is_on());
@@ -255,6 +257,7 @@ static int screen_soft_input(drm_disp_t*d,uint32_t now,int pressed,int x,int y,i
 static void action(const char*a){
  if(!a||strncmp(a,"act:",4))return;a+=4;
  if(!display_runtime_ready||factory_lifecycle.phase!=TF_FL_READY||factory_lifecycle.brightness<=0)return;
+ if(power_menu_action(a))return;
  if(pin_policy.locked){pin_action(a);if(!pin_policy.locked)screen_unlock_complete();return;}
  if(soft_lock.locked||soft_lock.block_release)return;
  if(!tf_fl_input_allowed(&factory_lifecycle,1))return;
@@ -278,7 +281,7 @@ static void action(const char*a){
  show_notice("请在 UFI 配置此功能");
 }
 static int paint_frame(drm_disp_t*d,const char*html){if(!deferred_present)frame_ready=0;if(!html)return 0;int h=html_view_render_html(html);if(h<1)return 0;page_h=h;draw_rate_chart();if(deferred_present)return 1;if(drm_disp_dirty(d,0,0,d->width-1,d->height-1)<0)return 0;frame_ready=1;return 1;}
-static int render(drm_disp_t*d){busy_visible=0;if(pin_policy.locked||soft_lock.locked){data_refresh(&state);if(data_snapshot_age_ms()>5000)state.valid=0;lock_dashboard_prepare();}if(pin_policy.locked){html_view_set_scroll(0);return paint_frame(d,pin_screen_html());}if(soft_lock.locked){html_view_set_scroll(0);return paint_frame(d,soft_screen_html(soft_lock.progress));}refresh_tokens();sync_home_page();build_sms();char path[256];snprintf(path,sizeof path,"%s/%s",UI,page);char*tmpl=readfile(path),*html=NULL;
+static int render(drm_disp_t*d){busy_visible=0;if(power_menu.active){refresh_tokens();power_menu_render();html_view_set_scroll(0);return paint_frame(d,advanced_html);}if(pin_policy.locked||soft_lock.locked){data_refresh(&state);if(data_snapshot_age_ms()>5000)state.valid=0;lock_dashboard_prepare();}if(pin_policy.locked){html_view_set_scroll(0);return paint_frame(d,pin_screen_html());}if(soft_lock.locked){html_view_set_scroll(0);return paint_frame(d,soft_screen_html(soft_lock.progress));}refresh_tokens();sync_home_page();build_sms();char path[256];snprintf(path,sizeof path,"%s/%s",UI,page);char*tmpl=readfile(path),*html=NULL;
  if(pending[0]){char label[10000];esc(label,sizeof label,pending_label);advanced_shell_frame("确认操作","act:cancel",0);ah("<div class='card'><p style='margin:8px 0 16px;word-break:break-all;line-height:24px'>%s</p><a href='act:confirm' class='button'>确认执行</a></div></div></body></html>",label);html=strdup(advanced_html);}
  else if(sms_id>=0){for(int i=0;i<state.sms_n;i++)if(state.sms[i].id==sms_id){char num[256],text[48000];esc(num,sizeof num,state.sms[i].num);esc(text,sizeof text,state.sms[i].text);advanced_shell_frame("短信详情","act:smsclose",0);ah("<div class='card'><h3 style='word-break:break-all'>%s</h3><p style='white-space:pre-wrap;word-break:break-all;margin-top:12px'>%s</p></div></div></body></html>",num,text);html=strdup(advanced_html);break;}}
  if(!html&&advanced_page)html=advanced_render();if(!html&&tmpl)html=fill(tmpl);free(tmpl);if(!html)html=strdup("<html><body style='background:#101828;color:white;padding:20px'><a href='act:page:index.html' style='float:right;color:white'>返回</a><h2>TopFlow Screen</h2><p>页面不可用，请在 UFI 插件检查屏幕程序。</p></body></html>");
@@ -317,6 +320,15 @@ static int runtime_sleep(void){screen_lock();tf_display_sleep(&display_policy);r
 /* Original power notifications distinguish sleep from wake. A duplicate wake
  * while already on must not relock the page or replay a display transaction. */
 static int runtime_power_event(drm_disp_t*d,int event){if(event==1)return runtime_sleep();if(event==2)return display_policy.on?1:runtime_wake(d);return 0;}
+/* A held power key opens a local overlay, never a second wake transaction on
+ * an already lit screen. Physical short presses retain the original policy. */
+static int runtime_key_event(drm_disp_t*d,int key_event){
+ if(key_event==KEY_EV_SHORT)return backlight_is_on()?runtime_sleep():runtime_wake(d);
+ if(key_event!=KEY_EV_LONG)return 1;
+ if(!backlight_is_on()&&!runtime_wake(d))return 0;
+ if(!running||!display_runtime_ready||factory_lifecycle.phase!=TF_FL_READY)return 0;
+ motion_cancel();tf_display_activity(&display_policy,tick());power_menu_open();return running;
+}
 int main(int argc,char**argv){
  if(argc==2&&!strcmp(argv[1],"--monotonic-seconds")){long long value=monotonic_seconds();if(value<0)return 7;printf("%lld\n",value);return 0;}
  signal(SIGINT,stop_signal);signal(SIGTERM,stop_signal);signal(SIGPIPE,SIG_IGN);
@@ -350,10 +362,11 @@ int main(int argc,char**argv){
   /* Read input before background reconnection or configuration polling. */
   touch_input_read(&touch,&x,&y,&pressed);if(!display_runtime_touch(pressed,now)){result=7;break;}
   if(gesture_block_until){if((int32_t)(gesture_block_until-now)>0)touch_input_clear_taps(&touch);else gesture_block_until=0;}
-  int k=key_input_poll(&key,now);if(k==KEY_EV_LONG||k==KEY_EV_SHORT){int ok=k==KEY_EV_SHORT&&backlight_is_on()?runtime_sleep():runtime_wake(&d);if(!ok){result=7;break;}touch_input_clear_taps(&touch);gesture_block_until=tick()+300;dirty=1;}
+  int k=key_input_poll(&key,now);if(k==KEY_EV_LONG||k==KEY_EV_SHORT){int ok=runtime_key_event(&d,k);if(!ok){result=7;break;}touch_input_clear_taps(&touch);gesture_block_until=tick()+300;dirty=1;}
+  if(power_menu_filter_touch(pressed)){touch_input_clear_taps(&touch);gesture_block_until=tick()+120;}
   now=tick();int soft_consumed=screen_soft_input(&d,now,pressed,x,y,gesture_block_until!=0,&dirty);if(soft_consumed<0){result=7;break;}if(soft_consumed){touch_input_clear_taps(&touch);if(!soft_lock.locked&&soft_lock.block_release)gesture_block_until=tick()+300;}
   if(pressed)last_interaction=now;
-  int can_interact=backlight_is_on()&&!pin_policy.locked&&!soft_consumed&&!gesture_block_until;
+  int can_interact=backlight_is_on()&&!power_menu.active&&!pin_policy.locked&&!soft_consumed&&!gesture_block_until;
   if(settle.active&&pressed){if(!swipe_finish(&d,settle.to==d.width)){result=6;break;}/* Continue this new press against the finished page; never swallow it. */}
   if(can_interact&&!settle.active){
    if(pressed){
@@ -378,7 +391,7 @@ int main(int argc,char**argv){
    if(!backlight_is_on()){touch_input_clear_taps(&touch);gesture_block_until=tick()+300;}
    else{
     int current=current_main_page(),content=y0>=html_view_pinned_height();tf_display_activity(&display_policy,now);
-    enum tf_gesture gesture=tf_classify_gesture(x0,y0,x1,y1,is_tap,content&&!pin_policy.locked&&current>=0&&sms_id<0&&!advanced_page,content&&!pin_policy.locked&&page_h>480,pending[0]!=0);
+    enum tf_gesture gesture=tf_classify_gesture(x0,y0,x1,y1,is_tap,content&&!power_menu.active&&!pin_policy.locked&&current>=0&&sms_id<0&&!advanced_page,content&&!power_menu.active&&!pin_policy.locked&&page_h>480,pending[0]!=0||power_menu.active);
     last_interaction=now;
     if(gesture==TF_NEXT||gesture==TF_PREVIOUS){int direction=gesture==TF_NEXT?1:-1;int prepared=swipe_begin(&d,current,direction);if(prepared<0){result=6;break;}if(prepared)tf_settle_begin(&settle,0,d.width,tick());else{change_page(tf_main_page_name(tf_next_page(current,gesture,TF_MAIN_PAGE_COUNT),aggregate_home),0);dirty=1;}touch_input_clear_taps(&touch);}
     else if(gesture==TF_SCROLL){scroll_y=tf_motion_clamp(scroll_y-(y1-y0),page_h-480);if(!repaint_scroll(&d)){result=6;break;}}
@@ -404,8 +417,8 @@ int main(int argc,char**argv){
   if(refresh_pending&&!interacting){dirty=1;refresh_pending=0;}
   if(dirty&&running&&!swipe_old&&!drag.mode){if(backlight_is_on()){if(!render(&d)){result=6;break;}heartbeat();}else if(periodic&&frame_ready)heartbeat();}
   else if(periodic&&frame_ready)heartbeat();
-  if(!dirty&&!interacting&&running&&frame_ready&&backlight_is_on()&&soft_lock.locked&&!pin_policy.locked&&!busy_visible&&!lock_rate_animation_tick(&d,tick())){frame_ready=0;result=6;break;}
-  if(!dirty&&!interacting&&running&&frame_ready&&backlight_is_on()&&!pin_policy.locked&&!soft_lock.locked&&!busy_visible&&!pending[0]&&!advanced_page&&!chart_animation_tick(&d,tick())){frame_ready=0;result=6;break;}
+  if(!dirty&&!interacting&&running&&frame_ready&&backlight_is_on()&&!power_menu.active&&soft_lock.locked&&!pin_policy.locked&&!busy_visible&&!lock_rate_animation_tick(&d,tick())){frame_ready=0;result=6;break;}
+  if(!dirty&&!interacting&&running&&frame_ready&&backlight_is_on()&&!power_menu.active&&!pin_policy.locked&&!soft_lock.locked&&!busy_visible&&!pending[0]&&!advanced_page&&!chart_animation_tick(&d,tick())){frame_ready=0;result=6;break;}
   usleep(backlight_is_on()?8000:30000);
  }
  cleanup:motion_discard();if(display_runtime_fault)result=7;if(result==6)native_failure_note("FRAME_RENDER");else if(result==7)native_failure_note("DISPLAY_RUNTIME");display_level_hook=NULL;display_auto_sensor_hook=NULL;tf_http_wait_hook=NULL;display_runtime_cleanup();sms_forward_cleanup();factory_extra_cleanup();pin_native_cleanup();data_backend_close();touch_input_close(&touch);key_input_close(&key);drm_disp_close(&d);return result;

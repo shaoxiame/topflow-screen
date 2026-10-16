@@ -82,6 +82,8 @@ static test_display_policy display_policy;
 static int unlock_seen_scroll=-1;static char unlock_seen_page[96],unlock_seen_previous[96];
 static int display_runtime_unlock_policy(void){unlock_seen_scroll=scroll_y;strcpy(unlock_seen_page,page);strcpy(unlock_seen_previous,previous);return 1;}
 static void tf_pin_lock(void*p){(void)p;pin_policy.locked=pin_policy.enabled;}
+static int power_menu_resets;
+static void power_menu_reset(void){power_menu_resets++;}
 static void form_reset(void){}
 static void sms_forward_cleanup(void){}
 static void factory_extra_cleanup(void){}
@@ -135,7 +137,7 @@ int main(void){
  /* Production sleep entry restores the source before policy/auth work, drops
   * all animation buffers, then applies its existing scroll-reset/lock policy. */
  source_apps(&d);assert(swipe_begin(&d,2,1)==1);tf_settle_begin(&settle,25,0,tick());drag.down=1;chart_animation.active=1;int submitted=submissions;
- assert(runtime_sleep()&&sleep_calls==1&&output_level==0&&login_value==1);
+ assert(runtime_sleep()&&sleep_calls==1&&output_level==0&&login_value==1&&power_menu_resets==1);
  assert(!strcmp(unlock_seen_page,"apps.html")&&!strcmp(unlock_seen_previous,"network.html")&&unlock_seen_scroll==160);
  assert(!strcmp(page,"apps.html")&&!strcmp(previous,"network.html")&&scroll_y==0&&!controls_enabled&&!pending[0]&&!pin_feedback[0]);
  assert(!swipe_old&&!swipe_next&&!settle.active&&!drag.down&&!chart_animation.active&&submissions==submitted);

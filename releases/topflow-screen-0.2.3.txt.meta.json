@@ -1,7 +1,7 @@
 {
   "name": "TopFlow 屏幕",
   "description": "中兴 TopFlow 原生屏幕；开机自启、原厂切换、三卡卡源与 UFI 功能集成",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "shaoxiame",
   "category": "设备管理",
   "device_models": [

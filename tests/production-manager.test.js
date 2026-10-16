@@ -13,7 +13,7 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
 function harness(options = {}) {
   const requests = [], writes = [], confirmations = [], elements = {};
   let state = {installed:!!options.installed, mode:options.mode || 'factory', ...options.initialState}, entry, panel, removed = false, started = false, statusReads = 0;
-  for (const name of ['close','cancel','toggle','status','uninstall','message','version','update','center-state','center-check','autostart','autostart-state']) elements['[data-tf-'+name+']'] = {disabled:false,textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
+  for (const name of ['close','cancel','toggle','status','uninstall','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state']) elements['[data-tf-'+name+']'] = {disabled:false,textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
   const root = {URL, Uint8Array, Blob, FormData, atob,
     TopFlowPackagePayload:{...payload,version:'0.1.8',reviewOnly:!!options.reviewOnly,directSwitch:!!options.directSwitch},
     location:{href:'http://localhost/host',origin:'http://localhost'},
@@ -73,21 +73,59 @@ test('production TXT manager needs no browser API modules, loads with zero calls
   h.root.__topflow_screen_plugin.close();assert.equal(panel.isConnected,false);
 });
 
-test('optional plugin center uses the real version once and stops as soon as uninstall is confirmed',async()=>{
-  const calls=[]; let changed;
-  const center={create(root,options){calls.push(['create',options.version,options.enabled,options.sdk.marker]);changed=options.onChange;
-    return {async start(){calls.push(['start']);changed({status:'unpublished',label:'本 TXT 版本尚未在插件中心发布'});},
-      async check(){calls.push(['check']);changed({status:'current',label:'插件中心已发布当前版本'});},stop(){calls.push(['stop']);}};}};
+test('manager ignores legacy store globals and performs no remote startup or telemetry work',async()=>{
+  const calls=[];
+  const center={create(){calls.push('create');throw Error('Legacy store must never initialize');}};
   const h=harness({center,installed:true});await flush();const panel=await h.open();
-  assert.deepEqual(calls,[['create','0.1.8',true,'private-sdk'],['start']]);
-  assert.match(h.elements['[data-tf-center-state]'].textContent,/尚未/);
-  assert.match(panel.innerHTML,/不传密码、短信、SSID/);
-  await h.elements['[data-tf-center-check]'].onclick();assert.equal(calls.at(-1)[0],'check');
-  await h.elements['[data-tf-uninstall]'].onclick();assert.equal(calls.at(-1)[0],'stop');
-  const failed=harness({center,installed:true,cleanupFails:true});await failed.open();const before=calls.length;
-  await failed.elements['[data-tf-uninstall]'].onclick();assert.equal(calls.length,before+1);assert.equal(calls.at(-1)[0],'stop');
-  const denied=harness({center,installed:true,deny:true});await denied.open();const beforeDeny=calls.length;
-  await denied.elements['[data-tf-uninstall]'].onclick();assert.equal(calls.length,beforeDeny);
+  assert.deepEqual(calls,[]);
+  assert.doesNotMatch(source,/TopFlowPluginCenter|TopFlowScreenTelemetrySDK|plugin\.shaneyun\.com|data-tf-center|checkCenter|updateCenter/);
+  assert.doesNotMatch(panel.innerHTML,/检查在线版本|插件中心连接|匿名 UUID|每 60 秒/);
+  assert.match(panel.innerHTML,/https:\/\/tapan\.top\/UFITOOLS-U60Pro\//);
+  assert.match(panel.innerHTML,/UFI 官方文档/);
+  assert.deepEqual(h.requests.map(x=>x.route),['/api/run_shell']);
+  await h.elements['[data-tf-uninstall]'].onclick();
+  assert.deepEqual(calls,[]);assert.deepEqual(h.writes,['uninstall','record']);
+});
+
+test('state card reports observed screen state and does not present stale failures as success',async()=>{
+  for(const [state,label,tone,hint] of [
+    [{installed:false,mode:'factory'},'原厂屏幕','ready',/原厂屏幕正在运行/],
+    [{installed:true,mode:'custom'},'插件屏幕','ready',/画面与触摸请在设备上确认/],
+    [{installed:true,mode:'unknown'},'屏幕状态未确认','pending',/请刷新状态/],
+    [{installed:true,mode:'factory',failure:'RENDERER_EXITED'},'原厂屏幕','pending',/需要检查/],
+    [{installed:true,mode:'factory',partial:true},'原厂屏幕','pending',/未完成安装/]
+  ]){
+    const h=harness({initialState:state});await h.open();
+    assert.equal(h.elements['[data-tf-mode]'].textContent,label);
+    assert.equal(h.elements['[data-tf-state-card]'].attributes['data-tone'],tone);
+    assert.equal(h.elements['[data-tf-state-card]'].attributes['aria-busy'],'false');
+    assert.match(h.elements['[data-tf-state-hint]'].textContent,hint);
+  }
+});
+
+test('manager Escape closes the modal only when there is no active operation',async()=>{
+  const h=harness();const panel=await h.open();let prevented=0;
+  panel.onkeydown({key:'Escape',preventDefault(){prevented++;}});
+  assert.equal(prevented,1);assert.equal(panel.isConnected,false);assert.deepEqual(h.writes,[]);
+  let release;const held=new Promise(resolve=>{release=resolve;});
+  const active=harness({initialState:{installed:true,mode:'custom',versionMismatch:true},beforeUninstall:()=>held});
+  const livePanel=await active.open(),work=active.elements['[data-tf-update]'].onclick();await flush();
+  assert.equal(active.elements['[data-tf-state-card]'].attributes['aria-busy'],'true');
+  livePanel.onkeydown({key:'Escape',preventDefault(){}});assert.equal(livePanel.isConnected,true);
+  release();await work;assert.equal(active.elements['[data-tf-state-card]'].attributes['aria-busy'],'false');
+});
+
+test('manager has locally styled accessible controls and fixed actions around its scrollable content',async()=>{
+  const css=fs.readFileSync(path.join(__dirname,'../src/manager.css'),'utf8');
+  assert.doesNotMatch(css,/@import|url\(|@font-face/);
+  assert.match(css,/prefers-reduced-motion/);assert.match(css,/focus-visible/);
+  for(const size of css.matchAll(/font-size:\s*(\d+)px/g))assert(Number(size[1])>=12,'manager text must be at least 12px');
+  const h=harness();const panel=await h.open();
+  assert.match(panel.innerHTML,/class="tf-package-scroll" role="region" aria-label="屏幕与组件管理" tabindex="0"/);
+  assert(panel.innerHTML.indexOf('data-tf-close')<panel.innerHTML.indexOf('tf-package-scroll'));
+  assert(panel.innerHTML.indexOf('data-tf-message')<panel.innerHTML.indexOf('tf-package-footer'));
+  assert.match(panel.innerHTML,/<\/div><footer class="tf-package-footer">/);
+  assert.match(panel.innerHTML,/data-tf-autostart[^>]*role="switch"[^>]*aria-label="开机自动启用插件屏幕"/);
 });
 
 test('production install and restore keep explicit confirmation and verified real control sequence',async()=>{

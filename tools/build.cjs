@@ -5,11 +5,10 @@ const crypto = require('node:crypto');
 const zlib = require('node:zlib');
 const vm = require('node:vm');
 const ROOT = path.resolve(__dirname, '..');
-const VERSION = '0.2.1';
+const VERSION = '0.2.2';
 const FACTORY_BINARY_SHA256 = '781e3c6ffa2a9db4d61a3cf1bb38461131dc3faed07499a2c9360bc582040dd2';
 const { managerOnly } = require('./production-manager.cjs');
-const { bundleSDK, CONTRACT: PLUGIN_CENTER } = require('./plugin-center-bundle.cjs');
-const SOURCES = ['vendor/ufi-device-sdk-2.0.0.js', 'plugin-center.js', 'ufi-plugin.js'];
+const SOURCES = ['ufi-plugin.js'];
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');
 
 function tarMembers(archive) {
@@ -127,6 +126,7 @@ function verifyNativeReleaseContract(manifest, {reviewOnly=false,diagnosticCandi
   }
 }
 function validateProductionScript(script) {
+  if (/plugin\.shaneyun\.com|UFIPluginTelemetry|TopFlowScreenTelemetrySDK|TopFlowPluginCenter|device-sdk|telemetry\/|api\/public\/plugins/.test(script)) throw Error('Removed store or telemetry integration found in production bundle');
   if (/NON_PRODUCTION_PASSWORD_SENTINEL|TF_FIXTURES|aoyou-status-summary|installed-plugins|BEGIN OPENSSH PRIVATE KEY|TopflowDeviceAPI|TopFlowAoyou|TopFlowUI|demoSnapshot|setSnapshot|createMockTransport|(?:source: )(?:device-api|aoyou-adapter|screen-ui)\.js/.test(script)) throw Error('Private source or preview/demo interface found in production bundle');
 }
 function validateReleaseGate(gate,reviewOnly,diagnosticCandidate=false){
@@ -168,9 +168,9 @@ function diagnosticReadme(summary,outputName){
 }
 function releaseReadme(summary,outputName){
   return [
-    'TopFlow 屏幕 '+summary.version+' — 卡源切换与实时锁屏版',
-    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false，本版界面、聚合首页、默认操作与短信改进尚未实机验收。',
-    '用户已确认 0.1.5 可以使用。现固定三个主页面：首页、网络、功能；普通/聚合共用一个首页位置。',
+    'TopFlow 屏幕 '+summary.version+' — 独立管理页与无遥测版',
+    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false。0.2.2 管理页与移除旧接入已在电脑验证，本轮未新增实机测试。',
+    '用户已确认 0.2.1 实机验收；0.2.2 原生运行文件与公开0.2.1保持一致。现固定三个主页面：首页、网络、功能；普通/聚合共用一个首页位置。',
     '首页随设备最新回读的聚合开关状态切换；未启用、未知或过期时显示普通页，已启用但离线仍显示聚合页。',
     '屏幕取消手动模式选择和聚合开关；读取现有设备状态，不新增GPIO读取，也不判断是谁操作了开关。',
     '保留0.1.6跟手拖动：横向翻页与纵向滚动跟随手指；松手后翻页按144毫秒目标收尾，慢帧跳进当前进度。',
@@ -187,14 +187,13 @@ function releaseReadme(summary,outputName){
     '短信改走现有UFI SEND_SMS及AD会话校验，一次确认只提交一次；会话失效需在UFI恢复，超时不重发。',
     '保留原厂切换、休眠和PIN保护；显示配置与光感瞬态失败分开，立即锁屏独立；本轮未访问设备。',
     '',
-    summary.reviewOnly?'此页仅供本地审查，安装和启动已禁用；不要改名当作可上传TXT。':'安装：在已登录UFI的插件管理中选择 '+outputName+'，再点击“保存”，等待完成后刷新。',
+    summary.reviewOnly?'此页仅供本地审查，安装和启动已禁用；不要改名当作可上传TXT。':'安装：在已登录UFI的插件管理中选择 '+outputName+'，再点击“提交”保存，等待完成后刷新。',
     '“功能列表”折叠区域外的“TopFlow 屏幕 · 管理”才是操控页；插件列表文件名打开源码，无需编辑。',
-    '更新0.1.0/0.1.1/0.1.2/0.1.3/0.1.4/0.1.5/0.1.6/0.1.7/0.1.8/0.1.9/0.2.0：旧屏幕可保持运行，移除旧TopFlow插件记录、保存并刷新，',
-    '再导入本包并保存刷新。UFI跳过同名导入，不会覆盖旧记录；不要改名叠加，也不要删除其他插件。',
+    '更新0.1.0至0.2.1已核验版本：旧屏幕可保持运行，移除旧TopFlow插件记录、点击“提交”保存并刷新，',
+    '再导入本包并点击“提交”保存刷新。UFI跳过同名导入，不会覆盖旧记录；不要改名叠加，也不要删除其他插件。',
     '管理器仅识别已交付且列入核验清单的旧归档；固定归属、清单和执行文件哈希匹配后，',
     '顶部检查已导入TXT与设备组件；发现旧版显示“更新到 v'+summary.version+'”，一次确认自动恢复原厂、清理、安装并启动，无需手动来回切换。',
-    '检查在线版本只读插件中心公开目录；正式发布后由UFI商店更新TXT，再用管理页按钮更新组件。未知或被改动版本拒绝迁移。',
-    'SDK仅在同版本已发布且UFI页面可见时每60秒上报匿名UUID、型号、固件、插件版本和Wi-Fi终端数；隐藏/卸载停止，不传认证头。',
+    '管理页只比较已导入TXT与本机已安装组件；不连接旧插件商店、下载远程SDK或发送遥测。未知或被改动版本拒绝迁移。',
     '',
     '打开管理页默认只读取状态。点击切换并确认后直接点亮插件屏幕；无密码时先本地长按解锁，已启用密码时保留原厂PIN锁屏保护。',
     '不再要求等待原厂自然熄屏。实际安全前置检查失败会停止接管并显示具体代码。',
@@ -203,9 +202,9 @@ function releaseReadme(summary,outputName){
     '卸载：先确认原厂稳定，再清理本插件路径及唯一UFI记录；归属不明、未知文件、上传或记录删除未确认时停止，不假报卸净。',
     '若失败，请保留页面主错误、固定阶段码和退出状态，先恢复原厂；不要重复盲目启用。',
     '',
-    'TXT含管理器、固定统计SDK和真实接口原生程序，无演示数据、模拟接口、密码、订阅或原厂字体/库。',
+    'TXT含管理器、独立样式和真实接口原生程序，无演示数据、模拟接口、密码、订阅或原厂字体/库。',
     '开机自启动默认关闭：更新组件后在管理页开启；使用UFI官方启动项，服务就绪后尝试一次；关闭取消待执行任务，卸载移除本插件启动项。',
-    '本版修复和未支持能力见 功能检查-0.2.1.txt；不宣称与原厂全部功能等价。',
+    '本版修复和未支持能力见 项目文档；不宣称与原厂全部功能等价。',
     '版本 '+summary.version+'；TXT '+summary.bytes+' 字节；与既有遨游约728KB合计约 '+(summary.bytes+728090)+' 字节。',
     '本项目限制单TXT小于4MiB；UFI全部自定义头部上限5MB，其它插件也计入。',
     'TXT SHA-256：'+summary.sha256,
@@ -218,12 +217,23 @@ function build(outputDir, options = {}) {
   const reviewOnly=options.reviewOnly===true;
   const diagnosticCandidate=options.diagnosticCandidate===true;
   validateReleaseGate(releaseGate,reviewOnly,diagnosticCandidate);
+  if(!reviewOnly&&!diagnosticCandidate) {
+    if(releaseGate.version!==VERSION) throw Error('PACKAGE_RELEASE_BLOCKED: Re-run npm run prepare:release for this version');
+    for(const name of ['src/ufi-plugin.js','src/manager.css','tools/build.cjs','tools/production-manager.cjs']) {
+      if(releaseGate.sourceSha256?.[name]!==sha256(fs.readFileSync(path.join(ROOT,name)))) throw Error('PACKAGE_RELEASE_BLOCKED: Source changed after public validation: '+name);
+    }
+  }
   outputDir = path.resolve(outputDir || path.join(ROOT, reviewOnly?'review':diagnosticCandidate?'diagnostic':'dist'));
   const distRelative = path.relative(path.join(ROOT, 'dist'), outputDir);
   if (reviewOnly&&(!distRelative || !distRelative.startsWith('..' + path.sep) && !path.isAbsolute(distRelative))) throw Error('Review output must not use dist or its descendants');
   if (diagnosticCandidate&&(!distRelative || !distRelative.startsWith('..' + path.sep) && !path.isAbsolute(distRelative))) throw Error('Diagnostic candidate output must not use dist or its descendants');
   const archive = fs.readFileSync(path.join(ROOT, 'native/topflow-native.tar.gz'));
   const members = tarMembers(archive);
+  for(const member of members) {
+    if(member.type==='0' && /plugin\.shaneyun\.com|UFIPluginTelemetry|TopFlowScreenTelemetrySDK|TopFlowPluginCenter|device-sdk/.test(member.content.toString('latin1'))) {
+      throw Error('Removed store or telemetry bytes found in native payload: '+member.name);
+    }
+  }
   const get = name => members.find(member => member.name === './' + name).content;
   const manifest = JSON.parse(get('build-manifest.json').toString('utf8'));
   verifyNativeReleaseContract(manifest,{reviewOnly,diagnosticCandidate});
@@ -232,11 +242,10 @@ function build(outputDir, options = {}) {
   verifyBootIntegrity(manifest, members);
   const {binaryHash,factoryBusHash}=verifyNativeBinaries(manifest,members);
   const payload = { version: VERSION, defaultViewOnly:manifest.defaultViewOnly, nativeAutostart:manifest.nativeAutostart,nativeControlAuthorization:manifest.nativeControlAuthorization, nativeNetwork:manifest.nativeNetwork,nativeAmbr:manifest.nativeAmbr,nativeSimSource:manifest.nativeSimSource,nativeSms:manifest.nativeSms, nativeManualCell:manifest.nativeManualCell, nativeSoftLock:manifest.nativeSoftLock, nativeBrightness:manifest.nativeBrightness, directSwitch:manifest.displayCompatibility.directSwitch, sensorAfterDrm:manifest.displayCompatibility.sensorAfterDrm, startupOrder:manifest.displayCompatibility.startupOrder,  hardwareTested: false, reviewOnly, diagnosticCandidate, adaptationFixCandidate:manifest.adaptationFixCandidate, aggregationUiFixCandidate:manifest.aggregationUiFixCandidate, homeViewFollowsObservedAggregation:manifest.homeViewFollowsObservedAggregation, nativeHomeNavigation:manifest.nativeHomeNavigation, aggregationPageDefaultVisible:manifest.aggregationPageDefaultVisible, aggregationDeviceVerified:manifest.aggregationDeviceVerified, performanceFixCandidate:manifest.performanceFixCandidate, userConfirmedFunctionalRelease:manifest.userConfirmedFunctionalRelease, devicePerformanceVerified:manifest.devicePerformanceVerified, performanceScope:manifest.performanceScope, nativePerformance:manifest.nativePerformance, nativeBattery:manifest.nativeBattery, confirmedLockCause:manifest.confirmedLockCause, retainedExistingTouchBackend:manifest.retainedExistingTouchBackend, uprightOrientationMatched:manifest.uprightOrientationMatched, factoryPinEnum:manifest.displayCompatibility.pinFactoryEnum, noPinStartup:manifest.displayCompatibility.noPinStartup, noPinWake:manifest.displayCompatibility.noPinWake, userReportedDisplayHandover:manifest.userReportedDisplayHandover, pendingDeviceAcceptance:manifest.pendingDeviceAcceptance, acceptanceStatus:diagnosticCandidate?'DIAGNOSTIC_CANDIDATE':'DEVICE_ACCEPTANCE_PENDING',releaseBlocked: reviewOnly?'REVIEW_ONLY':null, archiveBase64: archive.toString('base64'), archiveSha256: sha256(archive), screenctlSha256: sha256(get('screenctl.sh')), screenctlSource: get('screenctl.sh').toString('utf8'), members: members.map(member => member.name) };
-  const managerCss = '.tf-package-entry{padding:12px 18px;margin:10px;border:1px solid #dce5f7;border-radius:12px;background:#edf3ff;color:#245ce5;cursor:pointer}.tf-package-shell{position:fixed;inset:0;z-index:2147483000;background:#17243e80;display:flex;align-items:center;justify-content:center;overflow:auto;padding:20px;font:14px/1.6 "Microsoft YaHei",sans-serif;color:#17243e}.tf-package-dialog{background:#f7f9fd;border-radius:20px;padding:20px;max-width:780px;max-height:95vh;overflow:auto;box-sizing:border-box}.tf-package-head{display:flex;justify-content:space-between;gap:30px;font-size:18px}.tf-package-dialog p{font-size:12px;color:#687993;margin:10px 0}.tf-package-body{display:flex;gap:24px;align-items:flex-start}.tf-package-body aside{width:270px}.tf-package-body>div{flex:none}.tf-package-dialog aside button,.tf-package-head button{display:block;width:100%;padding:10px;margin:8px 0;border:1px solid #dce5f7;border-radius:10px;background:white;color:#235fe9;cursor:pointer}.tf-package-head button{width:auto;margin:0;font-size:12px}.tf-package-dialog [data-tf-message]{padding:12px;border-radius:10px;background:#eaf1ff;white-space:pre-wrap}.tf-package-dialog [data-tf-restore]{border-color:#e3aa96;color:#a34a30}@media(max-width:700px){.tf-package-body{flex-direction:column;align-items:center}.tf-package-body aside{width:320px}.tf-package-dialog{padding:12px}}';
-  const managerSimpleCss = '.tf-package-dialog{width:380px;max-width:92vw;max-height:86vh;background:#171b24;color:#e9effa;border:1px solid #303744;box-shadow:0 20px 70px #0008}.tf-package-head{align-items:center;gap:12px;font-size:16px}.tf-package-head button{flex-shrink:0;white-space:nowrap}.tf-package-dialog p{color:#9caac0}.tf-package-dialog button{font:inherit;cursor:pointer;border-radius:10px;padding:10px 12px;border:1px solid #3a4558;color:#e9effa;background:#222a37}.tf-package-dialog button:disabled{opacity:.45;cursor:default}.tf-package-dialog .tf-package-primary{display:block;width:100%;padding:14px;background:#3b72ec;border-color:#3b72ec;font-size:15px;font-weight:600}.tf-package-actions{display:flex;gap:10px;margin-top:10px}.tf-package-actions button{flex:1}.tf-package-dialog [data-tf-uninstall]{color:#edaa9a}.tf-package-dialog [data-tf-message]{background:#202938;min-height:68px}';
-  const managerUpdateCss='.tf-package-autostart{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid #34445e}.tf-package-autostart>div{flex:1}.tf-package-autostart button{flex-shrink:0}.tf-package-autostart [aria-checked=true]{background:#24644f;border-color:#438f73}.tf-package-autostart p{margin:4px 0;font-size:11px}'+'.tf-package-center{display:flex;align-items:center;gap:12px}.tf-package-center a{color:#a8c6ff;font-size:12px}.tf-package-privacy{margin-top:10px;color:#a8b8ce;font-size:12px}.tf-package-version{margin:14px 0;padding:12px;border:1px solid #34445e;border-radius:12px;background:#202938}.tf-package-version p{margin:0 0 10px}.tf-package-version [data-tf-update]{width:100%;background:#3266ce;border-color:#4c82ee;color:#fff}.tf-package-version button+p{margin-top:8px;margin-bottom:0}.tf-package-dialog [data-tf-update][hidden]{display:none}';
+  const managerCss = fs.readFileSync(path.join(ROOT, 'src/manager.css'), 'utf8');
+  if (/<\/style/i.test(managerCss) || /@import|url\s*\(/i.test(managerCss)) throw Error('Manager stylesheet must be self-contained');
   const modules = SOURCES.map(name => {
-    const raw = name.startsWith('vendor/') ? bundleSDK() : fs.readFileSync(path.join(ROOT, 'src', name), 'utf8');
+    const raw = fs.readFileSync(path.join(ROOT, 'src', name), 'utf8');
     const text = name === 'ufi-plugin.js' ? managerOnly(raw) : raw;
     new vm.Script(text, { filename: name });
     if (/<\/script/i.test(text)) throw Error('Source contains script closing tag: ' + name);
@@ -245,13 +254,13 @@ function build(outputDir, options = {}) {
   const script = emitPayload(payload) + modules.join('\n;\n');
   validateProductionScript(script);
   const name = 'TopFlow 屏幕';
-  const pluginMetadata={name,version:VERSION,build:sha256(script+'\n'+managerCss+'\n'+managerSimpleCss+'\n'+managerUpdateCss).slice(0,16),author:'TopFlow Screen',description:'中兴 TopFlow 原生屏幕；开机自启、原厂切换、三卡卡源与 UFI 功能集成',target:'ZTE TopFlow / MU5252',status:reviewOnly?'REVIEW_ONLY':diagnosticCandidate?'DIAGNOSTIC_CANDIDATE':'DEVICE_ACCEPTANCE_PENDING'};
+  const pluginMetadata={name,version:VERSION,build:sha256(script+'\n'+managerCss).slice(0,16),author:'TopFlow Screen',description:'中兴 TopFlow 原生屏幕；开机自启、原厂切换、三卡卡源与 UFI 功能集成',target:'ZTE TopFlow / MU5252',status:reviewOnly?'REVIEW_ONLY':diagnosticCandidate?'DIAGNOSTIC_CANDIDATE':'DEVICE_ACCEPTANCE_PENDING'};
   // Same public source-header convention as the reference AoYou plugin.
   // UFI requires raw plugin source: store metadata is generated by the host.
   // Public @version is for the source header; component version detection and
   // updates belong in this plugin's own manager, never in forged store tags.
   const header='<script id="topflow-screen-plugin-source">\n// '+name+' v'+VERSION+' — UFI-TOOLS-ZWRT 原生屏幕插件\n'+Object.entries(pluginMetadata).map(([key,value])=>'// @'+key+' '+value).join('\n')+'\n';
-  const txt = header+script+'\n</script>\n<style id="topflow-screen-plugin-style">\n'+managerCss+'\n'+managerSimpleCss+'\n'+managerUpdateCss+'\n</style>\n';
+  const txt = header+script+'\n</script>\n<style id="topflow-screen-plugin-style">\n'+managerCss+'\n</style>\n';
   if (/\[KANO_META\]|<!--\s*\[KANO_PLUGIN_(?:START|END)\]/.test(txt)) throw Error('Raw plugin must not include internal store markers');
   const bytes = Buffer.byteLength(txt, 'utf8');
   const maxLineLength = Math.max(...txt.split('\n').map(line=>line.length));
@@ -261,9 +270,17 @@ function build(outputDir, options = {}) {
   const outputName=reviewOnly?'topflow-screen.UNVERIFIED.html':diagnosticCandidate?'topflow-screen-'+VERSION+'-diagnostic.txt':'topflow-screen.txt';
   fs.writeFileSync(path.join(outputDir, outputName), txt, 'utf8');
   if (!reviewOnly&&!diagnosticCandidate) fs.writeFileSync(path.join(outputDir, 'topflow-screen-' + payload.version + '.txt'), txt, 'utf8');
+  const officialMetadata={name,description:pluginMetadata.description,version:VERSION,author:'shaoxiame',category:'设备管理',device_models:['TOPFLOW']};
+  if (!reviewOnly&&!diagnosticCandidate) {
+    for(const filename of ['topflow-screen.txt','topflow-screen-'+VERSION+'.txt']) {
+      fs.writeFileSync(path.join(outputDir,filename+'.meta.json'),JSON.stringify(officialMetadata,null,2)+'\n','utf8');
+    }
+  }
   const summary = { plugin: name, version: payload.version, defaultViewOnly:payload.defaultViewOnly, nativeAutostart:payload.nativeAutostart,nativeControlAuthorization:payload.nativeControlAuthorization, nativeNetwork:payload.nativeNetwork,nativeAmbr:payload.nativeAmbr,nativeSimSource:payload.nativeSimSource,nativeSms:payload.nativeSms, nativeManualCell:payload.nativeManualCell, nativeSoftLock:payload.nativeSoftLock, nativeBrightness:payload.nativeBrightness, directSwitch:payload.directSwitch, sensorAfterDrm:payload.sensorAfterDrm, startupOrder:payload.startupOrder,  receiptVersion:manifest.displayCompatibility.receiptVersion, factoryBinarySha256:manifest.displayCompatibility.factoryBinarySha256, reviewOnly,diagnosticCandidate,adaptationFixCandidate:payload.adaptationFixCandidate,aggregationUiFixCandidate:payload.aggregationUiFixCandidate,homeViewFollowsObservedAggregation:payload.homeViewFollowsObservedAggregation,nativeHomeNavigation:payload.nativeHomeNavigation,aggregationPageDefaultVisible:payload.aggregationPageDefaultVisible,aggregationDeviceVerified:payload.aggregationDeviceVerified,performanceFixCandidate:payload.performanceFixCandidate,userConfirmedFunctionalRelease:payload.userConfirmedFunctionalRelease,devicePerformanceVerified:payload.devicePerformanceVerified,performanceScope:payload.performanceScope,nativePerformance:payload.nativePerformance,nativeBattery:payload.nativeBattery,confirmedLockCause:payload.confirmedLockCause,retainedExistingTouchBackend:payload.retainedExistingTouchBackend,uprightOrientationMatched:payload.uprightOrientationMatched,factoryPinEnum:payload.factoryPinEnum,noPinStartup:payload.noPinStartup,noPinWake:payload.noPinWake,userReportedDisplayHandover:payload.userReportedDisplayHandover,pendingDeviceAcceptance:payload.pendingDeviceAcceptance,releaseBlocked:payload.releaseBlocked,acceptanceStatus:payload.acceptanceStatus, bytes, maxLineLength, sha256: sha256(txt), nativeArchiveSha256: payload.archiveSha256, nativeBinarySha256: binaryHash, factoryBusSha256:factoryBusHash, hardwareTested: false, sources: SOURCES, nativeMembers: payload.members };
   summary.pluginMetadata=pluginMetadata;
-  summary.pluginCenter=PLUGIN_CENTER;
+  summary.storeIntegration={officialDocumentationOnly:true,telemetry:false,remoteSDK:false};
+  summary.officialMetadata=officialMetadata;
+  summary.managerCssSha256=sha256(managerCss);
   fs.writeFileSync(path.join(outputDir, reviewOnly?'build-manifest.UNVERIFIED.json':diagnosticCandidate?'build-manifest.DIAGNOSTIC.json':'build-manifest.json'), JSON.stringify(summary, null, 2) + '\n');
   if(diagnosticCandidate){fs.writeFileSync(path.join(outputDir,'README.DIAGNOSTIC.txt'),diagnosticReadme(summary,outputName),'utf8');return summary;}
   fs.writeFileSync(path.join(outputDir, reviewOnly?'README.UNVERIFIED.txt':'README.txt'), releaseReadme(summary,outputName), 'utf8');

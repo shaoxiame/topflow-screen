@@ -23,15 +23,13 @@ This software is based in part on the work of the FreeType Team.
 
 若自行引入上游完整源码中的 stb 或 LVGL，则须另外保留这些组件与其可选资源的许可证。当前渲染目标未使用 LVGL，不能因此声称其示例字体、图片可无条件复制。
 
-## UFI-TOOLS-ZWRT 与官方 SDK
+## UFI-TOOLS-ZWRT 与插件接口
 
 特别鸣谢 **UFI-TOOLS-ZWRT 面板及开发者，感谢提供这么好的平台**。UFI-TOOLS-ZWRT 是设备上的宿主环境；本仓库不包含其完整面板源码，也不授予该面板新的使用或分发权限。
 
-UFI Plugin Telemetry SDK 2.0.0 的官方来源是 [`device-sdk.js`](https://plugin.shaneyun.com/assets/device-sdk.js)，接入文档为 [UFI 插件中心开发文档](https://plugin.shaneyun.com/developers)。本项目审阅版本的 SHA-256 为：
+当前宿主接口及插件格式依据 [UFI-TOOLS-ZWRT 1.0.0 官方文档](https://tapan.top/UFITOOLS-U60Pro/1.0.0%E6%96%B0%E7%89%88%E6%9C%AC%E6%96%87%E6%A1%A3)。插件商店由设备宿主管理；公开文档没有要求本插件携带第三方遥测 SDK，也没有授权把另一平台重命名为官方服务。
 
-`50d461aa76f1d35efba50f2b598c08f9b5ba518ae59799546a5862bfac82fc7d`
-
-该 SDK 源文件没有单独声明开源许可证。官方开发文档指导生产插件捆绑审阅后的固定版本；这不能解读成将 SDK 许可为 MIT 或本项目非商用协议。公开源码树保留来源及完整性信息，SDK 按构建流程从官方获取。官方原始头注应在最终插件中保留。已有成品 TXT 内含 SDK，使用时仍受其适用授权约束。
+v0.2.2 已移除先前接入的旧商店链接、远程版本检查、遥测 SDK 和上报。当前构建不下载或捆绑该 SDK；历史归档或分析材料涉及它时，仅描述当时实现，不表示当前运行依赖，也不改变第三方已有授权。
 
 ## 参考项目
 

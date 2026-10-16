@@ -464,6 +464,98 @@
     "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e"
   }
 });
+  // Exact prior 0.2.1 release bytes; recovery only, never execution.
+  recoveryArchives.push({
+    "archiveSha256": "b08e18c9cda493699229eaf94e37a11939b0b4b9ab31aaf6ec4c1322cdd5f258",
+    "members": [
+      "./",
+      "./boot-hook.sh",
+      "./boot-integrity.sha256",
+      "./build-manifest.json",
+      "./licenses/",
+      "./NOTICE.txt",
+      "./REBUILD.txt",
+      "./screenctl.sh",
+      "./supervisor.sh",
+      "./topflow-factory-bus-aarch64",
+      "./topflow-screen",
+      "./topflow-screen.sha256",
+      "./ui/",
+      "./ui/aggregate.html",
+      "./ui/apps.html",
+      "./ui/index.html",
+      "./ui/network.html",
+      "./ui/settings.html",
+      "./ui/style.css",
+      "./ui/subpages/",
+      "./ui/subpages/sms.html",
+      "./licenses/FreeType-FTL.txt",
+      "./licenses/FreeType-gzip-zlib.txt",
+      "./licenses/gumbo-Apache.txt",
+      "./licenses/LGPL-2.1.txt",
+      "./licenses/litehtml-BSD.txt",
+      "./licenses/LLVM-libcxx.txt",
+      "./licenses/LLVM-libcxxabi.txt",
+      "./licenses/musl-COPYRIGHT.txt",
+      "./licenses/openwrt-NOTICE.txt",
+      "./licenses/pinyin-data-MIT.txt",
+      "./licenses/PolyForm-Noncommercial-1.0.0.txt",
+      "./licenses/u60pro-devui-MIT.txt"
+    ],
+    "files": {
+      "topflow-screen": "063ce8523da021841820aff86be9541c1d60f8080c3b9407c97dcf62dd471202",
+      "topflow-factory-bus-aarch64": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28",
+      "screenctl.sh": "673a2a01bd21b070779254323be90ce71b33db83630bf667a6ec0a100785af08",
+      "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+      "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e"
+    }
+  });
+
+  // Exact prior 0.2.1 release bytes; recovery only, never execution.
+  recoveryArchives.push({
+    "archiveSha256": "1270e867cc42cc97c58ad5fccbf6c5444e1f27d8d10c67929c134f0722db3a87",
+    "members": [
+      "./",
+      "./boot-hook.sh",
+      "./boot-integrity.sha256",
+      "./build-manifest.json",
+      "./licenses/",
+      "./NOTICE.txt",
+      "./REBUILD.txt",
+      "./screenctl.sh",
+      "./supervisor.sh",
+      "./topflow-factory-bus-aarch64",
+      "./topflow-screen",
+      "./topflow-screen.sha256",
+      "./ui/",
+      "./ui/aggregate.html",
+      "./ui/apps.html",
+      "./ui/index.html",
+      "./ui/network.html",
+      "./ui/settings.html",
+      "./ui/style.css",
+      "./ui/subpages/",
+      "./ui/subpages/sms.html",
+      "./licenses/FreeType-FTL.txt",
+      "./licenses/gumbo-Apache.txt",
+      "./licenses/LGPL-2.1.txt",
+      "./licenses/litehtml-BSD.txt",
+      "./licenses/LLVM-libcxx.txt",
+      "./licenses/LLVM-libcxxabi.txt",
+      "./licenses/musl-COPYRIGHT.txt",
+      "./licenses/openwrt-NOTICE.txt",
+      "./licenses/pinyin-data-MIT.txt",
+      "./licenses/u60pro-devui-MIT.txt"
+    ],
+    "files": {
+      "topflow-screen": "063ce8523da021841820aff86be9541c1d60f8080c3b9407c97dcf62dd471202",
+      "topflow-factory-bus-aarch64": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28",
+      "screenctl.sh": "673a2a01bd21b070779254323be90ce71b33db83630bf667a6ec0a100785af08",
+      "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+      "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e"
+    }
+  });
+
   function error(code, message) { var e = new Error(message); e.code = code; return e; }
   function failureMessage(code) {
     var messages = {
@@ -747,31 +839,30 @@
     if (!doc || root.__topflow_screen_plugin) return;
     var payload = privatePayload(root.TopFlowPackagePayload);
     var versionLabel = typeof payload.version === 'string' && /^\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(payload.version) ? payload.version : '开发版';
+    var versionCaption = versionLabel === '开发版' ? versionLabel : 'v' + versionLabel;
     var executingScript = doc.currentScript && doc.currentScript.textContent || '';
     var controller = { close: closePanel, open: openPanel };
     root.__topflow_screen_plugin = controller;
     var panel = null, screen = null, mounted = null, message = null, observer = null, controls = false, busy = false, currentState = null;
     var bridges = readBridges(root, function () { return controls; });
     var cancelTask = null, cancelRequested = false, cancelSignal = null, cancelWake = null, activeAction = '', stateEpoch = 0;
-    var center = null, centerState = { status: 'unavailable', message: '插件中心连接未启用' };
-    function updateCenter() {
+    var focusReturn = null;
+    function updateStateCard() {
       if (!panel) return;
-      panel.querySelector('[data-tf-center-state]').textContent = (centerState.label || centerState.message) + (centerState.publishedVersion ? ' · v' + centerState.publishedVersion : '');
-      panel.querySelector('[data-tf-center-check]').disabled = busy || !center || centerState.status === 'checking';
-    }
-    // The fixed SDK uses a private namespace. Preview pages never collect host
-    // identity; the adapter also rejects localhost and unpublished versions.
-    if (root.TopFlowPluginCenter && root.TopFlowScreenTelemetrySDK && typeof KANO_baseURL !== 'undefined') {
-      try {
-        center = root.TopFlowPluginCenter.create(root, { version: versionLabel, enabled: true, sdk: root.TopFlowScreenTelemetrySDK,
-          onChange: function (state) { centerState = state; updateCenter(); } });
-        center.start().catch(function () {});
-      } catch (_) { /* Optional platform connection cannot block screen controls. */ }
+      var state = currentState, card = panel.querySelector('[data-tf-state-card]');
+      var mode = state && state.mode, pending = state && (state.waiting || state.uploadActive || state.partial);
+      card.setAttribute('data-mode', mode === 'custom' ? 'custom' : mode === 'factory' ? 'factory' : 'unknown');
+      card.setAttribute('data-tone', !state || state.failure || pending || mode === 'unknown' ? 'pending' : 'ready');
+      card.setAttribute('aria-busy', String(busy));
+      panel.querySelector('[data-tf-mode]').textContent = !state ? (busy ? '正在读取状态' : '屏幕状态未确认') : mode === 'custom' ? '插件屏幕' : mode === 'factory' ? '原厂屏幕' : '屏幕状态未确认';
+      var actions = { status: '读取中', switch: '切换中', uninstall: '卸载中', autostart: '设置中', cancel: '取消中' };
+      panel.querySelector('[data-tf-state-label]').textContent = busy ? (actions[activeAction] || '处理中') : !state ? '等待确认' : state.failure ? '需要检查' : state.waiting ? '等待交接' : state.uploadActive ? '上传待确认' : state.partial ? '安装未完成' : mode === 'custom' ? '进程运行中' : mode === 'factory' ? '原厂运行中' : '状态未知';
+      panel.querySelector('[data-tf-state-hint]').textContent = !state ? (busy ? '正在通过 UFI 读取当前屏幕与组件状态。' : '状态读取未确认，请刷新后继续。') : state.failure ? '操作结果需要检查，详细信息见下方。' : state.waiting ? '原厂继续运行，可随时取消本次等待。' : state.uploadActive ? '上传结果未确认，等待完成后再继续操作。' : state.partial ? '可清理已识别的未完成安装，再重新启用。' : mode === 'custom' ? '进程状态已读取，画面与触摸请在设备上确认。' : mode === 'factory' ? '原厂屏幕正在运行，插件组件按需启用。' : '请刷新状态，确认后再继续操作。';
     }
     function say(text) { if (message) message.textContent = text; }
     function updateButtons() {
       if (!panel) return;
-      updateCenter();
+      updateStateCard();
       var update = panel.querySelector('[data-tf-update]');
       update.hidden = !(currentState && currentState.installed && currentState.versionMismatch);
       update.disabled = busy || update.hidden || currentState.uploadActive || !!currentState.waiting || payload.reviewOnly;
@@ -821,6 +912,8 @@
       if (panel) panel.remove();
       panel = screen = message = null;
       currentState = null; stateEpoch++;
+      if (focusReturn && typeof focusReturn.focus === 'function') focusReturn.focus();
+      focusReturn = null;
     }
     async function shell(command, marker, timeout) {
       var result = await bridges.runShellWithRoot(command, timeout || 12000);
@@ -1004,7 +1097,6 @@
       if (busy || !currentState || currentState.uploadActive) return;
       if (!root.confirm('卸载将关闭并移除本插件开机启动项，恢复并确认原厂屏幕，再删除本插件 /data/plugins/topflow-screen 与 /tmp/topflow-screen。保留原厂、UFI及其他插件文件。面板插件记录的安全移除将在清理后检查。确认卸载？')) return;
       busy = true; activeAction = 'uninstall'; stateEpoch++; updateButtons(); stopWebScreen();
-      if (center) center.stop();
       try {
         say('正在恢复原厂、停止本插件进程并验证清理路径…');
         if (currentState.installed) await shell(buildScreenCommand('uninstall', payload, true), 'TOPFLOW_UNINSTALL=COMPONENTS_REMOVED', 60000);
@@ -1019,8 +1111,19 @@
     }
     function openPanel() {
       if (panel) return;
+      focusReturn = doc.activeElement || null;
       panel = doc.createElement('div'); panel.className = 'tf-package-shell';
-      panel.innerHTML = '<section class="tf-package-dialog" role="dialog" aria-modal="true" aria-label="TopFlow 屏幕插件"><div class="tf-package-head"><b>TopFlow 屏幕 ' + versionLabel + (payload.directSwitch ? ' · 直接切换版' : payload.diagnosticCandidate ? ' · 诊断自测版' : '') + '</b><button data-tf-close>关闭</button></div><section class="tf-package-version" aria-label="组件版本"><b>本 TXT · v' + versionLabel + '</b><p data-tf-version role="status">设备组件版本尚未确认</p><button data-tf-update hidden disabled>更新到 v' + versionLabel + '</button><p>检测已导入 TXT 与设备组件；新版需先导入 UFI。</p><p data-tf-center-state role="status">插件中心连接未启用</p><div class="tf-package-center"><button data-tf-center-check>检查在线版本</button><a href="https://plugin.shaneyun.com/" target="_blank" rel="noopener noreferrer">打开插件中心</a></div><details class="tf-package-privacy"><summary>插件中心连接说明</summary><p>已发布的同版本在可见 UFI 页面每 60 秒上报宿主匿名 UUID、型号、固件、插件版本与 Wi-Fi 终端数量。隐藏页面暂停，卸载停止；不传密码、短信、SSID 或终端明细。未发布版本不采集上报。仅主动检查线上版本，不自动安装内核。</p></details></section><p data-tf-message role="status">正在读取屏幕状态…</p><button class="tf-package-primary" data-tf-toggle disabled>正在读取屏幕状态…</button><button data-tf-cancel hidden>取消等待，保留原厂</button><div class="tf-package-actions"><button data-tf-status>检查更新 / 刷新</button><button data-tf-uninstall disabled>卸载插件</button></div><section class="tf-package-autostart"><div><b>开机自动启用插件屏幕</b><p data-tf-autostart-state role="status">状态未确认</p></div><button data-tf-autostart role="switch" aria-checked="false" disabled>开启自启动</button></section><p>自启动默认关闭；仅登记 UFI 官方启动项。首次开机效果请在设备确认。</p><details data-tf-advanced><summary>设备控制</summary><p>展开即可编辑；短信、Wi-Fi、基站和遨游等操作均在提交前确认。收起或关闭即停止刷新并撤销控制。</p><div data-tf-screen></div></details></section>';
+      panel.innerHTML = '<section class="tf-package-dialog" role="dialog" aria-modal="true" aria-label="TopFlow 屏幕插件" tabindex="-1">' +
+        '<header class="tf-package-head"><div class="tf-package-brand"><span class="tf-package-mark" aria-hidden="true">TF</span><div><p class="tf-package-eyebrow">UFI · 屏幕控制台</p><h2>TopFlow 屏幕</h2></div></div><button class="tf-package-close" data-tf-close type="button" aria-label="关闭管理面板">关闭<span aria-hidden="true">×</span></button></header>' +
+        '<div class="tf-package-scroll" role="region" aria-label="屏幕与组件管理" tabindex="0">' +
+        '<section class="tf-package-state-card" data-tf-state-card data-mode="unknown" data-tone="pending" aria-busy="true" aria-label="当前屏幕"><div class="tf-package-state-top"><span class="tf-package-caption">当前显示</span><span class="tf-package-state-pill"><i aria-hidden="true"></i><span data-tf-state-label>读取中</span></span></div><div class="tf-package-state-main"><div><h3 data-tf-mode>正在读取状态</h3><p data-tf-state-hint>正在通过 UFI 读取当前屏幕与组件状态。</p></div><span class="tf-package-screen-icon" aria-hidden="true"><i></i></span></div><button class="tf-package-primary" data-tf-toggle type="button" disabled>正在读取屏幕状态…</button><button class="tf-package-cancel" data-tf-cancel type="button" hidden>取消等待，保留原厂</button></section>' +
+        '<section class="tf-package-version" aria-label="组件版本"><div class="tf-package-section-head"><div><span class="tf-package-caption">组件版本</span><b>本 TXT · ' + versionCaption + '</b></div><button class="tf-package-subtle" data-tf-status type="button">刷新状态</button></div><p data-tf-version>设备组件版本尚未确认</p><button class="tf-package-update" data-tf-update type="button" hidden disabled>更新到 v' + versionLabel + '</button><p class="tf-package-footnote">检测已导入 TXT 与设备组件；新版需先导入 UFI。</p></section>' +
+        '<section class="tf-package-autostart" aria-label="开机启动"><div><b>开机自动启用</b><p data-tf-autostart-state>状态未确认</p></div><button class="tf-package-switch" data-tf-autostart type="button" role="switch" aria-label="开机自动启用插件屏幕" aria-checked="false" disabled>开启自启动</button></section>' +
+        '<section class="tf-package-feedback" aria-label="操作结果"><span class="tf-package-caption">操作信息</span><p data-tf-message role="status" aria-live="polite" aria-atomic="true">正在读取屏幕状态…</p></section>' +
+        '<details data-tf-advanced><summary>设备控制</summary><p>展开即可编辑；短信、Wi-Fi、基站和遨游等操作均在提交前确认。收起或关闭即停止刷新并撤销控制。</p><div data-tf-screen></div></details>' +
+        '</div>' +
+        '<footer class="tf-package-footer"><a class="tf-package-docs" href="https://tapan.top/UFITOOLS-U60Pro/1.0.0%E6%96%B0%E7%89%88%E6%9C%AC%E6%96%87%E6%A1%A3" target="_blank" rel="noopener noreferrer">UFI 官方文档<span aria-hidden="true">↗</span></a><button class="tf-package-danger" data-tf-uninstall type="button" disabled>卸载插件</button></footer>' +
+        '</section>';
       doc.body.append(panel); screen = panel.querySelector('[data-tf-screen]'); message = panel.querySelector('[data-tf-message]');
       if (typeof root.MutationObserver === 'function') {
         observer = new root.MutationObserver(function () {
@@ -1030,9 +1133,18 @@
         // cards do not need to wake this disposal observer.
         observer.observe(doc.body, { childList: true });
       }
-      updateCenter();
-      panel.querySelector('[data-tf-center-check]').onclick = function () { if (!busy && center) return center.check(); };
       panel.querySelector('[data-tf-close]').onclick = closePanel;
+      panel.onkeydown = function (event) {
+        if (event.key === 'Escape') { event.preventDefault(); if (!busy) closePanel(); return; }
+        if (event.key !== 'Tab' || !panel || typeof panel.querySelectorAll !== 'function') return;
+        var focusable = Array.from(panel.querySelectorAll('button:not(:disabled), a[href], summary, [tabindex="0"]')).filter(function (item) { return !item.hidden && item.getClientRects().length > 0; });
+        if (!focusable.length) { event.preventDefault(); return; }
+        var first = focusable[0], last = focusable[focusable.length - 1];
+        if (event.shiftKey && doc.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && doc.activeElement === last) { event.preventDefault(); first.focus(); }
+      };
+      var closeButton = panel.querySelector('[data-tf-close]');
+      if (typeof closeButton.focus === 'function') closeButton.focus();
       panel.querySelector('[data-tf-status]').onclick = refreshStatus;
       panel.querySelector('[data-tf-update]').onclick = function () { return toggleScreen(true); };
       panel.querySelector('[data-tf-toggle]').onclick = toggleScreen;

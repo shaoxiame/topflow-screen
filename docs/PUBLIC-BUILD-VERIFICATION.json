@@ -1,31 +1,32 @@
 {
-  "version": "0.2.1",
-  "edition": "public-source-final",
+  "version": "0.2.2",
+  "edition": "official-UFI-metadata-and-local-manager",
   "deviceAccess": false,
   "hardwareVerified": false,
-  "userHardwareAcceptance": {
-    "confirmed": true,
-    "basis": "The owner explicitly confirmed completed real-device acceptance and that the supplied photographs show the actual device.",
-    "scope": "Owner-reported acceptance; this public-source rebuild did not reconnect to the device or rerun automated hardware tests."
-  },
+  "hardwareBoundary": "This release was built and checked on the computer only. Prior user-reported screen operation is historical evidence, not fresh 0.2.2 hardware acceptance.",
   "sourceBuild": {
     "renderer": "aarch64-linux-musl",
     "helper": "public-ABI-link-imports-only",
-    "preview": "x86_64-windows-gnu",
-    "font": "developer-supplied Windows font; not redistributed"
+    "rendererAndHelperRebuilt": true,
+    "nativeRuntimeByteIdenticalToPublic021": [
+      "topflow-screen",
+      "topflow-factory-bus-aarch64",
+      "screenctl.sh",
+      "supervisor.sh",
+      "boot-hook.sh",
+      "ui/aggregate.html",
+      "ui/apps.html",
+      "ui/index.html",
+      "ui/network.html",
+      "ui/settings.html",
+      "ui/style.css",
+      "ui/subpages/sms.html"
+    ]
   },
   "checks": {
-    "cleanCloneGithubActions": {
-      "tests": 191,
-      "passed": 188,
-      "skipped": 3,
-      "failed": 0,
-      "additionalSkip": "Official SDK download was deliberately not performed in source-only CI.",
-      "url": "https://github.com/shaoxiame/topflow-screen/actions/runs/38913466039"
-    },
     "publicJavascript": {
-      "tests": 191,
-      "passed": 189,
+      "tests": 176,
+      "passed": 174,
       "skipped": 2,
       "failed": 0,
       "skips": [
@@ -35,45 +36,70 @@
     },
     "packageJavascript": {
       "tests": 17,
-      "passed": 17
+      "passed": 17,
+      "failed": 0
     },
-    "nativeLogic": [
-      "battery",
-      "modem-source",
-      "network-status",
-      "lockscreen"
-    ],
-    "nativePreview": {
-      "renderedPages": 22,
-      "inputs": "synthetic"
+    "migration": {
+      "public021": {
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      "private021": {
+        "tests": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      "mode": "local disposable shell/process/filesystem fixtures; actual old archive hashes checked; no device execution",
+      "coverage": [
+        "exact archive ownership and member list",
+        "modified executables rejected",
+        "autostart validates every old packaged byte",
+        "remove only own shared boot line",
+        "interrupted owned uninstall recovery",
+        "boot file identity receipt"
+      ]
     },
-    "localPreviewServer": [
-      "GET-only allowlist",
-      "127.0.0.1 only",
-      "CSP connect-src none",
-      "POST rejected",
-      "unlisted files rejected"
-    ],
+    "officialMetadata": {
+      "filename": "topflow-screen-0.2.2.txt.meta.json",
+      "device_models": [
+        "TOPFLOW"
+      ],
+      "noInternalStoreMarker": true,
+      "noAssignedStoreIdentity": true,
+      "officialStoreSubmissionPerformed": false
+    },
+    "remoteIntegration": {
+      "oldStore": false,
+      "SDK": false,
+      "telemetry": false,
+      "remoteAssets": false,
+      "previewCodeInTxt": false
+    },
     "integrity": [
-      "native source hashes",
-      "both ARM ELF hashes",
+      "source hashes",
+      "two AArch64 ELF hashes",
       "boot manifest",
-      "noncommercial license payload",
-      "FreeType gzip zlib payload",
-      "no KANO_META or preview fixtures"
+      "manager and CSS hashes bound to release gate",
+      "raw TXT below 4MiB",
+      "noncommercial and third-party license payloads"
     ]
   },
   "privateImportReplay": {
-    "input": "previously downloaded UFI importer and AoYou plugin reference; neither redistributed",
-    "reproducibleFromPublicClone": false,
     "tests": 4,
     "passed": 4,
-    "failed": 0
+    "failed": 0,
+    "input": "previously downloaded UFI importer and AoYou reference; neither redistributed",
+    "reproducibleFromPublicClone": false
   },
   "artifact": {
-    "file": "topflow-screen-0.2.1.txt",
-    "bytes": 1719617,
-    "sha256": "da8422e8c5df8a536ea0c94dc565013671d1e1e19e02911eef1796d0c0a09c34",
-    "nativeArchiveSha256": "b08e18c9cda493699229eaf94e37a11939b0b4b9ab31aaf6ec4c1322cdd5f258"
+    "file": "topflow-screen-0.2.2.txt",
+    "bytes": 1713137,
+    "sha256": "cf04c29381a5aa1b58d3f8efd485bc47427bcf178d0215f893a8e32b961c8e1c",
+    "metadataFile": "topflow-screen-0.2.2.txt.meta.json",
+    "metadataSha256": "ad5661bedee72e66dcaff67b37e45c383915046d191021e13a15fc0f425c80c4",
+    "nativeArchiveSha256": "e05476dd554865daa583ee0e8afe7edf924065e0b1972ea13febf9b2a2d0280b",
+    "nativeRendererSha256": "063ce8523da021841820aff86be9541c1d60f8080c3b9407c97dcf62dd471202",
+    "nativeHelperSha256": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28"
   }
 }

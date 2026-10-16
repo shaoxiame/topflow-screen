@@ -1,6 +1,6 @@
 # 本地构建与验证
 
-公开目录来自 0.2.1 最终版。构建脚本只操作电脑上的文件，不连接、安装或启动设备上的程序。源码包含真实接口实现；浏览器预览另用纯合成数据，预览代码不会进入插件 TXT。
+公开目录为 0.2.2 最终版。构建脚本只操作电脑上的文件，不连接、安装或启动设备上的程序。源码包含真实接口实现；浏览器预览另用纯合成数据，预览代码不会进入插件 TXT。用户对 0.2.1 的实机验收与本次 0.2.2 的电脑检查分别记录。
 
 ## 不需要设备的源码检查
 
@@ -13,7 +13,15 @@ npm run preview
 
 预览默认只绑定 `127.0.0.1:8877`。可通过 `TF_PREVIEW_PORT` 指定其他本地端口。服务器只读取固定白名单文件，没有设备代理、执行命令、上传或遥测功能；浏览器 CSP 禁止网络连接。模式与表单操作仅在浏览器内存演示。关闭终端即停止。
 
-`npm test` 明确运行九个公开测试文件：device-api、ui-contract、network-status、plugin-manager、production-manager、manager-cancel、aoyou-adapter、aoyou-ufi-transport、plugin-center。所有接口由 mock 提供。原始设备快照、UFI WebUI 原文未公开，对应两个历史证据测试会明确显示 SKIP；SDK未下载时，其独立哈希测试也显示 SKIP。不会把缺失私有输入当作通过。
+`npm test` 明确运行九个公开测试文件：device-api、ui-contract、network-status、plugin-manager、production-manager、manager-cancel、aoyou-adapter、aoyou-ufi-transport、no-remote-integration。所有接口由 mock 提供。原始设备快照、UFI WebUI 原文未公开，对应两个历史证据测试会明确显示 SKIP；不会把缺失私有输入当作通过。旧商店 SDK 及其下载步骤、遥测测试已移除。
+
+### UFI 管理页外观预览
+
+```sh
+node tools/manager-preview-server.cjs
+```
+
+打开 `http://127.0.0.1:8882`，可检查当前管理页的深浅色与模拟操作状态；使用 `TF_MANAGER_PORT` 可改本地端口。它复用管理页源码并由单独的开发适配器提供模拟响应，CSP 禁止外部连接，没有设备请求、命令执行、上传或遥测。开发适配器和测试状态不进入成品 TXT。关闭终端即停止预览。
 
 ## Windows 原生交叉编译
 
@@ -55,19 +63,28 @@ pwsh -NoProfile -File native/test-lockscreen.ps1
 
 ## 生成插件 TXT
 
-UFI Plugin Telemetry SDK 2.0.0 没有独立开源许可，源码仓库不包含 SDK 正文。官方插件分发指引建议内嵌固定 SDK；如需重建完整 TXT，显式下载并核验已审查字节：
+完成前述原生构建后打包，无需下载任何旧商店 SDK：
 
 ```powershell
-pwsh -NoProfile -File tools/bootstrap.ps1 -WithSdk
 pwsh -NoProfile -File native/package-native.ps1
 npm run prepare:release
 npm run build
 ```
 
-SDK下载地址、版本和固定 SHA-256 在 `vendor/ufi-device-sdk-provenance.json`。若上游无版本 URL 内容变动，下载步骤拒绝继续；不要删除哈希检查或把新字节冒称已审查版本。
+v0.2.2 不含旧商店在线目录查询、遥测 SDK 或数据上报。官方文档入口只供用户主动阅读；没有把旧 SDK 换域名继续运行，也不自动改变 UFI 的内置商店或设备授权服务。
 
-package 会生成源码哈希、AArch64 ELF 和启动文件完整性清单，并携带适用许可证（含 FreeType gzip 的 zlib 声明）。`prepare:release` 重新运行公开 JS 检查，核对原生归档源码/二进制/启动完整性及既有发布契约后生成本地门禁。`build` 再次检查并输出 `dist/topflow-screen-0.2.1.txt`。门禁始终保留 `hardwareVerified=false` / `DEVICE_ACCEPTANCE_PENDING`；它不伪造实机验收。
+package 会生成源码哈希、AArch64 ELF 和启动文件完整性清单，并携带适用许可证（含 FreeType gzip 的 zlib 声明）。`prepare:release` 重新运行公开 JS 检查，核对原生归档源码/二进制/启动完整性及既有发布契约后生成本地门禁。`build` 再次检查并输出 `dist/topflow-screen-0.2.2.txt`、稳定别名 `dist/topflow-screen.txt`，以及各自完整文件名加 `.meta.json` 的元信息旁文件。门禁保留 `hardwareVerified=false` / `DEVICE_ACCEPTANCE_PENDING` 表示本次构建未自动执行新的设备验收，不否认用户对旧版的实机反馈。
 
-本仓库的公开整理版会因许可证与清单更新而具有不同于早期私发 0.2.1 的文件哈希。重新构建亦不是历史归档字节重现承诺。已有私发同版本时，先在其旧管理页恢复原厂并完整卸载组件，再导入公开版；不要绕过归属和哈希保护。
+0.2.2 的管理器分别识别已核验的公开版和早期私发 0.2.1 归档。导入新 TXT、在 UFI 点击“提交”并刷新后，可通过本地更新完成原厂恢复、旧组件清理及新组件启用，无需先手动卸载。未知或被修改的归档不因版本号相同而获得迁移许可。重新构建也不承诺复现历史归档的相同字节。
+
+## 按官方规范导入与发布
+
+依据：[UFI-TOOLS-ZWRT 1.0.0 文档目录](https://tapan.top/UFITOOLS-U60Pro/1.0.0%E6%96%B0%E7%89%88%E6%9C%AC%E6%96%87%E6%A1%A3)，其中包含插件开发文档、API 文档和自建插件源规范。
+
+TXT 是 UTF-8 原始插件，必须保留完整 `<script>...</script>` / 样式包装；不得添加 `KANO_META` 或商店内部安装 ID。单次插件导入上限为 4 MiB。宿主“插件功能 → 插件商店”的一键安装/更新写入编辑区，之后须点击“提交”；“仅下载”不安装。
+
+元信息旁文件供源维护者使用，其文件名必须是完整插件文件名加 `.meta.json`，对象中 `version` 为 `0.2.2`，不是外套一个 `meta` 属性。旁文件不执行、无需导入面板，也不意味着已在官方商店上架。
+
+官方内置商店由宿主管理；自定义源留空或“恢复内置源”可恢复该入口，本插件不会自动执行这项设置。若自行发布静态源，按规范提供 HTTPS `plugins.json`、下载根地址、`res.code:200`、`res.data.content` 及推荐的大小/SHA-256。保持文件名稳定，使用最终分发字节更新 `meta.version` 与清单；不要把文档地址或 GitHub 文件预览页当作源地址。
 
 最终 TXT 不包括合成数据、原厂字体、设备库、密码、开发日志或链接桩。可发布成品不代表支持任意固件，也不表示本次公开整理重新完成了触摸、休眠、亮度、短信和恢复原厂的实机测试。

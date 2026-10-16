@@ -1,4 +1,3 @@
-param([switch]$WithSdk)
 $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $cache = Join-Path $root '.cache/downloads'
@@ -37,9 +36,4 @@ if (!(Test-Path -LiteralPath $zigRoot)) {
  Expand-Archive -LiteralPath $zigZip -DestinationPath (Split-Path $zigRoot -Parent)
 }
 if ((& (Join-Path $zigRoot 'zig.exe') version) -ne '0.14.1') { throw 'Unexpected Zig version' }
-if ($WithSdk) {
- # The SDK has no standalone open-source license. Explicit opt-in only.
- $sdk = Get-Content (Join-Path $root 'vendor/ufi-device-sdk-provenance.json') -Raw | ConvertFrom-Json
- Get-CheckedFile $sdk.source (Join-Path $root 'vendor/ufi-device-sdk-2.0.0.js') $sdk.sha256
-}
 Write-Output 'Pinned dependencies prepared locally. No device was contacted.'

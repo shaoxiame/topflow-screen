@@ -19,7 +19,7 @@ function harness({alreadyWaiting=false,holdAfterConfirmedRestoration=false,holdS
   let nextTimer=0, now=0, state={installed:true,mode:'factory'}, started=false, polls=0, statusReads=0, heldStatus=false, removed=false, restored=false, restoredReads=0;
   const pendingStatus=deferred(), restore=deferred(), uninstall=deferred();
   if(alreadyWaiting) state={...state,waiting:'FACTORY_AUTOSLEEP_LOCK_ACTIVE',waitingRemaining:300};
-  for(const name of ['toggle','cancel','close','status','uninstall','message','version','update','center-state','center-check','autostart','autostart-state']) elements[name]={disabled:false,hidden:false,textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
+  for(const name of ['toggle','cancel','close','status','uninstall','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state']) elements[name]={disabled:false,hidden:false,textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
   const root={URL,Uint8Array,Blob,FormData,atob,AbortController,
     TopFlowPackagePayload:payload,
     location:{href:'http://localhost/ufi',origin:'http://localhost'},

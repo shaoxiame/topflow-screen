@@ -20,7 +20,7 @@ function harness(options={}) {
   const requests=[],writes=[],confirmations=[],mounts=[];
   let state={installed:options.installed===true,mode:options.mode||'factory',versionMismatch:!!options.versionMismatch,...options.initialState}, panel, entry, denied=options.deny===true, destroyed=0, recordRemoved=false;
   const elements={};
-  for(const name of ['close','cancel','toggle','status','uninstall','controls','advanced','screen','message','version','update','center-state','center-check','autostart','autostart-state'])elements['[data-tf-'+name+']']={disabled:false,checked:false,open:false,textContent:'',replaceChildren(){},attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
+  for(const name of ['close','cancel','toggle','status','uninstall','controls','advanced','screen','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state'])elements['[data-tf-'+name+']']={disabled:false,checked:false,open:false,textContent:'',replaceChildren(){},attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
   const doc={currentScript:{textContent:source},body:{append(node){if(node.className==='tf-package-entry')entry=node;else panel=node;}},querySelector:()=>null,
     createElement(tag){return {tag,className:'',innerHTML:'',isConnected:true,querySelector(selector){return elements[selector];},remove(){this.isConnected=false;}};}};
   const root={document:doc,TopFlowPackagePayload:{...payload,reviewOnly:options.reviewOnly===true,version:options.version,directSwitch:options.directSwitch===true},URL,Uint8Array,Blob,FormData,atob,
@@ -203,7 +203,7 @@ test('wait countdown explicitly describes the maximum budget rather than a compl
 
 test('direct-switch management uses the payload version and explains immediate lighting with the original PIN policy',async()=>{
   const h=harness({installed:true,version:'0.1.3',directSwitch:true});const panel=await h.open();
-  assert.match(panel.innerHTML,/TopFlow 屏幕 0\.1\.3 · 直接切换版/);
+  assert.match(panel.innerHTML,/本 TXT · v0\.1\.3/);
   assert.match(h.elements['[data-tf-message]'].textContent,/直接点亮插件屏幕.*PIN.*无需等待自然熄屏/);
   assert.match(h.elements['[data-tf-message]'].textContent,/尚未实机验证/);assert.deepEqual(h.writes,[]);
   await h.elements['[data-tf-toggle]'].onclick();assert.deepEqual(h.writes,['start']);assert.equal(h.confirmations.length,1);
@@ -212,7 +212,7 @@ test('direct-switch management uses the payload version and explains immediate l
 
 test('version display cannot inject HTML and a legacy waiting state remains cancellable in a direct-switch manager',async()=>{
   const h=harness({installed:true,version:'<img src=x onerror=evil()>',directSwitch:true,initialState:{waiting:'FACTORY_AUTOSLEEP_LOCK_ACTIVE',waitingRemaining:123}});
-  const panel=await h.open();assert.doesNotMatch(panel.innerHTML,/<img|onerror|evil/);assert.match(panel.innerHTML,/TopFlow 屏幕 开发版/);
+  const panel=await h.open();assert.doesNotMatch(panel.innerHTML,/<img|onerror|evil/);assert.match(panel.innerHTML,/本 TXT · 开发版/);
   assert.match(h.elements['[data-tf-message]'].textContent,/最多还等待 123 秒/);assert.equal(h.elements['[data-tf-cancel]'].hidden,false);
   await h.elements['[data-tf-cancel]'].onclick();assert.deepEqual(h.writes,['restore']);assert.match(h.elements['[data-tf-message]'].textContent,/已取消等待/);
 });

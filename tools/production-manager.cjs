@@ -37,7 +37,6 @@ function managerOnly(source) {
   replace('var bridges = readBridges(root, function () { return controls; });', 'var bridges = readBridges(root);');
   removeRegion('    function stopWebScreen() {', '    function closePanel() {');
   replace('\n      stopWebScreen();\n', '\n');
-  replace('      panel = screen = message = null;', '      panel = message = null;');
   replace('\n        stopWebScreen();\n', '\n');
   replace("      busy = true; activeAction = 'uninstall'; stateEpoch++; updateButtons(); stopWebScreen();", "      busy = true; activeAction = 'uninstall'; stateEpoch++; updateButtons();");
 
@@ -45,12 +44,11 @@ function managerOnly(source) {
   const detailsEnd = out.indexOf('</details>', detailsStart);
   if (detailsEnd <= detailsStart) throw Error('Production manager HTML order changed');
   out = out.slice(0, detailsStart) + out.slice(detailsEnd + '</details>'.length);
-  replace("doc.body.append(panel); screen = panel.querySelector('[data-tf-screen]'); message = panel.querySelector('[data-tf-message]');",
-    "doc.body.append(panel); message = panel.querySelector('[data-tf-message]');");
-  replace('if (panel && !panel.isConnected) { stopWebScreen(); if (observer) observer.disconnect(); observer = null; panel = screen = message = null; currentState = null; }',
-    'if (panel && !panel.isConnected) { if (observer) observer.disconnect(); observer = null; panel = message = null; currentState = null; }');
+  replace("screen = panel.querySelector('[data-tf-screen]'); message = panel.querySelector('[data-tf-message]');",
+    "message = panel.querySelector('[data-tf-message]');");
+  replace('if (panel && !panel.isConnected) { stopWebScreen(); if (themeDispose) themeDispose(); themeDispose = null; if (wallpaperUI) wallpaperUI.dispose(); wallpaperUI = null; if (confirmer) confirmer.dispose(); confirmer = null; if (observer) observer.disconnect(); observer = null; panel = screen = message = null; currentState = null; }',
+    'if (panel && !panel.isConnected) { if (themeDispose) themeDispose(); themeDispose = null; if (wallpaperUI) wallpaperUI.dispose(); wallpaperUI = null; if (confirmer) confirmer.dispose(); confirmer = null; if (observer) observer.disconnect(); observer = null; panel = message = null; currentState = null; }');
   replace("      panel.querySelector('[data-tf-advanced]').ontoggle = function (event) { if (event.target.open) mountScreen(); else stopWebScreen(); };\n", '');
-  replace("entry.textContent = 'TopFlow 屏幕 · 预览与管理';", "entry.textContent = 'TopFlow 屏幕 · 管理';");
 
   const forbidden = /TopflowDeviceAPI|TopFlowAoyou|TopFlowUI|data-tf-(?:advanced|controls|screen)|mountScreen|stopWebScreen|DatadApp|\bgetData\b|\bpostData\b|\bmock\b|demoSnapshot|setSnapshot|TF_FIXTURES/;
   if (forbidden.test(out)) throw Error('Production manager retains a browser preview or simulation dependency');

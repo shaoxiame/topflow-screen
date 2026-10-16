@@ -34,6 +34,7 @@ static int vendor_exec(const char*path,char*const*args,const char*input,char*out
 READ_FUNCTION
 static void motion_cancel(void){}
 static void power_menu_reset(void){}
+static void lock_wallpaper_invalidate(void){}
 static void form_reset(void){form_calls++;}
 static void sms_forward_cleanup(void){sms_calls++;}
 static void factory_extra_cleanup(void){extra_calls++;}

@@ -601,6 +601,52 @@
     "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e"
   }
 });
+  // Exact public 0.2.3 bytes, verified before recovery or removal.
+  recoveryArchives.push({
+  "archiveSha256": "7f4205ebe407afaa27a7d63167b8db5cf1c7cf506db4a8d789eb9f2793557272",
+  "members": [
+    "./",
+    "./boot-hook.sh",
+    "./boot-integrity.sha256",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    "./topflow-factory-bus-aarch64",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+    "./ui/subpages/sms.html",
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/FreeType-gzip-zlib.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    "./licenses/LLVM-libcxxabi.txt",
+    "./licenses/musl-COPYRIGHT.txt",
+    "./licenses/openwrt-NOTICE.txt",
+    "./licenses/pinyin-data-MIT.txt",
+    "./licenses/PolyForm-Noncommercial-1.0.0.txt",
+    "./licenses/u60pro-devui-MIT.txt"
+  ],
+  "files": {
+    "topflow-screen": "fd00d9a165bd88c83eb5476b6c64149080a502511f39f42785b45c8eff9b5919",
+    "topflow-factory-bus-aarch64": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28",
+    "screenctl.sh": "673a2a01bd21b070779254323be90ce71b33db83630bf667a6ec0a100785af08",
+    "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+    "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e"
+  }
+});
   function error(code, message) { var e = new Error(message); e.code = code; return e; }
   function failureMessage(code) {
     var messages = {
@@ -793,6 +839,27 @@
     }
     return command;
   }
+  function buildWallpaperCommand(action, payload, sha, details) {
+    if (!['status', 'prepare', 'chunk', 'commit', 'abort', 'clear'].includes(action)) throw error('INVALID_ACTION', '壁纸动作无效');
+    if (action !== 'status' && !/^[a-f0-9]{64}$/.test(sha || '')) throw error('INVALID_HASH', '壁纸校验信息无效');
+    if (action !== 'status') releaseAllowed(payload);
+    var args = action === 'status' ? '' : ' --confirmed ' + shellQuote(sha);
+    if (action !== 'status') {
+      if (!details || !/^[a-f0-9]{32}$/.test(details.nonce || '') || !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(details.bootId || '')) throw error('INVALID_TRANSACTION', '壁纸事务信息无效');
+      args += ' ' + shellQuote(details.nonce) + ' ' + shellQuote(details.bootId);
+      if (action === 'chunk') {
+        if (!Number.isSafeInteger(details.offset) || details.offset < 0 || details.offset >= 307216 || typeof details.base64 !== 'string' || details.base64.length < 4 || details.base64.length > 32768 || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(details.base64)) throw error('INVALID_CHUNK', '壁纸分块信息无效');
+        args += ' ' + String(details.offset) + ' ' + shellQuote(details.base64);
+      }
+    }
+    nativePayload(payload);
+    return 'set -eu\n' + rootGuard() +
+      '[ -d "$TF_ROOT" ] && [ ! -L "$TF_ROOT" ] && [ "$(readlink -f "$TF_ROOT")" = "$TF_ROOT" ] && [ "$(stat -c %u "$TF_ROOT")" = 0 ] || { echo TOPFLOW_ERROR=UNSAFE_TARGET; exit 1; }\n' + screenOwnershipGuard(payload) +
+      '[ "$TF_VERSION_MISMATCH" = false ] || { echo TOPFLOW_ERROR=INSTALLED_VERSION_MISMATCH; exit 1; }\n' +
+      '[ ! -e "$TF_ROOT/.install-owner" ] && [ ! -L "$TF_ROOT/.install-owner" ] && [ -f "$TF_ROOT/screenctl.sh" ] && [ ! -L "$TF_ROOT/screenctl.sh" ] || { echo TOPFLOW_ERROR=INSTALL_INCOMPLETE; exit 1; }\n' +
+      'printf \'%s  %s\\n\' ' + shellQuote(payload.screenctlSha256) + ' "$TF_ROOT/screenctl.sh" | sha256sum -c -\n' +
+      'sh "$TF_ROOT/screenctl.sh" wallpaper-' + action + args + '\n';
+  }
   function parseScreenStatus(output) {
     var lines = String(output || '').split(/\r?\n/).filter(function (line) { return line.indexOf('TOPFLOW_SCREEN=') === 0; });
     if (lines.length !== 1) throw error('STATUS_UNCONFIRMED', '屏幕状态未确认');
@@ -891,7 +958,18 @@
     var panel = null, screen = null, mounted = null, message = null, observer = null, controls = false, busy = false, currentState = null;
     var bridges = readBridges(root, function () { return controls; });
     var cancelTask = null, cancelRequested = false, cancelSignal = null, cancelWake = null, activeAction = '', stateEpoch = 0;
-    var focusReturn = null;
+    var focusReturn = null, collapsed = false, themeDispose = null, wallpaperUI = null, confirmer = null;
+    async function confirmAction(text) {
+      if (!confirmer) throw error('CONFIRM_UNAVAILABLE', '确认界面未加载，请刷新 UFI 页面');
+      return confirmer.ask(text);
+    }
+    function setCollapsed(value) {
+      collapsed = !!value;
+      if (!panel) return;
+      if (typeof panel.setAttribute === "function") panel.setAttribute("data-collapsed", String(collapsed));
+      var button = panel.querySelector("[data-tf-close]");
+      button.textContent = collapsed ? "展开" : "收起"; button.setAttribute("aria-expanded", String(!collapsed));
+    }
     function updateStateCard() {
       if (!panel) return;
       var state = currentState, card = panel.querySelector('[data-tf-state-card]');
@@ -904,7 +982,7 @@
       panel.querySelector('[data-tf-state-label]').textContent = busy ? (actions[activeAction] || '处理中') : !state ? '等待确认' : state.failure ? '需要检查' : state.waiting ? '等待交接' : state.uploadActive ? '上传待确认' : state.partial ? '安装未完成' : mode === 'custom' ? '进程运行中' : mode === 'factory' ? '原厂运行中' : '状态未知';
       panel.querySelector('[data-tf-state-hint]').textContent = !state ? (busy ? '正在通过 UFI 读取当前屏幕与组件状态。' : '状态读取未确认，请刷新后继续。') : state.failure ? '操作结果需要检查，详细信息见下方。' : state.waiting ? '原厂继续运行，可随时取消本次等待。' : state.uploadActive ? '上传结果未确认，等待完成后再继续操作。' : state.partial ? '可清理已识别的未完成安装，再重新启用。' : mode === 'custom' ? '进程状态已读取，画面与触摸请在设备上确认。' : mode === 'factory' ? '原厂屏幕正在运行，插件组件按需启用。' : '请刷新状态，确认后再继续操作。';
     }
-    function say(text) { if (message) message.textContent = text; }
+    function say(text) { if (message) { message.textContent = text; if (message.parentElement && (activeAction !== 'status' || /失败|异常|未确认|未完成/.test(text))) message.parentElement.open = true; } }
     function updateButtons() {
       if (!panel) return;
       updateStateCard();
@@ -932,6 +1010,7 @@
       cancel.hidden = !(currentState && currentState.waiting);
       cancel.disabled = cancel.hidden || cancelRequested || busy && activeAction !== 'switch';
       if (currentState && currentState.waiting) { toggle.disabled = true; toggle.textContent = '等待原厂安全交接…'; }
+      if (wallpaperUI) wallpaperUI.update();
     }
     function stopWebScreen() {
       controls = false;
@@ -951,14 +1030,9 @@
       mounted = root.TopFlowUI.mount(screen, { api: api, aoyou: aoyou, state: root.TopflowDeviceAPI.normalize(root.UFI_DATA || {}), demo: false, live: true, control: controls, poll: true, interval: 3000 });
     }
     function closePanel() {
-      if (busy) { say('操作尚未完成，请等待结果后关闭。'); return; }
+      if (busy) return;
       stopWebScreen();
-      if (observer) observer.disconnect(); observer = null;
-      if (panel) panel.remove();
-      panel = screen = message = null;
-      currentState = null; stateEpoch++;
-      if (focusReturn && typeof focusReturn.focus === 'function') focusReturn.focus();
-      focusReturn = null;
+      setCollapsed(!collapsed);
     }
     async function shell(command, marker, timeout) {
       var result = await bridges.runShellWithRoot(command, timeout || 12000);
@@ -987,7 +1061,7 @@
     async function refreshStatus() {
       if (busy) return;
       busy = true; activeAction = 'status'; stateEpoch++; updateButtons();
-      try { return await screenStatus(); }
+      try { var state = await screenStatus(); if (wallpaperUI) await wallpaperUI.refresh(); return state; }
       catch (e) { currentState = null; say(e.message); }
       finally { busy = false; activeAction = ''; updateButtons(); }
     }
@@ -999,7 +1073,7 @@
         var boot = currentState.autostart;
         if (!currentState.installed || currentState.partial || currentState.uploadActive || currentState.versionMismatch || !boot || (!boot.enabled && (payload.reviewOnly || ['conflict', 'unknown'].includes(boot.hook)))) throw error('AUTOSTART_UNCONFIRMED', '当前组件或自启动状态未确认，请刷新后重试');
         var enable = !boot.enabled;
-        if (!root.confirm(enable ? '开启后，设备重启时由 UFI 官方启动入口自动加载插件屏幕；服务就绪后尝试一次，失败沿用原厂恢复机制。不立即切换当前屏幕。确认开启？' : '关闭开机自启动并取消尚未接管的启动任务。当前正在运行的屏幕保持不变。确认关闭？')) return;
+        if (!await confirmAction(enable ? '开启后，设备重启时由 UFI 官方启动入口自动加载插件屏幕；服务就绪后尝试一次，失败沿用原厂恢复机制。不立即切换当前屏幕。确认开启？' : '关闭开机自启动并取消尚未接管的启动任务。当前正在运行的屏幕保持不变。确认关闭？')) return;
         say(enable ? '正在登记本插件的开机启动项…' : '正在移除本插件的开机启动项…');
         await shell(buildScreenCommand(enable ? 'autostart-enable' : 'autostart-disable', payload, true), enable ? 'TOPFLOW_AUTOSTART=ENABLED' : 'TOPFLOW_AUTOSTART=DISABLED', 45000);
         currentState = await readStatus();
@@ -1105,7 +1179,7 @@
         updating = action === 'start' && state.versionMismatch === true;
         if (action === 'start') releaseAllowed(payload);
         var prompt = action === 'restore' ? '停止插件屏幕并恢复原厂屏幕。' + (state.autostart && state.autostart.enabled ? '开机自启动仍已开启；下次重启会再次加载插件屏幕，可另行关闭自启动开关。' : '') + '确认切换？' : (state.versionMismatch ? '更新到本 TXT 的 v' + versionLabel + '：将自动恢复并确认原厂稳定，清理已核验的旧组件，安装新版后启动插件屏幕；期间屏幕会短暂切换，无需手动恢复或再次启用。UFI 插件记录保持不变。' : !state.installed ? '将安装组件到 /data/plugins/topflow-screen 并切换到插件屏幕。' : '将切换到插件屏幕。') + (payload.directSwitch ? '将直接点亮插件屏幕，原厂启用PIN时保持锁屏；无需等待自然熄屏。新版尚未在设备验证。' : payload.diagnosticCandidate ? '这是诊断自测版，既有启动失败根因尚未确定，新版尚未在设备验证。' : '实体屏尚未实机验证。') + '原厂文件保留，开机自启动由独立开关控制。' + (updating && state.autostart && state.autostart.enabled ? '本次组件更新会清除旧自启动设置，更新后请重新开启。' : '') + '确认继续？';
-        if (!root.confirm(prompt)) { say('已取消，未执行屏幕切换。'); return; }
+        if (!await confirmAction(prompt)) { say('已取消，未执行屏幕切换。'); return; }
         stopWebScreen();
         if (action === 'start' && state.versionMismatch) {
           say('正在确认原厂稳定并移除已核验的旧组件…');
@@ -1117,6 +1191,7 @@
         say(action === 'start' ? payload.directSwitch ? '正在直接交接并点亮插件屏幕…' : '正在切换到插件屏幕…' : '正在恢复原厂屏幕…');
         switchContext = { action: action, submitted: false, previousFailure: JSON.stringify([state.failure, state.rendererFailure, state.rendererExitStatus]) };
         await switchScreen(action, switchContext);
+        if (wallpaperUI) await wallpaperUI.refresh();
       } catch (e) {
         var refreshedState = null, refreshFailed = false;
         if (!cancelRequested) { try { refreshedState = await screenStatus(); } catch (_) { refreshFailed = true; currentState = null; } }
@@ -1140,13 +1215,14 @@
     }
     async function uninstallPlugin() {
       if (busy || !currentState || currentState.uploadActive) return;
-      if (!root.confirm('卸载将关闭并移除本插件开机启动项，恢复并确认原厂屏幕，再删除本插件 /data/plugins/topflow-screen 与 /tmp/topflow-screen。保留原厂、UFI及其他插件文件。面板插件记录的安全移除将在清理后检查。确认卸载？')) return;
       busy = true; activeAction = 'uninstall'; stateEpoch++; updateButtons(); stopWebScreen();
       try {
+        if (!await confirmAction('卸载将关闭并移除本插件开机启动项，恢复并确认原厂屏幕，再删除本插件 /data/plugins/topflow-screen 与 /tmp/topflow-screen。保留原厂、UFI及其他插件文件。面板插件记录的安全移除将在清理后检查。确认卸载？')) return;
         say('正在恢复原厂、停止本插件进程并验证清理路径…');
         if (currentState.installed) await shell(buildScreenCommand('uninstall', payload, true), 'TOPFLOW_UNINSTALL=COMPONENTS_REMOVED', 60000);
         currentState = await readStatus();
         if (currentState.installed || currentState.mode !== 'factory') throw error('UNINSTALL_UNCONFIRMED', '组件清理后的原厂状态未确认');
+        if (wallpaperUI) wallpaperUI.reset();
         try {
           await removeInstalledRecord(root, executingScript);
           say('卸载已回读确认：实体组件、运行文件及本插件 UFI 记录已清除，原厂屏幕运行中。关闭后刷新 UFI 页面以移除已加载入口。');
@@ -1155,41 +1231,51 @@
       finally { busy = false; activeAction = ''; updateButtons(); }
     }
     function openPanel() {
-      if (panel) return;
+      if (panel) { setCollapsed(false); return; }
       focusReturn = doc.activeElement || null;
       panel = doc.createElement('div'); panel.className = 'tf-package-shell';
-      panel.innerHTML = '<section class="tf-package-dialog" role="dialog" aria-modal="true" aria-label="TopFlow 屏幕插件" tabindex="-1">' +
-        '<header class="tf-package-head"><div class="tf-package-brand"><span class="tf-package-mark" aria-hidden="true">TF</span><div><p class="tf-package-eyebrow">UFI · 屏幕控制台</p><h2>TopFlow 屏幕</h2></div></div><button class="tf-package-close" data-tf-close type="button" aria-label="关闭管理面板">关闭<span aria-hidden="true">×</span></button></header>' +
-        '<div class="tf-package-scroll" role="region" aria-label="屏幕与组件管理" tabindex="0">' +
+      panel.innerHTML = '<section class="tf-package-dialog" role="region" aria-label="TopFlow 屏幕插件">' +
+        '<header class="tf-package-head"><div class="tf-package-brand"><span class="tf-package-mark" aria-hidden="true">TF</span><div><h2>TopFlow 屏幕</h2><p class="tf-package-eyebrow">原生屏幕管理 · v' + versionLabel + '</p></div></div><button class="tf-package-close" data-tf-close type="button" aria-label="收起或展开屏幕管理" aria-expanded="true">收起</button></header>' +
+        '<div class="tf-package-scroll" role="region" aria-label="屏幕与组件管理" tabindex="0"><div class="tf-package-grid">' +
         '<section class="tf-package-state-card" data-tf-state-card data-mode="unknown" data-tone="pending" aria-busy="true" aria-label="当前屏幕"><div class="tf-package-state-top"><span class="tf-package-caption">当前显示</span><span class="tf-package-state-pill"><i aria-hidden="true"></i><span data-tf-state-label>读取中</span></span></div><div class="tf-package-state-main"><div><h3 data-tf-mode>正在读取状态</h3><p data-tf-state-hint>正在通过 UFI 读取当前屏幕与组件状态。</p></div><span class="tf-package-screen-icon" aria-hidden="true"><i></i></span></div><button class="tf-package-primary" data-tf-toggle type="button" disabled>正在读取屏幕状态…</button><button class="tf-package-cancel" data-tf-cancel type="button" hidden>取消等待，保留原厂</button></section>' +
-        '<section class="tf-package-version" aria-label="组件版本"><div class="tf-package-section-head"><div><span class="tf-package-caption">组件版本</span><b>本 TXT · ' + versionCaption + '</b></div><button class="tf-package-subtle" data-tf-status type="button">刷新状态</button></div><p data-tf-version>设备组件版本尚未确认</p><button class="tf-package-update" data-tf-update type="button" hidden disabled>更新到 v' + versionLabel + '</button><p class="tf-package-footnote">检测已导入 TXT 与设备组件；新版需先导入 UFI。</p></section>' +
+        '<div class="tf-package-side"><section class="tf-package-version" aria-label="组件版本"><div class="tf-package-section-head"><div><span class="tf-package-caption">组件版本</span><b>本 TXT · ' + versionCaption + '</b></div><button class="tf-package-subtle" data-tf-status type="button">刷新状态</button></div><p data-tf-version>设备组件版本尚未确认</p><button class="tf-package-update" data-tf-update type="button" hidden disabled>更新到 v' + versionLabel + '</button><p class="tf-package-footnote">检测已导入 TXT 与设备组件；新版需先导入 UFI。</p></section>' +
         '<section class="tf-package-autostart" aria-label="开机启动"><div><b>开机自动启用</b><p data-tf-autostart-state>状态未确认</p></div><button class="tf-package-switch" data-tf-autostart type="button" role="switch" aria-label="开机自动启用插件屏幕" aria-checked="false" disabled>开启自启动</button></section>' +
-        '<section class="tf-package-feedback" aria-label="操作结果"><span class="tf-package-caption">操作信息</span><p data-tf-message role="status" aria-live="polite" aria-atomic="true">正在读取屏幕状态…</p></section>' +
+        '</div></div><div data-tf-wallpaper></div><details class="tf-package-feedback" aria-label="操作结果"><summary>操作详情与运行说明</summary><p data-tf-message role="status" aria-live="polite" aria-atomic="true">正在读取屏幕状态…</p></details>' +
         '<details data-tf-advanced><summary>设备控制</summary><p>展开即可编辑；短信、Wi-Fi、基站和遨游等操作均在提交前确认。收起或关闭即停止刷新并撤销控制。</p><div data-tf-screen></div></details>' +
         '</div>' +
-        '<footer class="tf-package-footer"><a class="tf-package-docs" href="https://tapan.top/UFITOOLS-U60Pro/1.0.0%E6%96%B0%E7%89%88%E6%9C%AC%E6%96%87%E6%A1%A3" target="_blank" rel="noopener noreferrer">UFI 官方文档<span aria-hidden="true">↗</span></a><button class="tf-package-danger" data-tf-uninstall type="button" disabled>卸载插件</button></footer>' +
+        '<footer class="tf-package-footer"><div class="tf-package-footer-links"><span class="tf-package-credit">By：善恶</span><a class="tf-package-docs" href="https://tapan.top/UFITOOLS-U60Pro/1.0.0%E6%96%B0%E7%89%88%E6%9C%AC%E6%96%87%E6%A1%A3" target="_blank" rel="noopener noreferrer">UFI 官方文档 ↗</a></div><button class="tf-package-danger" data-tf-uninstall type="button" disabled>卸载插件</button></footer>' +
         '</section>';
-      doc.body.append(panel); screen = panel.querySelector('[data-tf-screen]'); message = panel.querySelector('[data-tf-message]');
+      // Place the whole component outside UFI's clipped function-list region.
+      var functions = doc.querySelector('.functions-container');
+      if (functions && typeof functions.insertAdjacentElement === 'function') functions.insertAdjacentElement('afterend', panel);
+      else (doc.querySelector('.container') || doc.body).append(panel);
+      screen = panel.querySelector('[data-tf-screen]'); message = panel.querySelector('[data-tf-message]');
+      setCollapsed(false);
+      if (root.TopFlowManagerTheme) themeDispose = root.TopFlowManagerTheme.watch(root, doc, function (theme) { if (panel && typeof panel.setAttribute === 'function') panel.setAttribute('data-tf-theme', theme); });
+      if (root.TopFlowManagerConfirm) confirmer = root.TopFlowManagerConfirm.create(root, panel);
+      if (root.TopFlowWallpaperPanel && root.TopFlowManagerWallpaper) wallpaperUI = root.TopFlowWallpaperPanel.mount(root, panel.querySelector('[data-tf-wallpaper]'), {
+        state: function () { return currentState; }, busy: function () { return busy; }, reviewOnly: payload.reviewOnly,
+        request: function (path, options) { return directRequest(root, path, options); },
+        command: function (action, sha, marker, details) { return shell(buildWallpaperCommand(action, payload, sha, details), marker ? 'TOPFLOW_WALLPAPER=' + marker : null, 20000); },
+        confirm: confirmAction,
+        run: async function (task) {
+          if (busy) return;
+          busy = true; activeAction = 'wallpaper'; stateEpoch++; updateButtons();
+          try { await task(); } finally { busy = false; activeAction = ''; updateButtons(); }
+        }
+      });
       if (typeof root.MutationObserver === 'function') {
         observer = new root.MutationObserver(function () {
-          if (panel && !panel.isConnected) { stopWebScreen(); if (observer) observer.disconnect(); observer = null; panel = screen = message = null; currentState = null; }
+          if (panel && !panel.isConnected) { stopWebScreen(); if (themeDispose) themeDispose(); themeDispose = null; if (wallpaperUI) wallpaperUI.dispose(); wallpaperUI = null; if (confirmer) confirmer.dispose(); confirmer = null; if (observer) observer.disconnect(); observer = null; panel = screen = message = null; currentState = null; }
         });
-        // The dialog is a direct body child. Changes inside UFI's live status
-        // cards do not need to wake this disposal observer.
+        // Observe only the panel's ancestors; UFI's live card text updates do
+        // not need to wake this disposal observer.
         observer.observe(doc.body, { childList: true });
+        if (panel.parentNode && panel.parentNode !== doc.body) observer.observe(panel.parentNode, { childList: true });
       }
       panel.querySelector('[data-tf-close]').onclick = closePanel;
-      panel.onkeydown = function (event) {
-        if (event.key === 'Escape') { event.preventDefault(); if (!busy) closePanel(); return; }
-        if (event.key !== 'Tab' || !panel || typeof panel.querySelectorAll !== 'function') return;
-        var focusable = Array.from(panel.querySelectorAll('button:not(:disabled), a[href], summary, [tabindex="0"]')).filter(function (item) { return !item.hidden && item.getClientRects().length > 0; });
-        if (!focusable.length) { event.preventDefault(); return; }
-        var first = focusable[0], last = focusable[focusable.length - 1];
-        if (event.shiftKey && doc.activeElement === first) { event.preventDefault(); last.focus(); }
-        else if (!event.shiftKey && doc.activeElement === last) { event.preventDefault(); first.focus(); }
-      };
-      var closeButton = panel.querySelector('[data-tf-close]');
-      if (typeof closeButton.focus === 'function') closeButton.focus();
+      // Embedded controls follow normal page focus order; no modal focus trap.
+      panel.onkeydown = function (event) { if (event.key === 'Escape' && !busy) { event.preventDefault(); setCollapsed(true); } };
       panel.querySelector('[data-tf-status]').onclick = refreshStatus;
       panel.querySelector('[data-tf-update]').onclick = function () { return toggleScreen(true); };
       panel.querySelector('[data-tf-toggle]').onclick = toggleScreen;
@@ -1199,15 +1285,8 @@
       panel.querySelector('[data-tf-advanced]').ontoggle = function (event) { if (event.target.open) mountScreen(); else stopWebScreen(); };
       refreshStatus();
     }
-    function attachEntry() {
-      var entry = doc.createElement('button'); entry.type = 'button'; entry.className = 'tf-package-entry'; entry.textContent = 'TopFlow 屏幕 · 预览与管理'; entry.onclick = openPanel;
-      // UFI clips .functions-container to the height of its inner .collapse_box.
-      // Keep this entry outside that collapsing region, as existing plugins do.
-      var functions = doc.querySelector('.functions-container');
-      if (functions && typeof functions.insertAdjacentElement === 'function') functions.insertAdjacentElement('afterend', entry);
-      else (doc.querySelector('.container') || doc.body).append(entry);
-    }
+    function attachEntry() { openPanel(); }
     if (doc.body) attachEntry(); else doc.addEventListener('DOMContentLoaded', attachEntry, { once: true });
   }
-  return { register: register, buildInstallStart: buildInstallStart, buildUploadComplete: buildUploadComplete, buildInstallFinish: buildInstallFinish, buildScreenCommand: buildScreenCommand, parseScreenStatus: parseScreenStatus, nativePayload: nativePayload, directRequest: directRequest, uploadNative: uploadNative, findInstalledBlockName: findInstalledBlockName, removeInstalledRecord: removeInstalledRecord, shellFailure: shellFailure };
+  return { register: register, buildInstallStart: buildInstallStart, buildUploadComplete: buildUploadComplete, buildInstallFinish: buildInstallFinish, buildScreenCommand: buildScreenCommand, buildWallpaperCommand: buildWallpaperCommand, parseScreenStatus: parseScreenStatus, nativePayload: nativePayload, directRequest: directRequest, uploadNative: uploadNative, findInstalledBlockName: findInstalledBlockName, removeInstalledRecord: removeInstalledRecord, shellFailure: shellFailure };
 });

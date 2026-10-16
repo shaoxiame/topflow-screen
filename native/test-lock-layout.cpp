@@ -13,6 +13,7 @@
 #include "lock-motion-functions.inc"
 extern "C" void html_view_init(uint16_t*,int,int,int,int,const char*);
 extern "C" int html_view_ready(void);
+extern "C" void html_view_set_lock_wallpaper(const uint16_t*);
 extern "C" void html_view_set_uidir(const char*);
 extern "C" int html_view_render_html(const char*);
 extern "C" int html_view_pinned_height(void);
@@ -31,12 +32,22 @@ static uint32_t tick(void){return clock_ms;}
 long json_get_int(const char*,const char*,long fallback){return fallback;}
 typedef struct{int width,height;}drm_disp_t;
 static int damaged=0;
-static int drm_disp_dirty(drm_disp_t*,int x0,int y0,int x1,int y1){assert(x0>=32&&x1<=287&&y0>=222&&y1<=297);damaged++;return 0;}
+static int drm_disp_dirty(drm_disp_t*,int x0,int y0,int x1,int y1){assert(x0>=36&&x1<=283&&y0>=260&&y1<=337);damaged++;return 0;}
 #include "lock-chart-functions.inc"
 static int theme_dark;
+static struct{int current;}lock_wallpaper;
 static tf_lock_motion lock_motion;
 #include "lock-rate-functions.inc"
 static uint16_t fb[320*480];
+static uint16_t wallpaper_pixels[320*480];
+static void make_wallpaper(void){for(int y=0;y<480;y++)for(int x=0;x<320;x++){
+ /* Synthetic local test artwork only. No default image enters the plugin. */
+ int r=115+x*95/320,g=139-y*75/480,b=208;
+ if(y>176+(int)(31*sin(x/81.0))){r=55;g=110+y/10;b=143;}
+ if(y>262+(int)(25*sin(x/58.0+1))){r=33;g=76+y/12;b=117;}
+ if(y>360+(int)(10*sin(x/73.0))){r=31;g=83;b=113;}
+ wallpaper_pixels[y*320+x]=(uint16_t)(((r&248)<<8)|((g&252)<<3)|(b>>3));
+}}
 struct box{int x,y,w,h;};
 static box rect(const char*s){box b;assert(html_view_rect(s,&b.x,&b.y,&b.w,&b.h));assert(b.x>=0&&b.y>=0&&b.x+b.w<=320&&b.y+b.h<=480);return b;}
 static std::string read(const std::string&p){FILE*f=fopen(p.c_str(),"rb");assert(f);std::string s;char b[4096];size_t n;while((n=fread(b,1,sizeof b,f)))s.append(b,n);fclose(f);return s;}
@@ -46,7 +57,7 @@ static void samples(int mode){memset(&lock_chart,0,sizeof lock_chart);memset(&ch
 static void color_test(const std::string&html,int dark){
  theme_dark=dark;assert(html_view_render_html(html.c_str())==480);static uint16_t before[320*480];memcpy(before,fb,sizeof fb);
  memset(&lock_motion,0,sizeof lock_motion);tf_lock_dashboard s={};s.mode=0;s.rx=41075000;s.tx=5785000;tf_lock_motion_sample(&lock_motion,&s,1000);lock_motion.active=1;chart_animation.active=0;drm_disp_t d={320,480};assert(lock_rate_animation_tick(&d,1040));
- int changed=0;for(int y=222;y<258;y++)for(int x=32;x<288;x++)if(fb[y*320+x]!=before[y*320+x])changed++;
+ int changed=0;for(int y=260;y<296;y++)for(int x=36;x<284;x++)if(fb[y*320+x]!=before[y*320+x])changed++;
  if(changed){save("native/preview/lock-color-after.ppm");memcpy(fb,before,sizeof fb);save("native/preview/lock-color-before.ppm");fprintf(stderr,"same-value repaint changed %d pixels (dark=%d)\n",changed,dark);}assert(!changed);
 }
 static void motion_test(const std::string&dir,int dark){
@@ -55,31 +66,43 @@ static void motion_test(const std::string&dir,int dark){
  clock_ms=2000;tf_lock_chart_sample(&lock_chart,0,13,56000000,9400000);s.rx=56000000;s.tx=9400000;tf_lock_motion_sample(&lock_motion,&s,clock_ms);
  assert(html_view_render_html(html.c_str())==480);draw_rate_chart();assert(chart_animation.active);std::string base=dir+"/lock-motion-021"+(dark?"-dark":"");save(base+"-0.ppm");
  static uint16_t original[320*480],previous[320*480];memcpy(original,fb,sizeof fb);memcpy(previous,fb,sizeof fb);drm_disp_t d={320,480};
- for(int elapsed:{90,180,320}){assert(lock_rate_animation_tick(&d,clock_ms+elapsed));int changed=0,curve_changed=0;for(int y=0;y<480;y++)for(int x=0;x<320;x++){int i=y*320+x;bool region=x>=32&&x<288&&((y>=222&&y<258)||(y>=274&&y<298));if(!region)assert(fb[i]==original[i]);if(fb[i]!=previous[i]){changed++;if(y>=274&&y<298)curve_changed++;}}assert(changed>0);if(elapsed<=180)assert(curve_changed>0);memcpy(previous,fb,sizeof fb);save(base+"-"+std::to_string(elapsed)+".ppm");}
+ for(int elapsed:{90,180,320}){assert(lock_rate_animation_tick(&d,clock_ms+elapsed));int changed=0,curve_changed=0;for(int y=0;y<480;y++)for(int x=0;x<320;x++){int i=y*320+x;bool region=x>=36&&x<284&&((y>=260&&y<296)||(y>=316&&y<338));if(!region)assert(fb[i]==original[i]);if(fb[i]!=previous[i]){changed++;if(y>=316&&y<338)curve_changed++;}}assert(changed>0);if(elapsed<=180)assert(curve_changed>0);memcpy(previous,fb,sizeof fb);save(base+"-"+std::to_string(elapsed)+".ppm");}
  assert(!chart_animation.active&&!lock_motion.active);int before=damaged;assert(lock_rate_animation_tick(&d,clock_ms+1000)&&before==damaged);
  printf("PASS native lock animation %s: actual 0/90/180/320ms frames; curves and digits change only their regions; settles with no idle redraw\n",dark?"dark":"light");
 }
+static void wallpaper_isolation(const std::string&dir,const char*font,const char*ui){
+ std::string html=read(dir+"/lock-wallpaper-024-dark.html");static uint16_t logical[320*480],plain[320*480];
+ html_view_init(fb,320,480,320,0,font);html_view_set_uidir(ui);html_view_set_lock_wallpaper(wallpaper_pixels);assert(html_view_render_html(html.c_str())==480);memcpy(logical,fb,sizeof fb);
+ /* The image really reaches the canvas, including corners outside cards. */
+ int expected_keep=96;uint16_t p=wallpaper_pixels[0];int r=((p>>11)*255/31*expected_keep+8*(255-expected_keep))/255,g=(((p>>5)&63)*255/63*expected_keep+18*(255-expected_keep))/255,b=((p&31)*255/31*expected_keep+32*(255-expected_keep))/255;
+ assert(fb[0]==(uint16_t)(((r&248)<<8)|((g&252)<<3)|(b>>3))&&fb[0]!=fb[319]);
+ html_view_init(fb,320,480,320,1,font);html_view_set_uidir(ui);html_view_set_lock_wallpaper(wallpaper_pixels);assert(html_view_render_html(html.c_str())==480);for(int i=0;i<320*480;i++)assert(fb[320*480-1-i]==logical[i]);
+ html_view_init(fb,320,480,320,0,font);html_view_set_uidir(ui);std::string home="<html><head><link rel='stylesheet' href='style.css'></head><body class='dark'><div class='screen'>Ordinary page</div></body></html>";assert(html_view_render_html(home.c_str())==480);memcpy(plain,fb,sizeof fb);html_view_set_lock_wallpaper(wallpaper_pixels);assert(html_view_render_html(home.c_str())==480);assert(!memcmp(fb,plain,sizeof fb));html_view_set_lock_wallpaper(nullptr);
+ printf("PASS wallpaper pixels: exact fixed scrim, native 0/180 degree orientation, ordinary page unchanged with buffer retained\n");
+}
 int main(int argc,char**argv){
  assert(argc==4);html_view_init(fb,320,480,320,0,argv[1]);assert(html_view_ready());html_view_set_uidir(argv[2]);
- const char*names[]={"lock-entry","lock-handover","lock-cooldown","soft-lock","soft-lock-progress","lock-normal-021","lock-aggregate-021","lock-stale-021","lock-hold-021","lock-pin-status-021"};int cases=0,hits=0;
+ make_wallpaper();
+ const char*names[]={"lock-entry","lock-handover","lock-cooldown","soft-lock","soft-lock-progress","lock-normal-021","lock-aggregate-021","lock-stale-021","lock-hold-021","lock-pin-status-021","lock-wallpaper-024","lock-wallpaper-hold-024","lock-wallpaper-aggregate-024","lock-wallpaper-pin-024"};int cases=0,hits=0;
  for(const char*name:names)for(int dark=0;dark<2;dark++){
   std::string base=std::string(argv[3])+"/"+name+(dark?"-dark":""),html=read(base+".html");
+  lock_wallpaper.current=strstr(name,"wallpaper")!=nullptr;html_view_set_lock_wallpaper(lock_wallpaper.current?wallpaper_pixels:nullptr);
   assert(html_view_render_html(html.c_str())==480&&html_view_pinned_height()==0);
   rect(".pin-top");rect(".pin-clock");rect(".pin-note");
   if(html.find("class='pin-screen soft-lock'")!=std::string::npos){
-   rect(".lock-date");rect(".lock-network");rect(".lock-rates");rect("#lock-rx");rect("#lock-tx");
+   rect(".lock-date");box net=rect(".lock-network"),rates=rect(".lock-rates");rect("#lock-rx");rect("#lock-tx");assert(net.y+net.h<=rates.y&&rates.y+rates.h<TF_SOFT_TOP);
    box b=rect(".soft-unlock"),p=rect(".soft-progress");
    assert(b.x==TF_SOFT_LEFT&&b.y==TF_SOFT_TOP&&b.w==TF_SOFT_WIDTH&&b.h==TF_SOFT_HEIGHT);
    assert(p.x==TF_SOFT_PROGRESS_X&&p.y==TF_SOFT_PROGRESS_Y&&p.w==TF_SOFT_PROGRESS_WIDTH&&p.h==TF_SOFT_PROGRESS_HEIGHT);
    box fill;int visible=html_view_rect(".soft-progress i",&fill.x,&fill.y,&fill.w,&fill.h);
-   int expected=!strcmp(name,"soft-lock-progress")?104:!strcmp(name,"lock-hold-021")?135:0;assert(fill.w==expected&&fill.h==4&&!!visible==!!expected);
+   int expected=!strcmp(name,"soft-lock-progress")?124:(!strcmp(name,"lock-hold-021")||!strcmp(name,"lock-wallpaper-hold-024"))?161:0;assert(fill.w==expected&&fill.h==3&&!!visible==!!expected);
    /* UI has no tap anchor: only the separately tested timed hold may unlock. */
    for(int y=0;y<480;y+=19)for(int x=0;x<320;x+=23){assert(!*html_view_click((float)x,(float)y));hits++;}
    if(expected)assert(fb[(p.y+1)*320+p.x+20]!=fb[(p.y+1)*320+p.x+180]);
    else assert(fb[(p.y+1)*320+p.x+20]==fb[(p.y+1)*320+p.x+180]);
   }else{
    rect(".pin-title");rect(".pin-status");rect(".pin-dots");rect(".pin-telemetry");const char*actions[]={"1","2","3","4","5","6","7","8","9","clear","0","submit"};
-   bool enabled=!strcmp(name,"lock-entry")||!strcmp(name,"lock-pin-status-021");
+   bool enabled=!strcmp(name,"lock-entry")||!strcmp(name,"lock-pin-status-021")||!strcmp(name,"lock-wallpaper-pin-024");
    for(int i=0;i<12;i++){
     char selector[160];snprintf(selector,sizeof selector,".pin-keypad tr:nth-child(%d) td:nth-child(%d) .pin-key",i/3+1,i%3+1);
     box b=rect(selector);assert(b.w>=80&&b.h>=48);
@@ -87,9 +110,11 @@ int main(int argc,char**argv){
     assert(html_view_click((float)b.x+b.w/2.0f,(float)b.y+b.h/2.0f)==expected);hits++;
    }
   }
-  if(!strcmp(name,"lock-normal-021")||!strcmp(name,"lock-hold-021")||!strcmp(name,"lock-aggregate-021")){samples(!strcmp(name,"lock-aggregate-021"));draw_rate_chart();box c=rect("#rate-chart");assert(c.x==32&&c.y==274&&c.w==256&&c.h==24);}
+  if(!strcmp(name,"lock-normal-021")||!strcmp(name,"lock-hold-021")||!strcmp(name,"lock-aggregate-021")||(lock_wallpaper.current&&strcmp(name,"lock-wallpaper-pin-024"))){samples(strstr(name,"aggregate")!=nullptr);draw_rate_chart();box c=rect("#rate-chart");assert(c.x==36&&c.y==316&&c.w==248&&c.h==22);}
   save(base+".ppm");if(!strcmp(name,"lock-normal-021"))color_test(html,dark);printf("PASS %s%s: native 320x480; layout, bounds, hit targets and state\n",name,dark?"-dark":"");cases++;
  }
+ lock_wallpaper.current=0;html_view_set_lock_wallpaper(nullptr);
  for(int dark=0;dark<2;dark++)motion_test(argv[3],dark);
+ wallpaper_isolation(argv[3],argv[1],argv[2]);
  printf("PASS: %d actual lock renders and %d hit targets; 8 real animation frames; static/full and partial rate repaint pixels identical\n",cases,hits);return 0;
 }

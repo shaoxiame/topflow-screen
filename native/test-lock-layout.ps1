@@ -22,7 +22,7 @@ if($LASTEXITCODE -ne 0){throw 'Lock layout renderer build failed'}
 if($LASTEXITCODE -ne 0){throw 'Lock layout test build failed'}
 & "$root/bin/test-lock-layout.exe" $font "$root/ui" "$root/preview"
 if($LASTEXITCODE -ne 0){throw 'Lock layout test failed'}
-foreach($name in @('lock-entry','lock-handover','lock-cooldown','soft-lock','soft-lock-progress','lock-normal-021','lock-aggregate-021','lock-stale-021','lock-hold-021','lock-pin-status-021')){
+foreach($name in @('lock-entry','lock-handover','lock-cooldown','soft-lock','soft-lock-progress','lock-normal-021','lock-aggregate-021','lock-stale-021','lock-hold-021','lock-pin-status-021','lock-wallpaper-024','lock-wallpaper-hold-024','lock-wallpaper-aggregate-024','lock-wallpaper-pin-024')){
  foreach($suffix in @('','-dark')){
   & node "$root/preview/convert-ppm.js" "$root/preview/$name$suffix.ppm"
   if($LASTEXITCODE -ne 0){throw "Lock PNG conversion failed: $name$suffix"}

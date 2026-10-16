@@ -13,15 +13,17 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
 function harness(options = {}) {
   const requests = [], writes = [], confirmations = [], elements = {};
   let state = {installed:!!options.installed, mode:options.mode || 'factory', ...options.initialState}, entry, panel, removed = false, started = false, statusReads = 0;
+  const hostContainer={children:[],append(node){this.children.push(node);node.parentNode=this;panel=node;}};
+  const functions={style:{overflow:'hidden',height:'86px'},parentNode:hostContainer,insertAdjacentElement(where,node){assert.equal(where,'afterend');hostContainer.append(node);}};
   for (const name of ['close','cancel','toggle','status','uninstall','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state']) elements['[data-tf-'+name+']'] = {disabled:false,textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
   const root = {URL, Uint8Array, Blob, FormData, atob,
     TopFlowPackagePayload:{...payload,version:'0.1.8',reviewOnly:!!options.reviewOnly,directSwitch:!!options.directSwitch},
     location:{href:'http://localhost/host',origin:'http://localhost'},
     crypto:{getRandomValues(bytes){bytes.fill(19);}}, setTimeout(resolve,ms){if(ms<15000)resolve();},clearTimeout(){},
     confirm(message){confirmations.push(message);return !options.deny;},
-    document:{currentScript:{textContent:source},querySelector(){return null;},
-      body:{append(node){if(node.className==='tf-package-entry')entry=node;else panel=node;}},
-      createElement(){return {className:'',isConnected:true,innerHTML:'',querySelector(selector){assert(Object.hasOwn(elements,selector),'Unexpected browser business UI: '+selector);return elements[selector];},remove(){this.isConnected=false;}};}},
+    document:{currentScript:{textContent:source},querySelector(selector){return options.inlineHost?(selector==='.functions-container'?functions:selector==='.container'?hostContainer:null):null;},
+      body:{append(node){node.parentNode=this;if(node.className==='tf-package-entry')entry=node;else panel=node;}},
+      createElement(){return {className:'',isConnected:true,innerHTML:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];},querySelector(selector){assert(Object.hasOwn(elements,selector),'Unexpected browser business UI: '+selector);return elements[selector];},remove(){this.isConnected=false;}};}},
     fetch:async(url,config)=>{
       const route = new URL(url).pathname; requests.push({route,config});
       assert.equal(config.credentials,'same-origin');
@@ -46,12 +48,13 @@ function harness(options = {}) {
       else {assert(command.includes('TOPFLOW_SCREEN='));const result=options.readStatus && await options.readStatus({read:++statusReads,state,started});if(result instanceof Error)throw result;content=typeof result==='string'?result:'TOPFLOW_SCREEN='+JSON.stringify(result || state);}
       return {ok:true,json:async()=>({success:true,content})};
     }};
+  root.TopFlowManagerConfirm = { create(context) { return { ask: async message => context.confirm(message), dispose() {} }; } };
   if (options.center) { root.TopFlowPluginCenter = options.center; root.TopFlowScreenTelemetrySDK = { marker: 'private-sdk' }; }
   vm.createContext(root);
   // Production runs within the same lexical UFI authentication environment.
   vm.runInContext('let KANO_baseURL="/api";const common_headers={"x-test-auth":"existing-session"};',root);
   vm.runInContext(source,root);
-  return {root,requests,writes,confirmations,elements,entry:()=>entry,async open(){root.__topflow_screen_plugin.open();await flush();return panel;}};
+  return {root,requests,writes,confirmations,elements,hostContainer,functions,entry:()=>entry,async open(){root.__topflow_screen_plugin.open();await flush();return panel;}};
 }
 
 test('production manager retains lifecycle/auth helpers verbatim and contains no preview adapters or simulation API',()=>{
@@ -66,11 +69,13 @@ test('production manager retains lifecycle/auth helpers verbatim and contains no
   assert.throws(()=>managerOnly(original+'\nTopFlowUI.mount(fake);'),/simulation dependency/);
 });
 
-test('production TXT manager needs no browser API modules, loads with zero calls and opens with exactly one read',async()=>{
-  const h=harness();assert.equal(h.requests.length,0);assert.equal(h.entry().textContent,'TopFlow 屏幕 · 管理');
-  const panel=await h.open();assert.equal(h.requests.length,1);assert.deepEqual(h.writes,[]);assert.doesNotMatch(panel.innerHTML,/预览|data-tf-advanced|data-tf-controls/);
+test('production homepage manager needs no browser API modules and performs exactly one initial read',async()=>{
+  const h=harness();assert.equal(h.requests.length,1);assert.equal(h.entry(),undefined);
+  const panel=await h.open();assert.equal(h.requests.length,1);assert.deepEqual(h.writes,[]);assert.doesNotMatch(panel.innerHTML,/预览与管理|data-tf-advanced|data-tf-controls/);
   assert.equal(h.requests[0].config.headers['x-test-auth'],'existing-session');
-  h.root.__topflow_screen_plugin.close();assert.equal(panel.isConnected,false);
+  assert.equal(await h.open(),panel);assert.equal(h.requests.length,1);
+  h.root.__topflow_screen_plugin.close();assert.equal(panel.isConnected,true);assert.equal(panel.attributes['data-collapsed'],'true');
+  assert.equal(await h.open(),panel);assert.equal(panel.attributes['data-collapsed'],'false');assert.equal(h.requests.length,1);
 });
 
 test('manager ignores legacy store globals and performs no remote startup or telemetry work',async()=>{
@@ -103,24 +108,32 @@ test('state card reports observed screen state and does not present stale failur
   }
 });
 
-test('manager Escape closes the modal only when there is no active operation',async()=>{
+test('manager Escape collapses the inline region only when there is no active operation',async()=>{
   const h=harness();const panel=await h.open();let prevented=0;
   panel.onkeydown({key:'Escape',preventDefault(){prevented++;}});
-  assert.equal(prevented,1);assert.equal(panel.isConnected,false);assert.deepEqual(h.writes,[]);
+  assert.equal(prevented,1);assert.equal(panel.isConnected,true);assert.equal(panel.attributes['data-collapsed'],'true');assert.deepEqual(h.writes,[]);
   let release;const held=new Promise(resolve=>{release=resolve;});
   const active=harness({initialState:{installed:true,mode:'custom',versionMismatch:true},beforeUninstall:()=>held});
   const livePanel=await active.open(),work=active.elements['[data-tf-update]'].onclick();await flush();
   assert.equal(active.elements['[data-tf-state-card]'].attributes['aria-busy'],'true');
-  livePanel.onkeydown({key:'Escape',preventDefault(){}});assert.equal(livePanel.isConnected,true);
+  livePanel.onkeydown({key:'Escape',preventDefault(){}});assert.equal(livePanel.isConnected,true);assert.equal(livePanel.attributes['data-collapsed'],'false');
   release();await work;assert.equal(active.elements['[data-tf-state-card]'].attributes['aria-busy'],'false');
 });
 
-test('manager has locally styled accessible controls and fixed actions around its scrollable content',async()=>{
+test('manager uses scoped host themes, sharp readable controls and normal homepage layout without an overlay',async()=>{
   const css=fs.readFileSync(path.join(__dirname,'../src/manager.css'),'utf8');
   assert.doesNotMatch(css,/@import|url\(|@font-face/);
   assert.match(css,/prefers-reduced-motion/);assert.match(css,/focus-visible/);
+  assert.match(css,/\.tf-package-shell\[data-tf-theme="dark"\]/);assert.match(css,/text-shadow:\s*none\s*!important/);
+  const homepageCss=css.slice(0,css.indexOf('.tf-package-shell.tf-confirm-overlay'));
+  assert(homepageCss.length>0);assert.match(homepageCss,/backdrop-filter:\s*none\s*!important/);
+  assert.doesNotMatch(homepageCss,/position:\s*fixed|backdrop-filter:\s*blur|100dvh/);
+  assert.match(css,/\.tf-package-shell\.tf-confirm-overlay\{position:fixed/);
+  assert.match(css,/\.tf-confirm-card\{[^}]*max-width:460px/);
   for(const size of css.matchAll(/font-size:\s*(\d+)px/g))assert(Number(size[1])>=12,'manager text must be at least 12px');
   const h=harness();const panel=await h.open();
+  assert.match(panel.innerHTML,/role="region" aria-label="TopFlow 屏幕插件"/);assert.doesNotMatch(panel.innerHTML,/aria-modal|role="dialog"/);
+  assert.match(panel.innerHTML,/By：善恶/);
   assert.match(panel.innerHTML,/class="tf-package-scroll" role="region" aria-label="屏幕与组件管理" tabindex="0"/);
   assert(panel.innerHTML.indexOf('data-tf-close')<panel.innerHTML.indexOf('tf-package-scroll'));
   assert(panel.innerHTML.indexOf('data-tf-message')<panel.innerHTML.indexOf('tf-package-footer'));
@@ -352,30 +365,17 @@ test('production uninstall removes only native components and the uniquely verif
   assert.match(h.elements['[data-tf-message]'].textContent,/卸载已回读确认/);
 });
 
-test('entry remains outside the actual UFI collapse observer clipping region in both menu states',{skip: !fs.existsSync(path.join(__dirname,'../analysis/evidence/ufi-utils.js')) && 'Private UFI WebUI source intentionally not distributed'},()=>{
-  const utils=fs.readFileSync(path.join(__dirname,'../analysis/evidence/ufi-utils.js'),'utf8');
-  const html=fs.readFileSync(path.join(__dirname,'../analysis/evidence/ufi-index.html'),'utf8');
-  assert.match(html,/class="functions-container actions collapse collapse_menu"/);
-  const start=utils.indexOf('const createCollapseObserver ='),end=utils.indexOf('const collapseGen =',start);
-  assert(start>0&&end>start);
-  const callbacks=[];let mode='open',entry,requests=0,timers=0;
-  const outer={children:[],append(node){node.parentElement=this;this.children.push(node);}};
-  const inner={getBoundingClientRect(){return {height:85.333};}};
-  const menu={style:{},parentElement:outer,querySelector(sel){assert.equal(sel,'.collapse_box');return inner;},getAttribute(){return mode;},
-    append(node){node.parentElement=this;},insertAdjacentElement(where,node){assert.equal(where,'afterend');entry=node;outer.append(node);}};
-  const root={TopFlowPackagePayload:payload,document:{currentScript:{textContent:source},body:outer,
-    querySelector(sel){return sel==='.functions-container'?menu:sel==='.container'?outer:null;},createElement(){return {};}} ,
-    fetch(){requests++;throw Error('No load-time network');},setTimeout(){timers++;throw Error('No startup timers');},
-    ResizeObserver:class{constructor(cb){this.cb=cb;}observe(){this.cb();}},
-    MutationObserver:class{constructor(cb){callbacks.push(cb);}observe(){}},console};
-  vm.createContext(root);vm.runInContext(utils.slice(start,end)+';globalThis.bindMenu=createCollapseObserver;',root);
-  root.bindMenu(menu);
-  assert.equal(menu.style.height,'85.333px');
-  vm.runInContext(source,root);
-  assert.equal(entry.parentElement,outer,'entry must not be appended to height-clipped functions-container');
-  for(const value of ['close','open']){mode=value;callbacks[0]([{type:'attributes',attributeName:'data-name'}]);assert.equal(menu.style.overflow,'hidden');assert.equal(menu.style.height,value==='close'?'0':'85.333px');assert.equal(entry.parentElement,outer);}
-  assert.equal(requests,0);assert.equal(timers,0);assert.equal(callbacks.length,1,'manager has no observer before it is opened');
-  root.TopFlowUfiPlugin.register(root);assert.equal(outer.children.length,1,'duplicate registration creates no repeated entry');
+test('whole homepage manager remains outside the clipped function list and registration stays idempotent',async()=>{
+  const h=harness({inlineHost:true}),panel=await h.open();
+  assert.equal(panel.parentNode,h.hostContainer);assert.notEqual(panel.parentNode,h.functions);
+  assert.deepEqual(h.hostContainer.children,[panel]);assert.equal(h.entry(),undefined);
+  for(const height of ['0px','86px']){
+    h.functions.style.height=height;
+    assert.equal(panel.parentNode,h.hostContainer,'function-list collapse cannot hide its sibling manager');
+    assert.equal(panel.isConnected,true);
+  }
+  h.root.TopFlowUfiPlugin.register(h.root);await h.open();
+  assert.deepEqual(h.hostContainer.children,[panel]);assert.equal(h.requests.length,1);assert.deepEqual(h.writes,[]);
 });
 
 

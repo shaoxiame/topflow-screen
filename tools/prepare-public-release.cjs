@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'..'),builder=require('./build.cjs');
 const result=cp.spawnSync(process.execPath,[path.join(__dirname,'test-public.cjs')],{cwd:root,stdio:'inherit'});
 if(result.error)throw result.error;
 if(result.status!==0)throw Error('Public tests failed; release gate was not created');
-const powerResult=cp.spawnSync(process.execPath,['--test','--test-concurrency=1','tests/native-power-key.test.js','tests/native-power-menu.test.js'],{cwd:root,stdio:'inherit'});
+const powerResult=cp.spawnSync(process.execPath,['--test','--test-concurrency=1','tests/native-power-key.test.js','tests/native-power-menu.test.js','tests/native-wallpaper.test.js','tests/native-wallpaper-files.test.js'],{cwd:root,stdio:'inherit'});
 if(powerResult.error)throw powerResult.error;
 if(powerResult.status!==0)throw Error('Native power-key/menu tests failed; release gate was not created');
 const archive=fs.readFileSync(path.join(root,'native/topflow-native.tar.gz'));
@@ -20,9 +20,9 @@ builder.verifyNativeReleaseContract(manifest,{});
 const gate={schema:1,version:manifest.version,state:'device-acceptance-pending',code:'DEVICE_ACCEPTANCE_PENDING',hardwareVerified:false,
  localValidationPassed:true,localImplementationReviewed:true,adaptationFixCandidate:true,
  reason:'Public-source local tests, source/archive integrity and release contracts passed. No new hardware acceptance is asserted.',
- validationScope:['public-js-tests','native-power-key-menu-C-harness','native-source-hashes','root-proof-hashes','native-ELF-architecture','boot-file-integrity','existing-release-contracts'],
+ validationScope:['public-js-tests','native-power-key-menu-C-harness','native-wallpaper-loader-and-file-lifecycle','native-source-hashes','root-proof-hashes','native-ELF-architecture','boot-file-integrity','existing-release-contracts'],
  exclusions:['private-firmware-evidence-tests','device-installation','device-ABI-validation','display-touch-sleep-hardware-tests'],
- sourceSha256:Object.fromEntries(['src/ufi-plugin.js','src/manager.css','tools/build.cjs','tools/production-manager.cjs'].map(name=>[name,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,name))).digest('hex')])),
+ sourceSha256:Object.fromEntries(['src/manager-theme.js','src/manager-confirm.js','src/manager-wallpaper.js','src/manager-wallpaper-ui.js','src/ufi-plugin.js','src/manager.css','tools/build.cjs','tools/production-manager.cjs'].map(name=>[name,crypto.createHash('sha256').update(fs.readFileSync(path.join(root,name))).digest('hex')])),
  checkedAt:new Date().toISOString()};
 fs.mkdirSync(path.join(root,'analysis'),{recursive:true});
 fs.writeFileSync(path.join(root,'analysis/release-gate.json'),JSON.stringify(gate,null,2)+'\n');

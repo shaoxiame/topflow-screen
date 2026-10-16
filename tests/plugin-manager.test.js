@@ -20,9 +20,9 @@ function harness(options={}) {
   const requests=[],writes=[],confirmations=[],mounts=[];
   let state={installed:options.installed===true,mode:options.mode||'factory',versionMismatch:!!options.versionMismatch,...options.initialState}, panel, entry, denied=options.deny===true, destroyed=0, recordRemoved=false;
   const elements={};
-  for(const name of ['close','cancel','toggle','status','uninstall','controls','advanced','screen','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state'])elements['[data-tf-'+name+']']={disabled:false,checked:false,open:false,textContent:'',replaceChildren(){},attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
-  const doc={currentScript:{textContent:source},body:{append(node){if(node.className==='tf-package-entry')entry=node;else panel=node;}},querySelector:()=>null,
-    createElement(tag){return {tag,className:'',innerHTML:'',isConnected:true,querySelector(selector){return elements[selector];},remove(){this.isConnected=false;}};}};
+  for(const name of ['close','cancel','toggle','status','uninstall','controls','advanced','screen','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state','wallpaper'])elements['[data-tf-'+name+']']={disabled:false,checked:false,open:false,textContent:'',replaceChildren(){},attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
+  const doc={currentScript:{textContent:source},body:{append(node){node.parentNode=this;if(node.className==='tf-package-entry')entry=node;else panel=node;}},querySelector:()=>null,
+    createElement(tag){return {tag,className:'',innerHTML:'',isConnected:true,attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];},querySelector(selector){return elements[selector];},remove(){this.isConnected=false;}};}};
   const root={document:doc,TopFlowPackagePayload:{...payload,reviewOnly:options.reviewOnly===true,version:options.version,directSwitch:options.directSwitch===true},URL,Uint8Array,Blob,FormData,atob,
     location:{href:'http://localhost/host',origin:'http://localhost'},crypto:{getRandomValues(bytes){bytes.fill(17);}},setTimeout(resolve,ms){if(ms<15000)resolve();},clearTimeout(){},
     confirm(message){confirmations.push(message);return !denied;},
@@ -49,16 +49,25 @@ function harness(options={}) {
       return {ok:true,json:async()=>({success:true,content})};
     }
   };
+  if(!options.noConfirm)root.TopFlowManagerConfirm={create(context){return {ask:async message=>context.confirm(message),dispose(){}};}};
   if(options.MutationObserver)root.MutationObserver=options.MutationObserver;
+  if(options.theme)root.TopFlowManagerTheme=options.theme;
+  if(options.wallpaper){root.TopFlowManagerWallpaper={};root.TopFlowWallpaperPanel=options.wallpaper;}
   vm.createContext(root);vm.runInContext(source,root);
   return {root,elements,requests,writes,confirmations,mounts,get destroyed(){return destroyed;},setDenied(value){denied=value;},
     async open(){root.__topflow_screen_plugin.open();await flush();return panel;},entry:()=>entry};
 }
 
-test('manager loads without requests, opens with one status read and keeps advanced polling unmounted',async()=>{
-  const h=harness();assert.equal(h.requests.length,0);
-  await h.open();assert.equal(h.requests.length,1);assert.equal(h.mounts.length,0);assert.deepEqual(h.writes,[]);
+test('homepage manager performs one initial read; repeated open keeps advanced polling unmounted',async()=>{
+  const h=harness();assert.equal(h.requests.length,1);assert.equal(h.entry(),undefined);
+  const panel=await h.open();assert.equal(await h.open(),panel);assert.equal(h.requests.length,1);assert.equal(h.mounts.length,0);assert.deepEqual(h.writes,[]);
   assert.equal(h.elements['[data-tf-toggle]'].textContent,'安装并切换到插件屏幕');
+});
+
+test('missing custom confirmation UI never falls back to a browser dialog or submits a write',async()=>{
+  const h=harness({noConfirm:true});await h.open();await h.elements['[data-tf-toggle]'].onclick();
+  assert.deepEqual(h.confirmations,[]);assert.deepEqual(h.writes,[]);
+  assert.match(h.elements['[data-tf-message]'].textContent,/确认界面未加载/);
 });
 
 test('review manager blocks installation and activation while preserving explicit recovery and cleanup',async()=>{
@@ -217,12 +226,46 @@ test('version display cannot inject HTML and a legacy waiting state remains canc
   await h.elements['[data-tf-cancel]'].onclick();assert.deepEqual(h.writes,['restore']);assert.match(h.elements['[data-tf-message]'].textContent,/已取消等待/);
 });
 
-test('dialog disposal observes only direct body removals and releases its observer on close',async()=>{
-  const observations=[];let disconnected=0;
-  class Observer {constructor(callback){this.callback=callback;}observe(target,options){observations.push(options);}disconnect(){disconnected++;}}
-  const h=harness({MutationObserver:Observer});assert.equal(observations.length,0);await h.open();
+test('homepage collapse retains its DOM and theme/wallpaper resources; actual removal disposes all subscriptions',async()=>{
+  const observations=[],instances=[];let disconnected=0,themeDisposed=0,wallpaperDisposed=0,wallpaperMounted=0,wallpaperRefreshed=0;
+  class Observer {constructor(callback){this.callback=callback;instances.push(this);}observe(target,options){observations.push(options);}disconnect(){disconnected++;}}
+  const h=harness({MutationObserver:Observer,theme:{watch(root,doc,callback){callback('dark');return()=>themeDisposed++;}},
+    wallpaper:{mount(){wallpaperMounted++;return{update(){},async refresh(){wallpaperRefreshed++;},dispose(){wallpaperDisposed++;}};}}});
+  const panel=await h.open();
   assert.equal(observations.length,1);assert.equal(observations[0].childList,true);assert.equal(observations[0].subtree,undefined);
-  await h.elements['[data-tf-close]'].onclick();assert.equal(disconnected,1);assert.deepEqual(h.writes,[]);
+  assert.equal(panel.attributes['data-tf-theme'],'dark');assert.equal(wallpaperMounted,1);assert.equal(wallpaperRefreshed,1);
+  await h.elements['[data-tf-close]'].onclick();
+  assert.equal(panel.isConnected,true);assert.equal(panel.attributes['data-collapsed'],'true');assert.equal(disconnected,0);assert.equal(themeDisposed,0);assert.equal(wallpaperDisposed,0);
+  await h.open();assert.equal(panel.attributes['data-collapsed'],'false');assert.equal(h.requests.length,1);
+  assert.equal(wallpaperMounted,1);assert.equal(wallpaperRefreshed,1);
+  panel.remove();instances[0].callback();instances[0].callback();
+  assert.equal(disconnected,1);assert.equal(themeDisposed,1);assert.equal(wallpaperDisposed,1);assert.deepEqual(h.writes,[]);
+});
+
+test('wallpaper selection resets only after native uninstall is confirmed, while the embedded UI remains usable',async()=>{
+  for(const cleanupFails of [false,true]){
+    let resets=0,disposals=0;
+    const h=harness({installed:true,cleanupFails,wallpaper:{mount(){return{update(){},async refresh(){},reset(){resets++;},dispose(){disposals++;}};}}});
+    const panel=await h.open();await h.elements['[data-tf-uninstall]'].onclick();
+    assert.equal(resets,cleanupFails?0:1);assert.equal(disposals,0);assert.equal(panel.isConnected,true);
+    assert.deepEqual(h.writes,cleanupFails?['uninstall']:['uninstall','record-uninstall']);
+    if(cleanupFails)assert.match(h.elements['[data-tf-message]'].textContent,/未完全确认/);
+  }
+});
+
+test('successful first install or old-version update refreshes wallpaper availability after switching; failed starts do not',async()=>{
+  for(const options of [{},{installed:true,versionMismatch:true}]){
+    const snapshots=[];
+    const h=harness({...options,wallpaper:{mount(root,host,context){return{update(){},async refresh(){snapshots.push({...context.state()});},reset(){},dispose(){}};}}});
+    await h.open();assert.equal(snapshots.length,1);assert(snapshots[0].installed===false||snapshots[0].versionMismatch===true);
+    await h.elements['[data-tf-toggle]'].onclick();assert.equal(snapshots.length,2,'successful switch must re-read wallpaper availability without manual refresh');
+    assert.equal(snapshots[1].installed,true);assert.equal(snapshots[1].mode,'custom');assert.notEqual(snapshots[1].versionMismatch,true);
+    assert.match(h.elements['[data-tf-message]'].textContent,/连续三次/);
+  }
+  let refreshed=0;
+  const failed=harness({installed:true,startFailure:'RENDERER_EXITED',wallpaper:{mount(){return{update(){},async refresh(){refreshed++;},reset(){},dispose(){}};}}});
+  await failed.open();await failed.elements['[data-tf-toggle]'].onclick();
+  assert.equal(refreshed,1);assert.deepEqual(failed.writes,['start']);assert.doesNotMatch(failed.elements['[data-tf-message]'].textContent,/已连续三次/);
 });
 
 test('direct-switch fixed failure codes stay bounded and expose the policy, sensor or ownership check that failed',async()=>{

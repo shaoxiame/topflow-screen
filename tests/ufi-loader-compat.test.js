@@ -6,7 +6,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const ROOT=path.resolve(__dirname,'..');
 const panelSource=fs.readFileSync(path.join(ROOT,'analysis/evidence/ufi-main.js'),'utf8');
-const bundle=fs.readFileSync(path.join(ROOT,'dist/topflow-screen-0.2.3.txt'),'utf8');
+const bundle=fs.readFileSync(path.join(ROOT,'dist/topflow-screen-0.2.4.txt'),'utf8');
 
 // Execute the actual downloaded UFI file-import routine, with only its DOM,
 // storage-ledger and toast dependencies replaced. No network or device shell.
@@ -35,18 +35,18 @@ function importer(initial=[]) {
 }
 
 test('saved UFI manual importer accepts raw source and preserves the AoYou-style public header without internal store metadata',async()=>{
-  const reference=fs.readFileSync(path.join(ROOT,'开发文档/遨游世界插件.txt'),'utf8');
+  const reference=fs.readFileSync(path.join(ROOT,'analysis/fixtures/aoyou-reference.txt'),'utf8');
   for(const key of ['name','version','build']){
     const pattern=new RegExp('^// @'+key+' (.+)$','m');assert(pattern.test(reference));assert(pattern.test(bundle));
   }
-  assert.equal(bundle.match(/^\/\/ @version (.+)$/m)[1],'0.2.3');
+  assert.equal(bundle.match(/^\/\/ @version (.+)$/m)[1],'0.2.4');
   assert.match(bundle,/^<script id="topflow-screen-plugin-source">/);
   assert.doesNotMatch(bundle,/\[KANO_META\]/,'current UFI rejects this internal tag in a raw upload');
   assert.doesNotMatch(bundle,/<!--\s*\[KANO_(?:PLUGIN_START|PLUGIN_END)\]/);
   const host=importer();await host.load();
   const blocks=host.blocks();assert.equal(blocks.length,1);assert.equal(blocks[0].meta.ver,'');
   assert.equal(blocks[0].meta.sid,'');assert.equal(blocks[0].meta.no,0);assert.equal(blocks[0].meta.pub,'');
-  assert.equal(blocks[0].content.match(/^\/\/ @version (.+)$/m)[1],'0.2.3','own source version remains available without claiming a store ledger version');
+  assert.equal(blocks[0].content.match(/^\/\/ @version (.+)$/m)[1],'0.2.4','own source version remains available without claiming a store ledger version');
   assert.equal((host.text.value.match(/<!-- \[KANO_PLUGIN_START\]/g)||[]).length,1);
   assert(host.text.value.includes(bundle));
   assert(host.toasts.includes('toast_add_success_save_to_submit'));
@@ -71,22 +71,21 @@ test('raw TopFlow import preserves other installed plugin blocks and their host-
   assert.equal(host.blocks()[0].meta.ver,'2.10.0');assert.equal(host.blocks()[1].meta.ver,'');
 });
 
-test('the actual generated script registers from a UFI-style head injection with lexical API globals and zero device requests',()=>{
+test('the generated UFI head script defers inline mounting until DOM readiness with no premature request',()=>{
   const scripts=Array.from(bundle.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script\s*>/gi));
-  assert.equal(scripts.length,1);let requests=0,entries=[];
-  const document={currentScript:{textContent:scripts[0][1]},body:{append:el=>entries.push(el)},querySelector:()=>null,
-    createElement:()=>({}),addEventListener(){throw Error('Unexpected delayed mounting');}};
+  assert.equal(scripts.length,1);let requests=0,readyCallback=null;
+  const document={currentScript:{textContent:scripts[0][1]},body:null,querySelector:()=>null,
+    createElement(){throw Error('Mounted before DOM was ready');},addEventListener(name,fn,options){assert.equal(name,'DOMContentLoaded');assert.equal(options.once,true);readyCallback=fn;}};
   const context={document,URL,TextEncoder,TextDecoder,Uint8Array,Blob,FormData,atob,AbortController,
     location:{href:'http://192.168.0.1:2333/',origin:'http://192.168.0.1:2333'},
     fetch(){requests++;throw Error('Device requests forbidden in loader test');}};
   vm.createContext(context);
   vm.runInContext('let KANO_baseURL="/api";const common_headers={authorization:null};',context);
   vm.runInContext(scripts[0][1],context);
-  assert.equal(requests,0);assert.equal(entries.length,1);
-  assert.equal(entries[0].textContent,'TopFlow 屏幕 · 管理');
+  assert.equal(requests,0);assert.equal(typeof readyCallback,'function');
   assert.equal(typeof context.__topflow_screen_plugin.open,'function');
   assert.equal(context.TopFlowPackagePayload.hardwareTested,false);
   assert.equal(context.TopFlowPackagePayload.diagnosticCandidate,false);
   assert.equal(context.TopFlowPackagePayload.unresolvedStartupFailure,undefined);
-  assert.equal(context.TopFlowPackagePayload.version,'0.2.3');
+  assert.equal(context.TopFlowPackagePayload.version,'0.2.4');
 });

@@ -281,11 +281,144 @@ stop_orphan_helpers() {
         same_process "$helper_pid" "$helper_birth" && { echo 'Bus helper remains; factory restart refused' >&2; exit 8; }
     done
 }
+# BEGIN WALLPAPER
+# Bounded shell transactions; no HTTP file upload, daemon or factory setting.
+wallpaper_fail() { printf 'TOPFLOW_ERROR=%s\n' "$1"; exit 8; }
+wallpaper_hash_valid() { case "${1:-}" in ''|*[!a-f0-9]*) return 1;; esac; [ "${#1}" = 64 ]; }
+wallpaper_nonce_valid() { case "${1:-}" in ''|*[!a-f0-9]*) return 1;; esac; [ "${#1}" = 32 ]; }
+wallpaper_boot_valid() { printf '%s\n' "${1:-}" | grep -Eq '^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$'; }
+wallpaper_boot_read() {
+    [ -f /proc/sys/kernel/random/boot_id ] && [ ! -L /proc/sys/kernel/random/boot_id ] && [ "$(wc -c < /proc/sys/kernel/random/boot_id)" = 37 ] || wallpaper_fail WALLPAPER_BOOT_ID_UNAVAILABLE
+    wallpaper_current_boot=$(cat /proc/sys/kernel/random/boot_id)
+    wallpaper_boot_valid "$wallpaper_current_boot" || wallpaper_fail WALLPAPER_BOOT_ID_UNAVAILABLE
+}
+wallpaper_safe_file() {
+    [ -f "$1" ] && [ ! -L "$1" ] && [ "$(stat -c %u "$1")" = 0 ] && [ "$(stat -c %h "$1")" = 1 ]
+}
+wallpaper_root() {
+    [ -d "$ROOT" ] && [ ! -L "$ROOT" ] && [ "$(readlink -f "$ROOT")" = "$ROOT" ] && [ "$(stat -c %u "$ROOT")" = 0 ] || wallpaper_fail WALLPAPER_UNSAFE_PATH
+    [ "$(stat -c %a "$ROOT")" = 700 ] || wallpaper_fail WALLPAPER_UNSAFE_PATH
+    [ ! -e "$ROOT/.install-owner" ] && [ ! -L "$ROOT/.install-owner" ] && [ ! -e "$ROOT/.uninstalling" ] && [ ! -L "$ROOT/.uninstalling" ] || wallpaper_fail WALLPAPER_INSTALL_INCOMPLETE
+}
+wallpaper_valid() {
+    wallpaper_safe_file "$1" && [ "$(wc -c < "$1")" = 307216 ] || return 1
+    [ "$(od -An -v -tx1 -N16 "$1" | tr -d ' \n')" = 54465750353635314001e00100b00400 ]
+}
+wallpaper_digest() { wallpaper_sum=$(sha256sum "$1") || return 1; wallpaper_sum=${wallpaper_sum%% *}; wallpaper_hash_valid "$wallpaper_sum"; }
+wallpaper_pending_read() {
+    wallpaper_pending_hash=; wallpaper_pending_nonce=; wallpaper_recorded_boot=; wallpaper_previous_boot=false
+    if [ ! -e "$ROOT/.lock-wallpaper.pending" ] && [ ! -L "$ROOT/.lock-wallpaper.pending" ]; then
+        for wallpaper_temp in .lock-wallpaper.upload .lock-wallpaper.chunk; do
+            [ ! -e "$ROOT/$wallpaper_temp" ] && [ ! -L "$ROOT/$wallpaper_temp" ] || wallpaper_fail WALLPAPER_UNKNOWN_UPLOAD
+        done
+        return 0
+    fi
+    wallpaper_safe_file "$ROOT/.lock-wallpaper.pending" || wallpaper_fail WALLPAPER_UNSAFE_PATH
+    [ "$(wc -c < "$ROOT/.lock-wallpaper.pending")" -le 240 ] && [ "$(wc -l < "$ROOT/.lock-wallpaper.pending")" = 5 ] && [ "$(head -n 1 "$ROOT/.lock-wallpaper.pending")" = TOPFLOW_SCREEN_WALLPAPER_V2 ] || wallpaper_fail WALLPAPER_UNKNOWN_UPLOAD
+    wallpaper_pending_hash=$(sed -n '2p' "$ROOT/.lock-wallpaper.pending")
+    wallpaper_pending_nonce=$(sed -n '4p' "$ROOT/.lock-wallpaper.pending")
+    wallpaper_recorded_boot=$(sed -n '5p' "$ROOT/.lock-wallpaper.pending")
+    wallpaper_hash_valid "$wallpaper_pending_hash" && wallpaper_nonce_valid "$wallpaper_pending_nonce" && wallpaper_boot_valid "$wallpaper_recorded_boot" || wallpaper_fail WALLPAPER_UNKNOWN_UPLOAD
+    wallpaper_install=$(sed -n '2p' "$ROOT/.topflow-install")
+    wallpaper_hash_valid "$wallpaper_install" && [ "$(sed -n '3p' "$ROOT/.lock-wallpaper.pending")" = "$wallpaper_install" ] || wallpaper_fail WALLPAPER_INSTALL_CHANGED
+    wallpaper_boot_read
+    [ "$wallpaper_current_boot" = "$wallpaper_recorded_boot" ] || wallpaper_previous_boot=true
+    wallpaper_receipt=$(printf 'TOPFLOW_SCREEN_WALLPAPER_V2\n%s\n%s\n%s\n%s' "$wallpaper_pending_hash" "$wallpaper_install" "$wallpaper_pending_nonce" "$wallpaper_recorded_boot")
+    [ "$(cat "$ROOT/.lock-wallpaper.pending")" = "$wallpaper_receipt" ] && [ "$(tail -c 1 "$ROOT/.lock-wallpaper.pending" | wc -l)" = 1 ] || wallpaper_fail WALLPAPER_UNKNOWN_UPLOAD
+    for wallpaper_temp in .lock-wallpaper.upload .lock-wallpaper.chunk; do
+        if [ -e "$ROOT/$wallpaper_temp" ] || [ -L "$ROOT/$wallpaper_temp" ]; then
+            wallpaper_limit=307216; [ "$wallpaper_temp" != .lock-wallpaper.chunk ] || wallpaper_limit=24576
+            wallpaper_safe_file "$ROOT/$wallpaper_temp" && [ "$(wc -c < "$ROOT/$wallpaper_temp")" -le "$wallpaper_limit" ] || wallpaper_fail WALLPAPER_UNSAFE_PATH
+        fi
+    done
+}
+wallpaper_status() {
+    wallpaper_root; wallpaper_boot_read; wallpaper_pending_read
+    wallpaper_configured=false; wallpaper_hash=
+    if [ -e "$ROOT/lock-wallpaper.rgb565" ] || [ -L "$ROOT/lock-wallpaper.rgb565" ]; then
+        wallpaper_valid "$ROOT/lock-wallpaper.rgb565" && wallpaper_digest "$ROOT/lock-wallpaper.rgb565" || wallpaper_fail WALLPAPER_INVALID_FILE
+        wallpaper_configured=true; wallpaper_hash=$wallpaper_sum
+    fi
+    wallpaper_pending=false; [ -z "$wallpaper_pending_hash" ] || wallpaper_pending=true
+    wallpaper_uploaded_bytes=0; wallpaper_upload_valid=false
+    if [ -n "$wallpaper_pending_hash" ] && [ -f "$ROOT/.lock-wallpaper.upload" ]; then
+        wallpaper_uploaded_bytes=$(wc -c < "$ROOT/.lock-wallpaper.upload")
+        if wallpaper_valid "$ROOT/.lock-wallpaper.upload" && wallpaper_digest "$ROOT/.lock-wallpaper.upload" && [ "$wallpaper_sum" = "$wallpaper_pending_hash" ]; then wallpaper_upload_valid=true; fi
+    fi
+    printf 'TOPFLOW_WALLPAPER={"configured":%s,"sha256":"%s","pending":%s,"pendingSha256":"%s","pendingNonce":"%s","pendingBootId":"%s","bootId":"%s","uploadedBytes":%s,"uploadValid":%s,"previousBoot":%s}\n' "$wallpaper_configured" "$wallpaper_hash" "$wallpaper_pending" "$wallpaper_pending_hash" "$wallpaper_pending_nonce" "$wallpaper_recorded_boot" "$wallpaper_current_boot" "$wallpaper_uploaded_bytes" "$wallpaper_upload_valid" "$wallpaper_previous_boot"
+}
+wallpaper_action() {
+    [ "${2:-}" = --confirmed ] && wallpaper_hash_valid "${3:-}" || wallpaper_fail WALLPAPER_CONFIRM_REQUIRED
+    wallpaper_nonce_valid "${4:-}" && wallpaper_boot_valid "${5:-}" || wallpaper_fail WALLPAPER_CONFIRM_REQUIRED
+    if [ "$1" = wallpaper-chunk ]; then [ "$#" = 7 ] || wallpaper_fail WALLPAPER_CONFIRM_REQUIRED
+    else [ "$#" = 5 ] || wallpaper_fail WALLPAPER_CONFIRM_REQUIRED; fi
+    lifecycle_lock
+    if command -v tf_verify_install >/dev/null 2>&1; then tf_verify_install; fi
+    wallpaper_root; wallpaper_boot_read; wallpaper_pending_read
+    wallpaper_target=$3
+    [ "$5" = "$wallpaper_current_boot" ] || wallpaper_fail WALLPAPER_BOOT_CHANGED
+    case "$1" in
+        wallpaper-prepare)
+            [ -z "$wallpaper_pending_hash" ] || wallpaper_fail WALLPAPER_UPLOAD_ACTIVE
+            if [ -e "$ROOT/lock-wallpaper.rgb565" ] || [ -L "$ROOT/lock-wallpaper.rgb565" ]; then wallpaper_valid "$ROOT/lock-wallpaper.rgb565" || wallpaper_fail WALLPAPER_INVALID_FILE; fi
+            wallpaper_install=$(sed -n '2p' "$ROOT/.topflow-install")
+            wallpaper_hash_valid "$wallpaper_install" || wallpaper_fail WALLPAPER_INSTALL_CHANGED
+            (set -C; printf 'TOPFLOW_SCREEN_WALLPAPER_V2\n%s\n%s\n%s\n%s\n' "$wallpaper_target" "$wallpaper_install" "$4" "$wallpaper_current_boot" > "$ROOT/.lock-wallpaper.pending") || wallpaper_fail WALLPAPER_UPLOAD_ACTIVE
+            (set -C; : > "$ROOT/.lock-wallpaper.upload") || wallpaper_fail WALLPAPER_UNSAFE_PATH
+            printf 'TOPFLOW_WALLPAPER=PREPARED\n';;
+        wallpaper-chunk|wallpaper-commit|wallpaper-abort)
+            [ "$wallpaper_pending_hash" = "$wallpaper_target" ] && [ "$wallpaper_pending_nonce" = "$4" ] || wallpaper_fail WALLPAPER_UPLOAD_CHANGED
+            if [ "$1" = wallpaper-abort ]; then
+                rm -f "$ROOT/.lock-wallpaper.chunk" "$ROOT/.lock-wallpaper.upload" "$ROOT/.lock-wallpaper.pending"
+                printf 'TOPFLOW_WALLPAPER=ABORTED\n'; return
+            fi
+            [ "$wallpaper_previous_boot" = false ] || wallpaper_fail WALLPAPER_PREVIOUS_BOOT
+            wallpaper_safe_file "$ROOT/.lock-wallpaper.upload" || wallpaper_fail WALLPAPER_UNSAFE_PATH
+            [ ! -e "$ROOT/.lock-wallpaper.chunk" ] && [ ! -L "$ROOT/.lock-wallpaper.chunk" ] || wallpaper_fail WALLPAPER_CHUNK_PENDING
+            if [ "$1" = wallpaper-chunk ]; then
+                case "$6" in 0|[1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1-9][0-9][0-9][0-9][0-9]|[1-9][0-9][0-9][0-9][0-9][0-9]) ;; *) wallpaper_fail WALLPAPER_INVALID_OFFSET;; esac
+                [ "$6" = "$(wc -c < "$ROOT/.lock-wallpaper.upload" | tr -d ' ')" ] || wallpaper_fail WALLPAPER_OFFSET_CHANGED
+                [ "${#7}" -gt 0 ] && [ "${#7}" -le 32768 ] && [ "$((${#7} % 4))" = 0 ] || wallpaper_fail WALLPAPER_INVALID_CHUNK
+                printf '%s\n' "$7" | grep -Eq '^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$' || wallpaper_fail WALLPAPER_INVALID_CHUNK
+                (set -C; printf '%s' "$7" | base64 -d > "$ROOT/.lock-wallpaper.chunk") || wallpaper_fail WALLPAPER_INVALID_CHUNK
+                wallpaper_safe_file "$ROOT/.lock-wallpaper.chunk" || wallpaper_fail WALLPAPER_UNSAFE_PATH
+                wallpaper_chunk_bytes=$(wc -c < "$ROOT/.lock-wallpaper.chunk")
+                [ "$wallpaper_chunk_bytes" -gt 0 ] && [ "$wallpaper_chunk_bytes" -le 24576 ] && [ "$(base64 "$ROOT/.lock-wallpaper.chunk" | tr -d '\n')" = "$7" ] || wallpaper_fail WALLPAPER_INVALID_CHUNK
+                wallpaper_next_bytes=$(($6 + wallpaper_chunk_bytes))
+                [ "$wallpaper_next_bytes" -le 307216 ] || wallpaper_fail WALLPAPER_TOO_LARGE
+                cat "$ROOT/.lock-wallpaper.chunk" >> "$ROOT/.lock-wallpaper.upload"
+                [ "$(wc -c < "$ROOT/.lock-wallpaper.upload" | tr -d ' ')" = "$wallpaper_next_bytes" ] || wallpaper_fail WALLPAPER_UPLOAD_CHANGED
+                rm -f "$ROOT/.lock-wallpaper.chunk"
+                printf 'TOPFLOW_WALLPAPER=CHUNKED\n'; return
+            fi
+            wallpaper_valid "$ROOT/.lock-wallpaper.upload" || wallpaper_fail WALLPAPER_INVALID_FILE
+            wallpaper_identity=$(stat -c '%d:%i:%s:%Y:%Z' "$ROOT/.lock-wallpaper.upload")
+            wallpaper_digest "$ROOT/.lock-wallpaper.upload" && [ "$wallpaper_sum" = "$wallpaper_target" ] || wallpaper_fail WALLPAPER_HASH_MISMATCH
+            if [ -e "$ROOT/lock-wallpaper.rgb565" ] || [ -L "$ROOT/lock-wallpaper.rgb565" ]; then wallpaper_valid "$ROOT/lock-wallpaper.rgb565" || wallpaper_fail WALLPAPER_INVALID_FILE; fi
+            wallpaper_safe_file "$ROOT/.lock-wallpaper.upload" && [ "$(stat -c '%d:%i:%s:%Y:%Z' "$ROOT/.lock-wallpaper.upload")" = "$wallpaper_identity" ] || wallpaper_fail WALLPAPER_UPLOAD_CHANGED
+            chmod 600 "$ROOT/.lock-wallpaper.upload"
+            mv -f "$ROOT/.lock-wallpaper.upload" "$ROOT/lock-wallpaper.rgb565"
+            rm -f "$ROOT/.lock-wallpaper.pending"
+            printf 'TOPFLOW_WALLPAPER=COMMITTED\n';;
+        wallpaper-clear)
+            [ -z "$wallpaper_pending_hash" ] || wallpaper_fail WALLPAPER_UPLOAD_ACTIVE
+            if [ -e "$ROOT/lock-wallpaper.rgb565" ] || [ -L "$ROOT/lock-wallpaper.rgb565" ]; then
+                wallpaper_valid "$ROOT/lock-wallpaper.rgb565" && wallpaper_digest "$ROOT/lock-wallpaper.rgb565" || wallpaper_fail WALLPAPER_INVALID_FILE
+                [ "$wallpaper_sum" = "$wallpaper_target" ] || wallpaper_fail WALLPAPER_HASH_MISMATCH
+                rm -f "$ROOT/lock-wallpaper.rgb565"
+            fi
+            printf 'TOPFLOW_WALLPAPER=CLEARED\n';;
+        *) wallpaper_fail WALLPAPER_INVALID_ACTION;;
+    esac
+}
+# END WALLPAPER
+
 validate_install_tree() {
     [ "$(readlink -f /data/plugins)" = /data/plugins ] || { echo 'Unsafe plugin parent' >&2; exit 9; }
     safe_tree "$ROOT" || { echo 'Unsafe plugin tree; nothing removed' >&2; exit 9; }
     [ -f "$ROOT/.topflow-install" ] && [ "$(head -n 1 "$ROOT/.topflow-install")" = TOPFLOW_SCREEN_INSTALL_V1 ] && [ -f "$ROOT/.topflow-files" ] || { echo 'Install ownership not verified; nothing removed' >&2; exit 9; }
     [ ! -e "$ROOT/.upload-active" ] && [ ! -L "$ROOT/.upload-active" ] || { echo 'Upload still active or outcome unknown; cleanup refused' >&2; exit 9; }
+    wallpaper_pending_read
     install_hash=$(sed -n '2p' "$ROOT/.topflow-install")
     case "$install_hash" in ''|*[!a-f0-9]*) echo 'Invalid install hash; nothing removed' >&2; exit 9;; esac
     [ "${#install_hash}" = 64 ] || { echo 'Invalid install hash length; nothing removed' >&2; exit 9; }
@@ -301,7 +434,7 @@ validate_install_tree() {
     done < "$ROOT/.topflow-files"
     find "$ROOT" -mindepth 1 -print | while IFS= read -r full; do
         entry=${full#"$ROOT/"}
-        case "$entry" in .topflow-install|.topflow-files|.lifecycle.lock|.uninstalling|.install-owner|.payload.tar.gz|.autostart-enabled|.autostart-hook.lock|autostart-boot-created) [ -f "$full" ] || { echo 'Invalid metadata type; nothing removed' >&2; exit 9; };; .autostart-hook-work) [ -d "$full" ] || exit 9;; .autostart-hook-work/owner|.autostart-hook-work/before|.autostart-hook-work/after|.autostart-hook-work/created) [ -f "$full" ] || exit 9;; *) grep -Fxq "$entry" "$ROOT/.topflow-files" || { echo 'Unexpected plugin file; nothing removed' >&2; exit 9; };; esac
+        case "$entry" in lock-wallpaper.rgb565) wallpaper_valid "$full" || { echo TOPFLOW_ERROR=WALLPAPER_INVALID_FILE; exit 9; };; .lock-wallpaper.upload|.lock-wallpaper.pending|.lock-wallpaper.chunk) [ -n "$wallpaper_pending_hash" ] || { echo TOPFLOW_ERROR=WALLPAPER_UNKNOWN_UPLOAD; exit 9; };; .topflow-install|.topflow-files|.lifecycle.lock|.uninstalling|.install-owner|.payload.tar.gz|.autostart-enabled|.autostart-hook.lock|autostart-boot-created) [ -f "$full" ] || { echo 'Invalid metadata type; nothing removed' >&2; exit 9; };; .autostart-hook-work) [ -d "$full" ] || exit 9;; .autostart-hook-work/owner|.autostart-hook-work/before|.autostart-hook-work/after|.autostart-hook-work/created) [ -f "$full" ] || exit 9;; *) grep -Fxq "$entry" "$ROOT/.topflow-files" || { echo 'Unexpected plugin file; nothing removed' >&2; exit 9; };; esac
     done
 }
 uninstall_components() {
@@ -315,6 +448,7 @@ uninstall_components() {
     no_plugin_processes || { echo 'Plugin process still present; nothing removed' >&2; exit 9; }
     # Keep the marker and locks while removing executable entry points first.
     printf 'uninstalling\n' > "$ROOT/.uninstalling"
+    rm -f "$ROOT/lock-wallpaper.rgb565" "$ROOT/.lock-wallpaper.upload" "$ROOT/.lock-wallpaper.pending" "$ROOT/.lock-wallpaper.chunk"
     rm -f "$ROOT/topflow-screen" "$ROOT/topflow-factory-bus-aarch64" "$ROOT/screenctl.sh" "$ROOT/supervisor.sh" "$ROOT/boot-hook.sh"
     while IFS= read -r entry; do [ ! -f "$ROOT/$entry" ] || rm -f "$ROOT/$entry"; done < "$ROOT/.topflow-files"
     find "$ROOT" -depth -mindepth 1 -type d -exec rmdir '{}' ';'
@@ -526,6 +660,13 @@ autostart_worker() {
 # END AUTOSTART
 
 case "${1:-status}" in
+ wallpaper-status)
+    [ -z "${2:-}" ] || wallpaper_fail WALLPAPER_INVALID_ACTION
+    wallpaper_status
+    ;;
+ wallpaper-prepare|wallpaper-chunk|wallpaper-commit|wallpaper-abort|wallpaper-clear)
+    wallpaper_action "$@"
+    ;;
  autostart-run)
     autostart_worker
     ;;

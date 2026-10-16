@@ -4,14 +4,14 @@
 #include <stdint.h>
 #include <string.h>
 #define TF_SOFT_HOLD_MS 1000u
-#define TF_SOFT_LEFT 40
-#define TF_SOFT_TOP 310
-#define TF_SOFT_WIDTH 240
-#define TF_SOFT_HEIGHT 64
-#define TF_SOFT_PROGRESS_X 56
-#define TF_SOFT_PROGRESS_Y 386
-#define TF_SOFT_PROGRESS_WIDTH 208
-#define TF_SOFT_PROGRESS_HEIGHT 4
+#define TF_SOFT_LEFT 20
+#define TF_SOFT_TOP 366
+#define TF_SOFT_WIDTH 280
+#define TF_SOFT_HEIGHT 60
+#define TF_SOFT_PROGRESS_X 36
+#define TF_SOFT_PROGRESS_Y 416
+#define TF_SOFT_PROGRESS_WIDTH 248
+#define TF_SOFT_PROGRESS_HEIGHT 3
 typedef struct{int locked,down,holding,release_required,block_release,progress;uint32_t began,last_frame;}tf_soft_lock;
 enum tf_soft_result{TF_SOFT_IDLE=0,TF_SOFT_PROGRESS=1,TF_SOFT_UNLOCK=2};
 static void tf_soft_lock_reset(tf_soft_lock*p,int pin_enabled){memset(p,0,sizeof *p);p->locked=!pin_enabled;p->release_required=p->locked;}

@@ -49,6 +49,7 @@
 #define MAX_HTML 262144
 extern void html_view_init(uint16_t *,int,int,int,int,const char *);
 extern int html_view_ready(void);
+extern void html_view_set_lock_wallpaper(const uint16_t*);
 extern int html_view_repaint(void);
 extern int html_view_pinned_height(void);
 extern void html_view_set_clip_top(int);
@@ -99,6 +100,7 @@ static uint32_t tick(void){struct timespec t;clock_gettime(CLOCK_MONOTONIC,&t);r
 #include "display_native.h"
 #include "pin_native.h"
 #include "soft_lock.h"
+#include "lock_wallpaper.h"
 static tf_soft_lock soft_lock;
 #include "display_runtime.h"
 
@@ -210,7 +212,7 @@ static int control(const char*payload){char body[8192];if(tf_http(9460,"POST","/
 static tf_lock_dashboard lock_dashboard;
 static tf_lock_motion lock_motion;
 static char lock_rx_text[48]="—",lock_tx_text[48]="—";
-static void lock_dashboard_prepare(void){uint32_t now=tick();const char*raw=data_snapshot_age_ms()<=5000?data_raw_json():NULL;tf_lock_status(raw,&lock_dashboard);lock_chart_rendering=!pin_policy.locked;tf_lock_chart_sample(&lock_chart,lock_dashboard.mode,raw?json_get_int(raw,"ts",-1):-1,lock_dashboard.rx,lock_dashboard.tx);tf_lock_motion_sample(&lock_motion,&lock_dashboard,now);tf_lock_rate_text(pin_policy.locked?lock_dashboard.rx:tf_lock_motion_value(&lock_motion,0,now),lock_rx_text,sizeof lock_rx_text);tf_lock_rate_text(pin_policy.locked?lock_dashboard.tx:tf_lock_motion_value(&lock_motion,1,now),lock_tx_text,sizeof lock_tx_text);}
+static void lock_dashboard_prepare(void){lock_wallpaper_prepare();html_view_set_lock_wallpaper(lock_wallpaper.current?lock_wallpaper.pixels:NULL);uint32_t now=tick();const char*raw=data_snapshot_age_ms()<=5000?data_raw_json():NULL;tf_lock_status(raw,&lock_dashboard);lock_chart_rendering=!pin_policy.locked;tf_lock_chart_sample(&lock_chart,lock_dashboard.mode,raw?json_get_int(raw,"ts",-1):-1,lock_dashboard.rx,lock_dashboard.tx);tf_lock_motion_sample(&lock_motion,&lock_dashboard,now);tf_lock_rate_text(pin_policy.locked?lock_dashboard.rx:tf_lock_motion_value(&lock_motion,0,now),lock_rx_text,sizeof lock_rx_text);tf_lock_rate_text(pin_policy.locked?lock_dashboard.tx:tf_lock_motion_value(&lock_motion,1,now),lock_tx_text,sizeof lock_tx_text);}
 static const char*lock_chart_hint(void){return !lock_chart.current?"实时曲线暂不可用":lock_chart.scope[lock_chart.mode].count<2?"等待实时采样":"";}
 #define TF_LOCK_MODE lock_dashboard.mode
 #define TF_LOCK_OPERATOR lock_dashboard.operator_name
@@ -222,18 +224,19 @@ static const char*lock_chart_hint(void){return !lock_chart.current?"实时曲线
 #define TF_LOCK_CARD1 lock_dashboard.cards[1]
 #define TF_LOCK_CARD2 lock_dashboard.cards[2]
 #define TF_LOCK_CHART_HINT lock_chart_hint()
+#define TF_LOCK_WALLPAPER lock_wallpaper.current
 #include "pin_view.h"
 /* Only the two rate rectangles animate between actual already-sampled values.
  * The 320 ms transition stops while touching or sleeping; no extra reads. */
 static int lock_rate_animation_tick(drm_disp_t*d,uint32_t now){
  if(!chart_animation_tick(d,now))return 0;if(!tf_lock_motion_frame(&lock_motion,now))return 1;
- for(int i=0;i<2;i++){char value[48];tf_lock_rate_text(tf_lock_motion_value(&lock_motion,i,now),value,sizeof value);int x=i?166:32,size=strlen(value)>7?21:strlen(value)>6?25:30;
-  html_view_fill_round_rect(x,222,122,36,0,theme_dark?20:37,theme_dark?49:85,theme_dark?84:163,255);
-  html_view_draw_text_px(x,222,value,size,0,i?106:255,i?239:255,i?217:255,255);
+ for(int i=0;i<2;i++){char value[48];tf_lock_rate_text(tf_lock_motion_value(&lock_motion,i,now),value,sizeof value);int x=i?168:36,size=strlen(value)>7?21:strlen(value)>6?25:30;
+  int dark=theme_dark||lock_wallpaper.current;html_view_fill_round_rect(x,260,116,36,0,dark?21:229,dark?43:238,dark?67:251,255);
+  html_view_draw_text_px(x,260,value,size,0,i?(dark?115:20):(dark?244:33),i?(dark?217:121):(dark?248:70),i?(dark?195:108):(dark?255:111),255);
  }
- return logical_damage(d,32,222,256,36);
+ return logical_damage(d,36,260,248,36);
 }
-static void screen_lock(void){power_menu_reset();controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();if(!display_runtime_unlock_policy())return;tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;form_reset();sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
+static void screen_lock(void){power_menu_reset();lock_wallpaper_invalidate();controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();if(!display_runtime_unlock_policy())return;tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;form_reset();sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
 /* A successful PIN entry alone is not enough: recheck the factory policy and
  * login acknowledgement before enabling confirmed business writes. */
 static int screen_unlock_complete(void){controls_enabled=0;if(pin_policy.locked||soft_lock.locked||!display_runtime_unlock_policy()||!display_runtime_login(1))return 0;controls_enabled=1;return 1;}
@@ -246,11 +249,12 @@ static int screen_soft_input(drm_disp_t*d,uint32_t now,int pressed,int x,int y,i
  int result=tf_soft_lock_touch(&soft_lock,now,pressed,x,y,!blocked&&display_runtime_ready&&factory_lifecycle.phase==TF_FL_READY&&backlight_is_on());
  if(result==TF_SOFT_UNLOCK){motion_cancel();if(!screen_unlock_complete())return -1;*dirty=1;}
  else if(result==TF_SOFT_PROGRESS&&backlight_is_on()&&frame_ready){
-  int r=theme_dark?45:217,g=theme_dark?62:228,b=theme_dark?89:246;html_view_fill_round_rect(TF_SOFT_PROGRESS_X,TF_SOFT_PROGRESS_Y,TF_SOFT_PROGRESS_WIDTH,TF_SOFT_PROGRESS_HEIGHT,2,r,g,b,255);int w=soft_lock.progress*TF_SOFT_PROGRESS_WIDTH/1000;if(w>0)html_view_fill_round_rect(TF_SOFT_PROGRESS_X,TF_SOFT_PROGRESS_Y,w,TF_SOFT_PROGRESS_HEIGHT,2,theme_dark?133:48,theme_dark?172:107,255,255);
-  html_view_fill_round_rect(TF_SOFT_LEFT,TF_SOFT_TOP,TF_SOFT_WIDTH,TF_SOFT_HEIGHT,16,theme_dark?25:36,theme_dark?61:88,theme_dark?124:189,255);
-  int filled=soft_lock.progress*TF_SOFT_WIDTH/1000;if(filled>0)html_view_fill_round_rect(TF_SOFT_LEFT,TF_SOFT_TOP,filled,TF_SOFT_HEIGHT,16,theme_dark?43:57,theme_dark?105:121,theme_dark?200:224,255);
-  const char*hold="长按解锁";int width=html_view_text_width_px(hold,15);html_view_draw_text_px(160-width/2,333,hold,15,1,255,255,255,255);
-  if(!logical_damage(d,TF_SOFT_LEFT,TF_SOFT_TOP,TF_SOFT_WIDTH,TF_SOFT_PROGRESS_Y+TF_SOFT_PROGRESS_HEIGHT-TF_SOFT_TOP))return -1;
+  int dark=theme_dark||lock_wallpaper.current;
+  /* Only the integrated progress line changes while holding. The label and
+   * surrounding wallpaper remain untouched; no repeated full-screen paint. */
+  html_view_fill_round_rect(TF_SOFT_PROGRESS_X,TF_SOFT_PROGRESS_Y,TF_SOFT_PROGRESS_WIDTH,TF_SOFT_PROGRESS_HEIGHT,1,dark?47:196,dark?70:213,dark?91:234,255);
+  int w=soft_lock.progress*TF_SOFT_PROGRESS_WIDTH/1000;if(w>0)html_view_fill_round_rect(TF_SOFT_PROGRESS_X,TF_SOFT_PROGRESS_Y,w,TF_SOFT_PROGRESS_HEIGHT,1,dark?115:32,dark?217:126,dark?195:201,255);
+  if(!logical_damage(d,TF_SOFT_PROGRESS_X,TF_SOFT_PROGRESS_Y,TF_SOFT_PROGRESS_WIDTH,TF_SOFT_PROGRESS_HEIGHT))return -1;
  }
  return consumed;
 }
@@ -421,5 +425,5 @@ int main(int argc,char**argv){
   if(!dirty&&!interacting&&running&&frame_ready&&backlight_is_on()&&!power_menu.active&&!pin_policy.locked&&!soft_lock.locked&&!busy_visible&&!pending[0]&&!advanced_page&&!chart_animation_tick(&d,tick())){frame_ready=0;result=6;break;}
   usleep(backlight_is_on()?8000:30000);
  }
- cleanup:motion_discard();if(display_runtime_fault)result=7;if(result==6)native_failure_note("FRAME_RENDER");else if(result==7)native_failure_note("DISPLAY_RUNTIME");display_level_hook=NULL;display_auto_sensor_hook=NULL;tf_http_wait_hook=NULL;display_runtime_cleanup();sms_forward_cleanup();factory_extra_cleanup();pin_native_cleanup();data_backend_close();touch_input_close(&touch);key_input_close(&key);drm_disp_close(&d);return result;
+ cleanup:html_view_set_lock_wallpaper(NULL);tf_wallpaper_clear(&lock_wallpaper);motion_discard();if(display_runtime_fault)result=7;if(result==6)native_failure_note("FRAME_RENDER");else if(result==7)native_failure_note("DISPLAY_RUNTIME");display_level_hook=NULL;display_auto_sensor_hook=NULL;tf_http_wait_hook=NULL;display_runtime_cleanup();sms_forward_cleanup();factory_extra_cleanup();pin_native_cleanup();data_backend_close();touch_input_close(&touch);key_input_close(&key);drm_disp_close(&d);return result;
 }

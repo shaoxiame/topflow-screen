@@ -16,7 +16,7 @@ function envelope(content, success=true) { return {ok:true,status:200,json:async
 // Use the actual stripped production manager and its authentication bridge.
 function harness({alreadyWaiting=false,holdAfterConfirmedRestoration=false,holdStatusReads=[],holdPoll=2}={}) {
   const writes=[], requests=[], elements={}, timers=new Map();
-  let nextTimer=0, now=0, state={installed:true,mode:'factory'}, started=false, polls=0, statusReads=0, heldStatus=false, removed=false, restored=false, restoredReads=0;
+  let nextTimer=0, now=0, state={installed:true,mode:'factory'}, started=false, polls=0, statusReads=0, heldStatus=false, removed=false, restored=false, restoredReads=0,panel;
   const pendingStatus=deferred(), restore=deferred(), uninstall=deferred();
   if(alreadyWaiting) state={...state,waiting:'FACTORY_AUTOSLEEP_LOCK_ACTIVE',waitingRemaining:300};
   for(const name of ['toggle','cancel','close','status','uninstall','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state']) elements[name]={disabled:false,hidden:false,textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
@@ -28,8 +28,8 @@ function harness({alreadyWaiting=false,holdAfterConfirmedRestoration=false,holdS
     setTimeout(fn,ms=0){const id=++nextTimer;timers.set(id,{fn,ms,at:now+ms});return id;},
     clearTimeout(id){timers.delete(id);},
     confirm(){return true;},
-    document:{currentScript:{textContent:source},querySelector(){return null;},body:{append(){}},
-      createElement(){return {className:'',isConnected:true,innerHTML:'',querySelector(selector){const key=selector.match(/^\[data-tf-(.+)\]$/)?.[1];assert(Object.hasOwn(elements,key),'Unexpected production UI '+selector);return elements[key];},remove(){this.isConnected=false;}};}},
+    document:{currentScript:{textContent:source},querySelector(){return null;},body:{append(node){panel=node;node.parentNode=this;}},
+      createElement(){return {className:'',isConnected:true,innerHTML:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];},querySelector(selector){const key=selector.match(/^\[data-tf-(.+)\]$/)?.[1];assert(Object.hasOwn(elements,key),'Unexpected production UI '+selector);return elements[key];},remove(){this.isConnected=false;}};}},
     fetch:async(url,options)=>{
       const route=new URL(url).pathname;requests.push({route,options});
       assert.equal(options.credentials,'same-origin');assert.equal(options.headers['x-existing-auth'],'panel-session');
@@ -56,6 +56,7 @@ function harness({alreadyWaiting=false,holdAfterConfirmedRestoration=false,holdS
       if(started && ++polls===holdPoll) {heldStatus=true;return pendingStatus.promise;}
       return envelope('TOPFLOW_SCREEN='+JSON.stringify(state));
     }};
+  root.TopFlowManagerConfirm={create(context){return {ask:async message=>context.confirm(message),dispose(){}};}};
   vm.createContext(root);vm.runInContext('let KANO_baseURL="/api";const common_headers={"x-existing-auth":"panel-session"};',root);vm.runInContext(source,root);
   async function settle(){for(let i=0;i<5;i++)await flush();}
   async function spinUntil(predicate, {runTimers=false}={}) {
@@ -72,7 +73,7 @@ function harness({alreadyWaiting=false,holdAfterConfirmedRestoration=false,holdS
   return {root,elements,writes,requests,pendingStatus,restore,uninstall,settle,spinUntil,timers,
     get heldStatus(){return heldStatus;},
     fireStatusDeadline(){const entry=[...timers].find(([,timer])=>timer.ms===15000);assert(entry,'A pending status must have a bounded local deadline');timers.delete(entry[0]);now=Math.max(now,entry[1].at);entry[1].fn();},
-    async open(){root.__topflow_screen_plugin.open();await settle();},
+    async open(){root.__topflow_screen_plugin.open();await settle();return panel;},
     async beginHeldStatus(){await this.open();const operation=observe(elements.toggle.onclick());await spinUntil(()=>heldStatus,{runTimers:true});assert.equal(elements.cancel.hidden,false);return operation;},
     lateCustom(){pendingStatus.resolve(envelope('TOPFLOW_SCREEN='+JSON.stringify({installed:true,mode:'custom',pid:1234,ready:true,supervised:true,heartbeatAge:1})));}
   };
@@ -128,11 +129,15 @@ test('uninstalling a waiting installation disables cancellation and the handler 
 });
 
 test('an initial status that never returns times out locally and its late response cannot change the panel',async()=>{
-  const h=harness({holdStatusReads:[1],holdPoll:0});await h.open();
+  const h=harness({holdStatusReads:[1],holdPoll:0});assert.equal(h.requests.length,1);const panel=await h.open();
+  assert.equal(await h.open(),panel);assert.equal(h.requests.length,1,'repeated open must not duplicate an in-flight initial read');
   assert.equal(h.heldStatus,true);assert.deepEqual(h.writes,[]);
+  h.root.__topflow_screen_plugin.close();assert.equal(panel.attributes['data-collapsed'],'false','pending read keeps the operation visible');
   h.fireStatusDeadline();await h.spinUntil(()=>/读取超时/.test(h.elements.message.textContent));
   const message=h.elements.message.textContent,label=h.elements.toggle.textContent,requestCount=h.requests.length;
   assert.equal(h.elements.status.disabled,false);assert.equal(h.elements.close.disabled,false);assert.equal(h.timers.size,0);
+  h.root.__topflow_screen_plugin.close();assert.equal(panel.isConnected,true);assert.equal(panel.attributes['data-collapsed'],'true');
+  await h.open();assert.equal(panel.attributes['data-collapsed'],'false');assert.equal(h.requests.length,requestCount,'expanding does not silently retry timed-out reads');
   h.lateCustom();await h.settle();
   assert.equal(h.elements.message.textContent,message);assert.equal(h.elements.toggle.textContent,label);
   assert.equal(h.requests.length,requestCount);assert.deepEqual(h.writes,[]);

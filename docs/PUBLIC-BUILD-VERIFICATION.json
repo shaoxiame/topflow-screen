@@ -1,16 +1,19 @@
 {
-  "version": "0.2.3",
-  "edition": "physical-power-key-menu",
+  "version": "0.2.4",
+  "edition": "ufi-inline-manager-and-lock-wallpaper",
   "deviceAccess": false,
+  "deviceWrites": false,
+  "separateReadOnlyThemeInspection": true,
   "hardwareVerified": false,
-  "hardwareBoundary": "This release was built and checked on the computer only. Prior user-reported 0.2.1 screen operation is historical evidence, not fresh 0.2.3 hardware acceptance.",
+  "hardwareBoundary": "Builds and tests ran on the computer with synthetic state, filesystem/process fixtures and mocked transports. Separately, UFI host color variables were inspected read-only without login or setting changes. No plugin was uploaded, installed or exercised on the device during this release. User acceptance of v0.2.1 remains historical evidence only.",
   "sourceBuild": {
     "renderer": "aarch64-linux-musl",
     "helper": "public-ABI-link-imports-only",
-    "rendererAndHelperRebuilt": true,
-    "nativeRuntimeByteIdenticalToPublic022": [
+    "rendererRebuilt": true,
+    "nativeRuntimeByteIdenticalToPublic023": [
       "boot-hook.sh",
-      "screenctl.sh",
+      "NOTICE.txt",
+      "REBUILD.txt",
       "supervisor.sh",
       "topflow-factory-bus-aarch64",
       "ui/aggregate.html",
@@ -18,60 +21,80 @@
       "ui/index.html",
       "ui/network.html",
       "ui/settings.html",
-      "ui/style.css",
-      "ui/subpages/sms.html"
+      "ui/subpages/sms.html",
+      "licenses/FreeType-FTL.txt",
+      "licenses/FreeType-gzip-zlib.txt",
+      "licenses/gumbo-Apache.txt",
+      "licenses/LGPL-2.1.txt",
+      "licenses/litehtml-BSD.txt",
+      "licenses/LLVM-libcxx.txt",
+      "licenses/LLVM-libcxxabi.txt",
+      "licenses/musl-COPYRIGHT.txt",
+      "licenses/openwrt-NOTICE.txt",
+      "licenses/pinyin-data-MIT.txt",
+      "licenses/PolyForm-Noncommercial-1.0.0.txt",
+      "licenses/u60pro-devui-MIT.txt"
     ],
-    "changedNativeMembersFromPublic022": [
+    "changedNativeMembersFromPublic023": [
       "boot-integrity.sha256",
       "build-manifest.json",
+      "screenctl.sh",
       "topflow-screen",
-      "topflow-screen.sha256"
+      "topflow-screen.sha256",
+      "ui/style.css"
     ]
   },
   "checks": {
     "publicJavascript": {
-      "tests": 176,
-      "passed": 174,
-      "skipped": 2,
+      "tests": 219,
+      "passed": 218,
+      "skipped": 1,
       "failed": 0,
       "skips": [
-        "private historical datad snapshot",
-        "private UFI WebUI observer source"
-      ]
+        "private historical datad snapshot"
+      ],
+      "files": 13
     },
     "packageJavascript": {
       "tests": 18,
       "passed": 18,
       "failed": 0
     },
-    "migration": {
-      "public021": {
-        "tests": 6,
-        "passed": 6,
-        "failed": 0
+    "nativePowerKeyMenuAndWallpaper": {
+      "tests": 18,
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0,
+      "breakdown": {
+        "powerKeyAndMenu": 5,
+        "wallpaperLoader": 3,
+        "wallpaperTransactions": 10
       },
-      "private021": {
-        "tests": 6,
-        "passed": 6,
-        "failed": 0
-      },
-      "mode": "local disposable shell/process/filesystem fixtures; actual old archive hashes checked; no device execution",
-      "coverage": [
-        "exact archive ownership and member list",
-        "modified executables rejected",
-        "autostart validates every old packaged byte",
-        "remove only own shared boot line",
-        "interrupted owned uninstall recovery",
-        "boot file identity receipt"
+      "suites": [
+        "tests/native-power-key.test.js",
+        "tests/native-power-menu.test.js",
+        "tests/native-wallpaper.test.js",
+        "tests/native-wallpaper-files.test.js"
       ],
-      "public022": {
+      "manifestProofs": "rootProofSha256"
+    },
+    "migration": {
+      "public023": {
         "tests": 6,
         "passed": 6,
         "failed": 0
-      }
+      },
+      "existingSupervisorRegression": {
+        "tests": 51,
+        "passed": 51,
+        "failed": 0,
+        "rerunNote": "Three historical migration cases initially lacked ignored private archive fixtures; exact local fixtures restored, all three rerun successfully. No device execution."
+      },
+      "mode": "local disposable shell/process/filesystem fixtures; exact old archive hashes checked"
     },
     "officialMetadata": {
-      "filename": "topflow-screen-0.2.3.txt.meta.json",
+      "filename": "topflow-screen-0.2.4.txt.meta.json",
+      "author": "善恶",
       "device_models": [
         "TOPFLOW"
       ],
@@ -90,73 +113,67 @@
       "source hashes",
       "two AArch64 ELF hashes",
       "boot manifest",
-      "manager and CSS hashes bound to release gate",
+      "manager/theme/confirmation/wallpaper/CSS hashes bound to release gate",
       "raw TXT below 4MiB",
       "noncommercial and third-party license payloads",
-      "power-key and power-menu root test hashes"
+      "four native root test hashes"
     ],
-    "nativePowerKeyAndMenu": {
-      "tests": 5,
-      "passed": 5,
-      "skipped": 0,
-      "failed": 0,
-      "suites": [
-        "tests/native-power-key.test.js",
-        "tests/native-power-menu.test.js"
-      ],
-      "mode": "local C harness, production evdev reader cross-compile and main-loop source assertions; synthetic input/HTTP only",
-      "manifestProofs": "rootProofSha256"
+    "nativeLockRendering": {
+      "screens": 28,
+      "hitTests": 6672,
+      "passed": 6672,
+      "viewport": "320x480",
+      "deviceAccess": false,
+      "reproducibleFromPublicClone": false,
+      "mode": "computer litehtml/FreeType render with synthetic fixtures and a local unredistributed font"
     },
-    "nativeExistingPowerAndExtra": {
-      "tests": 3,
-      "passed": 3,
-      "failed": 0,
-      "suite": "tests/native-extra.test.js"
-    },
-    "nativeSmsCancellation": {
-      "tests": 2,
-      "passed": 2,
-      "failed": 0,
-      "suite": "tests/native-sms-ufi.test.js",
-      "mode": "local HTTP only"
-    },
-    "nativeRegressionScripts": {
+    "nativeExistingRegression": {
       "passed": [
         "native/test-main-lock.ps1",
         "native/test-soft-lock.ps1",
         "native/test-interaction.ps1",
-        "native/test-display-runtime.ps1"
+        "native/test-lock-layout.ps1"
       ],
-      "deviceAccess": false
-    },
-    "desktopPowerLayout": {
-      "screens": 5,
-      "layoutHeight": 480,
-      "viewport": "320x480",
-      "hitTests": 9,
-      "passed": 9,
-      "visualScreenshots": 4,
       "deviceAccess": false,
-      "reproducibleFromPublicClone": false,
-      "mode": "locally generated power-menu HTML rendered with render-preview.exe and a previously downloaded unredistributed factory font; optional desktop evidence, not device validation"
+      "reportedBy": "native implementation agent"
+    },
+    "browserUi": {
+      "formatsDecoded": [
+        "PNG",
+        "JPEG",
+        "WebP"
+      ],
+      "crop": "320x480",
+      "hostThemes": [
+        "dark",
+        "light"
+      ],
+      "narrowContainerCssPixels": 359,
+      "horizontalOverflow": false,
+      "textShadow": "none",
+      "confirmation": "custom host-themed dialog",
+      "wallpaperApply": "13 sequential mock shell chunks, commit and SHA readback",
+      "wallpaperClear": "custom confirmation, clear and readback",
+      "deviceWrites": false,
+      "previewAdaptersInRelease": false
     }
   },
   "privateImportReplay": {
     "tests": 4,
     "passed": 4,
     "failed": 0,
-    "input": "previously downloaded UFI importer and AoYou reference; neither redistributed",
+    "input": "previously downloaded UFI importer and AoYou reference, held only in ignored local fixtures; neither redistributed",
     "reproducibleFromPublicClone": false
   },
   "artifact": {
-    "file": "topflow-screen-0.2.3.txt",
-    "bytes": 1720406,
-    "sha256": "add827c78256ec66b867afe3946ff2cb6f76d953246f4d80f4ed02e78f8e9cae",
-    "metadataFile": "topflow-screen-0.2.3.txt.meta.json",
-    "metadataSha256": "9fc86dbe29bb70622cf63e682854fe5233712acc151e47743b784ef78dcd0338",
-    "nativeArchiveSha256": "7f4205ebe407afaa27a7d63167b8db5cf1c7cf506db4a8d789eb9f2793557272",
-    "nativeRendererSha256": "fd00d9a165bd88c83eb5476b6c64149080a502511f39f42785b45c8eff9b5919",
+    "file": "topflow-screen-0.2.4.txt",
+    "bytes": 1780395,
+    "sha256": "9e9e77ed0d7357c0f95cbd8bcaea8a9e56d53a89216791518b3fabe919d18e8e",
+    "metadataFile": "topflow-screen-0.2.4.txt.meta.json",
+    "metadataSha256": "9d396653c96866de8dd64e17fec644c2c83f61bc31de5fd77bb51b783a6e6157",
+    "nativeArchiveSha256": "e8b51b443aa0207d8384ae9c7fe6408bc77d78dac3e1eade5de989369bcebea0",
+    "nativeRendererSha256": "0741d37b76791cc355bc035468c5aa8bc8e9189dd3d798cb3c0409f9112a2447",
     "nativeHelperSha256": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28"
   },
-  "checkedAt": "2026-10-16T17:24:03.402Z"
+  "checkedAt": "2026-10-16T17:57:44.124Z"
 }

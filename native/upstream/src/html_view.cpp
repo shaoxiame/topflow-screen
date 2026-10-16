@@ -30,6 +30,10 @@ static uint16_t *g_fb;
 static int g_w, g_h, g_pitch_px, g_rotate = 1;
 static int g_clip_top = 0;
 static int g_paint_top = 0, g_paint_bottom = 0; /* temporary document band */
+/* Borrowed fixed-size wallpaper buffer. Its owner loads it once per lock
+ * entry; the renderer never opens files or decodes user image formats. */
+static const uint16_t *g_lock_wallpaper;
+extern "C" void html_view_set_lock_wallpaper(const uint16_t *pixels) { g_lock_wallpaper = pixels; }
 
 static inline void put_px(int x, int y, int r, int g, int b, int a)
 {
@@ -562,6 +566,19 @@ static void draw_band(int top, int bottom, int scroll) {
 }
 static void draw_document(bool fresh) {
     std::fill(g_fb, g_fb + (size_t)g_pitch_px * g_h, (uint16_t)0);
+    if (g_lock_wallpaper && g_w == 320 && g_h == 480 && g_doc && g_doc->root() &&
+        g_doc->root()->select_one("body.tf-wallpaper")) {
+        for (int y = 0; y < 480; y++) for (int x = 0; x < 320; x++) {
+            uint16_t p = g_lock_wallpaper[y * 320 + x];
+            /* Stable navy scrim protects text against even all-white images.
+             * It is baked into this paint, never a running blur/animation. */
+            int keep = 96 - y * 36 / 479;
+            int r = ((p >> 11) * 255 / 31 * keep + 8 * (255 - keep)) / 255;
+            int g = (((p >> 5) & 63) * 255 / 63 * keep + 18 * (255 - keep)) / 255;
+            int b = ((p & 31) * 255 / 31 * keep + 32 * (255 - keep)) / 255;
+            put_px(x,y,r,g,b,255);
+        }
+    }
     if (g_pinned_height && fresh) {
         draw_band(0, g_pinned_height, 0);
         for (int y = 0; y < g_pinned_height; y++) for (int x = 0; x < g_w; x++)
@@ -583,7 +600,7 @@ extern "C" void html_view_init(uint16_t *fb, int w, int h, int pitch_px, int rot
     glyph_cache_clear();
     if (g_face) FT_Done_Face(g_face);
     if (g_ft) FT_Done_FreeType(g_ft);
-    g_face = nullptr; g_ft = nullptr; g_clip_top = 0; g_scroll_y = 0;
+    g_face = nullptr; g_ft = nullptr; g_clip_top = 0; g_scroll_y = 0; g_lock_wallpaper = nullptr;
     g_fb = fb; g_w = w; g_h = h; g_pitch_px = pitch_px; g_rotate = rotate;
     if (!fb || w <= 0 || h <= 0 || pitch_px < w || !font_path) return;
     if (FT_Init_FreeType(&g_ft) || FT_New_Face(g_ft, font_path, 0, &g_face)) {
@@ -959,6 +976,8 @@ extern "C" void html_view_polyline(int x, int y, int w, int h,
 extern "C" void html_view_rate_chart(int x,int y,int w,int h,const double*rx,const double*tx,int n)
 {
     if(!rx||!tx||n<2||n>30||w<8||h<8||w>320||h>96)return;
+    bool light_lock=g_doc && g_doc->root() && g_doc->root()->select_one("body.light.tf-pin") && !g_doc->root()->select_one("body.tf-wallpaper");
+    const int palette[2][3]={{light_lock?43:255,light_lock?101:255,light_lock?176:255},{light_lock?20:106,light_lock?132:239,light_lock?116:217}};
     double peak=1;bool valid=false;
     for(int i=0;i<n;i++)for(double v:{rx[i],tx[i]})if(std::isfinite(v)&&v>=0){valid=true;peak=std::max(peak,v);}
     if(!valid)return;
@@ -967,12 +986,12 @@ extern "C" void html_view_rate_chart(int x,int y,int w,int h,const double*rx,con
     /* Sparse one-pixel grid: it stays visible in data gaps, while values and
      * interpolation never cross them. Inset endpoints remain entirely inside. */
     for(int gy:{y+4,y+(h-1)/2,baseline})for(int col=2;col<w-2;col++)
-        if(col%6<2)put_px(x+col,gy,224,238,255,32);
+        if(col%6<2)put_px(x+col,gy,light_lock?77:224,light_lock?117:238,light_lock?164:255,32);
     for(int k=1;k<4;k++)for(int yy=y+4;yy<baseline;yy+=4)
-        put_px(plot_x+(plot_w-1)*k/4,yy,224,238,255,20);
+        put_px(plot_x+(plot_w-1)*k/4,yy,light_lock?77:224,light_lock?117:238,light_lock?164:255,20);
     for(int pass=0;pass<2;pass++)for(int series=0;series<2;series++){
         if(!pass&&series)continue;
-        const double*values=series?tx:rx;int red=series?106:255,green=series?239:255,blue=series?217:255;
+        const double*values=series?tx:rx;int red=palette[series][0],green=palette[series][1],blue=palette[series][2];
         for(int col=0;col<plot_w;col++){
             double t=(double)col*(n-1)/(plot_w-1);int a=std::min((int)t,n-2),b=a+1;double v0=values[a],v1=values[b];
             if(!std::isfinite(v0)||!std::isfinite(v1)||v0<0||v1<0)continue;
@@ -987,7 +1006,7 @@ extern "C" void html_view_rate_chart(int x,int y,int w,int h,const double*rx,con
         for(int yy=std::max(y,(int)cy-2);yy<=std::min(y+h-1,(int)cy+2);yy++)for(int xx=cx-2;xx<=cx+2;xx++){
             if(xx<x||xx>=x+w)continue;
             double dx=xx-cx,dy=yy+.5-cy,coverage=std::max(0.0,std::min(1.0,2.3-std::sqrt(dx*dx+dy*dy)));
-            put_px(xx,yy,series?106:255,series?239:255,series?217:255,(int)(coverage*255));
+            put_px(xx,yy,palette[series][0],palette[series][1],palette[series][2],(int)(coverage*255));
         }
     }
 }

@@ -1,0 +1,22 @@
+TopFlow API / UI 本机验收记录
+日期：[REDACTED_NUMBER]。仅使用本机证据、源码和测试替身；本子任务未访问或修改设备。
+
+本机验证
+- 联合执行 device-api、ui-contract、plugin-manager、native-supervisor：71/71 通过（28+16+9+18）。随后最后一次 factory 归一调整单独复跑 API：28/28 通过。
+- 原厂 ZTEZhengYuan.ttf / 同 litehtml 引擎静态明暗6页及极端速率共14图；52/52实际点击命中。原生键盘、WiFi、外卡详情、APN深色底部已独立查看，未见横向裁切。字体不进入插件包。
+- API导入零请求，默认readonly；live+allowWrites+每次确认才提交，短信/转发另有外部效果确认。原厂固定命令桥有独立写锁，不提供任意shell入口。mock只更改RAM本地样例。
+- 三卡独立保留enabled、cardPresence、lockState、dataConnection、availability；flight on=外卡未启用，不推断无卡；禁用/无卡不显示假速率，合计仅此两类贡献0，未知/冲突仍未知。
+[REDACTED_SENSITIVE_CONTEXT]
+- 访客WiFi按bands单独修改；客户端限制仅WiFi策略，不能保证限制有线；原厂QOS六枚举、快启和卡启停都有固定独立接口及回读。省电未知不假装关闭。
+[REDACTED_SENSITIVE_CONTEXT]
+
+仍不能承诺的覆盖及验收边界
+1. 原厂UI自身提供zwrt_deviceui并承担部分亮度、屏保/锁屏、散热策略。停止它可能中断这些职责；仅保留原文件和驱动不能证明无损。当前整体仍NOT READY，见lifecycle-readiness.txt。
+2. 月限额type1/2/3的业务语义未获得独立证据，不能标为上下行；UI已全部只读显示原始数值。月清零日/用量校正接口已核实。
+[REDACTED_SENSITIVE_CONTEXT]
+4. Native短信转发仍依赖已鉴权UFI表单配置，未绕过登录。API具备某项动作并不等同所有原厂菜单均已复现。
+5. 实际安装/卸载、DRM接管及首帧、触摸方向/误触、原厂恢复后画面/触摸、功耗/CPU/内存、每个写操作的真实生效与断网恢复均未实机验证。SIGKILL/断电/未知上传结果不能承诺自动完全恢复或清除。
+
+证据详情：control-api-notes.txt、integration-review.txt、官方0.10.79 rust源码、本地开发文档、SDK反汇编及root只读下载原始状态。
+
+散热补充（[REDACTED_NUMBER]）：已接现有datad风扇/液冷常开固定动作和readCooling；默认只读、明确确认、一次写入和有界缓存回读。关闭风扇常开恢复已保存曲线，关闭液冷常开恢复自动温控；不将enabled误作常开，PWM占比不称实际转速。所有温控硬件调用和原厂配置同步由现有datad处理，没有插件自建驱动写或服务。API33/UI18本机通过，仍未实机执行散热写操作；整体原厂UI生命周期覆盖缺口并未因此自动消除。

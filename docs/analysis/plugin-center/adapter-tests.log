@@ -1,0 +1,30 @@
+✔ public catalog uses only fixed anonymous HTTPS XHR; exact version starts private SDK (1.8544ms)
+✔ initialization and concurrent checks are merged without directory polling (2.3967ms)
+✔ newer catalog versions are advertised without starting wrong-version telemetry (0.2522ms)
+✔ older published version does not downgrade or impersonate current build (0.1654ms)
+✔ missing plugin is unpublished and waits for explicit check (0.457ms)
+✔ all localhost and file previews skip public/device requests even if enabled (0.4095ms)
+✔ disabled adapter and invalid local release version never request (0.1766ms)
+✔ remote version cannot inject arbitrary labels or HTML (0.2392ms)
+✔ duplicate own ID, invalid catalog and excessive list length are rejected (0.5435ms)
+✔ oversized, redirected and timed-out responses stop safely (1.0367ms)
+✔ hidden initial page waits; visibility resumes one catalog read (1.4139ms)
+✔ hiding cancels in-flight catalog and discards late response (0.2999ms)
+✔ pagehide suspends SDK and pageshow restores without extra catalog polling (0.165ms)
+✔ stop aborts pending directory, removes all listeners and check cannot restart (0.1336ms)
+✔ UI disposal during checking callback prevents the pending network request (0.0725ms)
+✔ stop terminates SDK and all handlers; late callbacks cannot reactivate it (0.0922ms)
+✔ network failures use bounded backoff and never schedule automatic retries (0.5983ms)
+✔ 429 respects Retry-After and imposes an upper bound without timers (0.2438ms)
+✔ previously started telemetry stops when explicit recheck reports a new release (0.1257ms)
+✔ semver release ordering handles prerelease numerically and never treats metadata as exact (0.4124ms)
+✔ callback and SDK exceptions cannot escape into screen initialization (1.1299ms)
+[REDACTED_SENSITIVE_CONTEXT]
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 62.9514

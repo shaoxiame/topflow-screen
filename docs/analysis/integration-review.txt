@@ -1,0 +1,74 @@
+TopFlow 集成与恢复独立复核（本机静态审查）
+阅读提示：本文保留开发过程历史，早期“当前结论”“NOT READY”“6/7”“无原生转发”等不是最终状态；以文末“最终覆盖说明”与当前 release-gate.json 为准。不得把任何本机通过等同于实机通过。
+日期：[REDACTED_NUMBER] / 设备目标：MU5252 TopFlow、现有 UFI / zwrt-datad 0.10.79
+范围：只读取本机已下载证据、源文件、用户提供开发文档；未连接设备，未安装、切换、卸载或调用任何设备写接口。
+
+结论边界
+当前结论：不能发布为“已无损适配原厂功能”。原厂 UI 本身提供 zwrt_deviceui 服务，并承担部分亮度/休眠/风扇策略；停止 UI 可能让这些服务及策略消失，这是实质性兼容阻塞，不是截图测试能消除的限制。独立供电已有 zwrt_bsp.charger 接口可用，但不等于全部 UI 托管职责已经补齐。参见 lifecycle-readiness.txt。
+其余接口设计有现成依据，安装/停止/恢复/组件清理的代码边界明确；不能据此声称已经实机无损运行或恢复成功。DRM 接管、原厂进程恢复后的真正画面和触摸、功耗/内存占用必须在用户认可 UI 且明确允许安装后实测。本地截图证明的是同一 litehtml/FreeType 排版，不证明 DRM 驱动或触摸方向。
+
+一、只读证据支持的事项
+1. [REDACTED_ENCODED_OR_IDENTIFIER].init：原厂程序 [REDACTED_ENCODED_OR_IDENTIFIER] 受 procd 管理，设 respawn。其 stop_service 除 killall 外还执行 rmmod sitronix_ts_spi.ko。因此不能通过 vendor stop/restart 直接切屏，否则可能卸载触摸。
+2. 当前 supervisor 仅 ubus service delete 指定 zte_topsw_devui，随后等确切原厂 exe 消失再启动插件；不调用 vendor stop/restart、不 rmmod。恢复仅 init start。该方案避免执行已知危险 stop hook；具体固件 procd 删除是否确实抑制 respawn 以及其他守护程序是否重启显示，尚需实机确认。已有 ubus-schema-explicit.txt 实际返回 Not found，不能把它当成功 schema 证据。
+3. drm-state.txt：card0、msm_qpic、DIN-1、320×480、RGB565、pitch640，原厂进程是 DRM master。插件枚举当前 connector/crtc、检查尺寸，关闭时释放本身 DRM fd。未替换原厂程序/库/init 文件。
+4. display.txt：sitronix 触摸为 evdev；当前 touch_input.c 只 O_RDONLY|NONBLOCK 打开符合 ABS 能力的设备，无 EVIOCGRAB，无卸载驱动。它选第一个符合条件的触摸设备，实际坐标/旋转/多触点行为仍需现场验证；不应写“触摸已验证”。
+5. zte_topsw_daemon 为独立 procd 服务。当前切换脚本不停止该 daemon，也不停止 UFI、datad、Mihomo、网络或聚合服务。切屏程序会持有 DRM、读取 evdev，电源键逻辑会写现有 led:lcd brightness；因此运行后并非设备全局“零写入”，这是显示职责所需的变化。开发取证阶段仍然零设备写入。
+
+二、生命周期与删除边界
+1. src/ufi-plugin.js 加载仅注册 DOM 入口；打开管理层仅查询屏幕状态。高级网页预览显式展开才开始读取，关闭/折叠销毁轮询并撤销业务控制。
+[REDACTED_SENSITIVE_CONTEXT]
+3. screenctl fd9 串行化动作；supervisor fd8 持有整个生命周期。restore 必须等 supervisor cleanup 结束才恢复原厂。信号目标使用 PID+进程出生时间+确切 exe/cmdline，不用 killall。无法确认身份时拒绝操作；无法停掉插件时不启动竞争的原厂。
+4. uninstall 先恢复并观察三次原厂进程存在，再清理自有树。ROOT/RUN 固定绝对路径；拒绝 symlink、挂载点、设备/FIFO/socket，核查安装标记与文件清单，发现未知文件即拒绝。只删除清单内文件、白名单运行文件及自有目录，不删除 /data/plugins 本身、其他插件、UFI 全局配置、原厂日志。
+5. 清理先标记 .uninstalling 并删除入口，先移除 RUN，再删除 ROOT 最后的归属元数据；start 在获得锁后重新检查安装标记和入口。这覆盖较晚开始的并发启动。审查未发现当前清理代码跨树删除路径。
+[REDACTED_SENSITIVE_CONTEXT]
+
+三、接口来源与业务写入边界
+[REDACTED_SENSITIVE_CONTEXT]
+2. 读取使用 goform_get_cmd_process；短信 tags100 与已下载 ufi-requests.js571 保持一致，读取不会 SET_MSG_READ。Wi-Fi、频段、当前服务小区都读取现成字段，不采集邻区。
+3. Web 聚合为 /api/datad/hardware action aggregation.set；Wi-Fi/频段/锁站/短信写入复用实际 UFI goformId。具体参数、支持范围与证据见 control-api-notes.txt，不以控件文字猜接口。网络模式4G_AND_5G仅保留读值，未猜映射新增写枚举。
+4. Native 主要 GET [REDACTED_IP]:9460/state 和 /events 获取原服务快照，另按需读取 APN/访客信息及10秒缓存原厂独立状态；启动不改采样、信令、网络配置。业务控制为 datad /control 的既有 action：wifi.radio.set、aggregation.set、band.set_lte/nr_sa/nr_nsa、cell.lock_nr/lte、cell.unlock_all。严格确认 ok===true 且 action 相同，再回读状态。锁小区与频段确认执行前重新核验新快照。
+[REDACTED_SENSITIVE_CONTEXT]
+
+四、日志与资源
+1. 新 supervisor / renderer stdout/stderr 重定向 /dev/null；last-status 为固定短状态覆盖，heartbeat 为时间戳覆盖，均 /tmp 自有目录。无 append 日志、无真实短信/凭据日志。清理也删除旧版本残余自有 log 文件。
+2. 无新增服务端监听。Web高级层收起/关闭停止轮询；Native趋势固定30点 RAM，主题仅RAM，滑动动画短时两帧缓冲，用完释放。不能据静态估算承诺实际CPU、内存或电池收益。
+3. 审查发现 data.c 在无有效快照时 [REDACTED_ENCODED_OR_IDENTIFIER] 直接调用 init，可能绕过 next_retry_ms，坏JSON/服务故障时高频重连或阻塞心跳。已通知 native_runtime 修复，待本机回归后补充结果。
+4. render 已修复 layout/font失败仍报告 ready 的问题；但当前 drm_disp_dirty 返回 void 并忽略 DIRTYFB结果，heartbeat最多证明布局/内存帧已生成。显示器真正呈现仍须实机目视确认；已通知 native_runtime。
+
+五、本机验证及尚待验证
+已实际执行：原厂 ZTEZhengYuan.ttf 同引擎明暗各6页+两极端速率页渲染，全部480高度，明暗各18次点击共36/36；动态4页顶部与底部可读，4/4右上返回点击。只使用本机合成样例；原厂字体不入包。
+[REDACTED_SENSITIVE_CONTEXT]
+后续必须实机才能确认：DRM释放/获取、驱动DIRTYFB接受、首帧真实上屏、触摸坐标和误触、原厂重启后触摸恢复、休眠/亮度/电源键与原服务协调、断电重启无残余启动、安装中断和服务异常回退、实际资源和温度、每个业务控制的真正效果以及UFI版本兼容性。在当前只读授权下未执行这些步骤。
+
+本轮补充核验
+- 新 factory-api-schemas.txt 通过正确 ubus -v list 取得各原厂对象schema；旧 Not found 文件仍不能作成功证据。schema证明方法和参数名存在，不等于参数取值语义或写入效果实测。
+- 当前UFI后端 ufi-tools-zwrt 已只读下载本机，40,239,230字节，为Go ELF且应用符号混淆。未找到单插件卸载route明文，不能据此证明不存在，也不能确证name匹配/响应；第二步保守处理结论不变。
+- 已复读修复后的native源码：data_backend_init带初始化/2秒deadline门控、refresh仅缓存读取；drm_disp_dirty现在返回错误，除驱动可能不支持的EINVAL/ENOSYS外失败向上反馈。原问题已在源码修复，native作者的本机backoff/渲染桩通过；真实驱动呈现仍未验证。
+- 后续三卡/API扩展本机23/23、网页UI合约11/11通过。状态现在区分SIM存在、锁卡、数据会话、USB可用性；空外卡状态不当未插卡，主卡enable0不当未启用。外卡APN目标是201/101；不等于subid5/3。
+- 明暗主页面三卡入口点击追加后共48/48通过；动态明暗8页顶部/底部已渲染，8/8返回命中；新增暗色首尾8图实际查看可读。
+
+2026-10-16追加：每卡、设置与半安装并发复核
+- 新SDK常量与invokeTable确认4G1=V3E2，4G2=V3E1；flight off代表启用，on代表未启用。不可解释为无SIM。数据连接、SIM存在、锁卡、USB和卡启用独立归一。合计只对明确禁用/无卡贡献0，未知/冲突不造0。
+- Web factory桥严格固定uci get/get_device_info读取，10秒缓存并合并并发。启停通过zwrt_mc.device.manager.[REDACTED_ENCODED_OR_IDENTIFIER]原有方法；QOS六枚举通过zwrt_smart_mng.api.[REDACTED_ENCODED_OR_IDENTIFIER]；快启/省电通过set_device_info单一键。无任意命令入口，默认独立写锁关闭；当前值未知则不显示能力，写入仅一次并回读同字段。所有测试为本机模拟，不是设备控制验证。
+- 原厂独立供电datad action使用zwrt_bsp.charger.list/set且后端带回读，不依赖停止后消失的zwrt_deviceui。sleep.set精确参数seconds为字符串；只使用原UFI支持时长。
+- APN 1/201/101是命名空间，PDP1 IPv4、2 IPv6、3双栈；auth0无/1PAP/2CHAP/3混合。四项GET完整有效才可写，config.writable=false绝对拒绝；真实执行前再次读取同卡目标。凭据不展示，未改不传。
+- WiFi guest只控制guest bands，不调用main radio伪开关；客户端block/unblock拒绝白名单模式；流量月清零日和校正已有确证，月限额type1..3尚未得到业务语义映射，不能标为下载/上传。
+- 本机实际最新API28/28与UI13/13通过；原厂字体静态14张、52点击通过，新增原生键盘/WiFi/APN/外卡截图已独立检查无横裁切。
+- 已发现并通知安装脚本所有者：buildInstallFinish在校验后解包未持fd9，可与另一管理实例uninstall并发造成晚到文件残留。所有者正在增加共享锁与.upload-active；仅上传响应明确后释放，未知上传结果拒绝卸载是必要边界。该修复尚待独立复查，不能先记录为已解决。
+- 先前fixture失败已由所有者修复并报告生命周期16/16、本轮总29项；此报告不冒充本agent重新跑过。后续新并发测试完成后再更新。
+
+2026-10-16最终复查记录（覆盖前述待复查项）
+- 重新独立审阅已修复的安装并发：upload-active在完整归属标记公布前建立；upload完成释放和finish均持同一fd9控制锁，锁后重验owner与完整manifest；finish不会重建已删除RUN。卸载在upload-active存在/未知时先拒绝且不操作服务。先前finish/uninstall并发缺口已修。上传结果未知时保留目录是明确安全拒绝边界，不承诺自动全清理。
+[REDACTED_SENSITIVE_CONTEXT]
+- 本agent实际执行node --test tests/device-api.test.js tests/ui-contract.test.js tests/plugin-manager.test.js tests/native-supervisor.test.js，71/71通过，含18生命周期、9管理器、28API、16UI测试。所有shell调用仅本机路径重写fixture；未连接设备。
+- UI已修复跨卡APN异步回包竞态：旧4G1请求不能覆盖后来4G2配置；测试用乱序Promise确认。访客仅bands目标，未知PDP省略，新增电源/流量/客户端只读会话无写入。
+- 客户端限制仅是Wi-Fi MAC策略，不能声称限制有线网口；已通知root仅对已确认WiFi客户端给动作，未知连接方式不能标无线。月限额type仍无独立语义证据，root已改全部只读原数字。
+- 仍存在原厂UI托管职责替代缺口，详见lifecycle-readiness.txt；本测试不改变NOT READY结论。
+
+[REDACTED_NUMBER] 最终覆盖说明（覆盖上述历史状态，不追溯修改当时事实）
+- 当前发行门禁为 [REDACTED_ENCODED_OR_IDENTIFIER]：原厂三方法服务代理、LCD/休眠事件和锁读回、自动亮度/锁屏/超时及限时过渡保护已实现并有本机专项；不再以早期“生命周期尚未实现”作为当前代码结论。物理显示、触摸、真正休眠功耗和恢复仍未实机写测，不能称已无损或硬件已验证。
+[REDACTED_SENSITIVE_CONTEXT]
+- 本轮独立发现并推动修复：心跳原用墙钟导致休眠/NTP误回退；truncate瞬间空心跳导致误回退；卸载后晚到start重建RUN的竞态。现统一CLOCK_MONOTONIC并保留最近有效心跳；新生命周期锁只读打开已有文件，持锁后复核目录/inode/归属，先锁后允许创建RUN，删除入口后最后移除锁锚点。
+- 新锁审查另发现内存子shell的$$并不指向自身，新fd7检查必须用/proc/self/fd/7；当前源码已修。管理器作者报告[REDACTED_ENCODED_OR_IDENTIFIER]共47/47通过，其中真实本地shell FD/inode及卸载/同hash重装ABA时序通过，Windows没有flock内核工具，互斥本身仍用桩，不冒称Linux实机并发已验证。
+- 本agent用最新litehtml/FreeType引擎与原厂字体重渲染75个二级明暗页面，119项命中/禁命中全部通过，实际抽看无新增裁切；本机预览样例不进入部署包。
+- 用户上传后发现入口不显示，已用真实宿主HTML/utils确认按钮放在collapse测高范围外会被裁切，根代理也在真实浏览器验证；修复由管理器作者负责。浏览器卡顿不能靠此前VM/桩测试排除，专项证据与夹具见 ufi-performance-review.txt；入口和性能修复完成前，不应沿用早期“加载正常”的泛化结论。

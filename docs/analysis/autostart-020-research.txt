@@ -1,0 +1,28 @@
+TopFlow 0.2.0 开机自启动机制研究（[REDACTED_NUMBER]）
+
+范围：仅读取本机开发文档、已下载参考源码和历史只读证据，没有连接设备，没有执行参考安装脚本。
+
+1. 官方插件机制
+开发文档/(1.0.0)插件开发文档.md:313–369：数据放 /data/plugins/<plugin-id>/；UFI-TOOLS-ZWRT 在系统启动后约20秒执行一次 [REDACTED_ENCODED_OR_IDENTIFIER].sh；长期任务必须后台，启动需幂等。明确不改 /etc/rc.local，不使用旧/sdcard路径，不写/data/ufi-tools目录。只增删自身唯一启动行；完整卸载只清自身资源。
+[REDACTED_SENSITIVE_CONTEXT]
+
+2. 遨游世界成品
+从开发文档/遨游世界插件.txt的atob(H4sI...)压缩资源，仅在电脑内存解压。第2号payload为service.sh：boot_update()（约第188行）写相同UFI共享脚本，使用末尾精确标记 # AOYOU_WORLD_BOOT / # AOYOU_WORLD_RULES_BOOT，仅删除自身标记；长期任务后台且stdout/stderr重定向/dev/null。记录自身创建共享脚本的boot.created，关闭时只有脚本仅含shebang/空白才删除，保留其它插件。
+service.sh:1209 start|boot共用操作锁、配置验证和存活检测，重复执行返回ALREADY_RUNNING；1216 uninstall先停止自己的长期任务/接管，再AUTOSTART=0去启动行，最后删自身目录。common.sh:29 owned_path逐级拒软链，进程识别使用可执行路径和/proc信息，不能只信pid文件。
+遨游实现是参考，不照搬其代理、iptables、规则更新、内核下载功能。
+
+3. TopFlow/U60开源参考的适用边界
+[REDACTED_ENCODED_OR_IDENTIFIER].sh改/etc/rc.local，且安装init服务；[REDACTED_ENCODED_OR_IDENTIFIER].sh也改rc.local并清理旧服务。它们不符合本插件的UFI官方接入边界，不能直接调用。
+可借鉴的是启动顺序：保留原厂开机服务，让原厂完成面板和触摸初始化后再交接。历史原厂init证据[REDACTED_ENCODED_OR_IDENTIFIER].init的stop含rmmod触摸驱动，不能直接照搬U60 killall/stop启动器。应复用本插件已验证的screenctl/supervisor显示交接与失败恢复。
+
+4. 实现要求
+[REDACTED_SENSITIVE_CONTEXT]
+共享脚本使用native/boot-hook.sh：固定行
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+插入在shebang后，避免已有exit使启动行不可达。已有精确启动行也只接受第二行位置；未知同类路径/标记、移动/重复行以及heredoc内相同行均拒绝，防止误把第三方数据当成启动命令删除。编辑前后复核原共享文件身份、SHA，保留原权限/组；自建脚本使用700。仅支持正常/bin/sh、LF终止、无NUL/CR、<=128KiB文本，遇其他形式保持原文件并报告冲突。
+自建共享脚本的receipt有两行：[REDACTED_ENCODED_OR_IDENTIFIER]与暂存候选文件的device:inode。先记录候选inode再rename，rename保留inode；完整删除共享脚本同时要求当前inode仍属于该receipt且移除自身行后仅剩shebang。首次创建与第三方创建相撞时，即使留下receipt，也不能认领或删除第三方的同内容空脚本。
+[REDACTED_SENSITIVE_CONTEXT]
+
+5. 校验限制
+UFI执行约20秒来自官方文档，启动器必须按实际就绪而非固定等待秒数判断。电脑隔离测试可以验证脚本幂等、冲突拒绝、取消/失败路径、清理等；不能代替真实设备重启后的画面、触摸、休眠联动验收。
+共享文件写入前使用stat/SHA检查能发现已发生的外部并发修改；普通POSIX shell缺少跨非协作写入者的原子CAS接口，不能宣称与所有第三方sed/覆盖写入同时执行时绝对无竞争。插件自身采用操作锁，并应避免同时修改多个插件的自启开关。

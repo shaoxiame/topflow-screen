@@ -1,0 +1,53 @@
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_NUMBER]
+
+[REDACTED_SENSITIVE_CONTEXT]
+does work: the initial protected lock page disabled input during its countdown.
+[REDACTED_SENSITIVE_CONTEXT]
+
+Confirmed causes
+1. topflow_main.c passed rotation=1 to the renderer. The reused U60 configuration
+   also rotated touch by 180 degrees. This is a different board's default.
+2. The original B22 [REDACTED_ENCODED_OR_IDENTIFIER] has reversed enum semantics:
+[REDACTED_SENSITIVE_CONTEXT]
+   disabled. This extra screen is removed.
+
+Released implementation
+Display and touch use upright coordinates. Chart/loading damage and horizontal
+page animation follow the same orientation; header changes invalidate objects.
+[REDACTED_SENSITIVE_CONTEXT]
+The original timeout/brightness policy remains in use. Sleep clears pending
+[REDACTED_SENSITIVE_CONTEXT]
+fail toward original-screen recovery before another wake render. The resync path
+[REDACTED_SENSITIVE_CONTEXT]
+uses its protected authentication path; no original setting is rewritten.
+
+Minimal input changes
+[REDACTED_SENSITIVE_CONTEXT]
+candidate added unverified device ioctls; independent review rejected including
+those new prerequisites in this release. The published 0.1.4 touch C source is
+restored byte-for-byte ([REDACTED_ENCODED_OR_IDENTIFIER]).
+Only its board orientation configuration changes. The candidate remains under
+[REDACTED_ENCODED_OR_IDENTIFIER] and is not included in the deployment archive.
+
+Reference used
+[REDACTED_URL]
+Locally inspected [REDACTED_ENCODED_OR_IDENTIFIER].md and start.sh. That project
+extends the original process with an LVGL LD_PRELOAD hook, retaining original
+input and authentication. Its service-delete path avoids the original stop hook
+which unloads Sitronix. Our existing direct takeover retains that lifecycle
+precaution; this patch does not replace the successful switching architecture.
+
+Validation scope
+PC tests exercise actual normalized policy reads, real main sleep/wake functions,
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_ENCODED_OR_IDENTIFIER], and gesture coordinates. Native ARM64 build and
+package integrity are checked separately. Exact old-version recovery permits
+0.1.4 [REDACTED_ENCODED_OR_IDENTIFIER] without executing its old renderer.
+Final test counts and output hashes are recorded in switch-0.1.5-verification.json.
+
+Device boundary
+Development reads existing device state only. No install, new executable,
+configuration write, driver action, screen switch or uninstall was performed on
+the device by the developer. The new version's physical direction, immediate
+[REDACTED_SENSITIVE_CONTEXT]

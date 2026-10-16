@@ -1,0 +1,153 @@
+000015cc ubus_add_object
+000015eb ubus_reconnect
+000015fa ubus_free
+[REDACTED_NUMBER] sleep
+0000164c ubus_lookup_id
+0000169b ubus_remove_object
+000016ae [REDACTED_ENCODED_OR_IDENTIFIER]
+000016ca ubus_connect
+000016dd ubus_send_event
+0000175b ubus_invoke_fd
+0000177d ubus_send_reply
+000017b3 ubus_notify
+[REDACTED_NUMBER] libSleep_uci_get
+[REDACTED_NUMBER] libSleep_uci_set
+0000183a libSleep_uci_commit
+[REDACTED_NUMBER] libubus.so.[REDACTED_NUMBER]
+000025bc libzte_sleep.so
+[REDACTED_NUMBER] echo mem > /sys/power/autolseep
+[REDACTED_NUMBER] zte_topsw_sleep_faw start....
+0001297e src/zte_topsw_sleep_faw.cpp
+0001299a zte_sleep_faw_ubus_init failed!
+000129ee [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00012a28 sleep_ubus_send_event: event=%s,parameter=%s
+00012a55 sleep_ubus_send_event ctx is NULL.
+00012a7f sleep_ubus_send_event: event=%s,parameter=%s faild ret:%d.
+00012aba [REDACTED_ENCODED_OR_IDENTIFIER]
+00012af9 zwrt_deviceui_event.lcdstatus
+00012bc5 [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00012d1e switch_autosleep_func start
+00012d3a switch autosleep failed
+00012d64 echo off > /sys/power/autosleep
+00012d84 echo mem > /sys/power/autosleep
+00012db4 [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00012e4a  > /sys/power/wake_unlock
+00012eeb  1 > /sys/power/wake_lock
+00012f66 [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00012fc1 run notifySleep
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+[REDACTED_NUMBER] ubus zte_sleep_faw_add_obj failed
+[REDACTED_NUMBER] ubus [REDACTED_ENCODED_OR_IDENTIFIER] failed
+000132bf zwrt_zte_sleep_faw.power_status
+000132df zwrt_zte_sleep_faw.wakelock
+0001332e enableAutoSleep
+0001337f zteSleepTest
+0001338c set_ufi_sleep
+0001339a set_ufi_sleep_for_devui
+000133b2 [REDACTED_ENCODED_OR_IDENTIFIER]
+000133ec ufiSleepTime
+[REDACTED_NUMBER] ubus_probe_event: msg is null.
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+0001348c ubus_probe_event: recv type=%s, msg=%s.
+000134b8 [REDACTED_ENCODED_OR_IDENTIFIER] [REDACTED_ENCODED_OR_IDENTIFIER] %d failed.
+000134fc [REDACTED_ENCODED_OR_IDENTIFIER].
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER]:ubus_lookup_id %s faild.
+[REDACTED_NUMBER] zte_topsw_sleep_faw
+000135ac [REDACTED_ENCODED_OR_IDENTIFIER]:ubus_invoke %s faild.
+[REDACTED_NUMBER] notifyDaemonReady: ubus_lookup_id %s failed.
+[REDACTED_NUMBER] notifyDaemonReady: ubus_invoke %s failed.
+000136bd zte_topsw_sleep_faw: READY
+000136d8 init ZTE_SLEEP::zte_sleep_faw_ubusCtx failed, it's NULL
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+[REDACTED_NUMBER] ubus connect failed!
+[REDACTED_NUMBER] ubus connect failed
+000137ac [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+[REDACTED_NUMBER] zte_sleep_ubus_notify ctx is nullptr.
+[REDACTED_NUMBER] zte_sleep_ubus_notify: ret=%d failed.
+0001386e zte_sleep_ubus_invoke %s %s.
+0001388b zte_sleep_ubus_invoke ctx is NULL.
+000138ae zte_sleep_ubus_invoke: ubus_lookup_id %s failed.
+000138df zte_sleep_ubus_invoke: ubus_invoke %s failed.
+0001390d ntf goto sleep
+0001391c gotoSleep
+[REDACTED_NUMBER] ntf goto sleep error
+0001393b sleepStatus
+[REDACTED_NUMBER] zwrt_sleep
+[REDACTED_NUMBER] fopen /sys/power/wake_lock failed: %s
+000139ae fread /sys/power/wake_lock failed: %s
+000139d4 fclose /sys/power/wake_lock failed: %s
+00013ab4 sysZteSleepLock
+00013b59 [REDACTED_ENCODED_OR_IDENTIFIER]
+00013b93 [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00013c03 zteSleepFotaDl
+00013c1b [REDACTED_ENCODED_OR_IDENTIFIER]
+00013c3e [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00013c9d [REDACTED_ENCODED_OR_IDENTIFIER]
+00013ce5 power
+[REDACTED_SENSITIVE_CONTEXT]
+00013d2f [REDACTED_ENCODED_OR_IDENTIFIER]
+00013d48 [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00013d71 lcd_status
+00013d7c lcdStatus error
+00013d8c lcd Status:%s
+00013d9a zteSleepBacklight
+00013db8 [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00013e38 Do nothing after power on
+00013e52 after quickent power on
+00013f15 in sleeping state.
+00013f28 system got sleep mem >
+00013f50 in goto sleep state
+00013f8e in power off quicken
+00013fa3 in power off quicken,do nothing
+00013fc3 in sleeped state.
+0001400c in poweroff quicken state
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER]  = on
+000140bc /tmp/zte_sleep_info.bin
+0001413f [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+[REDACTED_NUMBER] MC ubus action or parameter error!
+0001425c mode_power_on
+[REDACTED_NUMBER] mode_power_off
+000142a9 mode_power_off_quicken
+000142d1 [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_NUMBER] unknown power status event! %s %s
+[REDACTED_NUMBER] zte_sleep_pipe_fd_pipe:pipe zte_sleep_pipe faild.
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+[REDACTED_NUMBER] zte_sleep_pipe_fd_pipe:uloop add zte_sleep_pipe fail.
+000143bd zte_sleep_pipe_send_msg:mc_pipe not open and mdgData overflow.
+000143fc zte_sleep_pipe_send_msg:start write data cmd=%d,para=%s.
+[REDACTED_NUMBER] notify sleep msg
+[REDACTED_NUMBER] goToSleep
+0001449f [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER]
+000145ae [REDACTED_ENCODED_OR_IDENTIFIER]
+000145ef [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+0001463a sleep proc normal start.
+0001465d sleep proc abnormal start.
+000146ac mode_power_on_charger
+000146c2 mode_power_off_unreal
+000146d8 [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER] start
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER] start
+0001489b action set ufi sleep time %s
+0001490d zteSleepV3EUpDown
+[REDACTED_NUMBER] [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+0001495f [REDACTED_ENCODED_OR_IDENTIFIER] %d
+[REDACTED_NUMBER] never sleep mode Msec %d
+000149df [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00014aec sleep app opt v3e_%d %d
+00014bb5 [REDACTED_ENCODED_OR_IDENTIFIER]
+00014c1b [REDACTED_ENCODED_OR_IDENTIFIER]
+00014c44 usb power bank state %s
+00014c5c usb power bank state %d
+00014c74 [REDACTED_ENCODED_OR_IDENTIFIER]
+00014e18 zteSleepUsb
+00014e24 otg_powerbank_state
+00014e66 [REDACTED_ENCODED_OR_IDENTIFIER]
+00014e80 [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+00014f59 [REDACTED_ENCODED_OR_IDENTIFIER].cpp
+000152e0 zteSleepNetMonitor

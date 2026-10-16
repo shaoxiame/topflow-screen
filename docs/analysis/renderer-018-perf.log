@@ -1,0 +1,21 @@
+html_view: cannot load font [REDACTED_ENCODED_OR_IDENTIFIER].ttf
+{"page": "home", "height": 480, "iterations": 50, "full_render_ms": 409.423, "scroll_repaint_ms": 88.587}
+{"page": "home-dark", "height": 480, "iterations": 50, "full_render_ms": 380.46, "scroll_repaint_ms": 88.8}
+{"page": "long-settings", "height": 750, "iterations": 50, "full_render_ms": 303.566, "scroll_repaint_ms": 56.854}
+{"page": "long-settings-dark", "height": 750, "iterations": 50, "full_render_ms": 295.727, "scroll_repaint_ms": 57.385}
+[REDACTED_ENCODED_OR_IDENTIFIER] limit=393216 entries_limit=512
+PASS: current typography fresh-vs-retained pixels/layout/hit targets; fixed light/dark header/back targets; deterministic cached glyphs; bounded glyph eviction; rotation/pitch; reinitialization and unavailable-document failures. Legacy raster is intentionally different and is not an equivalence target.
+html_view: cannot load font [REDACTED_ENCODED_OR_IDENTIFIER].ttf
+{"page": "home", "height": 480, "iterations": 50, "full_render_ms": 410.025, "scroll_repaint_ms": 88.604}
+{"page": "home-dark", "height": 480, "iterations": 50, "full_render_ms": 376.688, "scroll_repaint_ms": 90.509}
+{"page": "long-settings", "height": 750, "iterations": 50, "full_render_ms": 299.954, "scroll_repaint_ms": 56.641}
+{"page": "long-settings-dark", "height": 750, "iterations": 50, "full_render_ms": 294.362, "scroll_repaint_ms": 56.729}
+[REDACTED_ENCODED_OR_IDENTIFIER] limit=393216 entries_limit=512
+PASS: current typography fresh-vs-retained pixels/layout/hit targets; fixed light/dark header/back targets; deterministic cached glyphs; bounded glyph eviction; rotation/pitch; reinitialization and unavailable-document failures. Legacy raster is intentionally different and is not an equivalence target.
+html_view: cannot load font [REDACTED_ENCODED_OR_IDENTIFIER].ttf
+{"page": "home", "height": 480, "iterations": 50, "full_render_ms": 406.717, "scroll_repaint_ms": 87.124}
+{"page": "home-dark", "height": 480, "iterations": 50, "full_render_ms": 383.292, "scroll_repaint_ms": 88.656}
+{"page": "long-settings", "height": 750, "iterations": 50, "full_render_ms": 299.282, "scroll_repaint_ms": 56.574}
+{"page": "long-settings-dark", "height": 750, "iterations": 50, "full_render_ms": 294.353, "scroll_repaint_ms": 55.905}
+[REDACTED_ENCODED_OR_IDENTIFIER] limit=393216 entries_limit=512
+PASS: current typography fresh-vs-retained pixels/layout/hit targets; fixed light/dark header/back targets; deterministic cached glyphs; bounded glyph eviction; rotation/pitch; reinitialization and unavailable-document failures. Legacy raster is intentionally different and is not an equivalence target.

@@ -1,0 +1,39 @@
+TopFlow 0.1.1 用户自行切换后的退出调查
+
+用户报告
+先看到“本次等待剩余317秒”，随后收到 failure:RENDERER_EXITED。
+剩余秒数是360秒总截止的余额，不是实际启动预计时间。两原厂锁释放即继续。
+已有SDK证据显示熄屏后180000ms释放自动休眠核锁，尚无确证的立即交接接口。
+
+已实读确认（开发者未执行切换）
+- 设备已安装本机0.1.1归档[REDACTED_ENCODED_OR_IDENTIFIER]。
+- 原生程序a9f4521f…、辅助程序9b786000…与交付包一致。
+- last-status为failure:RENDERER_EXITED，无本插件主程序/辅助程序；原厂PID18279持有DRM master。
+- 原厂服务实例running=true，三个zwrt_deviceui方法存在；UFI及datad健康接口成功。
+- PIN开关仍为1；未读取PIN值。运行目录无pin-state，恢复路径不删除这个文件。
+  因此退出很可能发生在prepare/helper或PIN初始化阶段，尚不能认定DRM/字体/首帧错误。
+- 内核日志中原UI关闭显示84719.159、新原UI初始化84723.699，相隔约4.54秒。
+  与辅助程序4000ms准备超时接近，只是线索，不是确定根因。
+- 检索所得日志未见本程序段错误或内存不足证据。原版本丢弃stderr及wait退出码，
+  无法从这次残留状态还原具体失败阶段；不得将RENDERER_EXITED断言成程序崩溃。
+
+推翻旧假设：休眠事件节点并非无副作用的状态读取
+内核明确记录：[REDACTED_ENCODED_OR_IDENTIFIER]读取is_suspended_enter后“clear it”。
+0.1.1每次预检使用fread到EOF，实际两次读取；该逻辑可能消费原厂尚未处理的事件。
+开发者早先将其当作getter，在只读取证脚本中也读取了该节点。本轮两次读取所见均为0，
+未观察到由此造成的异常，但不应再声称这种读取本身无副作用。
+确认后立即停止该节点读取，analysis/probe.py增加连接前拦截，防止旧清单重跑。
+SDK的getSleepState仅在原厂暗态点亮路径消费它；它不能作为当前panel挂起布尔状态。
+本机修订必须移除预检的消费性读取，并明确区分事件、休眠通知和可观察硬件状态。
+
+下一候选要求
+只在电脑修改和验证；不在设备安装、启动、注入或试运行诊断程序。
+固定阶段码与实际退出状态有界保存，不追加原始日志、不输出凭据。
+原厂恢复和精确自有锁清理优先，未知状态不得降级为成功。
+保留当前0.1.1作为失败版本证据；新候选使用独立版本，不能宣称已实机修复。
+
+证据
+[REDACTED_ENCODED_OR_IDENTIFIER].txt
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_ENCODED_OR_IDENTIFIER].txt
+[REDACTED_SENSITIVE_CONTEXT]

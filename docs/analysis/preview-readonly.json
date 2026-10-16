@@ -1,0 +1,4 @@
+{
+  "preview-state": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+  "preview-services": "pidof zte_topsw_devui ufi-tools-zwrt zwrt-datad; cat [REDACTED_ENCODED_OR_IDENTIFIER]"
+}

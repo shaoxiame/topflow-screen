@@ -1,0 +1,3 @@
+{
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "if [ -f /tmp/wakelockMap.txt ]; then cat /tmp/wakelockMap.txt; else printf 'ABSENT\\n'; fi"
+}

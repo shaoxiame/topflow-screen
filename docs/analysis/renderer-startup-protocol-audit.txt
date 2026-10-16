@@ -1,0 +1,123 @@
+Renderer startup / factory-bus independent audit — [REDACTED_NUMBER]
+
+Scope: local source, downloaded firmware libraries, and root-collected read-only
+evidence only. No device commands, service changes, or hardware tests by this
+reviewer. This report does not identify the exact RENDERER_EXITED cause.
+
+CONFIRMED DEFECT: READ-TO-CLEAR EVENT
+[REDACTED_ENCODED_OR_IDENTIFIER].txt records the kernel message
+"read is_suspended_enter by topflow-screen [0]and clear it" twice per preflight.
+[REDACTED_SENSITIVE_CONTEXT]
+The old stdio read-to-EOF additionally causes repeated driver reads. Neither a
+zero value nor a second zero read proves that the panel is awake.
+
+[REDACTED_SENSITIVE_CONTEXT]
+InfokeyBrightAction (0x19b94) and businessbackFun (0x19f38) occur on an actual wake
+path when brightness is zero and g_sleep_mode != 1. A value of 1 selects a
+different resume/callback path. The plugin must not consume it while the factory
+application owns the screen. No side-effect-free live suspend getter has been
+established in the available evidence. Deleting all plugin reads is appropriate;
+replacing them with a constant zero would not be appropriate.
+
+STARTUP STAGE EVIDENCE, NOT A PROVEN CAUSE
+[REDACTED_SENSITIVE_CONTEXT]
+setting was independently confirmed enabled. Its startup order was prepare/adopt
+[REDACTED_SENSITIVE_CONTEXT]
+it does not prove a helper failure. Kernel factory pipe-disable at 84719.159 and
+new factory initialization at 84723.699 are about 4.54 seconds apart, consistent
+with, but not proof of, the parent's 4000 ms helper READY deadline. No crash/OOM
+message was present in the supplied bounded kernel evidence. Original process,
+DRM ownership, and UFI health were restored in the recorded post-failure state.
+
+ACTUAL LIBRARY ABI / TRANSPORT CHECKS
+ARM64 offsetof output: [REDACTED_ENCODED_OR_IDENTIFIER].s.
+Firmware instruction evidence: [REDACTED_ENCODED_OR_IDENTIFIER].txt,
+[REDACTED_ENCODED_OR_IDENTIFIER].txt, [REDACTED_ENCODED_OR_IDENTIFIER].txt.
+The compiled headers agree with the actual library instructions for:
+  ubus_context size 0xc8; sock 0x50; sock.fd 0x58; connection_lost 0xa0;
+  uloop_fd size 0x10; cb 0; fd 8; [REDACTED_ENCODED_OR_IDENTIFIER] 0xc/0xd/0xe/0xf;
+  uloop_timeout pending 0x10; callback 0x18; timeval 0x20;
+  ubus_object name 0x38; id 0x40; type 0x50; methods 0x68; count 0x70;
+  ubus_method stride 0x30; policy 0x20; count 0x28.
+No ABI mismatch was found in those accessed fields. This is more specific than
+matching exported symbol names; it is not a complete dynamic execution test.
+
+Firmware ubus_reconnect at 0x3e08 selects /var/run/ubus/ubus.sock when given NULL.
+The helper uses ubus_connect(NULL), so it uses the firmware library's own path.
+The helper's ELF architecture, interpreter, needed ubus/ubox SONAMEs and imports
+match the downloaded library evidence. The link-only import stubs are not runtime
+implementations and must never be deployed. Root subsequently downloaded the
+existing libc as [REDACTED_ENCODED_OR_IDENTIFIER].so (590849 bytes). Static union
+checking of its exports with real ubus/ubox resolves all strong imports of the
+locally built helper; no missing dynamic symbol was found. No ARM64 binary or
+dynamic loader has been executed locally, so full runtime compatibility is not
+claimed.
+
+The private socketpair protocol is 16 bytes (four uint32_t fields), same-endian
+ARM64 at both ends, with matching magic, READY and ACK validation. No mismatch
+[REDACTED_SENSITIVE_CONTEXT]
+pass timeout=0 to firmware ubus_complete_request, which uses poll(...,-1).
+The parent's 4000 ms deadline is therefore the bounded protection for those
+synchronous operations. Event registration also passes timeout=0 (w6 at 0x4a0c
+before ubus_invoke_fd), so it too relies on the parent deadline. The separate
+uloop timeout calls use milliseconds. An earlier interim message misattributed
+a 1000 ms uloop timer/reconnect value to event registration; this paragraph is
+the corrected instruction-level conclusion. No unit-conversion error was found.
+
+Old PID disappearance does not synchronously prove that ubusd has processed that
+connection's EOF. A one-shot same-name object registration could fail in such a
+race, but the recorded evidence contains no registration result and does not
+establish this as the cause. Fixed startup-stage reporting is needed; a generic
+[REDACTED_SENSITIVE_CONTEXT]
+
+MINIMUM REPLACEMENT CONTRACT TO REVIEW
+Use the original-online receipt plus fresh ownership/provider checks, a finite
+plugin-owned transition wake guard, registered sleep notifications, a complete
+safe lock-screen frame, brightness readback and LCD-lock handshake. Acquire and
+verify the finite guard before initialization/frame submission and before every
+wake/resync frame. Only a successful complete frame may precede a requested
+brightness increase. Real failure must retain the existing factory restoration
+path; there is no permission to clear factory-owned wake locks or invent awake.
+
+At initial review, drm_disp_dirty still converted EINVAL/ENOSYS into success.
+That cannot serve as proof of a new safe lock-screen frame after resume. Native
+owner was notified to make DIRTYFB errors strict before relying on frame_ready.
+SETCRTC success at initial startup does not prove a later resume frame succeeded.
+Even successful driver submission and brightness/LCD-lock readback do not prove
+physical illumination or glitch-free resume; those remain hardware acceptance
+items. The initial read-to-clear defect is real regardless of whether it caused
+this particular exit.
+
+REVISED SOURCE REVIEW / LOCAL VALIDATION
+The native owner has now removed the production read-to-clear path and the
+fictitious suspended input/receipt field. Fresh exact own-guard presence is
+checked after a frame and before adopt/request/resync can reacquire a transition
+guard, so an expired frame lease is rejected instead of silently renewed. All
+DIRTYFB errors now fail. Wake/resync render a complete locked frame before a
+brightness increase; failure retains the factory recovery path. The reviewer
+read these resulting paths and found no additional blocker in this narrow scope.
+
+Helper startup emits bounded enum stages 1..9. The parent records the last stage
+[REDACTED_SENSITIVE_CONTEXT]
+initialization has separate fixed [REDACTED_ENCODED_OR_IDENTIFIER] codes. Preflight
+and --monotonic-seconds return before atexit diagnostic registration, so those
+read-only modes do not create a diagnostic file. The exit publisher accepts only
+an owned 0700 directory and a non-symlink, root-owned, single-link 0600 regular
+file, writes a bounded fixed-enum record, and never stores arbitrary stderr or
+[REDACTED_SENSITIVE_CONTEXT]
+
+The shell collector was independently reviewed: it waits only after the child
+is gone or a zombie; a live child or unreadable identity does not cause a wait.
+It accepts at most 64 bytes of a single fixed-enum line. Factory restore/guard
+release failure remains the primary status, with the renderer exit/detail merely
+attached. Manager parsing only accepts exit 0..255 and recognized detail codes;
+an exit >=128 is correctly described as possibly signal-related, not proof.
+
+Native owner reported passing the actual extracted parent-stage/4000 ms deadline,
+FATAL/EOF/first-error tests; strict DIRTYFB error tests; production zero-event-read
+check; bounded diagnostic-file tests; [REDACTED_ENCODED_OR_IDENTIFIER]
+policy/control suites; and ARM64 main/helper -Werror builds/import checks. These
+are local tests and compilation. They do not establish the old exit's cause or
+prove that a candidate starts, displays, resumes, or restores correctly on the
+physical panel. The next package remains a diagnostic candidate, not a hardware-
+verified repair.

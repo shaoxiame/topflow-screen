@@ -1,0 +1,22 @@
+[
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: actual navigation has one mode-dependent home in four pages; hidden home aliases cannot bypass mode; enable/disable updates home; detail/form/modal navigation preserved; no control writes"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: actual native snapshot parser+presentation matches browser fixtures: rate precision, primary metrics, QCI/title, disabled cards, totals/online count and stale gaps"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: continuous gesture [REDACTED_ENCODED_OR_IDENTIFIER], monotonic settle skips late frames, no offscreen DRM submit, pinned swipe rows, scrolled-source commit/cancel document/scroll, retained scroll repaint, actual main branches preserve new input and exclude 200ms preparation from animation, sleep cancels to source before policy and frees motion buffers"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "[REDACTED_SENSITIVE_CONTEXT]"
+  }
+]

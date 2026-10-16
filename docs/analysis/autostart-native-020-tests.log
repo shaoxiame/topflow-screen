@@ -1,0 +1,24 @@
+✔ autostart settings require explicit confirmation and do not exist by default (56.6089ms)
+✔ enable is idempotent and arms a future boot without starting or stopping display (3103.9387ms)
+✔ corrupt or mismatched boot component prevents enable before shared boot changes (709.3148ms)
+✔ status is read-only and refuses enabled status when signed components changed (1013.6081ms)
+✔ disable removes the opt-in and future boot hook without stopping the active screen (1047.3117ms)
+✔ boot waits at most its deadline, keeps factory running and never retries that boot (5249.0651ms)
+✔ a ready boot launches the normal controller once and confirms three healthy samples (2435.4539ms)
+✔ failed startup never retries or issues another factory/display command (2159.1113ms)
+✔ opt-in removed during readiness prevents the pending boot handover (2322.3318ms)
+✔ manual restoration cancels the pending boot worker and preserves future-boot opt-in (1361.7045ms)
+✔ cancel refuses a reused or unrelated live worker identity without signalling it (455.8413ms)
+✔ a successful uninstall removes all own autostart metadata and no shared record survives (3126.3969ms)
+✔ an old installation cannot silently delete an unknown newer boot hook (807.312ms)
+✔ boot startup requires unchanged installation, active opt-in and no cancel flag under lock (3135.9952ms)
+✔ supervisor never inherits the boot-worker lock and worker does not keep lifecycle lock while waiting (0.1931ms)
+✔ real controller and real boot editor preserve another plugin through enable, disable and complete uninstall (15170.9481ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 42212.6305

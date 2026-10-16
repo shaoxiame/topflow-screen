@@ -1,0 +1,46 @@
+[
+  {
+    "path": "[REDACTED_ENCODED_OR_IDENTIFIER].h",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "native/form_pages.h",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "native/service_pages.h",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "[REDACTED_ENCODED_OR_IDENTIFIER].h",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "[REDACTED_ENCODED_OR_IDENTIFIER].h",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "[REDACTED_ENCODED_OR_IDENTIFIER].h",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "native/power_pages.h",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "native/ufi_auth.h",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "[REDACTED_SENSITIVE_CONTEXT]",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "[REDACTED_SENSITIVE_CONTEXT]",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  {
+    "path": "native/local_http.h",
+    "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  }
+]

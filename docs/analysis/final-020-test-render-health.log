@@ -1,0 +1,2 @@
+PASS: no readiness before first frame; first/subsequent render failure cannot heartbeat; successful frame and normal standby remain live
+PASS: same-engine FreeType invalid font fails initialization with exit 5

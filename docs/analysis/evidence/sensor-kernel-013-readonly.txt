@@ -1,0 +1,131 @@
+SENSOR_KERNEL_WINDOW
+[126202.696035][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126202.766185][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126202.766207][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126202.836345][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126202.836371][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126202.906782][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126202.906812][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126202.975964][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126202.975981][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.045947][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.045963][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.115992][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.116034][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.186194][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.186210][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.256195][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.256223][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.326972][T20435] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.327002][T20435] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.396633][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.396667][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.466998][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.467032][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.535957][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.535976][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.606049][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.606066][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.675972][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.675988][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.745956][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.745972][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.816071][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.816087][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.886422][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.886441][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126203.893849][T17703] [STK]  stk_als_enable_store 159: Enable ALS : 1
+[126203.893870][T17703] [STK]  stk_als_enable_store 163: Enable ALS : 1
+[126203.893874][T17703] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 1144: ALS status is same (1)
+[126203.955943][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126203.955955][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126204.025983][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126204.026000][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126204.095930][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126204.095943][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126204.415045][T17618] [drm:qpic_display_pipe_enable] *ERROR* [REDACTED_ENCODED_OR_IDENTIFIER] 
+[126205.152750][T17947] [STK]  stk3329b_init_client 1455: Satrt
+[126205.172637][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 0] = 0x 0
+[126205.172931][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 1] = 0x31
+[126205.173209][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 2] = 0x38
+[126205.173479][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 3] = 0xFF
+[126205.173749][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 4] = 0x 1
+[126205.174017][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 5] = 0x 7
+[126205.174289][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 6] = 0xFF
+[126205.174557][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 7] = 0xFF
+[126205.175152][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 8] = 0x 0
+[126205.175421][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x 9] = 0x 0
+[126205.175680][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x A] = 0xFF
+[126205.175936][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x B] = 0xFF
+[126205.176189][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x C] = 0x 0
+[126205.176442][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x D] = 0x 0
+[126205.176695][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x10] = 0x 1
+[126205.176948][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x11] = 0x 0
+[126205.177200][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x12] = 0x 0
+[126205.177450][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x13] = 0x 0
+[126205.177701][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x14] = 0x 0
+[126205.177953][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x15] = 0x 0
+[126205.178203][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x16] = 0x 0
+[126205.178453][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x17] = 0x 0
+[126205.178747][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x18] = 0x 0
+[126205.179008][T17947] [STK]  stk3329b_dump_reg 1359: Reg[0x3E] = 0x15
+[126205.181129][T17952] [STK]  stk_als_enable_store 159: Enable ALS : 1
+[126205.181148][T17952] [STK]  stk_als_enable_store 163: Enable ALS : 1
+[126205.181153][T17952] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 68: Load Calibration Parameter
+[126205.181157][T17952] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 72: als_version = 0x0, als_scale = 0x0
+[126205.181162][T17952] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 77: ps_version = 0x0, ps_near = 0x0, ps_far = 0x0, ps_ctir = 0x0
+[126205.188251][T17952] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 1245: ALPS Timer SETTING
+[126205.188980][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 0] = 0x 2
+[126205.189262][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 1] = 0x31
+[126205.189541][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 2] = 0x38
+[126205.189817][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 3] = 0xFF
+[126205.190096][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 4] = 0x 1
+[126205.190372][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 5] = 0x 7
+[126205.190647][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 6] = 0xFF
+[126205.190948][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 7] = 0xFF
+[126205.191277][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 8] = 0x 0
+[126205.191597][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x 9] = 0x 0
+[126205.191912][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x A] = 0xFF
+[126205.192223][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x B] = 0xFF
+[126205.192538][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x C] = 0x 0
+[126205.192848][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x D] = 0x 0
+[126205.193154][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x10] = 0x 1
+[126205.193450][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x11] = 0x 0
+[126205.193743][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x12] = 0x 0
+[126205.194028][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x13] = 0x 0
+[126205.194315][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x14] = 0x 0
+[126205.194651][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x15] = 0x 0
+[126205.194961][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x16] = 0x 0
+[126205.195711][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x17] = 0x 0
+[126205.196176][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x18] = 0x 0
+[126205.196486][T17952] [STK]  stk3329b_dump_reg 1359: Reg[0x3E] = 0x15
+SENSOR_SYSFS_NAMES
+act8945a
+aw86320
+dummy
+i2c_pmic
+ir-kbd-i2c
+stk3329b
+tabla-i2c-core
+tasha-i2c-core
+tavil-i2c-core
+tcpci
+wcd9xxx-i2c-core
+[REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_ENCODED_OR_IDENTIFIER],qupv3_0_geni_se@9c0000/i2c@994000/stk@48
+[REDACTED_ENCODED_OR_IDENTIFIER],qupv3_0_geni_se@9c0000/i2c@994000/stk@48/stk,irq-gpio
+[REDACTED_ENCODED_OR_IDENTIFIER],qupv3_0_geni_se@9c0000/i2c@994000/stk@48/stk,ps_thd_l
+[REDACTED_ENCODED_OR_IDENTIFIER],qupv3_0_geni_se@9c0000/i2c@994000/stk@48/stk,ps_thd_h
+[REDACTED_ENCODED_OR_IDENTIFIER],qupv3_0_geni_se@9c0000/i2c@994000/stk@48/stk,ps_is_dri
+[REDACTED_ENCODED_OR_IDENTIFIER],qupv3_0_geni_se@9c0000/i2c@994000/stk@48/stk,als_scale
+[REDACTED_ENCODED_OR_IDENTIFIER],qupv3_0_geni_se@9c0000/i2c@994000/stk@48/stk,ps_ctir
+[REDACTED_ENCODED_OR_IDENTIFIER]@[REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_ENCODED_OR_IDENTIFIER]
+PRODUCT=18/0/0/0
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+PROP=0
+EV=9
+ABS=[REDACTED_NUMBER]
+MODALIAS=input:b0018v0000p0000e0000-e0,3,kra28,mlsfw
+
+STDERR:

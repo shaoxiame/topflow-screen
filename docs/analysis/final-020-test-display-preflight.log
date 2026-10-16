@@ -1,0 +1,3 @@
+PASS: read-only preflight captures policy/locks; post-stop adoption never accesses unpowered sensor; DRM-ready gate precedes live sensor checks; bounded I/O retries and one enable require real lux, preserve guard/helper checks; persistent I/O, invalid value, missing identity, expired guard and stale lux fail closed; never writes UCI or vendor locks
+PASS: every production C/header ubus path matches the captured device executable
+PASS: production main orders guard -> DRM black frame -> sensor -> policy -> verify existing lease -> protected UI frame -> LCD ON -> heartbeat

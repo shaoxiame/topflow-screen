@@ -1,0 +1,6 @@
+{
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "[REDACTED_SENSITIVE_FIELD]",
+  "review-original-display": "cat [REDACTED_ENCODED_OR_IDENTIFIER]; ls -l /dev/input/event5",
+  "review-original-files": "sha256sum [REDACTED_ENCODED_OR_IDENTIFIER] /etc/init.d/zte_topsw_devui",
+  "review-plugin-absence": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]"
+}

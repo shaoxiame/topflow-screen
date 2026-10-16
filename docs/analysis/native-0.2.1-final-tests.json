@@ -1,0 +1,193 @@
+[
+  {
+    "exit": 0,
+    "test": "[REDACTED_SENSITIVE_CONTEXT]",
+    "log": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log",
+    "rerunNote": "Initial harness compile required declarations for the new local lock animation state. Harness updated; production code unchanged; targeted rerun passed."
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_SENSITIVE_CONTEXT]",
+    "log": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_SENSITIVE_CONTEXT]",
+    "log": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  },
+  {
+    "exit": 0,
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log"
+  }
+]

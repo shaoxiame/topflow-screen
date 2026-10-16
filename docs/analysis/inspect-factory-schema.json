@@ -1,0 +1,3 @@
+{
+  "factory-api-schemas": "ubus -v list 'zwrt_zte_mdm.api'; ubus -v list 'zwrt_data'; ubus -v list 'zwrt_bsp.*'; ubus -v list 'zwrt_deviceui*'; ubus -v list 'zwrt_router.api'"
+}

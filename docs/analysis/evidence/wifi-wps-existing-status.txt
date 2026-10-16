@@ -1,0 +1,30 @@
+{
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+		{
+[REDACTED_SENSITIVE_FIELD]
+			"wps_status": "idle",
+			"wps_action": "",
+			"remaining": 0
+		},
+		{
+[REDACTED_SENSITIVE_FIELD]
+			"wps_status": "idle",
+			"wps_action": "",
+			"remaining": 0
+		},
+		{
+[REDACTED_SENSITIVE_FIELD]
+			"wps_status": "idle",
+			"wps_action": "",
+			"remaining": 0
+		},
+		{
+[REDACTED_SENSITIVE_FIELD]
+			"wps_status": "idle",
+			"wps_action": "",
+			"remaining": 0
+		}
+	]
+}
+
+STDERR:

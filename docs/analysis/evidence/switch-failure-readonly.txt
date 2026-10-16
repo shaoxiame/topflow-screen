@@ -1,0 +1,42 @@
+FACTORY_PID
+18392
+OUR_PIDS
+DISPLAY_MASTER
+             command   pid dev master a   uid      magic
+     zte_topsw_devui [REDACTED_NUMBER]   y    y     [REDACTED_NUMBER]
+INSTALL_METADATA
+drwx------    4 root     root          4096 Oct 16 05:28 [REDACTED_ENCODED_OR_IDENTIFIER]
+total 2320
+-rw-rw-rw-    1 root     root          2157 Oct 16 04:49 NOTICE.txt
+-rw-rw-rw-    1 root     root          2185 Oct 16 04:51 REBUILD.txt
+-rw-rw-rw-    1 root     root          9754 Oct 16 05:21 build-manifest.json
+drwxrwxrwx    2 root     root          4096 Oct 16 05:28 licenses
+-rwxr-xr-x    1 root     root         20578 Oct 16 05:19 screenctl.sh
+-rwxr-xr-x    1 root     root         13853 Oct 16 05:19 supervisor.sh
+-rwxr-xr-x    1 root     root         24552 Oct 16 04:59 [REDACTED_ENCODED_OR_IDENTIFIER]
+-rwxr-xr-x    1 root     root       2275016 Oct 16 05:21 topflow-screen
+-rw-rw-rw-    1 root     root           175 Oct 16 05:21 topflow-screen.sha256
+drwxrwxrwx    3 root     root          4096 Oct 16 05:28 ui
+drwx------    2 root     root           100 Oct 16 05:36 /tmp/topflow-screen
+total 4
+-rw-------    1 root     root             0 Oct 16 05:36 control.lock
+-rw-------    1 root     root            24 Oct 16 05:36 last-status
+-rw-------    1 root     root             0 Oct 16 05:36 supervisor.lock
+BOUNDED_RUNTIME_STATE
+[REDACTED_ENCODED_OR_IDENTIFIER]
+
+BINARY_CHECKSUMS
+[REDACTED_ENCODED_OR_IDENTIFIER]  [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_ENCODED_OR_IDENTIFIER]  [REDACTED_ENCODED_OR_IDENTIFIER].sh
+[REDACTED_ENCODED_OR_IDENTIFIER]
+83551.[REDACTED_NUMBER].41
+WAKE_LOCK_NAMES
+sysZteSleepLock zteSleepBacklight [REDACTED_ENCODED_OR_IDENTIFIER]
+FACTORY_SERVICE_NAMES
+HEALTH
+ok
+
+{"ok": true, "service": "ufi-tools-zwrt"}
+
+
+STDERR:

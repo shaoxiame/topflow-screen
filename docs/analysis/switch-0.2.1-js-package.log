@@ -1,0 +1,29 @@
+✔ browser registration only adds an entry and performs zero device requests (1.9289ms)
+✔ install start refuses an existing target and does not start any renderer (0.4236ms)
+✔ binary upload uses documented FormData endpoint and validates exact returned path (11.0119ms)
+✔ finish validates hash before extraction and never changes factory/startup files (0.1746ms)
+✔ screen controls are explicit, narrowly scoped and status is parsed without false success (1.4622ms)
+✔ current final candidate uses the documented script format and exact live direct-switch native archive (67.2548ms)
+✔ release gate rejects incomplete local verification and review payload blocks installation and activation (0.7119ms)
+✔ diagnostic candidate has a separate honest gate and cannot weaken the failed release gate (0.2928ms)
+✔ native archive inspection rejects symlinks before packaging (51.8482ms)
+✔ review packaging refuses stale native source, lifecycle scripts or UI even with valid archive checksums (6.0673ms)
+✔ both native executables require exact checksums and the ARM64 architecture (0.3654ms)
+✔ production validation rejects preview APIs and demo factories regardless of whether they are called (1.3204ms)
+✔ native package must explicitly declare real data and CLOCK_MONOTONIC heartbeat (0.3312ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ current install instructions describe direct switching and exact old-version migration without claiming hardware success (0.1693ms)
+✔ payload source uses bounded lines without changing archive bytes or recovery script (7.6053ms)
+✔ boot package covers every byte with checksums and declares disabled-by-default bounded startup (12.7987ms)
+✔ saved UFI manual importer accepts raw source and preserves the AoYou-style public header without internal store metadata (8.7883ms)
+✔ actual UFI importer documents that manual same-filename imports are skipped, not upgraded (1.5659ms)
+✔ raw TopFlow import preserves other installed plugin blocks and their host-owned metadata (4.8998ms)
+✔ the actual generated script registers from a UFI-style head injection with lexical API globals and zero device requests (23.7185ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 227.3959

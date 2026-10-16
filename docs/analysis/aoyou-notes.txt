@@ -1,0 +1,94 @@
+遨游世界与 TopFlow 的本地适配说明 — [REDACTED_NUMBER]
+
+范围
+本次仅静态分析本机 [REDACTED_ENCODED_OR_IDENTIFIER].txt（设备已有的遨游世界
+2.9.1 源码），编写并在电脑运行适配器测试。此子任务没有连接设备、没有执行
+原插件、没有调用设备接口、没有创建任何远程文件。
+
+确定的原插件结构
+[REDACTED_SENSITIVE_CONTEXT]
+   注释块包裹，KANO_META 的 v 是版本号。适配器仅解析名称/版本/禁用状态，
+   不返回也不执行插件源。若同名多份，按原 UFI 规则最后一份有效。
+2. 遨游世界 2.9.1 的数据目录为 [REDACTED_ENCODED_OR_IDENTIFIER]，Mihomo 控制器是
+   当前代 runtime.json 中配置的回环地址，默认端口 19090。不能假定所有设备
+[REDACTED_SENSITIVE_CONTEXT]
+3. 原插件 window.__aoyou_world_plugin 对象是完整 UI，不是只读公共 API。
+   device.status()/device.api() 都通过 command()，command() 先 prepare()。
+   prepareOnce() 可能安装程序文件、创建 bridge/snapshot 锁文件，并安排
+   program-refresh / temp prune。因此读取原插件 API 不等于设备只读。
+   新适配器完全不调用此对象及其 prepare、command、open、load、mount 等。
+
+新增接口 src/aoyou-adapter.js
+[REDACTED_SENSITIVE_CONTEXT]
+createAdapter({ mode, transport, snapshot, pluginSource })。
+mode 默认 readonly；demo 只改内存；control 才允许实际控制且每次必须传入
+{userInitiated:true}。transport 是独立注入的 Mihomo 桥接函数，接收
+{method,path,body}，返回解析后的 JSON；禁止把原插件 device.api 直接作为桥接。
+
+[REDACTED_SENSITIVE_CONTEXT]
+setMode(rule|global|direct,{userInitiated:true}): PATCH /configs，随后 GET
+  核验 mode。只改变内核运行态，返回 persistent:false；原插件重载配置可能覆盖。
+managementEntry(): 返回不可用及原因；本次不能打开可能执行 prepare 的原面板。
+
+可以实现和显示的部分
+- 遨游运行状态、内核版本、规则/全局/直连模式。
+- 策略组、已选节点、节点已有延迟与存活状态。
+- 本地演示节点切换及模式切换，没有网络请求。
+- 将来接入独立审核的控制桥后，支持上述节点和模式真实操作，并复读确认。
+
+明确的边界
+[REDACTED_SENSITIVE_CONTEXT]
+- 现有插件没有稳定、无副作用的打开入口；不能把“进入完整管理”做成假按钮。
+- 未执行设备写入，因此真实 PUT/PATCH 仅按已确认的 Mihomo 接口实现，尚未
+  在用户设备验证。测试通过不等于真机功能验证。
+- 浏览器 TXT 插件与设备物理屏幕程序不是同一个运行环境；本适配器可复用于
+  管理页面，但不能单独接管 320×480 物理屏幕。
+
+验证
+[REDACTED_SENSITIVE_CONTEXT]
+覆盖默认只读拒绝全部写操作、显式动作门控、演示零网络、原源码不执行、
+输出秘密字段过滤、节点/模式输入校验、URI 编码、写后复读确认及失败不误报。
+
+独立 UFI 桥接（新增 src/aoyou-ufi-transport.js）
+createTransport({runShellWithRoot}) 使用 UFI 已有的 root shell 接口，仅提交固定
+模板命令；没有执行原插件 service.sh、prepare 或任何启动/升级逻辑。默认只读。
+控制桥须单独传 allowWrites:true，且适配器仍需 control 模式及显式用户动作。
+[REDACTED_SENSITIVE_CONTEXT]
+包括 PUT 策略组的单一 name 字段、PATCH /configs 的单一 mode 枚举字段。
+路径与 JSON 参数经 Base64 注入固定模板，不执行动态输入。遍历片段、控制字符、
+多余字段及未知路由均拒绝。
+
+最初尝试 jq 时设备明确返回 UNSUPPORTED_JQ；没有安装依赖。
+root 随后只读确认已有 jsonfilter、lua5.1 与 luci.jsonc（parse/stringify）。
+最终远端仅使用已有 curl、jsonfilter、lua5.1/luci.jsonc 和基础命令；
+缺依赖返回 UNSUPPORTED_*，绝不安装。
+通过 pidof 找唯一 mihomo，并核对 /proc/PID/exe 与 /proc/PID/cmdline 中 -f。
+只接受 [REDACTED_ENCODED_OR_IDENTIFIER]{24位小写十六进制}/runtime.json
+或同目录的 runtime.self.json（用户提供 2.10.0 源码列明该文件），
+readlink -f 必须与该路径相同。配置中的控制器必须为 [REDACTED_IP] 的有效端口。
+[REDACTED_SENSITIVE_CONTEXT]
+不放进 curl 命令行参数、不返回浏览器。curl 禁用默认配置、代理和跟随重定向。
+响应在设备内经固定 Lua 代码和 luci.jsonc 白名单筛选后才返回；/configs 只返回
+[REDACTED_SENSITIVE_CONTEXT]
+控制请求的 JSON 与 curl 配置引用在电脑/浏览器先双层 JSON 编码，再 Base64
+注入固定 shell 模板；设备无需 jq，也不会执行节点或组名里的 shell 字符。
+
+只读快照命令由 buildSnapshotCommand() 生成（共3次GET，每次8秒上限；
+SSH外层宜给30秒）。parseSnapshotOutput(stdout) 返回可直接传入适配器的
+sanitized snapshot。本子任务没有连接设备；root 已只读实机执行上述最终版本：
+[REDACTED_SENSITIVE_CONTEXT]
+- 遨游运行中，内核 v1.19.32-ayw.1，mode=rule，共读取36个策略组。
+- 脱敏证据 [REDACTED_ENCODED_OR_IDENTIFIER].txt（108149字节）及
+[REDACTED_SENSITIVE_CONTEXT]
+
+用户补充开发文档后的核对
+- 开发文档/遨游世界插件.txt 为 2.10.0，runtimeVersion 2.1.0；并非设备下载的
+  2.9.1。两份源均仅静态阅读。新版 prepareOnce 仍存在安装/准备写入逻辑。
+- 新版备份校验包含 hybrid/self 分支的 runtime.self.json。桥只扩展该确切文件名，
+  仍从运行进程的 -f 参数查配置并核验唯一进程、真实路径、generation、loopback
+  控制器和 JSON 字段。该分支未在设备读取验证，缺字段或不兼容时明确报错。
+- (1.0.0)插件开发文档要求不手写商店内部标记、直接请求 /api/run_shell、
+  二进制使用 /api/upload_file。TXT 包装已按该文档调整。底层桥参数名
+  runShellWithRoot 仅为注入函数契约；包装器不调用或覆盖原页面同名全局函数。
+- 新打包上传固定 .payload.tar.gz 至全新自有目录，再做 SHA-256 检查；不通过
+  Shell 传二进制，不修改已有目录。所有实际安装和控制路径本轮均未执行。

@@ -1,0 +1,19 @@
+{
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+				"running": true,
+				"pid": 18392,
+[REDACTED_SENSITIVE_FIELD]
+					"[REDACTED_ENCODED_OR_IDENTIFIER]"
+				],
+				"term_timeout": 5,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+					"threshold": 3600,
+					"timeout": 3,
+					"retry": 500
+				}
+			}
+		}
+	}
+}
+
+STDERR:

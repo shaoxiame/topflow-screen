@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "scope": "Local validation only; no device access or changes",
+  "physicalPixels": [
+    320,
+    480
+  ],
+  "font": "existing factory ZTEZhengYuan.ttf",
+  "fontEvidence": {
+    "fpgm": false,
+    "cvt": false,
+    "prepBytes": 8,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 0
+  },
+  "changes": [
+    "Force FreeType auto-hinting at native pixel size, normal grayscale raster, no embedded bitmap strike",
+    "[REDACTED_SENSITIVE_CONTEXT]",
+    "Increase light-theme secondary text contrast",
+    "Unify overlapping direct-text coverage before contrast-color selection to prevent self-ink being mistaken for background"
+  ],
+  "limits": {
+    "glyphSlots": 512,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "only clipped text rectangle; a few KiB for ordinary labels",
+    "pinnedHeaderMaxBytes": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "tests": [
+    "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].json: 24 actual rendered theme/back hit checks"
+  ],
+  "performance": {
+    "before": "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "after": "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "meaning": "50 desktop paints, same new typography CSS, old renderer versus grid-fitted renderer. Not device FPS. Readability raises paint cost slightly; retained document and glyph limits are preserved."
+  },
+  "pixelBaseline": "The original 0.1.5 raster is deliberately different. It is a legacy performance/visual reference only, never a pixel-equivalence assertion.",
+  "screenshots": {
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "[REDACTED_ENCODED_OR_IDENTIFIER].png",
+    "currentPages": [
+      "native/preview/index.png",
+      "[REDACTED_ENCODED_OR_IDENTIFIER].png",
+      "native/preview/network.png",
+      "native/preview/apps.png",
+      "[REDACTED_ENCODED_OR_IDENTIFIER].png"
+    ],
+    "pinInitial": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "sourceSha256": "[REDACTED_SENSITIVE_FIELD]"
+}

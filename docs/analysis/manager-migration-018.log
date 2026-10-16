@@ -1,0 +1,11 @@
+✔ installed 0.1.7 is readable and recoverable through the new controller without starting the old renderer (6891.0483ms)
+✔ 0.1.7 migration rejects modified executable bytes, an altered member list or unknown ownership before writes (1811.2698ms)
+✔ an exactly owned interrupted 0.1.7 uninstall can finish without running a missing old entry point (3892.6734ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12658.9665

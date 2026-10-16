@@ -1,0 +1,60 @@
+✔ status rejection during cancellation keeps all control blocked until restore really finishes (19.4087ms)
+✔ a never-returning status is cancellable and a later custom response cannot overwrite confirmed cancellation (3.4225ms)
+✔ failed restoration cannot be reported as successfully cancelled even when factory PID is visible (2.6132ms)
+✔ confirmed cancellation finishes without a redundant read trapping the manager in busy state (3.1807ms)
+✔ uninstalling a waiting installation disables cancellation and the handler cannot send a parallel restore (2.1937ms)
+✔ an initial status that never returns times out locally and its late response cannot change the panel (1.6814ms)
+✔ a timed-out pre-switch status releases busy without submitting an action or retaining its deadline (1.5859ms)
+✔ the first post-start status is bounded before waiting UI is known and late custom state cannot report success (2.2804ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ manager loads without requests, opens with one status read and keeps advanced polling unmounted (16.9052ms)
+✔ review manager blocks installation and activation while preserving explicit recovery and cleanup (8.9427ms)
+✔ factory PID after a failed restore cannot masquerade as a successful service recovery (2.0697ms)
+✔ first switch requires one confirmation then installs, uploads, verifies and starts (4.6626ms)
+✔ cancelled switch and failed upload never start the screen (3.53ms)
+✔ explicit UFI control entry is editable by default without an extra gate, and folding revokes old bridge authority (1.5013ms)
+✔ uninstall clears native components and the double-read unique record via documented single-record API (1.9269ms)
+✔ unknown upload outcome keeps cleanup disabled and never signals a record or component deletion (2.5057ms)
+✔ unknown single-record response falls back explicitly without whole-table writes or false success (1.935ms)
+✔ record identification rejects ambiguous or combined plugin blocks without executing source (0.3467ms)
+✔ record deletion refuses list changes and verifies other records are preserved (0.5401ms)
+✔ an exact supported old install updates under one confirmation without deleting the current UFI record (5.6916ms)
+✔ specific preflight failure returns immediately without generic polling or falsely calling a complete install partial (4.3335ms)
+✔ manager exposes only whitelisted native phases and bounded numerical exit status (2.4243ms)
+✔ wait countdown explicitly describes the maximum budget rather than a completion estimate (1.158ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ version display cannot inject HTML and a legacy waiting state remains cancellable in a direct-switch manager (1.7935ms)
+✔ dialog disposal observes only direct body removals and releases its observer on close (1.0233ms)
+✔ direct-switch fixed failure codes stay bounded and expose the policy, sensor or ownership check that failed (28.3876ms)
+✔ production manager retains lifecycle/auth helpers verbatim and contains no preview adapters or simulation API (2.005ms)
+✔ production TXT manager needs no browser API modules, loads with zero calls and opens with exactly one read (16.3582ms)
+✔ production install and restore keep explicit confirmation and verified real control sequence (6.3071ms)
+✔ version panel compares only the imported TXT with components and never checks an invented remote release (3.514ms)
+✔ update from a running old screen restores and replaces components in one confirmation and preserves the UFI record (4.3484ms)
+✔ update preserves review, upload, wait, changed-version and failed-read barriers (9.4459ms)
+✔ update cannot install after failed factory recovery or unconfirmed cleanup and cannot claim a failed new start succeeded (7.4171ms)
+✔ update readiness cannot accept a healthy process belonging to a replaced old or incomplete component set (18.3417ms)
+✔ update holds one busy lock across cleanup, upload and start and suppresses duplicate clicks and refresh (3.2513ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ production failures preserve upload lock, failed recovery and review-only barriers (4.0402ms)
+✔ failure arriving on the final refresh preserves the native phase instead of the generic switch timeout (4.4794ms)
+✔ direct switching permits bounded slow handover and still requires three fresh healthy observations (7.0746ms)
+✔ direct-switch polling exits early with a late native failure after the old ten-read budget (7.6957ms)
+✔ direct-switch confirmation remains bounded when no target or failure is observed (12.7112ms)
+✔ a rejected start cannot attribute its error to the unchanged previous failure record (4.6495ms)
+✔ a new failure on a rejected start is read back with its current native phase (1.9755ms)
+✔ consecutive status read failures stop polling and report only bounded transport diagnostics (2.4918ms)
+✔ final recovery read exposes the latest native error without erasing repeated status-read failures (2.3276ms)
+✔ a transient status read failure still permits three fresh healthy observations (2.5834ms)
+✔ a refreshed newer failure supersedes the earlier poll phase and updates the recovery action (2.2125ms)
+✔ production uninstall removes only native components and the uniquely verified UFI record (2.2729ms)
+✔ entry remains outside the actual UFI collapse observer clipping region in both menu states (1.805ms)
+✔ manager caches only its validated private snapshot; later public payload mutation cannot change lifecycle commands (1.1666ms)
+ℹ tests 52
+ℹ suites 0
+ℹ pass 52
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 422.5743

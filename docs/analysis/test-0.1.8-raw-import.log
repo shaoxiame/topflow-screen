@@ -1,0 +1,27 @@
+✔ browser registration only adds an entry and performs zero device requests (1.9898ms)
+✔ install start refuses an existing target and does not start any renderer (0.4014ms)
+✔ binary upload uses documented FormData endpoint and validates exact returned path (10.2552ms)
+✔ finish validates hash before extraction and never changes factory/startup files (0.7258ms)
+✔ screen controls are explicit, narrowly scoped and status is parsed without false success (1.1202ms)
+✔ current final candidate uses the documented script format and exact live direct-switch native archive (64.217ms)
+✔ release gate rejects incomplete local verification and review payload blocks installation and activation (0.7823ms)
+✔ diagnostic candidate has a separate honest gate and cannot weaken the failed release gate (0.2194ms)
+✔ native archive inspection rejects symlinks before packaging (52.4928ms)
+✔ review packaging refuses stale native source, lifecycle scripts or UI even with valid archive checksums (6.3796ms)
+✔ both native executables require exact checksums and the ARM64 architecture (0.3433ms)
+✔ production validation rejects preview APIs and demo factories regardless of whether they are called (0.9663ms)
+✔ native package must explicitly declare real data and CLOCK_MONOTONIC heartbeat (0.3234ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ current install instructions describe direct switching and exact old-version migration without claiming hardware success (0.187ms)
+✔ payload source uses bounded lines without changing archive bytes or recovery script (8.6703ms)
+✔ saved UFI manual importer accepts raw source and preserves the AoYou-style public header without internal store metadata (8.9106ms)
+✔ actual UFI importer documents that manual same-filename imports are skipped, not upgraded (1.5577ms)
+✔ the actual generated script registers from a UFI-style head injection with lexical API globals and zero device requests (24.3571ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 301.0385

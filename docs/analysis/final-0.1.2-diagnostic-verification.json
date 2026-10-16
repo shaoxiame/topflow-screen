@@ -1,0 +1,35 @@
+{
+  "version": "0.1.2",
+  "status": "DIAGNOSTIC_CANDIDATE",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+  "hardwareTested": false,
+  "nodeTests": "[REDACTED_SENSITIVE_FIELD]",
+  "browser": {
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+    "packageLoaded": "[REDACTED_ENCODED_OR_IDENTIFIER].1.2-diagnostic.txt",
+    "url": "[REDACTED_SENSITIVE_FIELD]",
+    "realDeviceRequests": 0,
+    "screenshot": "[REDACTED_ENCODED_OR_IDENTIFIER].1.2-diagnostic.png",
+    "checks": [
+      "Package registration performs zero device requests",
+      "Diagnostic version visible",
+      "Renderer failure stage and exit status visible",
+      "Waiting explicitly described as upper bound, not ETA",
+      "Trusted old-version update visible",
+      "Cancel confirmation produces no writes"
+    ],
+    "writeAttempts": 0,
+    "stateReads": 4
+  },
+  "txtSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "oldTxtPreserved": true,
+  "deviceEvidence": "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+  "txtBytes": 1566889,
+  "finalCosmeticRebuild": {
+    "change": "Manager header spacing and no-wrap close button only",
+    "tests": "18/18 build and UFI loader compatibility tests passed",
+    "log": "[REDACTED_ENCODED_OR_IDENTIFIER].log",
+    "screenshotVerified": true,
+    "nativeArchiveUnchanged": "[REDACTED_SENSITIVE_FIELD]"
+  }
+}

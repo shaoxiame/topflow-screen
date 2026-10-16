@@ -1,0 +1,52 @@
+{
+  "schema": 2,
+  "state": "device-test-failed",
+  "code": "[REDACTED_SENSITIVE_FIELD]",
+  "hardwareVerified": false,
+  "reviewOnly": false,
+  "localValidationPassed": false,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": [
+    "Identify and verify the original RENDERER_EXITED root cause; a diagnostic candidate does not close device acceptance."
+  ],
+  "reason": "用户实际启用0.1.1出现RENDERER_EXITED，该次只读观察确认原厂恢复。发现并移除了debugfs读后清零副作用，补充有限启动阶段和实际退出状态；本机协议/故障测试通过，但退出根因仍未确定。默认发布继续阻断，仅允许独立诊断候选。",
+  "requiredNativeProtocol": 1,
+  "requiredArchiveChecks": "[REDACTED_SENSITIVE_FIELD]",
+  "evidence": [
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "tests/native-supervisor.test.js",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].ps1",
+    "native/test-factory-bus.ps1",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].ps1",
+    "[REDACTED_SENSITIVE_CONTEXT]",
+    "[REDACTED_SENSITIVE_CONTEXT]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].ps1",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].test.js",
+    "tests/ufi-loader-compat.test.js",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].ps1",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].h",
+    "tests/manager-cancel.test.js",
+    "tests/plugin-manager.test.js",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "native/native_failure.h",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].ps1",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].log",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].json"
+  ],
+  "allowedOutput": "Only explicit --diagnostic-candidate -> [REDACTED_ENCODED_OR_IDENTIFIER].1.2-diagnostic.txt; default release remains blocked.",
+  "forbiddenClaim": "hardware verified, guaranteed lossless, fully factory-equivalent or tested on this device",
+  "devicePolicy": "[REDACTED_SENSITIVE_CONTEXT]",
+  "diagnosticCandidate": {
+    "enabled": true,
+    "sideEffectReadRemoved": true,
+    "localValidationPassed": true,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+    "output": "[REDACTED_ENCODED_OR_IDENTIFIER].1.2-diagnostic.txt",
+    "reason": "0.1.1实测失败仍未归因；原生已移除读后清零debugfs路径，40枚举有限诊断与真实wait状态本机故障测试通过，72源码hash与双ELF/脚本逐字节验证通过。仅允许明确标识的诊断自测包，默认发布仍阻断。"
+  }
+}

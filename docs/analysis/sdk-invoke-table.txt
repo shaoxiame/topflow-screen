@@ -1,0 +1,395 @@
+invokeTable 0x70260 26600 filebytes 26598
+0 0x70260 (0, 1, 1, 0) ['objpath', 'methodpath']
+1 0x70328 (1, 1, 1, 0) ['zwrt_wlan', 'set']
+2 0x703f0 (2, 1, 1, 0) ['zwrt_wlan', 'wlan_get_dfs_status']
+3 0x704b8 (3, 1, 1, 0) ['zwrt_wlan', 'report']
+4 0x70580 (4, 1, 1, 0) ['zwrt_wlan', 'report']
+5 0x70648 (22, 1, 1, 0) ['zwrt_zte_mdm.api', 'get_sim_info']
+6 0x70710 (23, 1, 1, 0) ['zwrt_zte_mdm.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+7 0x707d8 (24, 1, 1, 0) ['zwrt_zte_mdm.api', 'set_simlock_nck']
+8 0x708a0 (5, 1, 1, 0) ['zwrt_wlan', 'get_wps_status']
+9 0x70968 (8, 1, 1, 0) ['zwrt_router.api', 'tr143_downup']
+10 0x70a30 (6, 1, 1, 0) ['zwrt_wlan', 'get_agent_list']
+11 0x70af8 (7, 1, 1, 0) ['zwrt_wlan', 'wlan_get_key']
+12 0x70bc0 (9, 1, 1, 0) ['zwrt_router.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+13 0x70c88 (10, 1, 1, 0) ['zwrt_router.api', 'router_get_status']
+14 0x70d50 (11, 1, 1, 0) ['zwrt_router.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+15 0x70e18 (12, 1, 1, 0) ['zwrt_router.api', 'router_lan_access_list']
+16 0x70ee0 (13, 1, 1, 0) ['zwrt_router.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+17 0x70fa8 (14, 1, 1, 0) ['zwrt_router.api', 'router_offline_list']
+18 0x71070 (15, 1, 1, 0) ['zwrt_router.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+19 0x71138 (16, 1, 1, 0) ['zwrt_router.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+20 0x71200 (17, 1, 1, 0) ['zwrt_router.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+21 0x712c8 (18, 1, 1, 0) ['zwrt_router.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+22 0x71390 (19, 1, 1, 0) ['zwrt_redirect.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+23 0x71458 (20, 1, 1, 0) ['zwrt_redirect.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+24 0x71520 (21, 1, 1, 0) ['zwrt_router.api', 'router_set_wan_mode']
+25 0x715e8 (25, 1, 1, 0) ['zwrt_zte_mdm.api', 'sim_verify_pin_puk']
+26 0x716b0 (26, 1, 1, 0) ['zwrt_zte_mdm.api', 'sim_change_pin']
+27 0x71778 (27, 1, 1, 0) ['zwrt_zte_mdm.api', 'sim_change_pin_mode']
+28 0x71840 (28, 1, 1, 0) ['zwrt_zte_mdm.api', 'st_set_auto_switch_slot']
+29 0x71908 (29, 1, 1, 0) ['zwrt_zte_mdm.api', 'get_sim_info_before']
+30 0x719d0 (30, 1, 1, 0) ['zwrt_zte_mdm.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+[REDACTED_SENSITIVE_CONTEXT]
+33 0x71c28 (33, 1, 1, 0) ['zwrt_zte_mdm.api', 'sim_switch_slot']
+34 0x71cf0 (36, 1, 1, 0) ['zwrt_zte_mdm.api', 'sub_modem_switch_slot']
+[REDACTED_SENSITIVE_CONTEXT]
+38 0x72010 (40, 1, 1, 0) ['zwrt_wms', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+39 0x720d8 (41, 1, 1, 0) ['zwrt_wms', 'zwrt_wms_modify_tag']
+40 0x721a0 (42, 1, 1, 0) ['zwrt_wms', 'zwrt_get_wms_nvitems']
+41 0x72268 (43, 1, 1, 0) ['zwrt_wms', 'zwrt_wms_get_cmd_status']
+42 0x72330 (44, 1, 1, 0) ['zte_nwinfo_api', 'nwinfo_set_netselect']
+43 0x723f8 (45, 1, 1, 0) ['zte_nwinfo_api', 'nwinfo_set_gwl_bandlock']
+44 0x724c0 (46, 1, 1, 0) ['zte_nwinfo_api', 'nwinfo_set_sa_bandlock']
+45 0x72588 (47, 1, 1, 0) ['zte_nwinfo_api', 'nwinfo_manual_scan']
+46 0x72650 (48, 1, 1, 0) ['zte_nwinfo_api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+47 0x72718 (49, 1, 1, 0) ['zte_nwinfo_api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+48 0x727e0 (50, 1, 1, 0) ['zte_nwinfo_api', 'nwinfo_manual_register']
+49 0x728a8 (51, 1, 1, 0) ['zte_nwinfo_api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+50 0x72970 (52, 1, 1, 0) ['zte_nwinfo_api', 'nwinfo_get_netinfo']
+51 0x72a38 (53, 1, 1, 0) ['zte_nwinfo_api', 'nwinfo_get_msim_netinfo']
+52 0x72b00 (54, 1, 1, 0) ['zte_nwinfo_api', 'nwinfo_set_lte_ext_band']
+53 0x72bc8 (55, 1, 1, 0) ['zte_nwinfo_api', 'nwinfo_set_nrbandlock']
+54 0x72c90 (56, 1, 1, 0) ['zte_nwinfo_api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+55 0x72d58 (57, 1, 1, 0) ['zte_nwinfo_api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+56 0x72e20 (58, 1, 1, 0) ['zwrt_apn_object', 'get_apn_mode']
+57 0x72ee8 (59, 1, 1, 0) ['zwrt_apn_object', 'get_auto_apn_list']
+58 0x72fb0 (60, 1, 1, 0) ['zwrt_apn_object', 'get_manu_apn_list']
+59 0x73078 (61, 1, 1, 0) ['zwrt_topsw_daemon.sync', 'daemon_sync']
+60 0x73140 (62, 1, 1, 0) ['zwrt_topsw_daemon.sync', 'daemon_sync']
+61 0x73208 (63, 1, 1, 0) ['zwrt_mc.device.manager', 'get_device_info']
+62 0x732d0 (64, 1, 1, 0) ['zwrt_mc.device.manager', 'get_device_info']
+63 0x73398 (65, 1, 1, 0) ['zwrt_mc.device.manager', 'set_device_info']
+64 0x73460 (66, 1, 1, 0) ['zwrt_mc.device.manager', 'device_reset']
+65 0x73528 (67, 1, 1, 0) ['zwrt_mc.device.manager', 'device_reboot']
+66 0x735f0 (68, 1, 1, 0) ['zwrt_mc.device.manager', 'device_poweroff']
+[REDACTED_SENSITIVE_CONTEXT]
+69 0x73848 (71, 1, 1, 0) ['zwrt_mc.device.manager', 'poweroff_compelte']
+[REDACTED_SENSITIVE_CONTEXT]
+72 0x73aa0 (74, 1, 1, 0) ['zwrt_mc.device.manager', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+[REDACTED_SENSITIVE_CONTEXT]
+75 0x73cf8 (77, 1, 1, 0) ['zwrt_mc.device.manager', 'power_reset_compelte']
+[REDACTED_SENSITIVE_CONTEXT]
+77 0x73e88 (79, 1, 1, 0) ['zwrt_zte_sleep_faw.wakelock', 'internalAddWakelock']
+78 0x73f50 (80, 1, 1, 0) ['zwrt_zte_sleep_faw.wakelock', 'internalDeleteWakelock']
+79 0x74018 (81, 1, 1, 0) ['zwrt_zte_sleep_faw.wakelock', 'set_ufi_sleep']
+80 0x740e0 (82, 1, 1, 0) ['zwrt_mc.device.manager', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+81 0x741a8 (83, 1, 1, 0) ['zwrt_data', 'set_wwandst_clearday']
+82 0x74270 (84, 1, 1, 0) ['zwrt_data', 'get_wwandst_clearday']
+83 0x74338 (85, 1, 1, 0) ['zwrt_data', 'get_wwandst_clearday']
+84 0x74400 (86, 1, 1, 0) ['zwrt_data', 'set_wwandst_clear']
+85 0x744c8 (87, 1, 1, 0) ['zwrt_data', 'set_wwaniface']
+86 0x74590 (88, 1, 1, 0) ['zwrt_data', 'get_wwaniface']
+87 0x74658 (89, 1, 1, 0) ['zwrt_data', 'get_wwaniface']
+88 0x74720 (90, 1, 1, 0) ['zwrt_data', 'set_wwandst_calibmonth']
+89 0x747e8 (91, 1, 1, 0) ['zwrt_data', 'get_wwandst']
+90 0x748b0 (92, 1, 1, 0) ['zwrt_data', 'get_wwandst']
+91 0x74978 (93, 1, 1, 0) ['zwrt_data', 'get_wwandst']
+92 0x74a40 (96, 1, 1, 0) ['zwrt_data', 'get_wwandst_monthlimit']
+93 0x74b08 (97, 1, 1, 0) ['zwrt_data', 'get_wwandst_monthlimit']
+94 0x74bd0 (98, 1, 1, 0) ['zwrt_data', 'get_wwandst_monthlimit']
+95 0x74c98 (94, 1, 1, 0) ['zwrt_data', 'set_wwandst_monthlimit']
+96 0x74d60 (95, 1, 1, 0) ['zwrt_bsp.charger', 'list']
+97 0x74e28 (99, 1, 1, 0) ['zwrt_bsp.battery', 'list']
+98 0x74ef0 (100, 1, 1, 0) ['zwrt_bsp.usb', 'list']
+99 0x74fb8 (101, 1, 1, 0) ['zwrt_bsp.charger', 'pvlist']
+100 0x75080 (102, 1, 1, 0) ['zwrt_bsp.powerbank', 'set']
+101 0x75148 (103, 1, 1, 0) ['zwrt_bsp.powerbank', 'get']
+102 0x75210 (104, 1, 1, 0) ['zwrt_bsp.led', 'set']
+103 0x752d8 (105, 1, 1, 0) ['zwrt_bsp.typec', 'list']
+104 0x753a0 (106, 1, 1, 0) ['zwrt_bsp.typec', 'set']
+105 0x75468 (107, 1, 1, 0) ['zwrt_bsp.charger', 'set']
+106 0x75530 (108, 1, 1, 0) ['zwrt_bsp.rtc', 'ui_set_alarm']
+[REDACTED_SENSITIVE_CONTEXT]
+108 0x756c0 (110, 1, 1, 0) ['zwrt_bsp.light', 'list']
+109 0x75788 (111, 1, 1, 0) ['zwrt_bsp.light', 'list']
+110 0x75850 (112, 1, 1, 0) ['zwrt_web', 'web_logout']
+111 0x75918 (113, 1, 1, 0) ['zwrt_web', 'web_info']
+112 0x759e0 (114, 1, 1, 0) ['zwrt_web', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+113 0x75aa8 (115, 1, 1, 0) ['zwrt_zte_dm', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+114 0x75b70 (116, 1, 1, 0) ['zwrt_zte_dm', 'confirm_download']
+115 0x75c38 (117, 1, 1, 0) ['zwrt_zte_dm', 'cancel_download']
+116 0x75d00 (118, 1, 1, 0) ['zwrt_zte_dm', 'confirm_install']
+117 0x75dc8 (119, 1, 1, 0) ['zwrt_zte_dm', 'cancel_install']
+118 0x75e90 (120, 1, 1, 0) ['zwrt_fota_res.api', 'get_update_result']
+119 0x75f58 (121, 1, 1, 0) ['zwrt_web', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+120 0x76020 (122, 1, 1, 0) ['zwrt_web', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+121 0x760e8 (123, 1, 1, 0) ['zwrt_web', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+122 0x761b0 (124, 1, 1, 0) ['zwrt_web', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+123 0x76278 (125, 1, 1, 0) ['zwrt_smart_mng.api', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+124 0x76340 (126, 1, 1, 0) ['zwrt_nfc', 'zwrt_nfc_wifi_set']
+125 0x76408 (127, 1, 1, 0) ['zwrt_nfc', 'zwrt_nfc_wifi_get']
+126 0x764d0 (34, 1, 1, 0) ['zwrt_zte_mdm.api', 'get_sim_info']
+127 0x76598 (35, 1, 1, 0) ['zwrt_zte_mdm.api', 'get_v3t_sim_info']
+128 0x76660 (1001, 0, [REDACTED_NUMBER], 0) ['zwrt_deviceui', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+129 0x76728 (1002, 0, [REDACTED_NUMBER], 0) ['zwrt_deviceui', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+130 0x767f0 (1003, 0, [REDACTED_NUMBER], 0) ['zwrt_deviceui', '[REDACTED_ENCODED_OR_IDENTIFIER]']
+131 0x768b8 (128, 1, 1, 0) ['zwrt_apn_object', 'enable_manu_apn_id']
+132 0x76980 (129, 1, 1, 0) ['zwrt_wlan', 'get_wifi_moving_info']
+Relocations within table:
+0x70270 0x53714 'objpath'
+0x70278 0x5371c 'methodpath'
+0x70338 0x535f0 'zwrt_wlan'
+0x70340 0x54180 'set'
+0x70400 0x535f0 'zwrt_wlan'
+0x70408 0x53727 'wlan_get_dfs_status'
+0x704c8 0x535f0 'zwrt_wlan'
+0x704d0 0x5373b 'report'
+0x70590 0x535f0 'zwrt_wlan'
+0x70598 0x5373b 'report'
+0x70658 0x53742 'zwrt_zte_mdm.api'
+0x70660 0x53753 'get_sim_info'
+0x70720 0x53742 'zwrt_zte_mdm.api'
+0x70728 0x53760 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x707e8 0x53742 'zwrt_zte_mdm.api'
+0x707f0 0x5377d 'set_simlock_nck'
+0x708b0 0x535f0 'zwrt_wlan'
+0x708b8 0x5378d 'get_wps_status'
+0x70978 0x5379c 'zwrt_router.api'
+0x70980 0x537ac 'tr143_downup'
+0x70a40 0x535f0 'zwrt_wlan'
+0x70a48 0x537b9 'get_agent_list'
+0x70b08 0x535f0 'zwrt_wlan'
+0x70b10 0x537c8 'wlan_get_key'
+0x70bd0 0x5379c 'zwrt_router.api'
+0x70bd8 0x537d5 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x70c98 0x5379c 'zwrt_router.api'
+0x70ca0 0x537ee 'router_get_status'
+0x70d60 0x5379c 'zwrt_router.api'
+0x70d68 0x53800 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x70e28 0x5379c 'zwrt_router.api'
+0x70e30 0x53819 'router_lan_access_list'
+0x70ef0 0x5379c 'zwrt_router.api'
+0x70ef8 0x53830 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x70fb8 0x5379c 'zwrt_router.api'
+0x70fc0 0x5384c 'router_offline_list'
+0x71080 0x5379c 'zwrt_router.api'
+0x71088 0x53860 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x71148 0x5379c 'zwrt_router.api'
+0x71150 0x5387d '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x71210 0x5379c 'zwrt_router.api'
+0x71218 0x53898 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x712d8 0x5379c 'zwrt_router.api'
+0x712e0 0x538b9 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x713a0 0x538d5 'zwrt_redirect.api'
+0x713a8 0x538e7 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x71468 0x538d5 'zwrt_redirect.api'
+0x71470 0x5390d '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x71530 0x5379c 'zwrt_router.api'
+0x71538 0x5392c 'router_set_wan_mode'
+0x715f8 0x53742 'zwrt_zte_mdm.api'
+0x71600 0x53940 'sim_verify_pin_puk'
+0x716c0 0x53742 'zwrt_zte_mdm.api'
+0x716c8 0x53953 'sim_change_pin'
+0x71788 0x53742 'zwrt_zte_mdm.api'
+0x71790 0x53962 'sim_change_pin_mode'
+0x71850 0x53742 'zwrt_zte_mdm.api'
+0x71858 0x53976 'st_set_auto_switch_slot'
+0x71918 0x53742 'zwrt_zte_mdm.api'
+0x71920 0x5398e 'get_sim_info_before'
+0x719e0 0x53742 'zwrt_zte_mdm.api'
+0x719e8 0x539a2 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x71aa8 0x53742 'zwrt_zte_mdm.api'
+[REDACTED_SENSITIVE_CONTEXT]
+0x71b70 0x53742 'zwrt_zte_mdm.api'
+[REDACTED_SENSITIVE_CONTEXT]
+0x71c38 0x53742 'zwrt_zte_mdm.api'
+0x71c40 0x539fd 'sim_switch_slot'
+0x71d00 0x53742 'zwrt_zte_mdm.api'
+0x71d08 0x53a0d 'sub_modem_switch_slot'
+0x71dc8 0x53a23 'zwrt_wms'
+[REDACTED_SENSITIVE_CONTEXT]
+0x71e90 0x53a23 'zwrt_wms'
+[REDACTED_SENSITIVE_CONTEXT]
+0x71f58 0x53a23 'zwrt_wms'
+[REDACTED_SENSITIVE_CONTEXT]
+0x72020 0x53a23 'zwrt_wms'
+0x72028 0x53a58 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x720e8 0x53a23 'zwrt_wms'
+0x720f0 0x53a72 'zwrt_wms_modify_tag'
+0x721b0 0x53a23 'zwrt_wms'
+0x721b8 0x53a86 'zwrt_get_wms_nvitems'
+0x72278 0x53a23 'zwrt_wms'
+0x72280 0x53a9b 'zwrt_wms_get_cmd_status'
+0x72340 0x53ab3 'zte_nwinfo_api'
+0x72348 0x53ac2 'nwinfo_set_netselect'
+0x72408 0x53ab3 'zte_nwinfo_api'
+0x72410 0x53ad7 'nwinfo_set_gwl_bandlock'
+0x724d0 0x53ab3 'zte_nwinfo_api'
+0x724d8 0x53aef 'nwinfo_set_sa_bandlock'
+0x72598 0x53ab3 'zte_nwinfo_api'
+0x725a0 0x53b06 'nwinfo_manual_scan'
+0x72660 0x53ab3 'zte_nwinfo_api'
+0x72668 0x53b19 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x72728 0x53ab3 'zte_nwinfo_api'
+0x72730 0x53b33 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x727f0 0x53ab3 'zte_nwinfo_api'
+0x727f8 0x53b4f 'nwinfo_manual_register'
+0x728b8 0x53ab3 'zte_nwinfo_api'
+0x728c0 0x53b66 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x72980 0x53ab3 'zte_nwinfo_api'
+0x72988 0x53b80 'nwinfo_get_netinfo'
+0x72a48 0x53ab3 'zte_nwinfo_api'
+0x72a50 0x53b93 'nwinfo_get_msim_netinfo'
+0x72b10 0x53ab3 'zte_nwinfo_api'
+0x72b18 0x53bab 'nwinfo_set_lte_ext_band'
+0x72bd8 0x53ab3 'zte_nwinfo_api'
+0x72be0 0x53bc3 'nwinfo_set_nrbandlock'
+0x72ca0 0x53ab3 'zte_nwinfo_api'
+0x72ca8 0x53bd9 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x72d68 0x53ab3 'zte_nwinfo_api'
+0x72d70 0x53bfb '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x72e30 0x53c27 'zwrt_apn_object'
+0x72e38 0x53c37 'get_apn_mode'
+0x72ef8 0x53c27 'zwrt_apn_object'
+0x72f00 0x53c44 'get_auto_apn_list'
+0x72fc0 0x53c27 'zwrt_apn_object'
+0x72fc8 0x53c56 'get_manu_apn_list'
+0x73088 0x53c68 'zwrt_topsw_daemon.sync'
+0x73090 0x53c7f 'daemon_sync'
+0x73150 0x53c68 'zwrt_topsw_daemon.sync'
+0x73158 0x53c7f 'daemon_sync'
+0x73218 0x53c8b 'zwrt_mc.device.manager'
+0x73220 0x53ca2 'get_device_info'
+0x732e0 0x53c8b 'zwrt_mc.device.manager'
+0x732e8 0x53ca2 'get_device_info'
+0x733a8 0x53c8b 'zwrt_mc.device.manager'
+0x733b0 0x53cb2 'set_device_info'
+0x73470 0x53c8b 'zwrt_mc.device.manager'
+0x73478 0x53cc2 'device_reset'
+0x73538 0x53c8b 'zwrt_mc.device.manager'
+0x73540 0x53ccf 'device_reboot'
+0x73600 0x53c8b 'zwrt_mc.device.manager'
+0x73608 0x53cdd 'device_poweroff'
+0x736c8 0x53c8b 'zwrt_mc.device.manager'
+[REDACTED_SENSITIVE_CONTEXT]
+0x73790 0x53c8b 'zwrt_mc.device.manager'
+[REDACTED_SENSITIVE_CONTEXT]
+0x73858 0x53c8b 'zwrt_mc.device.manager'
+0x73860 0x53d15 'poweroff_compelte'
+0x73920 0x53c8b 'zwrt_mc.device.manager'
+[REDACTED_SENSITIVE_CONTEXT]
+0x739e8 0x53c8b 'zwrt_mc.device.manager'
+[REDACTED_SENSITIVE_CONTEXT]
+0x73ab0 0x53c8b 'zwrt_mc.device.manager'
+0x73ab8 0x53d5f '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x73b78 0x53c8b 'zwrt_mc.device.manager'
+[REDACTED_SENSITIVE_CONTEXT]
+0x73c40 0x53c8b 'zwrt_mc.device.manager'
+[REDACTED_SENSITIVE_CONTEXT]
+0x73d08 0x53c8b 'zwrt_mc.device.manager'
+0x73d10 0x53da7 'power_reset_compelte'
+0x73dd0 0x53c8b 'zwrt_mc.device.manager'
+[REDACTED_SENSITIVE_CONTEXT]
+0x73e98 0x53dbc 'zwrt_zte_sleep_faw.wakelock'
+0x73ea0 0x53dd8 'internalAddWakelock'
+0x73f60 0x53dbc 'zwrt_zte_sleep_faw.wakelock'
+0x73f68 0x53dec 'internalDeleteWakelock'
+0x74028 0x53dbc 'zwrt_zte_sleep_faw.wakelock'
+0x74030 0x53e03 'set_ufi_sleep'
+0x740f0 0x53c8b 'zwrt_mc.device.manager'
+0x740f8 0x53e11 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x741b8 0x53e30 'zwrt_data'
+0x741c0 0x53e3a 'set_wwandst_clearday'
+0x74280 0x53e30 'zwrt_data'
+0x74288 0x53e4f 'get_wwandst_clearday'
+0x74348 0x53e30 'zwrt_data'
+0x74350 0x53e4f 'get_wwandst_clearday'
+0x74410 0x53e30 'zwrt_data'
+0x74418 0x53e64 'set_wwandst_clear'
+0x744d8 0x53e30 'zwrt_data'
+0x744e0 0x53e76 'set_wwaniface'
+0x745a0 0x53e30 'zwrt_data'
+0x745a8 0x53e84 'get_wwaniface'
+0x74668 0x53e30 'zwrt_data'
+0x74670 0x53e84 'get_wwaniface'
+0x74730 0x53e30 'zwrt_data'
+0x74738 0x53e92 'set_wwandst_calibmonth'
+0x747f8 0x53e30 'zwrt_data'
+0x74800 0x53ea9 'get_wwandst'
+0x748c0 0x53e30 'zwrt_data'
+0x748c8 0x53ea9 'get_wwandst'
+0x74988 0x53e30 'zwrt_data'
+0x74990 0x53ea9 'get_wwandst'
+0x74a50 0x53e30 'zwrt_data'
+0x74a58 0x53eb5 'get_wwandst_monthlimit'
+0x74b18 0x53e30 'zwrt_data'
+0x74b20 0x53eb5 'get_wwandst_monthlimit'
+0x74be0 0x53e30 'zwrt_data'
+0x74be8 0x53eb5 'get_wwandst_monthlimit'
+0x74ca8 0x53e30 'zwrt_data'
+0x74cb0 0x53ecc 'set_wwandst_monthlimit'
+0x74d70 0x53ee3 'zwrt_bsp.charger'
+0x74d78 0x5385b 'list'
+0x74e38 0x53ef4 'zwrt_bsp.battery'
+0x74e40 0x5385b 'list'
+0x74f00 0x53f05 'zwrt_bsp.usb'
+0x74f08 0x5385b 'list'
+0x74fc8 0x53ee3 'zwrt_bsp.charger'
+0x74fd0 0x53f12 'pvlist'
+0x75090 0x53f19 'zwrt_bsp.powerbank'
+0x75098 0x54180 'set'
+0x75158 0x53f19 'zwrt_bsp.powerbank'
+0x75160 0x5415c 'get'
+0x75220 0x53f2c 'zwrt_bsp.led'
+0x75228 0x54180 'set'
+0x752e8 0x53f39 'zwrt_bsp.typec'
+0x752f0 0x5385b 'list'
+0x753b0 0x53f39 'zwrt_bsp.typec'
+0x753b8 0x54180 'set'
+0x75478 0x53ee3 'zwrt_bsp.charger'
+0x75480 0x54180 'set'
+0x75540 0x53f48 'zwrt_bsp.rtc'
+0x75548 0x5237b 'ui_set_alarm'
+[REDACTED_SENSITIVE_CONTEXT]
+0x75610 0x47a55 'key_state'
+0x756d0 0x53f62 'zwrt_bsp.light'
+0x756d8 0x5385b 'list'
+0x75798 0x53f62 'zwrt_bsp.light'
+0x757a0 0x5385b 'list'
+0x75860 0x53f71 'zwrt_web'
+0x75868 0x53f7a 'web_logout'
+0x75928 0x53f71 'zwrt_web'
+0x75930 0x53f85 'web_info'
+0x759f0 0x53f71 'zwrt_web'
+0x759f8 0x53f8e '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x75ab8 0x4a8b7 'zwrt_zte_dm'
+0x75ac0 0x53fbc '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x75b80 0x4a8b7 'zwrt_zte_dm'
+0x75b88 0x53fd7 'confirm_download'
+0x75c48 0x4a8b7 'zwrt_zte_dm'
+0x75c50 0x53fe8 'cancel_download'
+0x75d10 0x4a8b7 'zwrt_zte_dm'
+0x75d18 0x53ff8 'confirm_install'
+0x75dd8 0x4a8b7 'zwrt_zte_dm'
+0x75de0 0x54008 'cancel_install'
+0x75ea0 0x54017 'zwrt_fota_res.api'
+0x75ea8 0x54029 'get_update_result'
+0x75f68 0x53f71 'zwrt_web'
+0x75f70 0x5403b '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x76030 0x53f71 'zwrt_web'
+0x76038 0x54055 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x760f8 0x53f71 'zwrt_web'
+0x76100 0x5406f '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x761c0 0x53f71 'zwrt_web'
+0x761c8 0x54090 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x76288 0x540b1 'zwrt_smart_mng.api'
+0x76290 0x540c4 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x76350 0x540df 'zwrt_nfc'
+0x76358 0x540e8 'zwrt_nfc_wifi_set'
+0x76418 0x540df 'zwrt_nfc'
+0x76420 0x540fa 'zwrt_nfc_wifi_get'
+0x764e0 0x53742 'zwrt_zte_mdm.api'
+0x764e8 0x53753 'get_sim_info'
+0x765a8 0x53742 'zwrt_zte_mdm.api'
+0x765b0 0x5410c 'get_v3t_sim_info'
+0x76670 0x46d14 'zwrt_deviceui'
+0x76678 0x5411d '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x76738 0x46d14 'zwrt_deviceui'
+0x76740 0x5413c '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x76800 0x46d14 'zwrt_deviceui'
+0x76808 0x54160 '[REDACTED_ENCODED_OR_IDENTIFIER]'
+0x768c8 0x53c27 'zwrt_apn_object'
+0x768d0 0x54184 'enable_manu_apn_id'
+0x76990 0x535f0 'zwrt_wlan'
+0x76998 0x54197 'get_wifi_moving_info'

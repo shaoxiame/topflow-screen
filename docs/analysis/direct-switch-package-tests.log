@@ -1,0 +1,27 @@
+✔ browser registration only adds an entry and performs zero device requests (1.7106ms)
+✔ install start refuses an existing target and does not start any renderer (0.4146ms)
+✔ binary upload uses documented FormData endpoint and validates exact returned path (9.526ms)
+✔ finish validates hash before extraction and never changes factory/startup files (0.1737ms)
+✔ screen controls are explicit, narrowly scoped and status is parsed without false success (1.1647ms)
+✔ current final candidate uses the documented script format and exact live direct-switch native archive (51.7653ms)
+✔ release gate rejects incomplete local verification and review payload blocks installation and activation (0.58ms)
+✔ diagnostic candidate has a separate honest gate and cannot weaken the failed release gate (0.2352ms)
+✔ native archive inspection rejects symlinks before packaging (49.6772ms)
+✔ review packaging refuses stale native source, lifecycle scripts or UI even with valid archive checksums (0.7365ms)
+✔ both native executables require exact checksums and the ARM64 architecture (0.2954ms)
+✔ production validation rejects preview APIs and demo factories regardless of whether they are called (0.9991ms)
+✔ native package must explicitly declare real data and CLOCK_MONOTONIC heartbeat (0.2606ms)
+✔ native readiness distinguishes a reviewed fix candidate from confirmed hardware or a resolved root cause (0.2437ms)
+✔ current install instructions describe direct switching and exact old-version migration without claiming hardware success (0.12ms)
+✔ payload source uses bounded lines without changing archive bytes or recovery script (8.7343ms)
+✔ actual UFI manual importer accepts the complete generated TXT without treating embedded code as store metadata (4.0417ms)
+✔ actual UFI importer documents that manual same-filename imports are skipped, not upgraded (1.2857ms)
+✔ the actual generated script registers from a UFI-style head injection with lexical API globals and zero device requests (21.7709ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 183.1753

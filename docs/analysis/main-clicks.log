@@ -1,0 +1,672 @@
+[
+  {
+    "page": "index",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "",
+    "actual": "",
+    "pass": true
+  },
+  {
+    "page": "aggregate",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "",
+    "actual": "",
+    "pass": true
+  },
+  {
+    "page": "index",
+    "x": 223,
+    "y": 87,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:aggregate.html",
+    "actual": "act:page:aggregate.html",
+    "pass": true
+  },
+  {
+    "page": "network",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:index.html",
+    "actual": "act:page:index.html",
+    "pass": true
+  },
+  {
+    "page": "apps",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:index.html",
+    "actual": "act:page:index.html",
+    "pass": true
+  },
+  {
+    "page": "settings",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:index.html",
+    "actual": "act:page:index.html",
+    "pass": true
+  },
+  {
+    "page": "aggregate",
+    "x": 81,
+    "y": 87,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:index.html",
+    "actual": "act:page:index.html",
+    "pass": true
+  },
+  {
+    "page": "apps",
+    "x": 150,
+    "y": 257,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+    "page": "apps",
+    "x": 150,
+    "y": 169,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:aoyou",
+    "actual": "act:aoyou",
+    "pass": true
+  },
+  {
+    "page": "apps",
+    "x": 150,
+    "y": 320,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+    "page": "apps",
+    "x": 150,
+    "y": 383,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:wifi",
+    "actual": "act:wifi",
+    "pass": true
+  },
+  {
+    "page": "network",
+    "x": 155,
+    "y": 402,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:network",
+    "actual": "act:network",
+    "pass": true
+  },
+  {
+    "page": "network",
+    "x": 155,
+    "y": 465,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:network",
+    "actual": "act:network",
+    "pass": true
+  },
+  {
+    "page": "settings",
+    "x": 277,
+    "y": 141,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:controls",
+    "actual": "act:controls",
+    "pass": true
+  },
+  {
+    "page": "settings",
+    "x": 275,
+    "y": 371,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:aggregate",
+    "actual": "act:aggregate",
+    "pass": true
+  },
+  {
+    "page": "settings",
+    "x": 150,
+    "y": 450,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:wifi",
+    "actual": "act:wifi",
+    "pass": true
+  },
+  {
+    "page": "settings-more",
+    "x": 155,
+    "y": 156,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:clients",
+    "actual": "act:clients",
+    "pass": true
+  },
+  {
+    "page": "settings-more",
+    "x": 155,
+    "y": 218,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:traffic",
+    "actual": "act:traffic",
+    "pass": true
+  },
+  {
+    "page": "settings-more",
+    "x": 155,
+    "y": 282,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:power",
+    "actual": "act:power",
+    "pass": true
+  },
+  {
+    "page": "settings-more",
+    "x": 155,
+    "y": 345,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:display",
+    "actual": "act:display",
+    "pass": true
+  },
+  {
+    "page": "settings-more",
+    "x": 155,
+    "y": 409,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:more",
+    "actual": "act:more",
+    "pass": true
+  },
+  {
+    "page": "settings-more",
+    "x": 155,
+    "y": 461,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:theme",
+    "actual": "act:theme",
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:apps.html",
+    "actual": "act:page:apps.html",
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 22,
+    "y": 86,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "",
+    "actual": "",
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 145,
+    "y": 195,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 100,
+    "y": 128,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 250,
+    "y": 128,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+    "page": "index",
+    "x": 140,
+    "y": 280,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:5G",
+    "actual": "act:modem:5G",
+    "pass": true
+  },
+  {
+    "page": "index",
+    "x": 140,
+    "y": 346,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:4G1",
+    "actual": "act:modem:4G1",
+    "pass": true
+  },
+  {
+    "page": "index",
+    "x": 140,
+    "y": 412,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:4G2",
+    "actual": "act:modem:4G2",
+    "pass": true
+  },
+  {
+    "page": "index",
+    "x": 280,
+    "y": 459,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:settings.html",
+    "actual": "act:page:settings.html",
+    "pass": true
+  },
+  {
+    "page": "aggregate",
+    "x": 140,
+    "y": 280,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:5G",
+    "actual": "act:modem:5G",
+    "pass": true
+  },
+  {
+    "page": "aggregate",
+    "x": 140,
+    "y": 346,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:4G1",
+    "actual": "act:modem:4G1",
+    "pass": true
+  },
+  {
+    "page": "aggregate",
+    "x": 140,
+    "y": 412,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:4G2",
+    "actual": "act:modem:4G2",
+    "pass": true
+  },
+  {
+    "page": "index-dark",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "",
+    "actual": "",
+    "pass": true
+  },
+  {
+    "page": "aggregate-dark",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "",
+    "actual": "",
+    "pass": true
+  },
+  {
+    "page": "index-dark",
+    "x": 223,
+    "y": 87,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:aggregate.html",
+    "actual": "act:page:aggregate.html",
+    "pass": true
+  },
+  {
+    "page": "network-dark",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:index.html",
+    "actual": "act:page:index.html",
+    "pass": true
+  },
+  {
+    "page": "apps-dark",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:index.html",
+    "actual": "act:page:index.html",
+    "pass": true
+  },
+  {
+    "page": "settings-dark",
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:index.html",
+    "actual": "act:page:index.html",
+    "pass": true
+  },
+  {
+    "page": "aggregate-dark",
+    "x": 81,
+    "y": 87,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:index.html",
+    "actual": "act:page:index.html",
+    "pass": true
+  },
+  {
+    "page": "apps-dark",
+    "x": 150,
+    "y": 257,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+    "page": "apps-dark",
+    "x": 150,
+    "y": 169,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:aoyou",
+    "actual": "act:aoyou",
+    "pass": true
+  },
+  {
+    "page": "apps-dark",
+    "x": 150,
+    "y": 320,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+    "page": "apps-dark",
+    "x": 150,
+    "y": 383,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:wifi",
+    "actual": "act:wifi",
+    "pass": true
+  },
+  {
+    "page": "network-dark",
+    "x": 155,
+    "y": 402,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:network",
+    "actual": "act:network",
+    "pass": true
+  },
+  {
+    "page": "network-dark",
+    "x": 155,
+    "y": 465,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:network",
+    "actual": "act:network",
+    "pass": true
+  },
+  {
+    "page": "settings-dark",
+    "x": 277,
+    "y": 141,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:controls",
+    "actual": "act:controls",
+    "pass": true
+  },
+  {
+    "page": "settings-dark",
+    "x": 275,
+    "y": 371,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:aggregate",
+    "actual": "act:aggregate",
+    "pass": true
+  },
+  {
+    "page": "settings-dark",
+    "x": 150,
+    "y": 450,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:wifi",
+    "actual": "act:wifi",
+    "pass": true
+  },
+  {
+    "page": "settings-more-dark",
+    "x": 155,
+    "y": 156,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:clients",
+    "actual": "act:clients",
+    "pass": true
+  },
+  {
+    "page": "settings-more-dark",
+    "x": 155,
+    "y": 218,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:traffic",
+    "actual": "act:traffic",
+    "pass": true
+  },
+  {
+    "page": "settings-more-dark",
+    "x": 155,
+    "y": 282,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:power",
+    "actual": "act:power",
+    "pass": true
+  },
+  {
+    "page": "settings-more-dark",
+    "x": 155,
+    "y": 345,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:display",
+    "actual": "act:display",
+    "pass": true
+  },
+  {
+    "page": "settings-more-dark",
+    "x": 155,
+    "y": 409,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:more",
+    "actual": "act:more",
+    "pass": true
+  },
+  {
+    "page": "settings-more-dark",
+    "x": 155,
+    "y": 461,
+    "scroll": 360,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:theme",
+    "actual": "act:theme",
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 285,
+    "y": 43,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:apps.html",
+    "actual": "act:page:apps.html",
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 22,
+    "y": 86,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "",
+    "actual": "",
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 145,
+    "y": 195,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 100,
+    "y": 128,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "x": 250,
+    "y": 128,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "pass": true
+  },
+  {
+    "page": "index-dark",
+    "x": 140,
+    "y": 280,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:5G",
+    "actual": "act:modem:5G",
+    "pass": true
+  },
+  {
+    "page": "index-dark",
+    "x": 140,
+    "y": 346,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:4G1",
+    "actual": "act:modem:4G1",
+    "pass": true
+  },
+  {
+    "page": "index-dark",
+    "x": 140,
+    "y": 412,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:4G2",
+    "actual": "act:modem:4G2",
+    "pass": true
+  },
+  {
+    "page": "index-dark",
+    "x": 280,
+    "y": 459,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:page:settings.html",
+    "actual": "act:page:settings.html",
+    "pass": true
+  },
+  {
+    "page": "aggregate-dark",
+    "x": 140,
+    "y": 280,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:5G",
+    "actual": "act:modem:5G",
+    "pass": true
+  },
+  {
+    "page": "aggregate-dark",
+    "x": 140,
+    "y": 346,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:4G1",
+    "actual": "act:modem:4G1",
+    "pass": true
+  },
+  {
+    "page": "aggregate-dark",
+    "x": 140,
+    "y": 412,
+    "scroll": 0,
+    "font": "[REDACTED_LOCAL_PATH]",
+    "expected": "act:modem:4G2",
+    "actual": "act:modem:4G2",
+    "pass": true
+  }
+]

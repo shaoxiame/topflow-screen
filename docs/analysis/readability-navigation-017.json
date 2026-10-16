@@ -1,0 +1,199 @@
+{
+  "scope": "local actual litehtml + original ZTE font; no device access",
+  "results": [
+    {
+      "page": "index",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "index-dark",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "aggregate",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "aggregate-dark",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "network",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "network-dark",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "apps",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "apps-dark",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "settings",
+      "x": 264,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=788\nclick=act:theme"
+    },
+    {
+      "page": "settings",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:page:apps.html",
+      "report": "layout-height=788\nclick=act:page:apps.html"
+    },
+    {
+      "page": "settings",
+      "x": 290,
+      "y": 47,
+      "scroll": 240,
+      "expect": "act:page:apps.html",
+      "report": "layout-height=788\nclick=act:page:apps.html"
+    },
+    {
+      "page": "settings",
+      "x": 264,
+      "y": 47,
+      "scroll": 240,
+      "expect": "act:theme",
+      "report": "layout-height=788\nclick=act:theme"
+    },
+    {
+      "page": "settings-dark",
+      "x": 264,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=788\nclick=act:theme"
+    },
+    {
+      "page": "settings-dark",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:page:apps.html",
+      "report": "layout-height=788\nclick=act:page:apps.html"
+    },
+    {
+      "page": "settings-dark",
+      "x": 290,
+      "y": 47,
+      "scroll": 240,
+      "expect": "act:page:apps.html",
+      "report": "layout-height=788\nclick=act:page:apps.html"
+    },
+    {
+      "page": "settings-dark",
+      "x": 264,
+      "y": 47,
+      "scroll": 240,
+      "expect": "act:theme",
+      "report": "layout-height=788\nclick=act:theme"
+    },
+    {
+      "page": "[REDACTED_SENSITIVE_CONTEXT]",
+      "x": 264,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "[REDACTED_SENSITIVE_CONTEXT]",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:page:apps.html",
+      "report": "layout-height=480\nclick=act:page:apps.html"
+    },
+    {
+      "page": "[REDACTED_SENSITIVE_CONTEXT]",
+      "x": 290,
+      "y": 47,
+      "scroll": 240,
+      "expect": "act:page:apps.html",
+      "report": "layout-height=480\nclick=act:page:apps.html"
+    },
+    {
+      "page": "[REDACTED_SENSITIVE_CONTEXT]",
+      "x": 264,
+      "y": 47,
+      "scroll": 240,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "[REDACTED_SENSITIVE_CONTEXT]",
+      "x": 264,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    },
+    {
+      "page": "[REDACTED_SENSITIVE_CONTEXT]",
+      "x": 290,
+      "y": 47,
+      "scroll": 0,
+      "expect": "act:page:apps.html",
+      "report": "layout-height=480\nclick=act:page:apps.html"
+    },
+    {
+      "page": "[REDACTED_SENSITIVE_CONTEXT]",
+      "x": 290,
+      "y": 47,
+      "scroll": 240,
+      "expect": "act:page:apps.html",
+      "report": "layout-height=480\nclick=act:page:apps.html"
+    },
+    {
+      "page": "[REDACTED_SENSITIVE_CONTEXT]",
+      "x": 264,
+      "y": 47,
+      "scroll": 240,
+      "expect": "act:theme",
+      "report": "layout-height=480\nclick=act:theme"
+    }
+  ],
+  "version": "0.1.7",
+  "checkedSourceSha256": "[REDACTED_SENSITIVE_FIELD]"
+}

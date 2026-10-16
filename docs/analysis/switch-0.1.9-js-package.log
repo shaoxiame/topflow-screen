@@ -1,0 +1,53 @@
+✔ browser registration only adds an entry and performs zero device requests (1.8137ms)
+✔ install start refuses an existing target and does not start any renderer (0.3857ms)
+✔ binary upload uses documented FormData endpoint and validates exact returned path (9.1588ms)
+✔ finish validates hash before extraction and never changes factory/startup files (0.5219ms)
+✔ screen controls are explicit, narrowly scoped and status is parsed without false success (0.9995ms)
+✔ current final candidate uses the documented script format and exact live direct-switch native archive (64.0035ms)
+✔ release gate rejects incomplete local verification and review payload blocks installation and activation (0.7126ms)
+✔ diagnostic candidate has a separate honest gate and cannot weaken the failed release gate (0.227ms)
+✔ native archive inspection rejects symlinks before packaging (50.4259ms)
+✔ review packaging refuses stale native source, lifecycle scripts or UI even with valid archive checksums (6.5808ms)
+✔ both native executables require exact checksums and the ARM64 architecture (0.3457ms)
+✔ production validation rejects preview APIs and demo factories regardless of whether they are called (1.2129ms)
+✔ native package must explicitly declare real data and CLOCK_MONOTONIC heartbeat (0.3734ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ current install instructions describe direct switching and exact old-version migration without claiming hardware success (0.1836ms)
+✔ payload source uses bounded lines without changing archive bytes or recovery script (10.6127ms)
+✔ production manager retains lifecycle/auth helpers verbatim and contains no preview adapters or simulation API (2.1641ms)
+✔ production TXT manager needs no browser API modules, loads with zero calls and opens with exactly one read (15.57ms)
+✔ optional plugin center uses the real version once and stops as soon as uninstall is confirmed (4.4173ms)
+✔ production install and restore keep explicit confirmation and verified real control sequence (6.408ms)
+✔ version panel compares only the imported TXT with components and never checks an invented remote release (4.7474ms)
+✔ update from a running old screen restores and replaces components in one confirmation and preserves the UFI record (2.7368ms)
+✔ update preserves review, upload, wait, changed-version and failed-read barriers (8.1836ms)
+✔ update cannot install after failed factory recovery or unconfirmed cleanup and cannot claim a failed new start succeeded (8.0554ms)
+✔ update readiness cannot accept a healthy process belonging to a replaced old or incomplete component set (17.9905ms)
+✔ update holds one busy lock across cleanup, upload and start and suppresses duplicate clicks and refresh (2.6721ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ production failures preserve upload lock, failed recovery and review-only barriers (4.8106ms)
+✔ failure arriving on the final refresh preserves the native phase instead of the generic switch timeout (3.7455ms)
+✔ direct switching permits bounded slow handover and still requires three fresh healthy observations (5.7678ms)
+✔ direct-switch polling exits early with a late native failure after the old ten-read budget (6.4449ms)
+✔ direct-switch confirmation remains bounded when no target or failure is observed (9.5709ms)
+✔ a rejected start cannot attribute its error to the unchanged previous failure record (2.681ms)
+✔ a new failure on a rejected start is read back with its current native phase (1.6911ms)
+✔ consecutive status read failures stop polling and report only bounded transport diagnostics (2.3778ms)
+✔ final recovery read exposes the latest native error without erasing repeated status-read failures (2.5053ms)
+✔ a transient status read failure still permits three fresh healthy observations (2.3825ms)
+✔ a refreshed newer failure supersedes the earlier poll phase and updates the recovery action (1.9418ms)
+✔ production uninstall removes only native components and the uniquely verified UFI record (1.513ms)
+✔ entry remains outside the actual UFI collapse observer clipping region in both menu states (1.3816ms)
+✔ manager caches only its validated private snapshot; later public payload mutation cannot change lifecycle commands (2.1095ms)
+✔ saved UFI manual importer accepts raw source and preserves the AoYou-style public header without internal store metadata (9.3088ms)
+✔ actual UFI importer documents that manual same-filename imports are skipped, not upgraded (1.5709ms)
+✔ raw TopFlow import preserves other installed plugin blocks and their host-owned metadata (4.6958ms)
+✔ the actual generated script registers from a UFI-style head injection with lexical API globals and zero device requests (23.3257ms)
+ℹ tests 45
+ℹ suites 0
+ℹ pass 45
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 470.1176

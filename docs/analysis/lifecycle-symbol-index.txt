@@ -1,0 +1,209 @@
+
+libzte_SDKowrt.so symbols=761
+libSleepWakeLock                                                  [REDACTED_NUMBER] STT_FUNC
+usleep                                                            [REDACTED_NUMBER] STT_FUNC
+sleep                                                             [REDACTED_NUMBER] STT_FUNC
+pthread_mutex_lock                                                [REDACTED_NUMBER] STT_FUNC
+zBusInit                                                          [REDACTED_NUMBER] STT_FUNC
+zBusRegisterCallBack                                              [REDACTED_NUMBER] STT_FUNC
+zBusSendMsg                                                       [REDACTED_NUMBER] STT_FUNC
+libSleepWakeUnLock                                                [REDACTED_NUMBER] STT_FUNC
+exit                                                              [REDACTED_NUMBER] STT_FUNC
+pthread_mutex_unlock                                              [REDACTED_NUMBER] STT_FUNC
+ZTD_DeleteWakeLock                                                [REDACTED_NUMBER] STT_FUNC
+ZTD_GetNVLcdBrightness                                            000112e0    304 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                  000114fc     32 STT_FUNC
+ZTD_GetPowerBankState                                             000147a4     84 STT_FUNC
+ZTD_GetLcdLockStatus                                              [REDACTED_NUMBER] STT_FUNC
+eventTable                                                        000700b0    432 STT_OBJECT
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         0001234c    248 STT_FUNC
+ZTD_SetLcdShowInterval                                            00010b3c    264 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                00014e24    468 STT_FUNC
+g_autobrightness                                                  [REDACTED_NUMBER] STT_OBJECT
+ZTD_SetPowerOffComplete                                           00023c5c    280 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       000125a4    248 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       [REDACTED_NUMBER] STT_FUNC
+ProcessSleepEvent                                                 [REDACTED_NUMBER] STT_FUNC
+g_brightness                                                      [REDACTED_NUMBER] STT_OBJECT
+[REDACTED_ENCODED_OR_IDENTIFIER]                                        00010e40    260 STT_FUNC
+WebScreenBrightAction                                             00018fa0    404 STT_FUNC
+ZTD_UnblockPin                                                    000350a0    316 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         [REDACTED_NUMBER] STT_FUNC
+ZTD_AddSleepWakeUnLock                                            [REDACTED_NUMBER] STT_FUNC
+g_sleep_second                                                    [REDACTED_NUMBER] STT_OBJECT
+exit_server_thread                                                [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                 0004336c    284 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       00014a7c    468 STT_FUNC
+ZTD_SetLcdBrightness                                              [REDACTED_NUMBER] STT_FUNC
+PowerkeyBrightAction                                              000198cc    900 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                          0002b75c    492 STT_FUNC
+ZTD_SetLcdOpenOrClose                                             [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                          0002bba8    116 STT_FUNC
+ZTD_GetLcdBrightness                                              [REDACTED_NUMBER] STT_FUNC
+ZTD_GetSleepEnableState                                           00011bd4     92 STT_FUNC
+ZTD_GetSIMLockState                                               00034cc4    336 STT_FUNC
+[REDACTED_SENSITIVE_CONTEXT]
+sendZbusObjMessage                                                000173c8    340 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                    00023d74    280 STT_FUNC
+ZTD_SetLockPinValue                                               00011c7c     76 STT_FUNC
+g_sleep_mode                                                      0007000c      4 STT_OBJECT
+[REDACTED_SENSITIVE_CONTEXT]
+is_lcd_file_inited                                                000162a0    296 STT_FUNC
+zEventTable                                                       [REDACTED_NUMBER] STT_OBJECT
+[REDACTED_ENCODED_OR_IDENTIFIER]                                  [REDACTED_NUMBER] STT_FUNC
+ZTD_GetSleepState                                                 [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                   0003438c    368 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                          00011b44    144 STT_FUNC
+wakeup_off_timer                                                  00077d74      4 STT_OBJECT
+ZTD_SetNVLcdBrightness                                            [REDACTED_NUMBER] STT_FUNC
+ZTD_SendReadytoSleep                                              000248c0     84 STT_FUNC
+InfokeyBrightAction                                               000196c4    520 STT_FUNC
+ZTD_SetNr5gBandLock                                               0002988c    264 STT_FUNC
+wakeup_working                                                    00077d7c      4 STT_OBJECT
+setLCDOpenOrCloseForUI                                            0001a078    340 STT_FUNC
+handle_signal                                                     0001a1cc     52 STT_FUNC
+g_monitor_lcd_count                                               00076c58      4 STT_OBJECT
+ZTD_GetDirectPowerMode                                            [REDACTED_NUMBER] STT_FUNC
+ZTD_GetLcdShowInterval                                            00010d1c    292 STT_FUNC
+ZTD_GetLockPinValue                                               00011cc8    176 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                  [REDACTED_NUMBER] STT_FUNC
+ZTD_GetWanSignal                                                  [REDACTED_NUMBER] STT_FUNC
+cancelWakeUpTimer                                                 [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                          [REDACTED_NUMBER] STT_FUNC
+ZTD_SetLcdTouchStatus                                             [REDACTED_NUMBER] STT_FUNC
+ZTD_SetLcdOpenKDDI                                                [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                           0002b948    492 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                    0002ce18    548 STT_FUNC
+[REDACTED_SENSITIVE_CONTEXT]
+ReSetBrightAction                                                 [REDACTED_NUMBER] STT_FUNC
+wakeup_on_timer                                                   00077d78      4 STT_OBJECT
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       000127fc    248 STT_FUNC
+[REDACTED_SENSITIVE_CONTEXT]
+ZTD_GetDeviceSleepTime                                            00010a08    308 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                      [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                          00024c5c    604 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                           0002bc1c    116 STT_FUNC
+ZTD_AddSleepWakeLock                                              000255dc    148 STT_FUNC
+ZTD_SetLcdLockStatus                                              0001151c    236 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                          00011a54    240 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                 00010c44    216 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                     00034e14      8 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                           0002bff8    448 STT_FUNC
+isSleepMode                                                       [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       0003425c    304 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         000121fc    336 STT_FUNC
+ZTD_SetSleepEnableState                                           00011c30     76 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                          0002be38    448 STT_FUNC
+getSleepState                                                     [REDACTED_NUMBER] STT_FUNC
+ZTD_SetSimNet_unlock                                              0003841c    236 STT_FUNC
+ZTD_SetDirectPowerMode                                            0001539c    244 STT_FUNC
+WebSetBrightValue                                                 [REDACTED_NUMBER] STT_FUNC
+ZTD_SetSIMLockMode                                                000353fc    392 STT_FUNC
+calculateBrightness                                               000183e8     96 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       0001269c    352 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                              0002b570    492 STT_FUNC
+zte_sdk_init_zbus                                                 [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                          00024eb8    236 STT_FUNC
+g_poweroffunreally                                                00077d89      1 STT_OBJECT
+[REDACTED_ENCODED_OR_IDENTIFIER]                                     00037f9c    520 STT_FUNC
+ZTD_AddWakeLock                                                   [REDACTED_NUMBER] STT_FUNC
+ZTD_SetDeviceSleepTime                                            0001087c    396 STT_FUNC
+RetsetSleeptime                                                   [REDACTED_NUMBER] STT_FUNC
+ZTD_GetSignalStrength                                             00020af4    600 STT_FUNC
+ZTD_SetPoweroffState                                              00023a14    152 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                              0002bb34    116 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         00029a30    340 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                              0002bc90    424 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                          00014c50    468 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         00024b70    236 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                        00010f44    300 STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       0001499c    224 STT_FUNC
+
+zte_topsw_devui symbols=1103
+ZTD_AddWakeLock                                                   [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                    [REDACTED_NUMBER] STT_FUNC
+pthread_mutex_unlock                                              [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                  [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                          [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                           [REDACTED_NUMBER] STT_FUNC
+lv_obj_add_event_cb                                               [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                              [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                  [REDACTED_NUMBER] STT_FUNC
+ZTD_SetSimNet_unlock                                              [REDACTED_NUMBER] STT_FUNC
+ZTD_GetNVLcdBrightness                                            [REDACTED_NUMBER] STT_FUNC
+lv_obj_is_has_event_cb                                            [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                          [REDACTED_NUMBER] STT_FUNC
+usleep                                                            [REDACTED_NUMBER] STT_FUNC
+ZTD_GetSignalStrength                                             [REDACTED_NUMBER] STT_FUNC
+ZTD_GetWanSignal                                                  [REDACTED_NUMBER] STT_FUNC
+pthread_mutex_lock                                                [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                        [REDACTED_NUMBER] STT_FUNC
+ZTD_SetLockPinValue                                               [REDACTED_NUMBER] STT_FUNC
+ZTD_SetDeviceSleepTime                                            [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                          [REDACTED_NUMBER] STT_FUNC
+ZTD_UnblockPin                                                    [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                          [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                           [REDACTED_NUMBER] STT_FUNC
+ZTD_SetNVLcdBrightness                                            [REDACTED_NUMBER] STT_FUNC
+lv_event_get_target                                               [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                          [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         [REDACTED_NUMBER] STT_FUNC
+ZTD_GetLcdBrightness                                              [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                          [REDACTED_NUMBER] STT_FUNC
+clock_gettime                                                     [REDACTED_NUMBER] STT_FUNC
+ZTD_SetDirectPowerMode                                            [REDACTED_NUMBER] STT_FUNC
+ZTD_GetDeviceSleepTime                                            [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                              [REDACTED_NUMBER] STT_FUNC
+ZTD_GetDirectPowerMode                                            [REDACTED_NUMBER] STT_FUNC
+ZTD_GetLockPinValue                                               [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                           [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       [REDACTED_NUMBER] STT_FUNC
+__cxa_atexit                                                      [REDACTED_NUMBER] STT_FUNC
+ZTD_AddSleepWakeUnLock                                            [REDACTED_NUMBER] STT_FUNC
+ZTD_SetLcdBrightness                                              [REDACTED_NUMBER] STT_FUNC
+ZTD_SetPowerOffComplete                                           [REDACTED_NUMBER] STT_FUNC
+ZTD_SetLcdOpenOrClose                                             [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                        [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                 [REDACTED_NUMBER] STT_FUNC
+ZTD_SendReadytoSleep                                              [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                  [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                     [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                              [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       [REDACTED_NUMBER] STT_FUNC
+lv_event_send                                                     [REDACTED_NUMBER] STT_FUNC
+ZTD_GetLcdLockStatus                                              [REDACTED_NUMBER] STT_FUNC
+ZTD_SetLcdShowInterval                                            [REDACTED_NUMBER] STT_FUNC
+ZTD_SetLcdTouchStatus                                             [REDACTED_NUMBER] STT_FUNC
+ZTD_GetSleepState                                                 [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                         [REDACTED_NUMBER] STT_FUNC
+ZTD_AddSleepWakeLock                                              [REDACTED_NUMBER] STT_FUNC
+ZTD_SetPoweroffState                                              [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                        [REDACTED_NUMBER] STT_FUNC
+exit                                                              [REDACTED_NUMBER] STT_FUNC
+ZTD_SetLcdLockStatus                                              [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                            [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                          [REDACTED_NUMBER] STT_FUNC
+ZTD_SetNr5gBandLock                                               [REDACTED_NUMBER] STT_FUNC
+lv_event_get_user_data                                            [REDACTED_NUMBER] STT_FUNC
+ZTD_GetLcdShowInterval                                            [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       [REDACTED_NUMBER] STT_FUNC
+
+zte_topsw_sleep_faw symbols=152
+sleep                                                             [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]         [REDACTED_NUMBER] STT_FUNC
+ubus_send_event                                                   [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                              [REDACTED_NUMBER] STT_FUNC
+pthread_mutex_lock                                                [REDACTED_NUMBER] STT_FUNC
+__cxa_atexit                                                      [REDACTED_NUMBER] STT_FUNC
+libSleep_uci_commit                                               [REDACTED_NUMBER] STT_FUNC
+pthread_mutex_unlock                                              [REDACTED_NUMBER] STT_FUNC
+[REDACTED_ENCODED_OR_IDENTIFIER]                                       [REDACTED_NUMBER] STT_FUNC
+libSleep_uci_set                                                  [REDACTED_NUMBER] STT_FUNC
+libSleep_uci_get                                                  [REDACTED_NUMBER] STT_FUNC

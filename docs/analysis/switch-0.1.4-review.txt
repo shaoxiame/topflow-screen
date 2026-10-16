@@ -1,0 +1,55 @@
+TopFlow screen 0.1.4 - sensor/display startup order correction
+Date: [REDACTED_NUMBER]
+
+Confirmed device evidence (read-only SSH; no device files or settings changed)
+- Installed 0.1.3 archive marker and four executable hashes match the delivered
+  release. last-status is failure:RENDERER_EXITED:7:ADOPT_SENSOR_STATE.
+- The original zte_topsw_devui is again the sole observed DRM master. Its ELF
+  and init script hashes match the previously captured original files.
+- Kernel uptime 126195.023844: original QPIC pipe is disabled. At 126195.065957,
+  stk3329b starts reporting I2C read failures. Those failures continue during
+  the switch gap. The recovering original enables QPIC at 126204.415045 and
+  performs sensor init and enable at approximately 126205.[REDACTED_NUMBER].19.
+- This establishes the observed ordering/dependency, not the physical wiring.
+  ADOPT_SENSOR_STATE conflated failed I/O and invalid values in 0.1.3; that
+  earlier record cannot retrospectively identify the precise failed read.
+
+Static original-program evidence, analyzed only on downloaded PC copies
+- Factory wrapper call at 0x452e80 reads sensor state. The branch compares
+  desired automatic mode with observed state; when they differ and observed
+  state is zero, 0x452ea0 calls ResetLightSensorState, then 0x452eb4 calls
+  SetLightSensorState with the desired mode.
+[REDACTED_SENSITIVE_CONTEXT]
+- Original getter silently treats open/scan failure as zero. This plugin does
+  not copy that fallback: unreadable or invalid values do not authorize init.
+
+Reference toolkit
+[REDACTED_URL]
+Pinned local reference: [REDACTED_ENCODED_OR_IDENTIFIER].
+The toolkit uses process-scoped LD_PRELOAD and original LVGL timer dispatch;
+[REDACTED_SENSITIVE_CONTEXT]
+that our independent renderer has equivalent lifecycle behavior. No toolkit
+installer, network changes, startup hooks or original binary edits are applied.
+[REDACTED_SENSITIVE_CONTEXT]
+dependency instead of claiming to have adopted the toolkit's hook architecture.
+
+Implementation and validation boundaries
+The new path validates persistent policy and ownership, opens DRM and submits
+an initialized black buffer, then checks sensor readiness. Automatic mode may
+use the source-verified init/enable sequence once, only for observed state zero
+under the active owned guard. It still requires genuine enable/lux readback.
+Sensor I/O errors, invalid values and init/enable errors have separate bounded
+codes. There is no fabricated sensor value or unconditional driver reset.
+[REDACTED_SENSITIVE_CONTEXT]
+Manager error reporting preserves delayed native failures and read failures;
+the direct-switch check allows a bounded complete handover, ending early on a
+confirmed result. There is no idle status polling added.
+Trusted 0.1.3 migration permits recovery/uninstall, never running its old renderer.
+
+No hardware switch, installation, reset, UCI write or file upload was performed
+by the developer. PC tests and ARM64 builds do not establish physical display,
+touch, sleep/wake or complete uninstall acceptance. 0.1.4 is a fix candidate;
+additional runtime failures after the now-reordered phase remain possible.
+
+Evidence files
+[REDACTED_ENCODED_OR_IDENTIFIER].txt

@@ -1,0 +1,44 @@
+[REDACTED_SENSITIVE_CONTEXT]
+
+Confirmed local cause:
+The prior native controls_enabled value started at 0 and screen_lock cleared it
+[REDACTED_SENSITIVE_CONTEXT]
+could not be submitted until a separate manual control switch was enabled.
+This is a reproduced local blocker; no new device trace was read, so it is not
+[REDACTED_SENSITIVE_CONTEXT]
+
+[REDACTED_SENSITIVE_CONTEXT]
+- Initialization remains controls_enabled=0.
+- Successful display adoption authorizes only an unlocked screen.
+[REDACTED_SENSITIVE_CONTEXT]
+- The old controls action is informational. Stale @enable/@disable markers
+[REDACTED_SENSITIVE_CONTEXT]
+
+Official local source comparison (zwrt-datad 0.10.79):
+[REDACTED_ENCODED_OR_IDENTIFIER].10.79/rust/src/control.rs:
+[REDACTED_SENSITIVE_CONTEXT]
+  Status 3 is success, status 2 is failure. Sends are not replayed automatically.
+[REDACTED_ENCODED_OR_IDENTIFIER].10.79/rust/src/server.rs:
+  POST /control uses ok/action/result for success and fixed error codes for
+[REDACTED_SENSITIVE_CONTEXT]
+
+[REDACTED_SENSITIVE_CONTEXT]
+or send retry was introduced. UTF-16BE encoding is unchanged and verified for
+Chinese text and supplementary Unicode characters.
+
+[REDACTED_SENSITIVE_CONTEXT]
+The body is cleared only on confirmed success. A failed/unknown result retains
+[REDACTED_SENSITIVE_CONTEXT]
+
+PC checks passed:
+[REDACTED_SENSITIVE_CONTEXT]
+- native/test-controls.ps1 executes actual form actions and confirmation with an
+[REDACTED_SENSITIVE_CONTEXT]
+  unauthorized, invalid parameters, device failure, timeout, failed status,
+[REDACTED_SENSITIVE_CONTEXT]
+- native/test-interaction.ps1 keeps sleep revocation/cancel semantics and uses
+  the three-page navigation fixture.
+- Build-contract tests (excluding final unbuilt package) pass 15/15.
+
+Device remains untouched by the developer. Real carrier delivery and current
+[REDACTED_SENSITIVE_CONTEXT]

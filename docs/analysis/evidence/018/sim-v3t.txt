@@ -1,0 +1,14 @@
+{
+  "v3t_1_modem_main_state": "",
+[REDACTED_SENSITIVE_FIELD]
+  "v3t_1_spn_b1_flag": "",
+  "v3t_1_spn_b2_flag": "",
+  "v3t_1_Operator": "",
+  "v3t_1_st_slot": "",
+  "v3t_2_modem_main_state": "",
+[REDACTED_SENSITIVE_FIELD]
+  "v3t_2_spn_b1_flag": "",
+  "v3t_2_spn_b2_flag": "",
+  "v3t_2_Operator": "",
+  "v3t_2_st_slot": ""
+}

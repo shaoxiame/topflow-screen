@@ -1,0 +1,7 @@
+{
+  "screen-lock-policy": "uci -q get zwrt_deviceui.Screen.[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "screen-light-input": "cat [REDACTED_ENCODED_OR_IDENTIFIER] [REDACTED_ENCODED_OR_IDENTIFIER] [REDACTED_ENCODED_OR_IDENTIFIER]",
+  "screen-light-output": "cat /sys/class/leds/led:lcd/brightness /sys/class/leds/led:lcd/max_brightness",
+  "screen-light-driver": "ls -ld [REDACTED_ENCODED_OR_IDENTIFIER] [REDACTED_ENCODED_OR_IDENTIFIER] [REDACTED_ENCODED_OR_IDENTIFIER]",
+  "ufi-listen-port": "netstat -ltnp 2>/dev/null | grep -E '(:2333[[:space:]]|:9460[[:space:]])'"
+}

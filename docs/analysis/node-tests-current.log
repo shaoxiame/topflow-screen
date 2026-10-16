@@ -1,0 +1,149 @@
+✔ inventory parser inspects source without executing scripts and last duplicate wins (1.0496ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ default mode permits only three GET reads and rejects all mutations (2.4898ms)
+✔ demo interaction changes local state and cannot call a device transport (0.3319ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ a mutation is not reported successful when the engine has not confirmed it (0.2917ms)
+✔ mode control uses PATCH, verifies state and declares that it is not persisted (0.2185ms)
+✔ transport failure is unknown state, never a false stopped status or leaked error (0.4035ms)
+✔ read-only command finds the active config and uses only existing tools (0.7994ms)
+✔ runtime whitelist allows exactly the two verified filename shapes and 24 hexadecimal generation (96.7968ms)
+✔ default bridge rejects writes, arbitrary routes, body-bearing reads and malformed paths (0.3583ms)
+✔ writes require a narrow body and all dynamic names are Base64, not shell source (0.317ms)
+✔ snapshot command contains only the three audited read operations (0.16ms)
+✔ snapshot parsing produces the sanitized adapter input and rejects incomplete snapshots (0.8979ms)
+✔ parser rejects mismatched/ambiguous output and suppresses raw diagnostics (0.1756ms)
+✔ transport uses only the provided runner, preserves default read-only boundary and parses result (0.2986ms)
+✔ browser registration only adds an entry and performs zero device requests (1.5984ms)
+✔ install start refuses an existing target and does not start any renderer (0.4222ms)
+✔ binary upload uses documented FormData endpoint and validates exact returned path (14.697ms)
+✔ finish validates hash before extraction and never changes factory/startup files (0.2761ms)
+✔ screen controls are explicit, narrowly scoped and status is parsed without false success (0.9532ms)
+✖ package uses documented script format without store markers, below 4 MiB and current source (11.313ms)
+✔ release gate rejects incomplete local verification and review payload blocks installation and activation (0.4981ms)
+✖ self-test TXT is explicitly device-unverified and retains zero-action loading (7.7526ms)
+✔ native archive inspection rejects symlinks before packaging (57.4692ms)
+✔ review packaging refuses stale native source, lifecycle scripts or UI even with valid archive checksums (0.7369ms)
+✔ both native executables require exact checksums and the ARM64 architecture (0.402ms)
+✔ normalizes byte rates, QoS, zero values and unknown secondary SIMs without identifiers (2.517ms)
+✔ missing data stays unknown; valid zero is not conflated with unavailable (0.8942ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ primary cellular controls cannot silently target an external modem or overwrite unrelated fields (1.0712ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ downloaded exact-version snapshot can be normalized without network calls (1.0513ms)
+✔ APN protocol enums follow the vendor contract and unreadable targets never become writable (0.3863ms)
+✔ factory supplement distinguishes disabled cards from absence and expires through a single cached read (0.4858ms)
+✔ factory bridge permits only exact vendor reads and confirmed targeted writes with readback (0.5127ms)
+✔ factory work and boot settings use fixed original interfaces and refuse unknown readback (0.4091ms)
+✔ guest, client, traffic and power actions keep vendor types and sparse target semantics (0.9883ms)
+✔ cooling normalization preserves always-on independently from legacy enabled and instantaneous activity (0.2951ms)
+✔ cooling actions are exact boolean policies; readonly and unconfirmed control issue zero requests (0.8833ms)
+✔ cooling mock changes only local policies and returns to the documented thermal strategies (0.2075ms)
+✔ cooling live writes once and waits for matching independent policy readback (0.5436ms)
+✔ cooling stale cache, hardware policy failure and stopped liquid waveform never report verified success (0.6953ms)
+✔ builds exact UFI aggregation and cell payloads, rejects unsupported modem selection (0.2382ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ read-only gate prevents all write transports, including a caller-supplied transport (0.3568ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ explicit live mode still requires confirmation and separately confirms external effects (0.3111ms)
+✔ mock actions are local, change readable state, and cannot mutate supplied input (1.9054ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ saved-but-test-failed forwarding responses preserve saved state without automatic retries (0.3397ms)
+✔ device errors and ambiguous success remain failures with no retry (0.1956ms)
+✔ UFI bridge preserves authenticated postData and does not log in (0.2721ms)
+✔ serving cell data drops sentinels and disconnected placeholders while retaining valid zero PCI/SINR (0.5741ms)
+✔ frequency capabilities are read independently, extended LTE list outranks bitmask (0.3113ms)
+✔ automatic frequency restore uses the complete nonempty reported list, never empty string (0.5058ms)
+✔ band/mode reading never invokes cell collection; mock changes remain observable (0.5739ms)
+✔ current 4G_AND_5G is preserved for display without guessing a writable mapping (0.1871ms)
+✔ fixed factory protocol rejects malformed operations and [REDACTED_ENCODED_OR_IDENTIFIER] SIM state (158.7723ms)
+✔ device reboot and shutdown require current capabilities and confirmation, submit once and never claim completion (150.2135ms)
+✔ native SIM and WPS pages are read-only until confirmed, mask codes, recheck slot and read back once (153.421ms)
+✔ native scripts parse as POSIX sh and never invoke vendor stop, touch unload or networking changes (32.4825ms)
+✔ restore waits for supervisor cleanup before factory start and only signals verified identity (805.9402ms)
+✔ PID reuse or a different supervisor script refuses restore without killing anyone (118.8628ms)
+✔ orphan recovery stops only our exact binary with matching process birth time (865.9646ms)
+✔ status remains read-only and requires a renderer heartbeat after first frame (283.3067ms)
+✔ a reused renderer PID does not stop a different instance or start a competing factory (134.7883ms)
+✔ TERM during supervisor preflight exits through cleanup without handing over display (214.7109ms)
+✔ unknown display policy refuses handover before original services are stopped (237.8593ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ handover takes only an expiring own guard and passes the verified receipt as one argument (922.1705ms)
+✔ unconfirmed timed guard blocks handover while keeping the original provider alive (376.7399ms)
+✔ factory process without its methods cannot confirm restoration or allow component removal (413.6394ms)
+✔ an orphan bus helper is stopped before the original service is restarted (761.7322ms)
+✔ restoration releases only recorded verified custom identities after stable factory methods (883.6008ms)
+✔ uninstall restores factory and removes exactly the verified local component and runtime fixtures (1119.2486ms)
+✔ uninstall refuses unknown files and preserves the installation (175.1446ms)
+✔ uninstall refuses a nested mount and missing ownership marker before deleting files (136.6183ms)
+✔ an orphan without its PID record is identified and stopped before factory restoration and deletion (1366.8651ms)
+✔ an orphan with unreadable process identity blocks factory takeover and deletion (274.8682ms)
+✔ uploaded but unextracted package is identified read-only and removed by the in-memory controller (1179.5936ms)
+✔ partial install with mismatched bundle ownership is preserved before any service or lock writes (45.2009ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ an unlinked own executable is still stopped before restoring the factory display (870.3385ms)
+✔ uninstall refuses an in-flight or unknown upload before touching locks or services (123.9714ms)
+✔ upload completion and extraction share the uninstall control lock and cannot advance when busy (199.6206ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ manager loads without requests, opens with one status read and keeps advanced polling unmounted (22.5805ms)
+✔ review manager blocks installation and activation while preserving explicit recovery and cleanup (4.338ms)
+✔ factory PID after a failed restore cannot masquerade as a successful service recovery (1.0453ms)
+✔ first switch requires one confirmation then installs, uploads, verifies and starts (3.1367ms)
+✔ cancelled switch and failed upload never start the screen (1.8179ms)
+✔ advanced controls are off by default and folding destroys polling and revokes control (0.9423ms)
+✔ uninstall clears native components and the double-read unique record via documented single-record API (0.9411ms)
+✔ unknown upload outcome keeps cleanup disabled and never signals a record or component deletion (0.9788ms)
+✔ unknown single-record response falls back explicitly without whole-table writes or false success (1.4448ms)
+✔ record identification rejects ambiguous or combined plugin blocks without executing source (0.3112ms)
+✔ record deletion refuses list changes and verifies other records are preserved (0.6037ms)
+✔ production manager retains lifecycle/auth helpers verbatim and contains no preview adapters or simulation API (1.353ms)
+✔ production TXT manager needs no browser API modules, loads with zero calls and opens with exactly one read (16.8029ms)
+✔ production install and restore keep explicit confirmation and verified real control sequence (3.0114ms)
+✔ production failures preserve upload lock, failed recovery and review-only barriers (3.3353ms)
+✔ production uninstall removes only native components and the uniquely verified UFI record (2.2737ms)
+✔ actual UFI manual importer accepts the complete generated TXT without treating embedded code as store metadata (5.6635ms)
+✔ actual UFI importer documents that manual same-filename imports are skipped, not upgraded (2.101ms)
+✔ the actual generated script registers from a UFI-style head injection with lexical API globals and zero device requests (26.8117ms)
+✔ mounting, navigating every page and refreshing never perform hidden writes (19.5454ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ unreadable engine status is not presented as a stopped engine or doubled version prefix (1.8866ms)
+✔ destroy removes action handlers so remounting read-only cannot retain old control authority (1.2188ms)
+✔ changing Wi-Fi section retains its values and submits only edited fields, including unknown existing encryption (7.8944ms)
+✔ LTE and NR serving cell selection keeps PCI, channel and band in their own radio family (1.8693ms)
+✔ horizontal swipes cycle only main pages and reject vertical, edited, cancelled or mismatched gestures (4.2548ms)
+✔ home hides back navigation, detail headers return one level and no screen page exposes factory controls (3.5763ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ read-only form submissions and toggles never build, execute or send an API action (1.2451ms)
+✔ per-card APN pages retain the target, parent navigation and exact protocol numbers (4.399ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ a late APN response cannot replace the currently selected card configuration (1.6784ms)
+✔ guest Wi-Fi switch targets only its own guest band and waits for confirmation (1.1305ms)
+✔ new settings pages preserve unknown states and all readonly actions stay local (2.438ms)
+✔ cooling page treats always-on independently and readonly or unknown toggles never create writes (1.6708ms)
+✔ cooling switches keep their target and do not execute before confirmation or after cancellation (1.4061ms)
+ℹ tests 129
+ℹ suites 0
+ℹ pass 127
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13200.2479
+
+✖ failing tests:
+
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+✖ package uses documented script format without store markers, below 4 MiB and current source (11.313ms)
+[REDACTED_SENSITIVE_CONTEXT]
+      at verifyNativeSources ([REDACTED_LOCAL_PATH]
+      at Object.build ([REDACTED_LOCAL_PATH]
+      at TestContext.<anonymous> ([REDACTED_LOCAL_PATH]
+[REDACTED_SENSITIVE_CONTEXT]
+
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+✖ self-test TXT is explicitly device-unverified and retains zero-action loading (7.7526ms)
+[REDACTED_SENSITIVE_CONTEXT]
+      at verifyNativeSources ([REDACTED_LOCAL_PATH]
+      at Object.build ([REDACTED_LOCAL_PATH]
+      at TestContext.<anonymous> ([REDACTED_LOCAL_PATH]
+[REDACTED_SENSITIVE_CONTEXT]

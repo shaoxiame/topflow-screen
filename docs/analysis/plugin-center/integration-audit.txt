@@ -1,0 +1,51 @@
+TopFlow 插件中心接入审阅（0.1.9 开发版）
+检查时间：[REDACTED_NUMBER] UTC。全部分析在电脑完成；没有连接设备，没有安装或发送统计。
+
+一、来源与平台实况
+1. 官方开发文档：[REDACTED_URL]
+   已保存 developers.html。网页是 SDK 2.0、匿名统计和文件分发文档，并非完整的后台投稿表单说明。
+2. 官方 SDK：[REDACTED_URL]
+   原始版本 2.0.0，12790 字节，SHA-256：
+   [REDACTED_ENCODED_OR_IDENTIFIER]
+   vendor/ufi-device-sdk-2.0.0.js 保留原始字节；provenance 记录来源和集成方式。
+3. 公开目录：[REDACTED_URL]
+   返回 Topflow-屏幕插件，ID [REDACTED_ENCODED_OR_IDENTIFIER]，公开版本 0.1.8。
+   检查时 0.1.9 尚未公开；本版不得假借 0.1.8 上报。目录快照 public-plugins.json。
+4. 文件清单：[REDACTED_URL]
+   返回 assets=[]，已保存 topflow-core-assets.json。尚无可用的公开原生组件文件，不能虚构在线安装地址。
+5. 首页公开说明：网页仅展示插件，原始 TXT 下载和更新通过已配置的 UFI 插件商店完成。
+   已保存 index.html 和 home.js。普通 QQ 登录不会给予后台管理权限。
+
+二、TXT 与发布边界
+本地《(1.0.0)插件开发文档.md》要求完整 script 包装、独立作用域、唯一命名；原始源码不手写商店内部 KANO_META、安装标记或商店 ID。平台负责生成安装记录。
+现有构建已保留公开 @name/@version/@build 头，且阻止 KANO_META 和外层安装标记进入原始 TXT。
+SDK plugin_id 是真实公开 ID，只用于公开目录/匿名统计身份，不是伪造安装元数据。
+0.1.9 的原始 TXT 应上传为同一个已有插件的新版本，并单独填写版本、描述、设备 TopFlow、更新说明。公开文档未列出完整后台表单或源码提交 API，因此没有臆造字段、替用户登录、上传或发布。
+[REDACTED_SENSITIVE_CONTEXT]
+文件管理发布需管理员会话及 CSRF。若后续发布 native archive，需真实 arm64、专用兼容标识、压缩与解压大小/SHA-256；下载只能用已发布清单 HTTPS 地址。不能借用遨游世界 aoyou-ufi-v1 标识。
+
+三、SDK 审阅
+[REDACTED_SENSITIVE_CONTEXT]
+源码里的固件选择顺序为 wa_inner_version、cr_version、hardware_version。最后一项是 SDK 原始行为，不应宣称已独立验证该备用字段的固件含义。
+[REDACTED_SENSITIVE_CONTEXT]
+自动链仅可见页面运行，每 60 秒串行采集上报；隐藏页面清除定时器并中止自动请求。stop 清除自动请求/定时器及其 [REDACTED_ENCODED_OR_IDENTIFIER] 监听。没有原生常驻服务、日志写入或身份持久化。
+手动 heartbeat/collect 不受 stop 的自动 AbortController 管理，接入代码因此只调用 start/stop，不调用手动心跳。
+原版 SDK 会赋值 window.UFIPluginTelemetry，构建应在 TopFlow 私有作用域封装，不覆盖遨游世界等插件的同名全局对象。
+原版对 400 未发布错误也会 60 秒重试，本适配器在启动前检查公开目录精确版本，避免未发布版本持续发无效心跳。
+
+四、本次适配器实现
+src/plugin-center.js，UMD 导出 TopFlowPluginCenter。
+create(root,{version,sdk,onChange,enabled:true})，返回 [REDACTED_ENCODED_OR_IDENTIFIER]。
+默认不启用；manager 需确认 UFI 上下文并传入私有 SDK。localhost、*.localhost、127/8、IPv6 loopback、[REDACTED_IP] 和 file 预览始终禁止公网和宿主采集。
+[REDACTED_SENSITIVE_CONTEXT]
+目录精确匹配当前版本才启动统计；更高 semver 标记 update-available；较旧版本/未公开当前版本为 unpublished。不降级、不伪报版本，名称和描述等服务器文本不进入 UI 文案。
+重复 start 不重复监听/请求；并发 check 合并。目录不轮询；普通失败退避 1/2/4/8/16/32/60 秒，仅下一次手动或可见恢复触发，429 遵守 Retry-After，上限一小时。
+隐藏与 pagehide 取消目录、停止 SDK；重新可见/pageshow 恢复已核验的同生命周期状态。显式 stop 去掉全部监听并阻止 check 偷偷重启，必须再显式 start。
+固定状态：[REDACTED_ENCODED_OR_IDENTIFIER]；label 只来自本地常量，版本经过严格 SemVer 格式验证。
+管理 UI 的关闭不等于卸载。完整卸载、插件入口被外部移除、页面生命周期结束均需停止适配器；manager 挂接由根任务负责。
+
+五、验证范围
+固定 SDK 离线审阅：[REDACTED_ENCODED_OR_IDENTIFIER].cjs，8 项通过。
+适配器测试：tests/plugin-center.test.js。覆盖凭据隔离、版本排序/未知版本、恶意目录、大小/超时、并发、隐藏/取消、页面恢复、卸载停止、无轮询退避、私有 SDK 故障。
+所有网络/设备接口在测试中均是假对象；未向平台报告任何设备身份。
+[REDACTED_SENSITIVE_CONTEXT]

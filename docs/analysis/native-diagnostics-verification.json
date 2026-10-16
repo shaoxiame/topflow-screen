@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "status": "DIAGNOSTIC_CANDIDATE",
+  "date": "[REDACTED_NUMBER]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "[REDACTED_SENSITIVE_FIELD]",
+  "hardwareTested": false,
+  "helperStartupDeadlineMs": 4000,
+  "firstErrorOnly": true,
+  "recordProtocol": "TF_NATIVE_FAILURE_V1",
+  "mainSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "helperSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "localTests": [
+    "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "ARM64 main -Wall -Wextra -Werror compile",
+    "ARM64 helper -Wall -Wextra -Werror production build",
+    "verify-native.ps1",
+    "verify-factory-bus-elf.py: 24 existing imports"
+  ],
+  "sources": "[REDACTED_SENSITIVE_FIELD]"
+}

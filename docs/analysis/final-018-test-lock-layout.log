@@ -1,0 +1,11 @@
+PASS lock-entry: native 320x480; layout, bounds, hit targets and state
+PASS lock-entry-dark: native 320x480; layout, bounds, hit targets and state
+PASS lock-handover: native 320x480; layout, bounds, hit targets and state
+PASS lock-handover-dark: native 320x480; layout, bounds, hit targets and state
+PASS lock-cooldown: native 320x480; layout, bounds, hit targets and state
+PASS lock-cooldown-dark: native 320x480; layout, bounds, hit targets and state
+PASS soft-lock: native 320x480; layout, bounds, hit targets and state
+PASS soft-lock-dark: native 320x480; layout, bounds, hit targets and state
+PASS soft-lock-progress: native 320x480; layout, bounds, hit targets and state
+PASS soft-lock-progress-dark: native 320x480; layout, bounds, hit targets and state
+PASS: 10 actual lock renders and 1528 hit targets; no gesture tests are inferred from static screenshots

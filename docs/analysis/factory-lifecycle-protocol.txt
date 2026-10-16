@@ -1,0 +1,152 @@
+TopFlow 原厂屏幕 / 休眠联动协议与恢复边界
+日期：[REDACTED_NUMBER]；全部来自已下载二进制静态分析、原接口只读证据与本机故障测试。
+本报告不表示替换已成功或真实休眠已验收。用户自行运行0.1.1后启动失败并恢复原厂；
+本代理仅本机开发。下文已按失败后的只读日志修正历史事件节点语义。
+
+一、确证的原厂调用链
+1. libzte_SDKowrt.so ZTD_SetLcdOpenOrClose@0x18988 计算亮度、写 LCD、重置计时，
+   0x18b24 调 [REDACTED_ENCODED_OR_IDENTIFIER]@0x4336c。
+   zbus eventTable@0x70170 的 3002 对应 zwrt_deviceui_event.lcdstatus。
+   libzte_zbus.so zbus_send_event@0x98bc → ubus_send_event@0x99e0。
+   payload 业务字段 [REDACTED_ENCODED_OR_IDENTIFIER], lcd_status=on/off。
+2. zte_topsw_sleep_faw callback@0xcc44 消费该 lcd_status，on 调@0xbc34保留
+   zteSleepBacklight，off 调@0xbe08释放。消息投递成功不等于状态转换完成，须另读
+[REDACTED_SENSITIVE_CONTEXT]
+3. sleep_faw@0xb28c/0xb620 对 zwrt_zte_sleep_faw.power_status 对象通知
+   [REDACTED_ENCODED_OR_IDENTIFIER]，同时更新原厂 sleepStatus。
+   @0xe9a8 的普通广播事件名是 [REDACTED_ENCODED_OR_IDENTIFIER]，
+   [REDACTED_ENCODED_OR_IDENTIFIER]。两种大小写不同，不应混用。
+[REDACTED_SENSITIVE_CONTEXT]
+   然后按当时真实 brightness>0 重新发LCD状态；不重放旧的期望亮度。
+5. ProcessSleepEvent@0x19408 更新g_sleep_mode，仅值1调用autoScreenOn(1)。
+   autoScreenOn@0x1924c只在screen_wakeup=1且g_sleep_mode=1时启动周期亮屏计时；
+   当前screen_wakeup=0，不发生此行为。gotoWakeup本身不自动亮屏/解锁。
+   autoScreenOn(2)另有触摸状态、取消定时器、UI安全帧与延时点亮，但此分支并非
+   ProcessSleepEvent的调用。本实现当前预检拒绝周期亮屏开启，不猜测该功能等效。
+   熄屏触摸直接唤醒未由上述证据证明；采用明确物理键唤醒且保持锁屏。
+6. SDK getSleepState@0x18848 消费驱动历史事件，非当前挂起状态。
+   2026-10-16实际kernel日志明确读取会clear；原SDK只在特定唤醒路径读取一次。
+   旧实现把它当实时布尔并用fread到EOF，造成重复消费；此前只读采集也曾误读。
+   诊断候选彻底移除此节点的预检和运行读取，不轮询、不用固定0冒充状态。
+   isSleepMode@0x18830实际读取wakeup_working。当前没有确证的非消费式面板
+   suspend getter。自有guard只保证活动转换，DRM成功只证明驱动接受帧，
+   均不声称证明物理面板resume/发光。
+7. SDK dispatch@0x43664 的原3方法由root独立服务报告补充：touch_status_get返回
+   UI登录内存状态；direct_power_mode_get读固定原UCI；setter走既有charger接口。
+[REDACTED_SENSITIVE_CONTEXT]
+
+二、锁归属与限时过渡guard
+SDK AddWakeLock@0x24750/Delete@0x24808使用内部名zte_topsw_devui及sourceId=getpid。
+sleep内部树@0x9788/@0x9b8c按lockName查找，sourceId不是删除所有权屏障；不能看到
+原UI退出就删除同名锁。后续只读证据显示 /tmp/wakelockMap.txt 在原厂亮屏时确有
+zte_topsw_devui <PID>，自然熄屏后会删除。SDK ZTD_SendReadytoSleep@0x248c0
+在0x24904调用ZTD_DeleteWakeLock。不得调用Print/Test来生成新文件。
+
+2026-10-16首轮用户启用失败后补证：add@0x9788与del@0x9b8c都会调用writer@0x9334，
+以ofstream截断并写入整棵树。因此空文件、末行无换行、未知格式或单次读取不能证明
+原厂内部锁已释放。现C要求非空完整格式、读取前后及当前路径inode/size/mtime/ctime
+一致，并间隔100ms两次内容和元信息完全一致；瞬时重写给UNSTABLE，真正IO/格式
+未知给UNKNOWN。只有明确稳定无devui条目才继续。
+
+另一个独立kernel锁[REDACTED_ENCODED_OR_IDENTIFIER]不能与上述内部树或LCD锁混淆。
+原UI [REDACTED_ENCODED_OR_IDENTIFIER]@0x44e1fc调用ZTD_AddSleepWakeUnLock；timer构造
+@0x45ff64..0x45ff80周期0x2bf20=180000ms。processScreenBackLight ON@0x45cb00
+加锁，@0x45cb14暂停该timer；OFF@0x45c94c重置/运行timer。因此熄屏后的前3分钟
+锁仍在是正常原厂策略，退出原厂将取消未来释放回调，不能直接停止后忽略这个锁。
+新预检只观察并等待原厂自行释放：内部锁和该kernel锁均不存在才允许停原厂。
+等待期间原UI继续运行，不改超时配置，不释放任何原厂锁。接管前/原UI退出后各再
+验证一次；若出现竞争，拒绝新provider/DRM并恢复原UI。超时/常亮会返回明确原因。
+现有sysZteSleepLock等其他锁仍不干涉。证据详见控制代理新增原厂timer分析报告及
+[REDACTED_ENCODED_OR_IDENTIFIER].txt，不以旧32秒样本推断锁已永久存在。
+后续被动采样已与反汇编交叉印证：最后亮屏uptime83667.74，83687.78已灭屏，
+83848.21仍有auto_sleep锁，83866.80起锁自然消失且factory18392持续运行。
+见[REDACTED_ENCODED_OR_IDENTIFIER].txt。此为只读自然变化观察，
+不是执行插件预检/切换的测试。监督器最多360秒、每5秒只读重检，触碰唤醒会按
+原厂自己的策略延后；常亮不能等到自然熄屏，立即给明确原因，不改原厂设置。
+
+本实现使用自有 topflow_screen_<PID>_<proc-starttime> kernel wake_lock，事务固定
+10,000,000,000ns租期。另有同身份加_idle后缀的独立180,000,000,000ns租期，
+用于真实亮→灭前保留原厂三分钟延后休眠策略；不会复用或释放厂auto_sleep锁。
+初接原厂已暗且旧租约已释放时不新加三分钟，重复off及过期后仍暗均不续期。
+亮屏并确认原LCD锁后释放idle租约；异常退出留给监督器在原厂稳定后按精确自身名
+释放，进程全死亦最多180秒到期。重注册发现原来亮屏现已暗时，在重新发off事件
+之前取得同一有限租期，不用旧期望值改写屏幕。C适配器固定sysfs路径，
+O_NOFOLLOW、sysfs类型验证、单次写入
+[REDACTED_SENSITIVE_CONTEXT]
+原厂恢复后只释放先前验证过身份的自有名字，绝不扫描prefix/清理其他厂锁。
+即使renderer和supervisor同时死亡，guard也在租期后失活；unlock不保证立即删除内核
+缓存的inactive wakeup_source对象，但不会新增持久文件或永久阻止休眠。
+依据Linux v5.15原始源：
+[REDACTED_URL]
+该ABI接受name加非零纳秒timeout，按有限计时激活；精确name的wake_unlock解除激活。
+设备vendor内核实际写路径仍未测试；不能把上游ABI依据当作本设备硬件验收。
+
+三、实际实现合同
+[REDACTED_ENCODED_OR_IDENTIFIER].h：无I/O纯事务状态机。
+预检完整capabilities=255；原厂进程/provider、sleep provider、[REDACTED_ENCODED_OR_IDENTIFIER]
+已知；实际亮度/LCD锁一致、稳定无devui内部锁且精确auto_sleep kernel锁
+已自然释放。缺任一项拒绝或在原厂仍运行时进行有界只读等待。
+新native --display-preflight在原厂仍在线时产严格单行receipt：
+DISPLAY_PREFLIGHT_OK PIN_GUARD=none|initial-300s-v1 BRIGHTNESS=N LCDLOCK=0|1
+supervisor验证完整字段、范围与互相一致，作为一个参数传 --display-adopt。
+它不是对同root恶意进程的授权边界；用于拒绝旧程序/未知返回/不完整预检。
+
+[REDACTED_SENSITIVE_CONTEXT]
+所有DIRTYFB错误包含EINVAL/ENOSYS均失败，不再吞错。帧后再验证exact自有guard
+仍在；若租期在绘制中已过，恢复而非续租后冒充全程受保护。按真实亮度
+做完整LCD同步：取得自身guard → 写亮度并读回 → 发布LCD事件 → 独立观察厂LCD锁
+→ 释放自身guard并读回。亮度非零到非零只写并读回，不重复发布事件。
+每个事务3秒总限时，epoch丢弃迟到/错序ACK；状态未知、读写失败、provider丢失、
+[REDACTED_SENSITIVE_CONTEXT]
+物理键唤醒、重注册重绘同样先guard→锁屏帧→再次确认guard→事务；不消费原厂
+历史事件。亮屏同级刷新无需LCD事件时也会验证LCD锁后解除额外frame guard。
+[REDACTED_SENSITIVE_CONTEXT]
+
+supervisor.sh：预检全部完成才service.delete原厂display实例，绕过原厂stop_service
+卸载触控驱动的钩子。不改网络/开机启动。不使用killall，不改原厂文件。
+接管和有限恢复阶段取得自身10秒guard；有效首帧心跳后解除接管guard，常态不续租。
+恢复先停止验证过PID+birth的renderer，等helper消失，再启动原厂并连续3次确认
+同PID+birth和原3方法存在，才解除已验证自有guard。provider不出现不得报恢复成功。
+原生心跳必须在安全帧及adopt事务完成后生成；主进程冻结/退出触发恢复。
+screenctl restore/uninstall保留control/lifetime双锁；可停止验证过的orphan renderer/
+[REDACTED_SENSITIVE_CONTEXT]
+不含PIN，restore保留，uninstall纳入本插件固定运行目录清理。
+
+0.1.2仅诊断候选：原0.1.1退出根因仍未证实。无pin-state且原PIN启用，使故障范围
+靠近[REDACTED_ENCODED_OR_IDENTIFIER]保护早期；4.54秒恢复间隔与helper4秒截止相合，但不是证明。
+helper通过原私有socketpair报告9个固定初始化阶段，无载荷或新增监听；父程序仍4秒
+总截止，失败先保留阶段再清理。原生仅在自有0700目录中写0600单行renderer.failure，
+固定40码白名单、O_NOFOLLOW、root/单链接/类型/大小验证，不记录stderr、PIN或响应。
+首次错误保留。非正常信号未必能写记录，监督器另保存真实wait退出状态。
+用户下一次自行测试才能取得具体阶段；本机编译/故障桩不能证明设备已修好。
+
+四、本机验证与未验证项目
+[REDACTED_ENCODED_OR_IDENTIFIER].ps1：纯协调器缺能力/未知/厂锁、锁定首帧、顺序事务、
+错序ACK、五步I/O失败、超时/回绕、provider丢失、恢复屏障、重注册新读数；实际
+guard接口以fake kernel测试有限租期、过期免写、精确归属、读写失败与短/超长结果。
+同源还进行ARM64交叉编译，未执行设备代码。
+[REDACTED_ENCODED_OR_IDENTIFIER].ps1还执行真实idle guard与runtime：取得180秒租约先于
+灭屏、亮屏原LCD锁确认后释放、初接暗态无租期、重复off不续期、自然到期、重注册
+[REDACTED_SENSITIVE_CONTEXT]
+所有写入断言只能是本renderer精确自身名字；cleanup不得提前释放任何自有lease。
+tests/native-supervisor.test.js：全部设备/proc/sysfs路径改为电脑临时目录，服务、
+kill与锁函数均本地桩。覆盖并发恢复、PID重用、未知/旧receipt、接管guard先后顺序、
+provider缺失不卸载、orphanhelper、精确释放、原厂锁保留、半安装及卸载竞态。
+[REDACTED_SENSITIVE_CONTEXT]
+
+2026-10-16再次更新：0.1.1用户测试退出原因未证实，当前只允许明确DIAGNOSTIC_CANDIDATE；
+构建仍强制当前源哈希、两个ARM64二进制与协议完整性，不自动部署。必须区分：
+- 已知实现缺口：应补代码/本机测试，不能用免责声明替代。
+- 未实机写测：真实DRM/触摸/休眠功耗/电源键/原厂恢复视觉与服务连续性仍待用户
+  明确安装后的验收。只读开发期不会偷偷执行这些动作；也不因此永久禁止合格自测包。
+
+独立触摸活动通知已补入：原SDK事件3001由亮屏实际pressed输入触发，helper只接受
+TF_BUS_TOUCH=5/value1并发原zwrt_deviceui_event.touchstatus及唯一数字touch_status=1。
+libzbus@0x68a8先删除[REDACTED_ENCODED_OR_IDENTIFIER]内部路由字段再转换发出，不能把
+LOGIN查询状态当成触摸事件。主程序首按立即发、长按250ms节流；黑屏和释放不发，
+PIN触摸不解锁、不改变LOGIN；事件失败退出交回原厂。原定时唤屏值2路径仍不支持且
+预检拒绝。详见[REDACTED_ENCODED_OR_IDENTIFIER].txt及[REDACTED_ENCODED_OR_IDENTIFIER].txt。
+实际显示事务/重注册/触摸故障桩：[REDACTED_ENCODED_OR_IDENTIFIER].ps1；helper严格协议：
+native/test-factory-bus.ps1。历史[REDACTED_ENCODED_OR_IDENTIFIER]不能代表本轮启动故障已解决；
+[REDACTED_ENCODED_OR_IDENTIFIER]必须true。hardwareVerified仍false，用户自行测试已发生并失败；
+代理本轮没有在设备执行安装、事件发送或服务控制。

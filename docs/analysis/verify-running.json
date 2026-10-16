@@ -1,0 +1,4 @@
+{
+  "final-running-check": "echo screen_pid; pidof zte_topsw_devui; echo screen_owner; cat [REDACTED_ENCODED_OR_IDENTIFIER]; echo touch_device; ls -l /dev/input/event5; echo ufi_pids; pidof ufi-tools-zwrt; echo datad_pid; pidof zwrt-datad; echo uptime; cat /proc/uptime",
+  "datad-state-second": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]"
+}

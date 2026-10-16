@@ -1,0 +1,4 @@
+{
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "ls -l /lib/libubus* /lib/libubox* /usr/lib/libubus* /usr/lib/libubox* [REDACTED_ENCODED_OR_IDENTIFIER]* 2>/dev/null",
+  "ubus-package-versions": "cat [REDACTED_ENCODED_OR_IDENTIFIER]*.control [REDACTED_ENCODED_OR_IDENTIFIER]*.control [REDACTED_ENCODED_OR_IDENTIFIER]*.control 2>/dev/null"
+}

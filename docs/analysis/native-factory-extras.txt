@@ -1,0 +1,101 @@
+Native factory extras — local implementation evidence, [REDACTED_NUMBER]
+
+[REDACTED_SENSITIVE_CONTEXT]
+remaining attempts; independent main2.4GHz/5GHz WPS status/PBC and cancel;
+main modem operator search/current-list selection/status; capability-gated
+[REDACTED_SENSITIVE_CONTEXT]
+No device write, SIM-code submission, WPS pairing, operator scan, reboot or
+shutdown was performed during development. Tests use local synthetic values.
+
+Authoritative local evidence and exact mapping
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+   get_sim_info: sim_states,modem_main_state,current_sim_slot,pinnumber,puknumber.
+   card-sim-info.txt,sim-api-schema.txt,factory-Chinese.ini confirm current
+   original fields and PIN4–8/PUK8 digits. Unknown attempts never become zero
+[REDACTED_SENSITIVE_CONTEXT]
+   modem state and positive known remaining attempts qualify. Slot rechecked.
+2. WPS: SDK WPSPair_Main2g/Main5g type1 -> zwrt_wlan.set,
+   {main_2g:{wps_action:'pbc'}} or {main_5g:{wps_action:'pbc'}}.
+   WPSCancel_MainALL sends cancel to both main sections, not guest APs.
+   get_wps_status -> wifi_wps_status_info[] section_name,wps_status,remaining.
+   Evidence: sdk-extras-disasm.txt,wps-api-schema.txt,[REDACTED_ENCODED_OR_IDENTIFIER].txt.
+   Start requires original state exactly idle,remaining0,known enabled radio.
+   running/positive remaining/unknown states have no start button; confirmation
+   and helper freshly recheck to prevent restarting a pairing in progress.
+[REDACTED_SENSITIVE_CONTEXT]
+3. Operator search: SDK type47 -> zte_nwinfo_api.nwinfo_manual_scan,
+   {moduleName:'zte_topsw_devui'}; type50 -> nwinfo_manual_register with same
+   moduleName plus m_mcc_mnc (PLMN5–6 digits),m_rat (decimal original RAT).
+   Reads [REDACTED_ENCODED_OR_IDENTIFIER],m_netselect_contents,m_netselect_result
+   with same moduleName. The corresponding keys are m_netselect_status,
+   m_netselect_contents,m_netselect_result. SDK parser0x27bdc splits contents
+   into ';' records and ',' fields: status,name,PLMN,RAT; max20 records.
+   State [REDACTED_ENCODED_OR_IDENTIFIER], registration
+   result [REDACTED_ENCODED_OR_IDENTIFIER]. Evidence sdk-network-scan-disasm.txt,
+   sdk-invoke-table.txt,[REDACTED_ENCODED_OR_IDENTIFIER].txt. Unknown RAT/status retain
+   original numeric values; no guessed RAT labels. Registration requires
+   current SIM ready/current slot unchanged,completed search and exact fresh
+   list match of both PLMN and RAT. Search/selection may interrupt networking.
+   Only confirmed one-shot requests; manual result refresh; no neighbor scan.
+4. Reboot/shutdown: existing datad control.rs device.reboot/device.poweroff;
+   GET127.0.0.1:9460/capabilities controls[] exact action presence, checked
+   again at confirmation; POST/control {action:'device.reboot',params:{}}
+   or device.poweroff. Existing datad flushes activity history, delegates
+   mc.device.manager with moduleName:'web'. Existing original schema confirms
+   methods. Strict successful HTTP+matching action response is acceptance,
+   not proof the later offline reboot/shutdown completed. No replay/readback
+   mutation or recovery reset is attempted.
+
+Implementation and security
+- factory_extra_protocol.h fixed128-byte newline stdin protocol: SIM_READ,
+[REDACTED_SENSITIVE_CONTEXT]
+  NET_SCAN with slot,NET_SELECT with PLMN/RAT/slot. No arbitrary object/method,
+  shell, command interpolation or filesystem path can be supplied.
+- factory_extra_rpc.h is --extra mode of existing [REDACTED_ENCODED_OR_IDENTIFIER].
+  Short-lived client only; no registered object/service/listener. Anonymous
+  pipe stdin carries SIM codes, never argv. Requires pipe stdin,parent-death
+  kill,no core/dump,locked buffers,5-second total deadline,1200ms individual
+[REDACTED_SENSITIVE_CONTEXT]
+  Original control methods retain their original documented side effects.
+- factory_extra_pages.h pages17 overview,18 masked numeric editor,19 operators.
+  Parent-side helper deadline6 seconds. Default read-only; opening/refreshing
+  only reads; control enable plus confirmation before one call. No automatic
+  retry.8KiB private page-aligned SIM draft locked while open,wiped/unlocked
+[REDACTED_SENSITIVE_CONTEXT]
+  [REDACTED_ENCODED_OR_IDENTIFIER] state,changed slot,invalid lengths,mismatched
+[REDACTED_SENSITIVE_CONTEXT]
+- accepted from helper means ubus accepted invocation, not SIM unlock/pairing.
+  SIM success is only reported after actual sim ready readback. Operator/WPS
+  say request accepted and offer status refresh. Timeout remains unknown and
+  never repeats. Maximum compound RPC duration may exceed5s under a slow
+  service; that is a bounded unknown outcome, not permission to retry.
+- Power actions stay in power_pages.h, not another native settings subtree.
+  Only supplied capability enables a button; restart/off never use the helper.
+
+Offline verification
+[REDACTED_SENSITIVE_CONTEXT]
+Three extra C suites compile with assertions enabled: protocol malformed and
+injection/extra-field guards; attempts/slot/state conflict; PLMN/RAT exact list
+match,scan state and busy-WPS guards; reboot/off readonly,cancel,capability
+change,strict action identity,exact one payload/no false completion; actual
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_ENCODED_OR_IDENTIFIER].js renders10 actual C HTML variants light/dark
+using original ZTEZhengYuan.ttf and actual litehtml.28 checks:10 top-right
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+4 scan/operator-selection hits. Top and scrolled-bottom PNGs retained.
+Visual review confirms equal numeric columns,clear operator rows,and no
+start button on the already-pairing5GHz fixture. Fixtures are synthetic.
+
+Coverage gaps and acceptance boundary
+[REDACTED_SENSITIVE_CONTEXT]
+  by these schemas and remain unavailable; no silent main-card fallback.
+[REDACTED_SENSITIVE_CONTEXT]
+  without full action+state contracts. Neighbor collection remains excluded.
+- [REDACTED_ENCODED_OR_IDENTIFIER] is the overall gate. Local handover/provider/guard
+  implementation and tests are not physical acceptance. Future acceptance
+  must check helper dynamic linking,original API response timing,controlled
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+[REDACTED_SENSITIVE_CONTEXT]
+  Physical display/touch/power behavior and restoration remain root's global
+  device acceptance checklist; this module does not prove them by itself.

@@ -1,0 +1,43 @@
+# Private input and unreviewed local evidence never belong in public Git history.
+/analysis/
+/.*.log
+analysis/evidence/
+analysis/python-deps/
+analysis/release-gate.json
+.cache/
+.public-tests.log
+.*-check.log
+*.local
+.env
+.env.*
+*.pem
+*.key
+# Pinned dependencies are downloaded; nested Git histories are not distributed.
+native/toolchain/
+native/vendor/litehtml/
+native/vendor/freetype/
+vendor/ufi-device-sdk-2.0.0.js
+# Local compilers, generated ABI link-only stubs, and staging artifacts.
+native/build/
+native/build-preview/
+native/build-bus-import/
+native/bin/
+native/payload/
+native/build-manifest.json
+native/topflow-native.tar.gz
+native/*-log.txt
+native/preview/*.html
+native/preview/*.ppm
+native/preview/*.png
+native/preview/*.gif
+native/preview/*.json
+native/preview/*-chart.txt
+# Only reviewed release/ contents are intended for publication.
+dist/
+review/
+diagnostic/
+node_modules/
+*.pyc
+__pycache__/
+Thumbs.db
+.DS_Store

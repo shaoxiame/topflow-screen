@@ -1,0 +1,14 @@
+[
+  {
+    "start": "0x5133e0",
+    "size": "0x10",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "ZTD_SetLcdTouchStatus"
+  },
+  {
+    "start": "0x513410",
+    "size": "0x10",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  }
+]

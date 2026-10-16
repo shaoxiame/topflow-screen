@@ -1,0 +1,4 @@
+{
+  "cooling-existing-state": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+  "cooling-factory-flags": "uci -q get zwrt_deviceui.Device.fan_switch_status; uci -q get zwrt_deviceui.Device.[REDACTED_ENCODED_OR_IDENTIFIER]"
+}

@@ -1,0 +1,233 @@
+TopFlow 状态与控制适配说明
+版本：0.1.0 / 研究目标 zwrt-datad 0.10.79
+日期：[REDACTED_NUMBER]（Asia/Shanghai）
+
+本模块只做本地静态研究和开发；本任务未连接设备，未调用设备请求。
+模块加载时不联网，不执行 shell，不登录，不创建文件，不启动轮询。
+最新本地验证：API 23 项、UI 合约 11 项均通过；不连接设备。
+
+文件
+[REDACTED_SENSITIVE_CONTEXT]
+  tests/device-api.test.js：归一化、请求协议、缺失值、只读保护、本地模拟和错误处理测试。
+
+1. 状态格式
+TopflowDeviceAPI.normalize(raw, {source:'snapshot'|'device'|'demo'})
+返回：
+  source, ts, version
+  modems：固定顺序 5G、4G1、4G2；id、connected、simState、simSlot、statusLabel、
+    operator、rat、band、bars、rxBps、txBps、qci、ambrDownMbps、ambrUpMbps、
+[REDACTED_SENSITIVE_CONTEXT]
+    serving:{nr,lte} 保存两套服务小区，包含 available、radio、band（数字）、信号及小区字段。
+  total：rxBps、txBps、scope（各基带承载速率之和，含协议开销）。
+  primary：5G 主基带的 rxBps、txBps。
+  battery：percent、tempC、charging。
+  cpu：tempC、usagePct。
+  memory：usagePct、totalBytes、availableBytes。
+[REDACTED_SENSITIVE_CONTEXT]
+  aggregation：supported、enabled、online、mode、state、remainingBytes。
+[REDACTED_SENSITIVE_CONTEXT]
+  bands：见下方频段读取格式。
+
+速率为 B/s，不是 bit/s；formatRate 使用十进制 KB/s、MB/s。
+主流量 traffic 与 5G 基带数据可能相同，不能再加一次。
+聚合合计不能称为应用层有效吞吐；各基带缺失任一速率时，合计为 null。
+0 保持为有效值；缺失温度/速率/占用为 null。qci=0 和 AMBR 空串视为未知。
+4G1/4G2 状态 disconnected 且 SIM 字段空，显示“未联网”，不会误标成“未插卡”或“未启用”。
+断开连接或缺少有效服务信号时，信号/服务小区为 null，不从占位值生成质量评分。
+65535 PCI、[REDACTED_NUMBER] CellID 等越界/哨兵数据返回 null；有效 PCI=0、SINR=0 保留。
+NR 36 位 CellID 保持完整数值，不截成 32 位；当前真实主卡 CellID 大于 2^32 仍有效。
+[REDACTED_SENSITIVE_CONTEXT]
+
+2. 客户端构造
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+  messages: [{id:'demo-1',number:'10010',text:'演示短信',date:'[REDACTED_NUMBER]',unread:true,direction:'incoming'}]});
+
+mode 默认 readonly；mock 完全本地；live 仍需 allowWrites:true 才能写。
+mock 可指定 wifi（归一化 Wi-Fi 格式）和 forward（{enabled,method,config}）。
+
+client.readState() 返回归一化状态。
+[REDACTED_SENSITIVE_CONTEXT]
+client.readWifi() 返回 {enabled,dualBand,dualBandSupported,aps,wireless}。
+[REDACTED_SENSITIVE_CONTEXT]
+client.readBands() / TopflowDeviceAPI.normalizeBands(raw) 返回：
+  {supported:{lte,nrSa,nrNsa},selected:{lte,nrSa,nrNsa},automatic:{lte,nrSa,nrNsa},
+   networkMode,modeOptions:[{value,label}],lockedCells:[{radio,pci,arfcn,band}]}。
+  supported / selected 均为数字数组；未知为 []，automatic 未知为 null。
+  能力只取专有 supported 字段，不拿当前锁定列表冒充设备能力。
+  LTE 优先扩展 lte_band/lte_bands；旧 lte_band_lock 位掩码仅作回退。
+client.readForward() 返回 {enabled,method,executor?,config}。
+  UFI 转发私密配置只用于当前编辑，不应进入 UI 截图、日志、持久化或公开包。
+client.execute(name, params, confirmation) 只处理下列白名单动作。
+client.setSnapshot(raw) 仅 mock 可用，深复制输入。
+
+3. 动作参数
+aggregation.set：{enabled:boolean}
+band.set_lte / band.set_nr_sa / band.set_nr_nsa：{bands,supported,automatic?:boolean,modem?:'5G'}
+  bands / supported 可为数字数组或逗号分隔列表；仅允许 supported 内的频段。
+  supported 必须是刚读取的真实设备能力；不可硬编码样例列表用于真实操作。
+  automatic=true 时写入全部 supported，不发空串。
+  没有支持列表或手动列表为空时拒绝，不进行请求。
+network.set_mode：{mode}，只接受下载 UFI 面板实际列出的以下 6 个值：
+  WL_AND_5G、LTE_AND_5G、Only_5G、WCDMA_AND_LTE、Only_LTE、Only_WCDMA。
+  设备读到其他当前值时保留原值，不自动改写或映射。
+  实机当前 4G_AND_5G 不在下载 UFI 的六个选择值中。normalizeBands 会返回
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+  首项添加 {value:'4G_AND_5G',label:'当前模式：4G / 5G',readOnly:true}。
+  UI 应显示并选中此只读项，未改选时不提交；不能默认显示 WL_AND_5G。
+  精确版本 control.rs 233–242 直接透传 mode→net_select，不提供别名映射。
+  未确认 UFI 后端对此值的写入映射，因此写白名单没有增加 4G_AND_5G。
+cell.lock_nr：{pci:0..1007,arfcn:1..3279165,band:1..512,modem?:'5G'}
+cell.lock_lte：{pci:0..503,earfcn:1..262143,modem?:'5G'}
+cell.unlock_all：{}
+wifi.configure：{section:'main_2g'|'main_5g'|'guest_2g'|'guest_5g',
+[REDACTED_SENSITIVE_CONTEXT]
+  UI 保存应先 readWifi，保留读取值，避免用缺失值替换当前设置。
+wifi.radio.set：{band:'2g'|'5g',enabled:boolean}
+wifi.set_dual_band：{enabled:boolean}
+[REDACTED_SENSITIVE_CONTEXT]
+  UTF-16BE hex；限制 1000 UTF-16 码元，保留换行和代理对。
+[REDACTED_SENSITIVE_CONTEXT]
+    默认端口 465；不限制为 465/587，TLS/STARTTLS 选择由原 UFI 服务处理。
+[REDACTED_SENSITIVE_CONTEXT]
+
+buildAction(name, params) 只生成请求描述，不联网。
+currentCellAction(normalizedState,'nr'|'lte') 返回 {name,params}，由界面再次确认后 execute。
+  只用现有主基带服务小区，不触发扫描；缺少 PCI/ARFCN/NR Band 时拒绝。
+[REDACTED_SENSITIVE_CONTEXT]
+screen.restore 明确返回 NOT_VERIFIED：此模块没有伪造原厂切换命令。
+
+4. 已核对的 UFI 协议
+只读状态：GET [REDACTED_ENCODED_OR_IDENTIFIER]，query.cmd 按已有 UFI_STATUS_CMD 取必要字段。
+[REDACTED_SENSITIVE_CONTEXT]
+  与原 UFI 页面不同，模块读取后绝不自动调用 SET_MSG_READ。
+只读 Wi-Fi：同路径，[REDACTED_ENCODED_OR_IDENTIFIER],queryAccessPointInfo,queryWirelessConfig,WiFiDualBandSupported,WiFiDualBandEnabled,BandSteeringSwitch。
+只读频段：同路径，cmd=net_select,lte_supported_bands,nr_sa_supported_bands,nr_nsa_supported_bands,lte_band,lte_band_lock,nr_band_lock,nr_nsa_band_lock,lock_nr_cell,lock_lte_cell。
+[REDACTED_SENSITIVE_CONTEXT]
+
+聚合：POST /api/datad/hardware，{action:'aggregation.set',params:{enabled}}。
+频段：UFI postData，[REDACTED_ENCODED_OR_IDENTIFIER]、[REDACTED_ENCODED_OR_IDENTIFIER]、[REDACTED_ENCODED_OR_IDENTIFIER]。
+网络模式：[REDACTED_ENCODED_OR_IDENTIFIER]，BearerPreference=mode。
+锁小区：UFI postData，goformId=CELL_LOCK；NR rat='16'，LTE rat='12'；参数 pci、earfcn、NR band。
+解除锁定：[REDACTED_ENCODED_OR_IDENTIFIER]。
+[REDACTED_SENSITIVE_CONTEXT]
+单频：goformId=setWiFiRadio，Band、Enabled。
+双频合一：[REDACTED_ENCODED_OR_IDENTIFIER]，WiFiDualBandEnabled。
+[REDACTED_SENSITIVE_CONTEXT]
+
+5. 已登录 UFI 的接入
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+});
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+
+[REDACTED_SENSITIVE_CONTEXT]
+当且仅当用户授权设备写入，调用方另建 live + allowWrites:true 客户端。
+每次 live execute 还必须确认 {confirmed:true}。
+短信发送/转发开关/转发配置另需 {allowExternalEffects:true}。
+不自动重试写请求；超时或返回不能确认成功时保留失败，必须重新读真实状态。
+返回 verified:false 表示设备接受了请求但还未验证最终状态；UI 不得假显示“已生效”。
+转发 saved:true 但 result:failed 的错误保留 saved=true / requiresReadback=true，明确显示
+“配置已保存，但测试通知未确认成功”；不自动重试，以免重复投递或短信扣费。
+
+6. 实际功能边界
+接口与负载经过精确版本静态核对，本轮未做设备写入验证。
+TopFlow 0.10.79 仅 5G 主卡可发短信。外挂 4G1 / 4G2 的短信发送被 datad 明确拒绝，UI 必须禁用。
+锁 LTE/NR 小区作用于 5G 主基带的 LTE/NR 制式；不可当作给 4G1/4G2 分别锁站。
+用户明确禁止小区采集，本模块没有实现 neighbor/scan/采集开启动作，也不读取对应端点。
+频段“自动”必须写全设备支持频段。本地 UFI main.js 3676–3680、3759–3768 的注释记录
+HAR 实测空串会清空允许列表导致断网；因此优先遵从本设备面板实证，不照抄 datad 文档的空串自动说明。
+QCI/AMBR 是运营商下发状态；本模块只显示，不提供伪造“修改 QCI 等级”功能。
+Wi-Fi 修改会引发无线网络重载。聚合开关会切换网络模式及 mwan3/ICG 进程状态。
+[REDACTED_SENSITIVE_CONTEXT]
+短信发送和测试可能收费；UI 确认应展示确切号码/目的地，不能只问“保存吗”。
+本模块不接管 DRM，不装触摸驱动，不操作原厂 devui，不实现遨游世界核心服务。
+原厂切回入口的实际执行由后续单独验证的原生生命周期适配承担。
+
+证据
+  开发文档/(1.0.0)API文档.md：用户提供的 UFI 官方接口说明，§2/6/7/15 已逐项核对。
+[REDACTED_SENSITIVE_CONTEXT]
+  [REDACTED_ENCODED_OR_IDENTIFIER].js：postHardwareControl（1970）、锁基站（3922–4000）、Wi-Fi（4713–4945）、短信转发（7710–8083）。
+  [REDACTED_ENCODED_OR_IDENTIFIER].html：Wi-Fi 加密可选值。
+  [REDACTED_ENCODED_OR_IDENTIFIER].js：同源 JSON 桥。
+  [REDACTED_ENCODED_OR_IDENTIFIER].txt：实际设备控制白名单。
+  [REDACTED_ENCODED_OR_IDENTIFIER].txt：本地真实快照归一化测试。
+  [REDACTED_URL]
+  [REDACTED_URL]
+  [REDACTED_URL]
+
+7. 用户提供 API 文档复核（[REDACTED_NUMBER]）
+[REDACTED_SENSITIVE_CONTEXT]
+§6.1：状态、Wi-Fi、频段读取路径与查询别名一致。仅读取已有服务小区，不调用邻区信息。
+[REDACTED_SENSITIVE_CONTEXT]
+  文档没有展开 sparse 更新语义；适配器只发送真正修改的字段，不把未编辑/未知值覆盖成默认。
+  setWiFiRadio、SET_WIFI_DUAL_BAND 未列入简表，但存在于下载的本设备 UFI 前端，继续沿用。
+  NR rat16、LTE rat12、pci/earfcn/NR band 与下载原前端一致；本模块不接受其他基带目标。
+§7.1：短信查询兼容；文档示例 tags10，下载本设备 ufi-requests.js 571 使用 tags100，沿用实际前端。
+[REDACTED_SENSITIVE_CONTEXT]
+  （ufi-main.js 7743–7745、7910、7925），而不是 datad 私有编辑器或云配置的其他接口规则。
+[REDACTED_SENSITIVE_CONTEXT]
+§15：aggregation.set 经 /api/datad/hardware，能力需由实际状态支持；不调用POST multiwan.status读取。
+§4.1：baseDeviceInfo 的温度是毫摄氏度；本模块没有新增该接口请求，当前 datad 结构温度保持摄氏度。
+  若以后接入 baseDeviceInfo，必须独立除以1000后合并，不能直接覆盖已归一化温度。
+
+8. 三卡状态与 APN 追加核验（本机官方 v0.10.79 完整源码）
+source: [REDACTED_ENCODED_OR_IDENTIFIER].10.79/rust/src/state.rs、control.rs、apn_targets.rs、server.rs。
+5G 为主基带；4G1=V3E2，4G2=V3E1。外卡 subid 分别5/6、3/4，但不能把该值当APN命名空间。
+state.rs 的 integer()/clamp() 将缺失 st_slot 转成0；card-v3t-info.txt 已证实当前原始 st_slot 是空字符串。
+因此外卡空SIM状态/未联网时 simSlot=null；reportedSlot 可保留datad的0。不能显示已确认的实体/内置卡选择。
+当前datad未提供独立射频启用状态，enabled=null；interfaces.cellular.enable=0可以和已联网同时出现，不能用它推导禁用。
+root 正在确认原厂 V3E*_lpr_flight_status 的 on/off 与 UI 反转语义，未确认前未接入该字段。
+
+新增每卡状态字段：
+[REDACTED_SENSITIVE_CONTEXT]
+  dataConnection: connected / disconnected / connecting / conflict / unknown。
+  registration: registered（仅已联网可确定）/ unknown；不凭信号格或运营商名称推测注册/受限。
+  availability: available / unavailable / unknown；usbPresent 单独保存。USB不可用不等于未插卡或未启用。
+  enabled:null、reportedSlot、subid、roaming（Home/Roaming）、roamingAllowed（主卡）、apnTarget、capabilities。
+  statusCode: no_sim / locked / sim_error / connected / disconnected / connecting / conflict / unknown。
+[REDACTED_SENSITIVE_CONTEXT]
+已联网与明确无卡/锁卡/异常冲突时 statusCode=conflict、connected=null、速率/服务小区为空；不展示矛盾的正常联网状态。
+
+readApn(modem) 只读GET /api/apn/all?slotId=1|201|101，目标映射为5G/4G1/4G2。
+返回 {modem,slotId,readable,mode,singleProfile,enabledId,automatic,manual}。
+[REDACTED_SENSITIVE_CONTEXT]
+可用API动作：
+  apn.set_mode {modem,mode:0|1}
+[REDACTED_SENSITIVE_CONTEXT]
+  apn.enable {modem,profileId}
+  apn.add {modem:'5G',name,apn,...}、apn.delete {modem:'5G',profileId}
+外卡只有固定配置，不支持add/delete；未知目标拒绝，不回退主卡。修改省略凭据保留，显式空字符串清空。
+写通过已登录 UFI /api/datad/hardware，以原datad apn.*动作和slot_id精确映射执行；不会通过只支持GET/POST的DatadApp桥发送PUT/DELETE。
+Native特别注意：server.rs1944 的 apn.list 不读取 params.slot_id，永远是旧主卡读取！不能带外卡id假装读取外卡。
+
+新增主卡动作（拒绝modem=4G1/4G2和subid/slot_id参数）：
+  cellular.connect / cellular.disconnect {modem?:'5G'} → datad同名动作params{}。
+  cellular.set {modem?:'5G',roaming?:0|1,enabled?:0|1} →只提交显式变化；不复制读回enable字段。
+  sim.set_slot {modem?:'5G',slot:1|2} → 主基带槽；UI须先确认dual_sim支持。
+  traffic.set_limit {modem?:'5G',enabled:0|1,value?:十进制字节字符串,type?:1..3,ratio?:0..100}。
+    启用时value必须1..100TiB且type必填。来源固定cid1，无逐外卡subid支持；不得借此实现外卡限额。
+以上动作不会在模块加载/读取时执行；只读锁和二次确认保持。mock仅本机修改可读状态。
+
+[REDACTED_NUMBER] exact-version supplemental review
+APN readable/writable separated: valid mode alone is insufficient; all four lists/id reads required, panel config.writable must be true. execute rereads same APN target before writes. PDP1=IPv4,2=IPv6,3=IPv4v6; auth0=none,1=PAP,2=CHAP,3=mixed.
+Factory supplement shape: factory.modems['4G1'|'4G2']={flight:'on'|'off'|null,enabled:boolean|null}; factory.settings={qosMode,quickBoot,powerSaver}. 4G1 maps V3E2,4G2 maps V3E1, flight off=enabled; no SIM-presence inference. readFactoryState uses fixed UCI/get_device_info command with 10s memory cache and concurrent dedup, no file writes. readState merges supplement automatically.
+Factory actions: factory.modem.enabled({modem,enabled}), factory.qos.set({mode}), factory.quick_boot.set({enabled}), factory.power_saver.set({enabled}). Bridge createUfiTransport(bridges,{allowWrites:true}) additionally required. Exact SDK [REDACTED_ENCODED_OR_IDENTIFIER] retained. Every mutation single-shot followed by limited readback; unknown setting refuses preflight. Current power_saver_mode is empty, UI must not expose a toggle as false.
+[REDACTED_SENSITIVE_CONTEXT]
+Independent power API: zwrt_bsp.charger list/set [REDACTED_ENCODED_OR_IDENTIFIER] enable/disable, backend five attempts readback. NOT zwrt_deviceui direct_power service hosted by original UI.
+Traffic limit semantic caution: control allows type1..3 but names unproven. SDK calibrate Times fixes type1 and Bytes fixes type2; MaxTraffPerMonth takes caller type, Aggregate variant fixes1. Do not conflate accounting enum with limit direction or units. New local disasm files sdk-traffic-disasm.txt and [REDACTED_ENCODED_OR_IDENTIFIER].txt.
+
+[REDACTED_SENSITIVE_CONTEXT]
+
+[REDACTED_NUMBER] cooling integration (local-source review only)
+Source: exact tag0.10.79 rust/src/cooling.rs [REDACTED_ENCODED_OR_IDENTIFIER], state.rs cooling_status; docs/CONTROL_API.md cooling section; existing UFI frontend [REDACTED_ENCODED_OR_IDENTIFIER]; root's read-only [REDACTED_ENCODED_OR_IDENTIFIER].txt.
+readCooling() GET existing UFI getData cmd=cooling; readState STATUS_CMD also includes cooling. normalizeCooling exported. Shape:
+  {supported,source:'datad',vendorSyncError,
+   fan:{supported,alwaysOn,mode,speedPct,pwm,tempC,thermalEnabled,policyApplied,policyError},
+   liquid:{supported,alwaysOn,mode,active,driverPlaying,thermalEnabled}}
+Missing fields remain null; supported requires the corresponding actual object. ALWAYS use always_on, never enabled or instantaneous activity. Current live evidence fan.enabled=false but PWM30 /12%; liquid.enabled=true while always_on=false and active=false. speedPct is PWM/255 duty indicator, NOT measured RPM.
+Dedicated API actions: cooling.fan.set_enabled / cooling.liquid.set_enabled {enabled:boolean}, UFI POST /api/datad/hardware {action,params}; native uses existing datad /control. No raw sysfs/UCI-only mutation, no new daemon or sampling change.
+Fan true->always_on, false->custom (saved curve). Liquid true->high, false->automatic. Disabling always-on does not disable thermal protection. Exact backend first applies hardware, syncs original UCI switch and saves existing [REDACTED_ENCODED_OR_IDENTIFIER].conf. These explicit future actions persist; UI theme RAM semantics do NOT apply to cooling.
+[REDACTED_SENSITIVE_CONTEXT]
+execute defaults readonly, requires [REDACTED_ENCODED_OR_IDENTIFIER], preflights actual capability, writes ONCE then polls existing cache at most6 times at1s intervals (covers configured max5s sample period). Requires target always_on and exact mode, fan policy.applied=true/no error, liquid thermal enabled and no explicitly stopped waveform when on, no vendor_sync_error. Otherwise UNCONFIRMED with requiresReadback; never write retry. Successful verification describes configured policy/driver status, not physical fan RPM or actual liquid flow. Older driver without driver_playing cannot prove physical play.
+Mock mutates only cloned local snapshot, returns [REDACTED_ENCODED_OR_IDENTIFIER]. Local tests cover legacy enabled mismatch, missing state, exact payloads, readonly/confirmation zero calls, mock no transport, delayed cache, fan policy and liquid driver failures, vendor sync failure, cancel/readonly UI. New totals API33/UI18 pass; no device request/write was performed by this subtask.

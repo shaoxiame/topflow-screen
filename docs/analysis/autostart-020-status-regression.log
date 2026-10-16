@@ -1,0 +1,11 @@
+✔ status remains read-only and requires a renderer heartbeat after first frame (608.6221ms)
+✔ uploaded but unextracted package is identified read-only and removed by the in-memory controller (2450.0435ms)
+✔ native failure preserves bounded startup stage and actual child wait status after factory restoration (12158.301ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 15268.4033

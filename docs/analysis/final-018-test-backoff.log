@@ -1,0 +1,1 @@
+PASS: invalid/no backend retries at most once per 2s; cached refresh never reconnects; SSE drop respects deadline; uint32 wrap safe

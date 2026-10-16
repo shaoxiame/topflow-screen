@@ -1,0 +1,55 @@
+FACTORY_PID
+18279
+OUR_PIDS
+DISPLAY_MASTER
+             command   pid dev master a   uid      magic
+     zte_topsw_devui [REDACTED_NUMBER]   y    y     [REDACTED_NUMBER]
+INSTALL_METADATA
+drwx------    4 root     root          4096 Oct 16 05:52 [REDACTED_ENCODED_OR_IDENTIFIER]
+total 2328
+-rw-rw-rw-    1 root     root          2157 Oct 16 04:49 NOTICE.txt
+-rw-rw-rw-    1 root     root          2185 Oct 16 04:51 REBUILD.txt
+-rw-rw-rw-    1 root     root         10243 Oct 16 05:51 build-manifest.json
+drwxrwxrwx    2 root     root          4096 Oct 16 05:52 licenses
+-rwxr-xr-x    1 root     root         25992 Oct 16 05:50 screenctl.sh
+-rwxr-xr-x    1 root     root         17358 Oct 16 05:48 supervisor.sh
+-rwxr-xr-x    1 root     root         24552 Oct 16 05:35 [REDACTED_ENCODED_OR_IDENTIFIER]
+-rwxr-xr-x    1 root     root       2277256 Oct 16 05:43 topflow-screen
+-rw-rw-rw-    1 root     root           175 Oct 16 05:51 topflow-screen.sha256
+drwxrwxrwx    3 root     root          4096 Oct 16 05:52 ui
+drwx------    2 root     root           100 Oct 16 05:56 /tmp/topflow-screen
+total 4
+-rw-------    1 root     root             0 Oct 16 05:52 control.lock
+-rw-------    1 root     root            24 Oct 16 05:56 last-status
+-rw-------    1 root     root             0 Oct 16 05:52 supervisor.lock
+BOUNDED_RUNTIME_STATE
+last-status=failure:RENDERER_EXITED
+
+BINARY_CHECKSUMS
+[REDACTED_ENCODED_OR_IDENTIFIER]  [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_ENCODED_OR_IDENTIFIER]  [REDACTED_ENCODED_OR_IDENTIFIER].sh
+[REDACTED_ENCODED_OR_IDENTIFIER]
+84750.[REDACTED_NUMBER].60
+WAKE_LOCK_NAMES
+sysZteSleepLock zteSleepBacklight [REDACTED_ENCODED_OR_IDENTIFIER]
+FACTORY_SERVICE_NAMES
+'zwrt_deviceui' @09f39b44
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+HEALTH
+ok
+
+{"ok": true, "service": "ufi-tools-zwrt"}
+
+INTERNAL_LOCK_MAP
+zte_topsw_data 17634
+zte_topsw_devui 18279
+zte_topsw_mc 17739
+[REDACTED_ENCODED_OR_IDENTIFIER] 19789
+zte_topsw_wlan_on_off 19789
+CURRENT_BRIGHTNESS
+INSTALL_MARKERS
+.[REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_ENCODED_OR_IDENTIFIER]
+
+
+STDERR:

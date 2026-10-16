@@ -1,0 +1,157 @@
+[
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: auto brightness rejects low-light jitter and isolated spikes; sustained changes ramp monotonically <=3 levels/100ms; steady-state zero writes; invalid/stale readings freeze; sleep/wake/manual/clock wrap preserved\nPASS: production ramp is deferred during swipe and uses the existing lifecycle",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: invalid/no backend retries at most once per 2s; cached refresh never reconnects; SSE drop respects deadline; uint32 wrap safe",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: actual battery parser preserves enum/unknown/zero; charge versus plugged idle/full; 100% does not imply full; bounded icon fill",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: two actual scopes, 30-sample ring, duplicate/zero/gap semantics, finite four-frame 180ms transition, no idle redraw, upright dirty bounds, pinned header clipping reset and flush failure",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "Actual sanitized AoYou snapshot: 36 groups parsed\n[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: read-only preflight captures policy/locks; post-stop adoption never accesses unpowered sensor; DRM-ready gate precedes live sensor checks; bounded I/O retries and one enable require real lux, preserve guard/helper checks; persistent I/O, invalid value, missing identity, expired guard and stale lux fail closed; never writes UCI or vendor locks\nPASS: every production C/header ubus path matches the captured device executable\nPASS: production main orders guard -> DRM black frame -> sensor -> policy -> verify existing lease -> protected UI frame -> LCD ON -> heartbeat",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: actual display runtime receipt/map, guarded adopt, first-frame renewal cannot conceal an expired startup lease; later wakes acquire a new lease; level-only change, sleep, resync, [REDACTED_ENCODED_OR_IDENTIFIER] failures, unsafe wake rejection; own 180s idle lease precedes LCD off, repeated off never renews, dark adoption adds no lease, verified LCD-on releases, failures retain bounded lease without touching original locks\nPASS: main ownership/frame order, no brightness bypass, IPC hook cancellation",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: actual display UI has explicit fixed/adaptive modes, local 1-percent draft and presets; confirm once/cancel/no-repeat, readonly denial, stale-mode refusal, bounded values, sensor failure and unknown results; no device I/O",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "factory-bus: protocol rejection, exact service contracts and event routing passed",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: swipe order/wrap; thresholds; diagonal/vertical separation; modal/subpage exclusion; drag is not tap; TopFlow upright coordinates; no stale queued tap",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: actual monotonic clock heartbeat, valid boot zero, suspended wall jump, backwards NTP, awake advance and failed-clock/no-frame refusal\nPASS: read-only clock CLI is the first main branch",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: actual navigation has one mode-dependent home in three pages; settings is a detail; hidden home aliases cannot bypass mode; enable/disable updates home; detail/form/modal navigation preserved; no control writes",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: continuous gesture [REDACTED_ENCODED_OR_IDENTIFIER], monotonic settle skips late frames, no offscreen DRM submit, pinned swipe rows, scrolled-source commit/cancel document/scroll, retained scroll repaint, actual main branches preserve new input and exclude 200ms preparation from animation, sleep cancels to source before policy and frees motion buffers",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS lock-entry: native 320x480; layout, bounds, hit targets and state\nPASS lock-entry-dark: native 320x480; layout, bounds, hit targets and state\nPASS lock-handover: native 320x480; layout, bounds, hit targets and state\nPASS lock-handover-dark: native 320x480; layout, bounds, hit targets and state\nPASS lock-cooldown: native 320x480; layout, bounds, hit targets and state\nPASS lock-cooldown-dark: native 320x480; layout, bounds, hit targets and state\nPASS soft-lock: native 320x480; layout, bounds, hit targets and state\nPASS soft-lock-dark: native 320x480; layout, bounds, hit targets and state\nPASS soft-lock-progress: native 320x480; layout, bounds, hit targets and state\nPASS soft-lock-progress-dark: native 320x480; layout, bounds, hit targets and state\nPASS: 10 actual lock renders and 1528 hit targets; no gesture tests are inferred from static screenshots",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_SENSITIVE_CONTEXT]",
+    "output": "[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_SENSITIVE_CONTEXT]",
+    "output": "[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "pinyin: Chinese composition/commit, bounded candidate paging, UTF-8 byte limits, all 402 syllables passed",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: actual native snapshot parser+presentation matches browser fixtures: rate precision, primary metrics, QCI/title, disabled cards, totals/online count and stale gaps",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: no readiness before first frame; first/subsequent render failure cannot heartbeat; successful frame and normal standby remain live\nPASS: same-engine FreeType invalid font fails initialization with exit 5",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "html_view: cannot load font [REDACTED_ENCODED_OR_IDENTIFIER].ttf\n{\"page\": \"home\", \"height\": 480, \"iterations\": 50, \"full_render_ms\": 409.874, \"scroll_repaint_ms\": 140.082}\n{\"page\": \"home-dark\", \"height\": 480, \"iterations\": 50, \"full_render_ms\": 388.412, \"scroll_repaint_ms\": 140.225}\n{\"page\": \"long-settings\", \"height\": 750, \"iterations\": 50, \"full_render_ms\": 290.748, \"scroll_repaint_ms\": 54.973}\n{\"page\": \"long-settings-dark\", \"height\": 750, \"iterations\": 50, \"full_render_ms\": 289.789, \"scroll_repaint_ms\": 53.993}\n[REDACTED_ENCODED_OR_IDENTIFIER] limit=393216 entries_limit=512\nPASS: current typography fresh-vs-retained pixels/layout/hit targets; fixed light/dark header/back targets; deterministic cached glyphs; bounded glyph eviction; rotation/pitch; reinitialization and unavailable-document failures. Legacy raster is intentionally different and is not an equivalence target.",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: actual CSS bold width/coverage, gradient stops/rounded corner, same-scale white/mint chart lines, inset latest markers, subtle guide-only data gaps, missing-vs-zero semantics, bounded chart cache/clipping, 180-degree rendering; 11/13/29px bold contrast glyphs retain all strokes on light/dark backgrounds",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: TopFlow upright render/touch profile, actual chart/loading damage rectangles, clipping, overflow and slide direction",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: production sensor callback follows observed OFF -> fixed init=1 -> guard recheck -> fixed enable=1; ON/unreadable state never resets; all open/write/close and ownership failures stop before subsequent writes",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_SENSITIVE_CONTEXT]",
+    "output": "[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "[REDACTED_SENSITIVE_CONTEXT]\nPASS: production gesture dispatcher blocks soft-lock touches and consumes release",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: actual parent startup/poll code; stages 1..9 each timeout at 4000ms; early FATAL/EOF; bad ordering; setup failures; first safe code survives stop/reset; no external service execution\nPASS: actual DIRTYFB wrapper never converts unsupported/invalid/IO failures into frame readiness\nPASS: preflight and runtime contain no read-to-clear event path\nPASS: actual failure publisher validates owned directory/file, permissions/type/link count/size, NOFOLLOW, bounded exact record, EINTR and short-write; never saves stderr or payloads",
+    "exit": 0
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "output": "PASS: upright slide: next moves old page left, previous moves right; full endpoints; row pitch/padding; bounds",
+    "exit": 0
+  },
+  {
+    "exit": 0,
+    "output": "PASS: 10 actual display/cell-lock renders, 2664 hit checks; header pixels unchanged at every target scroll.",
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]"
+  }
+]

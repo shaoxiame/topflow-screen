@@ -1,0 +1,7 @@
+html_view: cannot load font [REDACTED_ENCODED_OR_IDENTIFIER].ttf
+{"page": "home", "height": 480, "iterations": 50, "full_render_ms": 347.617, "scroll_repaint_ms": 132.082}
+{"page": "home-dark", "height": 480, "iterations": 50, "full_render_ms": 329.175, "scroll_repaint_ms": 130.544}
+{"page": "long-settings", "height": 658, "iterations": 50, "full_render_ms": 240.891, "scroll_repaint_ms": 47.805}
+{"page": "long-settings-dark", "height": 658, "iterations": 50, "full_render_ms": 241.576, "scroll_repaint_ms": 47.998}
+[REDACTED_ENCODED_OR_IDENTIFIER] limit=393216 entries_limit=512
+PASS: baseline pixels/layout/hit targets and direct glyphs; fixed light/dark header/back targets; retained scroll; bounded glyph eviction; rotation/pitch; reinitialization and unavailable-document failures

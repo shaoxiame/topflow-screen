@@ -1,0 +1,3 @@
+[REDACTED_SOURCE_MATERIAL]
+Original firmware/library disassembly or machine-code extraction is omitted. Independently written analysis notes are retained separately.
+Historical material; this is not an original capture or a validation result.

@@ -1,0 +1,7 @@
+{
+  "zwrt-datad": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "miniuiconfig.ini": "[REDACTED_SENSITIVE_FIELD]",
+  "startdui.sh": "/usr/ui/startdui.sh",
+  "zte_topsw_daemon.conf": "[REDACTED_ENCODED_OR_IDENTIFIER].conf",
+  "zte_nwinfo": "/etc/config/zte_nwinfo"
+}

@@ -1,0 +1,37 @@
+{
+  "version": "0.1.5",
+  "txt": "dist/topflow-screen-0.1.5.txt",
+  "bytes": "[REDACTED_SENSITIVE_FIELD]",
+  "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "archiveSha256": "[REDACTED_SENSITIVE_FIELD]",
+  "nativeBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "sourceHashesVerified": "[REDACTED_SENSITIVE_FIELD]",
+  "archiveEntries": "[REDACTED_SENSITIVE_FIELD]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+  "privateKeyScan": "[REDACTED_SENSITIVE_FIELD]",
+  "directSwitch": true,
+  "sensorAfterDrm": true,
+  "startupOrder": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "confirmedCause": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "noPinStartup": "[REDACTED_SENSITIVE_FIELD]",
+  "touchBackendSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "hardwareTested": false,
+  "userEvidence": "[REDACTED_SENSITIVE_FIELD]",
+  "deviceAccess": "Read-only state collection. No installation, parameter writes or execution of new binaries.",
+  "localTests": {
+    "nativeScripts": "[REDACTED_SENSITIVE_FIELD]",
+    "nativeArm64Build": "passed",
+    "jsRegression": {
+      "tests": 194,
+      "passed": 193,
+      "processTimeout": 1
+    },
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": {
+      "tests": 36,
+      "passed": 36,
+      "failed": 0
+    },
+    "independentReview": "passed; excluded unverified Type B prerequisites"
+  },
+  "boundary": "[REDACTED_SENSITIVE_CONTEXT]"
+}

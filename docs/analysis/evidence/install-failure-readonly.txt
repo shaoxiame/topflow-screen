@@ -1,0 +1,30 @@
+tool_paths
+/usr/bin/sha256sum
+/bin/tar
+/usr/bin/flock
+/bin/stat
+/usr/bin/readlink
+/usr/bin/awk
+/bin/pidof
+/bin/base64
+directory_metadata
+drwxr-xr-x    4 root     root          4096 Oct 16 03:30 /data/plugins
+parent_target
+/data/plugins
+own_files
+own_runtime_files
+own_status
+original_screen
+18392
+screen_master
+             command   pid dev master a   uid      magic
+     zte_topsw_devui [REDACTED_NUMBER]   y    y     [REDACTED_NUMBER]
+current_arch
+aarch64
+busybox_tar
+BusyBox v1.36.[REDACTED_NUMBER] [REDACTED_IP] UTC) multi-call binary.
+
+Usage: tar c|x|t [-zahvokO] [-f TARFILE] [-C DIR] [-T FILE] [-X FILE] [FILE]...
+
+
+STDERR:

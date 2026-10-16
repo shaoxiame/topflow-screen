@@ -1,0 +1,12 @@
+luci.jsonc:table
+  parse:function
+  stringify:function
+  decode:nil
+  encode:nil
+cjson:missing
+json:missing
+dkjson:missing
+luci.json:missing
+[REDACTED_IP]:19090
+
+STDERR:

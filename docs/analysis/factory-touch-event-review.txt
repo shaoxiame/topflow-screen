@@ -1,0 +1,63 @@
+Original touch activity event 3001 — offline static findings, [REDACTED_NUMBER]
+
+SDK libzte_SDKowrt.so:
+- ZTD_SetLcdTouchStatus@0x11738 always calls RetsetSleeptime.
+- isSleepMode checks wakeup_working, not g_sleep_mode. If true, no message.
+- Constant double at 0x473c8 = 3001.0.
+- Message includes numeric touch_status equal to incoming argument.
+- eventTable@0x70160 has id3001 and send flag1; pointer0x535b2 is
+  zwrt_deviceui_event.touchstatus. It is an ordinary outgoing ubus event.
+- This is separate from the LOGIN state queried by service1001; LOGIN alone
+  cannot stand in for this activity event.
+
+Original zte_topsw_devui:
+- Imported setter wrapper@0x5133e0 moves w1→w0 then calls SDK setter.
+- Fixed GOT slot0xef9ad8 points to that wrapper.
+- Scanning EH-frame function starts for GOT references found one direct call
+  from touchdev_read@0x4285c4, instruction0x428a14.
+- Function begins by checking display-open/input flags; pressed state is loaded
+  from globalinputstatus, compared to1 at0x4289f8. Only equality reaches call.
+- It sends numeric1 when a touch remains pressed, including repeated reads.
+- No release0 call was observed. Other unknown indirect uses are not ruled out.
+- SDK autoScreenOn(2) sends value2, but this is a distinct periodic-screen-wake
+  path, currently refused by display preflight. Do not synthesize2 on all keys.
+
+Consumer scope:
+A binary-only exact string search of downloaded evidence found the outgoing
+name/touch_status only in SDK. No downloaded sleep_faw/libsleep consumer had the
+name. This cannot prove no other live consumer exists. Preserve the known
+outgoing activity event instead of relying on unproven absence of consumers.
+
+Implementation request to root/native:
+Separate fixed private TOUCH command, only numeric1 allowed, emits the exact
+original event. Trigger only when display is lit and an actual touch is pressed;
+[REDACTED_SENSITIVE_CONTEXT]
+Optional bounded repeat throttling is an explicit resource choice; first touch
+must not be delayed. No event needs to be sent during untouched display polling.
+
+Evidence files:
+[REDACTED_ENCODED_OR_IDENTIFIER].txt
+[REDACTED_ENCODED_OR_IDENTIFIER].json
+[REDACTED_ENCODED_OR_IDENTIFIER].txt
+
+No original binary was executed. No device reads, writes, event sends or service
+controls were performed by this investigation.
+
+Resolved implementation and wire payload, [REDACTED_NUMBER]:
+- Separate TF_BUS_TOUCH=5 private command accepts only value1. Helper emits
+  zwrt_deviceui_event.touchstatus with one u32 field touch_status=1.
+- Exact libzte_zbus parser [REDACTED_ENCODED_OR_IDENTIFIER]@0x68a8 removes zbuspeer
+  (when present) at0x6a38, pthread_id at0x6a9c and zbustype at0x6aa8.
+  It prints the remaining JSON at0x6ac0, converts at0x6b28 with
+  [REDACTED_ENCODED_OR_IDENTIFIER], routes3001..4000 at0x6bcc to zbus_send_event,
+  and that function invokes ubus_send_event at0x99e0 without adding fields.
+  Since the setter constructed only [REDACTED_ENCODED_OR_IDENTIFIER],
+  the external event has only numeric touch_status. Internal transport
+  routing metadata must not be added by the replacement helper.
+- Native main sends immediately on actual bright-screen press and every250ms
+[REDACTED_SENSITIVE_CONTEXT]
+  lock/login. Emission/transport failure leads to factory recovery.
+- Root/native confirmed actual C fault tests pass in
+  [REDACTED_ENCODED_OR_IDENTIFIER].ps1; helper protocol validation is in
+  native/test-factory-bus.ps1. These are local mocks, not device event writes.
+Additional evidence: [REDACTED_ENCODED_OR_IDENTIFIER].txt.

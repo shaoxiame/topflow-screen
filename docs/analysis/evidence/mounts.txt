@@ -1,0 +1,31 @@
+/dev/root / ext4 rw,seclabel,relatime 0 0
+sysfs /sys sysfs rw,seclabel,relatime 0 0
+selinuxfs /sys/fs/selinux selinuxfs rw,nosuid,noexec,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,noatime 0 0
+cgroup2 /sys/fs/cgroup cgroup2 rw,seclabel,nosuid,nodev,noexec,relatime,nsdelegate 0 0
+tmpfs /tmp tmpfs rw,seclabel,nosuid,nodev,noatime 0 0
+tmpfs /dev tmpfs rw,seclabel,nosuid,noexec,noatime,size=512k,mode=755 0 0
+devpts /dev/pts devpts rw,seclabel,nosuid,noexec,noatime,gid=5,mode=620,ptmxmode=000 0 0
+/dev/mmcblk0p1 /firmware vfat ro,context=u:r:qcfirmware.miscfile,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /usr/zte_web ext4 ro,seclabel,nosuid,nodev,noexec,noatime,discard,noauto_da_alloc,data=ordered 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /cache ext4 rw,context=u:r:cache.miscfile,nosuid,nodev,noatime,discard,noauto_da_alloc,data=ordered 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /overlay ext4 rw,seclabel,nosuid,nodev,noexec,noatime,discard,noauto_da_alloc,data=ordered 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /data ext4 rw,seclabel,relatime 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /zteoverlay ext4 rw,seclabel,noatime 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /persist ext4 rw,seclabel,relatime 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /etc_ro/manufacture ext4 ro,seclabel,nosuid,nodev,noexec,noatime,discard,noauto_da_alloc,data=ordered 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /etc_rw ext4 rw,seclabel,relatime 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /ztebat ext4 rw,seclabel,nosuid,nodev,noexec,noatime,discard,noauto_da_alloc,data=ordered 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /ai_app ext4 rw,seclabel,relatime 0 0
+[REDACTED_ENCODED_OR_IDENTIFIER] /ai_data ext4 rw,seclabel,relatime 0 0
+overlay /etc overlay rw,seclabel,relatime,lowerdir=/etc,[REDACTED_ENCODED_OR_IDENTIFIER],workdir=/zteoverlay/.etc-work_a 0 0
+none /sys/kernel/config configfs rw,relatime 0 0
+adb /dev/usb-ffs/adb functionfs rw,relatime 0 0
+diag /dev/ffs-diag functionfs rw,relatime 0 0
+debugfs /sys/kernel/debug debugfs rw,seclabel,noatime 0 0
+bpffs /sys/fs/bpf bpf rw,nosuid,nodev,noexec,noatime,mode=700 0 0
+pstore /sys/fs/pstore pstore rw,seclabel,noatime 0 0
+tracefs [REDACTED_ENCODED_OR_IDENTIFIER] tracefs rw,seclabel,noatime 0 0
+binder /dev/binderfs binder rw,relatime,max=[REDACTED_NUMBER]
+
+STDERR:

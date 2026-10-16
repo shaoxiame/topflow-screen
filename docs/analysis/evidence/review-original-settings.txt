@@ -1,0 +1,3 @@
+[REDACTED_SOURCE_MATERIAL]
+Raw device configuration/status capture is represented by this redaction notice; no original snapshot values are published.
+Historical material; this is not an original capture or a validation result.

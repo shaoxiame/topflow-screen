@@ -1,0 +1,155 @@
+TopFlow 0.2.1 lock-screen integration — local implementation and verification
+
+The SIM-source fix is retained. This increment adds lock-screen telemetry and
+bounded visual animation using only the existing sampled device state. No device
+connection, write, reboot, installation or live API probe was performed.
+
+Data and display
+----------------
+lockscreen_status.h consumes the caller's already sampled JSON. Production passes
+NULL once the snapshot is older than 5000 ms. There are no network requests in
+the new model or view. Mode is aggregation.enabled, the same verified state used
+by the home page. Unknown mode remains unconfirmed.
+
+Ordinary mode shows only id=5G card traffic, current operator, actual reported
+radio label and connection status. Aggregation mode shows each physical card's
+operator and radio label, or its absent/disabled/unknown state, with cellular
+traffic summed across the three valid cards. This is explicitly labelled as
+three-card cellular traffic; it does not claim tunnel-level effective throughput
+and does not add eth0 counters a second time.
+
+Card rates use [REDACTED_ENCODED_OR_IDENTIFIER] plus explicit enabled==1 for
+external modems. Disabled and absent cards do not contribute cached traffic.
+Unknown participating data makes the total unconfirmed instead of fabricated
+zero. [REDACTED_ENCODED_OR_IDENTIFIER] rates format as an em dash.
+
+The shared radio_status.h provided by the parent gives normalized actual radio
+[REDACTED_SENSITIVE_CONTEXT]
+is disconnected; that is not counted as online. Online count still requires a
+[REDACTED_SENSITIVE_CONTEXT]
+type. Neither carrier aggregation, three-card aggregation, speed nor plain 5G
+causes 5G-A to be inferred.
+
+[REDACTED_SENSITIVE_CONTEXT]
+blue hero card with white/mint real-time down/up values and a matching dual-line
+[REDACTED_SENSITIVE_CONTEXT]
+own keypad and masked dots and includes compact read-only mode/radio/operator/
+rate lines. No navigation or business actions are exposed before unlock.
+
+Animations and resource bounds
+[REDACTED_ENCODED_OR_IDENTIFIER]
+Rate changes interpolate between actual samples over 320 ms with quadratic
+ease-out, at most one frame every 40 ms (8 update frames). Unknown values and a
+[REDACTED_SENSITIVE_CONTEXT]
+screens show the current sample directly rather than a sample behind the motion.
+
+Only soft-lock rate rectangles are repainted: two 122x36 clears/text draws and a
+256x36 dirty rectangle at (32,222). Full HTML and partial repaint use exactly the
+same colors, font weights and normal line height; actual RGB565 framebuffer
+comparison verifies identical pixels when the value is unchanged. This catches
+both color flashes and one-pixel font-baseline movement between full frames.
+
+The chart uses the existing rate_history.h algorithm: at most 30 actual distinct
+timestamped samples per mode, stored separately from home-page history. Ordinary
+and aggregation mode have separate scopes; changing mode clears its displayed
+history. Stale or unavailable snapshots invalidate the displayed curve. Entering
+screen_lock() invalidates the history, numeric motion and shared chart-animation
+[REDACTED_SENSITIVE_CONTEXT]
+One point remains a waiting state; a curve needs two real samples. No startup
+history is generated and missing measurements remain gaps instead of zeroes.
+
+The existing native chart renderer draws white downlink and mint uplink lines
+and faint grid/fill in (32,274,256,24), with four bounded interpolation frames
+over 180 ms. A growing history interpolates its new endpoint from the preceding
+actual endpoint; this is only a drawing transition, never a synthetic sample in
+the stored ring. The common chart background cache is reused, not duplicated.
+
+Animation runs only with the backlight on, no interaction,
+[REDACTED_SENSITIVE_CONTEXT]
+swiping and other content do not run this animation. Existing render cadence and
+backend polling are unchanged.
+
+The long-press animation keeps the original 1000 ms threshold, 40 ms throttle,
+[REDACTED_SENSITIVE_CONTEXT]
+It adds button fill alongside the original progress strip. The button always
+reads only "长按解锁", including while pressed; neither a duration nor percentage
+[REDACTED_SENSITIVE_CONTEXT]
+its dirty rectangle is 240x80. Unlock still requires screen_unlock_complete(),
+which checks factory policy and login acknowledgment before allowing controls.
+
+html_view.cpp was NOT changed. Drawing uses existing html_view_draw_text_px,
+html_view_text_width_px and [REDACTED_ENCODED_OR_IDENTIFIER]. Those functions retain
+FreeType glyph caching, native pixel clipping and bounded transient text masks.
+The new lock dashboard, motion and two bounded history rings occupy approximately
+2 KiB of static state; chart drawing reuses the existing renderer background
+buffer. No new daemon, timer thread, polling, persistent state, append log or
+network request was added. Host PNG/PPM/GIF fixtures are not runtime assets.
+
+Validation after final edits
+[REDACTED_ENCODED_OR_IDENTIFIER]
+PASS native/test-lockscreen.ps1: primary and aggregation data; exact mode bits;
+per-card operators; 4G/5G NSA/5G SA/explicit 5G-A; absent cached radio suppression;
+unknown enabled module rate suppression; stale/null data; HTML displayed numeric
+values; animation schedule, no overshoot, immediate invalid data and mode reset.
+
+[REDACTED_SENSITIVE_CONTEXT]
+
+PASS native/test-soft-lock.ps1: actual production input/render/dispatch functions;
+hold duration; already-held finger; [REDACTED_ENCODED_OR_IDENTIFIER] reset;
+sleep cancellation; completing release consumption; original login/policy errors;
+render damage remains inside the logical display.
+
+PASS native/test-main-lock.ps1: original sleep/wake, policy checking and control
+revocation remain unchanged; actual screen_lock clears old motion, history mode,
+and chart-animation state on re-entry.
+
+PASS native/test-chart.ps1: actual extracted production chart functions; homepage
+history unaffected; lock normal/aggregate scopes, growing real history, repeated
+[REDACTED_SENSITIVE_CONTEXT]
+bounded damage and failed display-flush handling.
+
+PASS [REDACTED_ENCODED_OR_IDENTIFIER].ps1: home [REDACTED_ENCODED_OR_IDENTIFIER] presentation
+remains consistent after sharing the existing native chart implementation.
+
+PASS native/test-lock-layout.ps1: 20 actual litehtml/FreeType 320x480 light/dark
+[REDACTED_SENSITIVE_CONTEXT]
+Both partial-fill cases and telemetry cases render in the production engine.
+Eight additional actual animation frames (0, 90, 180 and 320 ms, light and dark)
+execute extracted production chart and rate-animation functions with the real
+litehtml/FreeType renderer. The tests assert curves change during the first two
+transitions, digits change until settled, no pixel outside their two rectangles
+changes, and completed animations stop redrawing. Static and animated repaint of
+the same numeric values are pixel-identical. Gesture behavior is separately
+tested, not inferred from screenshots.
+
+[REDACTED_SENSITIVE_CONTEXT]
+layout test consumes their freshly generated view HTML. No new standalone test
+script beyond test-lockscreen.ps1 was introduced for the chart increment.
+
+Representative files
+--------------------
+[REDACTED_ENCODED_OR_IDENTIFIER].png
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_ENCODED_OR_IDENTIFIER].png
+[REDACTED_ENCODED_OR_IDENTIFIER].png (and -90/-180/-320)
+
+Preview values are local test inputs used to validate presentation; they are not
+production data sources, are not claimed to be live readings, and are not sent
+to the device. Runtime production reads only existing device snapshots.
+
+Changed files owned by this increment
+[REDACTED_ENCODED_OR_IDENTIFIER]
+New: [REDACTED_ENCODED_OR_IDENTIFIER].h; native/lockscreen_chart.h;
+native/test-lockscreen.c and .ps1.
+Updated: native/pin_view.h; native/topflow_main.c lock-screen preparation/render/
+[REDACTED_SENSITIVE_CONTEXT]
+native/test-soft-lock.ps1; native/test-lock-layout.cpp and .ps1;
+native/test-chart.ps1; native/test-main-lock.ps1; native/display_pages.h (hold
+label only); [REDACTED_ENCODED_OR_IDENTIFIER].ps1 (lock chart include only).
+
+Parent separately owns radio_status.h, home-page radio labels, version metadata,
+packaging and release verification. No changes were made here to soft_lock.h,
+[REDACTED_SENSITIVE_CONTEXT]
+
+[REDACTED_SENSITIVE_CONTEXT]
+device test. This local verification does not claim a real-device animation FPS.

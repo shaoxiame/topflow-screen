@@ -1,0 +1,56 @@
+Package: libubus-lua
+Version: [REDACTED_NUMBER]-f787c97b-1
+Depends: libc, libubus20230605, liblua5.1.5
+Source: package/system/ubus
+SourceName: libubus-lua
+License: LGPL-2.1
+Section: libs
+SourceDateEpoch: [REDACTED_NUMBER]
+Maintainer: Felix Fietkau <[REDACTED_EMAIL]>
+Architecture: aarch64_cortex-a53
+Installed-Size: 7523
+Description:  Lua binding for the OpenWrt RPC client
+Package: libubus20230605
+Version: [REDACTED_NUMBER]-f787c97b-1
+Depends: libc, libubox20230523
+Provides: libubus
+Source: package/system/ubus
+SourceName: libubus
+License: LGPL-2.1
+Section: libs
+SourceDateEpoch: [REDACTED_NUMBER]
+ABIVersion: [REDACTED_NUMBER]
+Maintainer: Felix Fietkau <[REDACTED_EMAIL]>
+Architecture: aarch64_cortex-a53
+Installed-Size: 11899
+Description:  OpenWrt RPC client library
+Package: libubox20230523
+Version: [REDACTED_NUMBER]-75a3b870-1
+Depends: libc
+Provides: libubox
+Source: package/libs/libubox
+SourceName: libubox
+License: ISC
+Section: libs
+SourceDateEpoch: [REDACTED_NUMBER]
+ABIVersion: [REDACTED_NUMBER]
+Maintainer: Felix Fietkau <[REDACTED_EMAIL]>
+Architecture: aarch64_cortex-a53
+Installed-Size: 25032
+Description:  Basic utility library
+Package: libblobmsg-json20230523
+Version: [REDACTED_NUMBER]-75a3b870-1
+Depends: libc, libjson-c5, libubox20230523
+Provides: libblobmsg-json
+Source: package/libs/libubox
+SourceName: libblobmsg-json
+License: ISC
+Section: libs
+SourceDateEpoch: [REDACTED_NUMBER]
+ABIVersion: [REDACTED_NUMBER]
+Maintainer: Felix Fietkau <[REDACTED_EMAIL]>
+Architecture: aarch64_cortex-a53
+Installed-Size: 4433
+Description:  blobmsg <-> json conversion library
+
+STDERR:

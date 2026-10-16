@@ -1,0 +1,77 @@
+{
+  "version": "0.1.7",
+  "txt": "dist/topflow-screen-0.1.7.txt",
+  "bytes": "[REDACTED_SENSITIVE_FIELD]",
+  "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "archiveSha256": "[REDACTED_SENSITIVE_FIELD]",
+  "nativeBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "sourceHashesVerified": "[REDACTED_SENSITIVE_FIELD]",
+  "archiveEntries": "[REDACTED_SENSITIVE_FIELD]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "[REDACTED_SENSITIVE_FIELD]",
+  "privateKeyScan": "[REDACTED_SENSITIVE_FIELD]",
+  "directSwitch": true,
+  "sensorAfterDrm": true,
+  "startupOrder": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "noPinStartup": "[REDACTED_SENSITIVE_FIELD]",
+  "touchBackendSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "nativeHomeNavigation": {
+    "modeSource": "[REDACTED_SENSITIVE_FIELD]",
+    "homePageSlots": 1,
+    "homeSlotModes": [
+      "normal",
+      "aggregate"
+    ],
+    "screenModeOverride": false,
+    "mainPageCount": 3,
+    "enabledOfflineView": "aggregate",
+    "modeDerivedFrom": "zwrt_router.network.[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "screenAggregationToggle": false,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false
+  },
+  "nativePerformance": {
+    "cssEntriesLimit": 4,
+    "swipeBuffers": 2,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 160,
+    "touchMotion": "continuous-drag",
+    "cacheStorage": "process-memory-only",
+    "cssFileBytesLimit": 262144,
+    "pageSettleMilliseconds": 144,
+    "swipeBufferLifetime": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "lateFrames": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "glyphEntriesLimit": 512,
+    "glyphCoverageBytesLimit": 393216,
+    "retainedDocuments": 1,
+    "pinnedHeaderBufferBytes": "[REDACTED_SENSITIVE_FIELD]",
+    "pinnedHeader": "[REDACTED_SENSITIVE_FIELD]",
+    "swipeBufferBytesMaximum": 1966080
+  },
+  "nativeSms": "[REDACTED_SENSITIVE_FIELD]",
+  "hardwareTested": false,
+  "deviceAccess": "No device access or writes during this release. Development, mocked transports, renderer checks and builds ran only on PC.",
+  "localTests": {
+    "nativeScripts": "[REDACTED_SENSITIVE_FIELD]",
+    "jsTests": [
+      {
+        "file": "analysis/switch-0.1.7-js-core.log",
+        "tests": 163,
+        "passed": 163,
+        "failed": 0
+      },
+      {
+        "file": "analysis/switch-0.1.7-js-ui.log",
+        "tests": 30,
+        "passed": 30,
+        "failed": 0
+      },
+      {
+        "file": "analysis/switch-0.1.7-js-package.log",
+        "tests": 36,
+        "passed": 36,
+        "failed": 0
+      }
+    ],
+    "nativeArm64Build": "passed",
+    "independentReview": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  "boundary": "[REDACTED_SENSITIVE_CONTEXT]"
+}

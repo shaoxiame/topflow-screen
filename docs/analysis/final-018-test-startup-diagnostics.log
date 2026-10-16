@@ -1,0 +1,4 @@
+PASS: actual parent startup/poll code; stages 1..9 each timeout at 4000ms; early FATAL/EOF; bad ordering; setup failures; first safe code survives stop/reset; no external service execution
+PASS: actual DIRTYFB wrapper never converts unsupported/invalid/IO failures into frame readiness
+PASS: preflight and runtime contain no read-to-clear event path
+PASS: actual failure publisher validates owned directory/file, permissions/type/link count/size, NOFOLLOW, bounded exact record, EINTR and short-write; never saves stderr or payloads

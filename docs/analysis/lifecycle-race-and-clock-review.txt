@@ -1,0 +1,44 @@
+Lifecycle and heartbeat correction review — [REDACTED_NUMBER]
+
+Device policy: no device request or write. The checks below ran on local
+[REDACTED_SENSITIVE_CONTEXT]
+
+Heartbeat:
+- renderer --monotonic-seconds and heartbeat share CLOCK_MONOTONIC.
+- supervisor rejects malformed, backward and future heartbeat samples and
+  retains the most recent validated sample. A transient fopen/truncate gap
+  cannot reset liveness to process startup; actual age >12 seconds recovers.
+- zero seconds at boot is valid; inability to read monotonic time fails closed.
+- status reads neither create files nor acquire runtime locks.
+
+Lifecycle:
+- installer creates .lifecycle.lock once inside its newly owned directory.
+- start/restore/uninstall open that EXISTING anchor read-only before creating
+  RUN. They never recreate a deleted lock. Extraction/finish uses the same
+  installation lock, then the existing runtime control lock (7 before9).
+- after lock acquisition they compare held descriptor inode with current path,
+  installation directory inode and ownership marker. Same-path replacement,
+  even with byte-identical package ownership, cannot pass the old lock.
+- /proc/self/fd/7 is deliberate: memoryController runs in a POSIX subshell,
+  where $$ still names the outer shell. stat inherits the actual descriptor.
+- startup inherits7 to supervisor; child verifies same anchor and re-flocks
+  the inherited open description. It publishes lifetime identity while8 held,
+  then closes7. The launching controller keeps7 until it observes publication.
+- restore/uninstall can subsequently take7 and cancel the supervisor, waiting
+  for8 to be released after complete cleanup. Original startup receives no
+  plugin lock descriptors. Uninstall removes executable entries first and
+  the lifecycle anchor last, while still holding its open descriptor.
+
+Local validation:
+[REDACTED_SENSITIVE_CONTEXT]
+47/47 passed (30 lifecycle/shell,12 manager,5 production).
+The two new concurrent cases launch two real local shells: the delayed
+controller opens its fd and pauses immediately BEFORE flock acquisition;
+second shell runs the complete offline uninstall. Resuming the first is
+rejected without recreating RUN. A second case recreates the same package
+marker and a fresh lock at the same path to exercise ABA rejection.
+Real open descriptors and actual inode observations are used, including the
+in-memory controller subshell. Windows has no flock binary in this runtime,
+so the flock syscall itself is a controlled before-acquisition barrier, not
+claimed as Linux-kernel or device lock validation. [REDACTED_ENCODED_OR_IDENTIFIER]
+paths and signals are isolated fixtures; no original process is touched.

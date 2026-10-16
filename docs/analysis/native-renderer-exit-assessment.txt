@@ -1,0 +1,36 @@
+0.1.1 RENDERER_EXITED 本机调查与诊断候选（[REDACTED_NUMBER]）
+
+设备事实来自 root 保存的只读文件，未由本代理连接或执行设备程序。
+用户已自行安装并启用0.1.1；这次失败之后原厂PID18279、DRM master恢复，无插件/helper。
+安装文件哈希与40c3b519...归档、a9f4521f...主程序、9b786000...helper匹配。
+原厂PIN启用=1，但RUN没有pin-state；正常恢复不会删除pin-state。
+因此故障更靠近display_prepare_adopt、helper READY或PIN保护/boot_id/open早期，
+不能把没有日志的DRM、触摸、字体或首帧故障直接当已证原因。
+原厂pipe_disable84719.159到恢复init84723.699约4.54秒，与helper父进程4秒截止相合，
+仅为定位线索。helper ELF解释器、动态SONAME、导入符号、结构ABI独立检查未见错配。
+libubus部分初始化RPC无内部截止，但父进程4秒停止并回收；本候选保持原上限。
+
+独立确认的缺陷：is_suspended_enter 实际读取后清除历史事件；旧代码却作为当前
+suspend状态，并fread到EOF导致多次读。实机dmesg有明确“and clear it”。
+这证明节点使用有误，不证明它造成此次RENDERER_EXITED。
+另DIRTYFB旧代码吞EINVAL/ENOSYS，不能用该返回值作为安全锁屏帧提交证据。
+
+本机候选更改：
+1. 全部移除该历史节点的预检和运行访问；receipt只包含PIN策略、亮度、LCD锁。
+2. 首帧/物理键唤醒/重注册重绘前持自有10秒guard，帧后重新观察仍在。
+   超时不靠续租掩盖；任何DIRTYFB错误都恢复。亮度和LCD锁仍独立回读。
+3. helper通过原私有socketpair报告1..9固定阶段，卡住/EOF/FATAL时父程序保留固定码。
+[REDACTED_SENSITIVE_CONTEXT]
+4. 仅自有RUN/renderer.failure单行固定码，root0600/目录0700/nlink1/NOFOLLOW校验，
+   最多64字节、首错误不覆盖，不存PIN、API响应或stderr。信号退出交监督器wait状态。
+
+本机测试：[REDACTED_ENCODED_OR_IDENTIFIER].ps1实际抽取生产C执行9阶段每个4000ms截止、
+早FATAL/EOF、倒序、setup失败、stop清零后首错仍在；文件所有权/权限/类型/链接/
+长度/EINTR/短写；DIRTYFB EINVAL、ENOSYS、EIO不得产生ready。
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+guard过期帧拒绝、same-level多余guard释放、原锁/idle180策略不变。
+主程序ARM64 -Wall -Wextra -Werror编译通过；helper相同严格编译并核24个设备导入。
+
+候选不是已确认修复。guard仅防止继续系统休眠，DRM接受不等于物理面板已亮。
+没有下一次由用户自主测试得到的精确阶段，不能解释为“根因已解决”。
+本轮只编译本地候选，生产打包等待监督器诊断审查完成。

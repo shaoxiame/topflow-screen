@@ -1,0 +1,4 @@
+tcp        0      0 [REDACTED_IP]:9460          [REDACTED_IP]:*               LISTEN      10392/zwrt-datad
+tcp        0      0 [REDACTED_IP]                 [REDACTED_IP]*                    LISTEN      3960/ufi-tools-zwrt
+
+STDERR:

@@ -1,0 +1,511 @@
+{
+  "output": "[REDACTED_LOCAL_PATH]",
+  "strings": 38,
+  "xrefs": [
+    {
+      "function": "0x6718",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12bc5",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x6718",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12baa",
+      "text": "create_wakelock_func start"
+    },
+    {
+      "function": "0x6718",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12bf1",
+      "text": "action add wakelock %s"
+    },
+    {
+      "function": "0x6718",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12c0b",
+      "text": "action [REDACTED_ENCODED_OR_IDENTIFIER] == NULL"
+    },
+    {
+      "function": "0x69b8",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12bc5",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x69b8",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12c3c",
+      "text": "destroy_wakelock start"
+    },
+    {
+      "function": "0x69b8",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12c5a",
+      "text": "action [REDACTED_ENCODED_OR_IDENTIFIER] == nullptr"
+    },
+    {
+      "function": "0x6ba0",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12bc5",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x6bf4",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12cc2",
+      "text": "wakelock failed."
+    },
+    {
+      "function": "0x6bf4",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12bc5",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x6bf4",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12cd3",
+      "text": "action wakelock == nullptr"
+    },
+    {
+      "function": "0x6bf4",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12bc5",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x6d94",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12bc5",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x6d94",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12bc5",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x6f34",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12bc5",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x7418",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12db4",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x7418",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12db4",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x7618",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12db4",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x7790",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12db4",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x7854",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12db4",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x7854",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12db4",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x7c08",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12db4",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x7c08",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12db4",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x7c08",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12db4",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x8754",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12f36",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "function": "0x8aac",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12f66",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x8aac",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12ffb",
+      "text": "get source id error"
+    },
+    {
+      "function": "0x8aac",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12f66",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x8aac",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12f66",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x8aac",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13022",
+      "text": "error -> addWakelock: %s,%d"
+    },
+    {
+      "function": "0x8aac",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12f66",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x8d74",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12f66",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x8d74",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12ffb",
+      "text": "get source id error"
+    },
+    {
+      "function": "0x8d74",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12f66",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x8d74",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12f66",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x8d74",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x1303e",
+      "text": "error -> deleteWakelock: %s,%d"
+    },
+    {
+      "function": "0x8d74",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x12f66",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x9094",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x1305d",
+      "text": "construct [REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "function": "0x9094",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13083",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x9238",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x130d4",
+      "text": "wakelock empty."
+    },
+    {
+      "function": "0x9238",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13083",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x9334",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13083",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x9500",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13083",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x9788",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13083",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0x9788",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13123",
+      "text": "This wakeLock add failed."
+    },
+    {
+      "function": "0x9788",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x1313d",
+      "text": "/tmp/wakelockMap.txt"
+    },
+    {
+      "function": "0x9b8c",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x1313d",
+      "text": "/tmp/wakelockMap.txt"
+    },
+    {
+      "function": "0x9ebc",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x1313d",
+      "text": "/tmp/wakelockMap.txt"
+    },
+    {
+      "function": "0x9ebc",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x131ae",
+      "text": "in read lock map internalWakeLock map empty."
+    },
+    {
+      "function": "0x9ebc",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13083",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER].cpp"
+    },
+    {
+      "function": "0xa528",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x1357d",
+      "text": "processname"
+    },
+    {
+      "function": "0xa528",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13592",
+      "text": "processstatus"
+    },
+    {
+      "function": "0xa93c",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x1357d",
+      "text": "processname"
+    },
+    {
+      "function": "0xa93c",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13592",
+      "text": "processstatus"
+    },
+    {
+      "function": "0xadd8",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x137f6",
+      "text": "[%s] subprocess exit fail, exit status [%d]"
+    },
+    {
+      "function": "0xb78c",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13a47",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "function": "0xb78c",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13a64",
+      "text": "FOTA install processing file exists"
+    },
+    {
+      "function": "0xb78c",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13a88",
+      "text": "FOTA install processing file does not exist"
+    },
+    {
+      "function": "0xc2e0",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13a47",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "function": "0xcf54",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x13df7",
+      "text": "system have wakelocks."
+    },
+    {
+      "function": "0xd570",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x14026",
+      "text": "wakelock: %s"
+    },
+    {
+      "function": "0xd570",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x14026",
+      "text": "wakelock: %s"
+    },
+    {
+      "function": "0x11984",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x14eb8",
+      "text": "recv wow_wakelock"
+    },
+    {
+      "function": "0x11984",
+      "symbol": null,
+      "instruction": "[REDACTED_SENSITIVE_FIELD]",
+      "string_va": "0x14ef3",
+      "text": "in fota processing."
+    }
+  ],
+  "relocations": [
+    {
+      "slot": "0x2f298",
+      "string_va": "0x133f9",
+      "text": "testOptWakelockfile"
+    },
+    {
+      "slot": "0x2f2a8",
+      "string_va": "0x12f36",
+      "text": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "slot": "0x2f2b8",
+      "string_va": "0x1340d",
+      "text": "sourceId"
+    },
+    {
+      "slot": "0x2f2d8",
+      "string_va": "0x1340d",
+      "text": "sourceId"
+    },
+    {
+      "slot": "0x30058",
+      "string_va": "0x132df",
+      "text": "zwrt_zte_sleep_faw.wakelock"
+    },
+    {
+      "slot": "0x30098",
+      "string_va": "0x132fb",
+      "text": "createWakelock"
+    },
+    {
+      "slot": "0x300c8",
+      "string_va": "0x1330a",
+      "text": "destroyWakelock"
+    },
+    {
+      "slot": "0x300f8",
+      "string_va": "0x1331a",
+      "text": "WakeLock"
+    },
+    {
+      "slot": "0x30188",
+      "string_va": "0x1333e",
+      "text": "internalAddWakelock"
+    },
+    {
+      "slot": "0x301b8",
+      "string_va": "0x13352",
+      "text": "internalDeleteWakelock"
+    },
+    {
+      "slot": "0x303a0",
+      "string_va": "0x132df",
+      "text": "zwrt_zte_sleep_faw.wakelock"
+    }
+  ]
+}

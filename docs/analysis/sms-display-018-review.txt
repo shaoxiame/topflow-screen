@@ -1,0 +1,70 @@
+[REDACTED_SENSITIVE_CONTEXT]
+
+Scope
+All development and tests described here ran on the computer. This agent did
+not connect to or write to the device. Parent-collected device evidence below
+[REDACTED_SENSITIVE_CONTEXT]
+
+[REDACTED_SENSITIVE_CONTEXT]
+
+Only HTTP 200 with result equal to the string "success" and no nonempty or
+[REDACTED_SENSITIVE_CONTEXT]
+or timed-out results preserve the message draft and never trigger a resend.
+
+Evidence:
+[REDACTED_SENSITIVE_CONTEXT]
+  RD/LD GET availability; only presence/status was retained.
+[REDACTED_SENSITIVE_CONTEXT]
+
+[REDACTED_SENSITIVE_CONTEXT]
+Contract compatibility is established against its installed client and API
+[REDACTED_SENSITIVE_CONTEXT]
+not performed and cannot be claimed from fixture tests.
+
+Display and lock
+The old settings page required a fully ready light sensor before showing all
+settings. A transient disabled/unreadable sensor could hide the page, including
+its lock entry. Settings now read persistent policy independently; the lock
+entry is always at the page top, and failures show a bounded diagnostic code.
+Strict adoption/preflight checks are retained. Manual brightness and timeout
+remain usable when lux is temporarily unavailable.
+
+The old wake path rendered but only read lux, whereas startup separately
+prepared the light sensor. Factory sleep can leave sensor enable at zero.
+The wake path now reuses guarded sensor preparation after a complete frame,
+[REDACTED_SENSITIVE_CONTEXT]
+the same only when the panel is actually on. Fixed mode needs no sensor I/O.
+
+Enabling automatic brightness from fixed mode prepares a real sensor sample
+only after confirmation. A temporary owned frame guard is released via the
+existing same-level display transaction. Pending sleep/resync, cancellation,
+policy change, missing sensor identity, missing lux, or expired guard prevents
+the configuration commit. A failed commit does not change the fixed preference
+in the local model. Sensor preparation can transiently enable the sensor even
+if the subsequent commit fails; it never forces LCD off/on or overwrites the
+previous fixed brightness preference.
+
+Parent integration separates factory power event 1 (sleep) from 2 (wake).
+Repeated wake while already awake performs no relock or output transaction.
+[REDACTED_SENSITIVE_CONTEXT]
+
+The HTTP poll helper now pumps the [REDACTED_ENCODED_OR_IDENTIFIER] callback by elapsed
+monotonic time even when fragmented response bytes keep arriving. Cancellation
+and deadlines still terminate pending waits.
+
+Local validation passed
+pwsh -NoProfile -File native/test-controls.ps1
+pwsh -NoProfile -File [REDACTED_ENCODED_OR_IDENTIFIER].ps1
+pwsh -NoProfile -File [REDACTED_ENCODED_OR_IDENTIFIER].ps1
+pwsh -NoProfile -File [REDACTED_ENCODED_OR_IDENTIFIER].ps1
+pwsh -NoProfile -File native/test-main-lock.ps1
+pwsh -NoProfile -File [REDACTED_ENCODED_OR_IDENTIFIER].ps1
+pwsh -NoProfile -File native/test-wake-sensor.ps1
+[REDACTED_SENSITIVE_CONTEXT]
+
+Tests exercise the actual extracted production functions with explicit local
+I/O fixtures: single-submit and exact AD/signature/form encoding, malformed
+success responses, max input boundaries, UI cancellation, missing sensor,
+guard ownership/release, fixed-to-auto confirmation, failed commits, sleep/wake
+[REDACTED_SENSITIVE_CONTEXT]
+They do not prove physical device delivery, brightness, or touch behaviour.

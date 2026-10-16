@@ -1,0 +1,42 @@
+Static evidence from downloaded original SDK only. No setters executed on device.
+
+SDK libzte_SDKowrt.so, dispatcher 0x43664 selects IDs 1001..1003.
+[REDACTED_FIRMWARE_ASSEMBLY_OR_BYTES]
+  This is UI login RAM, not physical touch presence. Setter at 0x11a54.
+[REDACTED_FIRMWARE_ASSEMBLY_OR_BYTES]
+  Original read failure returns "0"; adapter intentionally returns an error to
+  avoid presenting an unobserved value as confirmed state.
+[REDACTED_FIRMWARE_ASSEMBLY_OR_BYTES]
+  Adapter rejects malformed values rather than silently disabling power mode.
+  ZTD_SetDirectPowerMode at 0x1539c emits zbustype107, source_module
+  zte_topsw_devui and [REDACTED_ENCODED_OR_IDENTIFIER]"enable"|"disable".
+  invokeTable107 -> zwrt_bsp.charger.set (original service, no direct UCI write).
+
+LCD event: zwrt_deviceui_event.lcdstatus, [REDACTED_ENCODED_OR_IDENTIFIER],
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+zteSleepBacklight kernel lock. A successful bus-send alone is not proof of that
+lock state; lifecycle separately observes it before releasing its own guard.
+
+Sleep topicTable: ID4001 object/method zwrt_zte_sleep_faw.power_status.
+Action strings gotoSleep/gotoWakeup dispatch through SDK at 0x45f44..46078.
+An event of the same name is also listed by original SDK eventTable, but the
+sleep-faw ordinary broadcaster at 0xe9a8 actually emits the distinct event
+[REDACTED_ENCODED_OR_IDENTIFIER] with goToSleep/goToWakeup (capital T).
+[REDACTED_SENSITIVE_CONTEXT]
+and validates each channel's exact case-sensitive action vocabulary.
+Re-registration event [REDACTED_ENCODED_OR_IDENTIFIER] at 0x46118..4616c
+[REDACTED_SENSITIVE_CONTEXT]
+
+Adapter: native/factory_bus.c uses matching existing libubus.so.[REDACTED_NUMBER] and
+libubox.so.[REDACTED_NUMBER], no closed SDK initialization or proprietary binaries in
+the package. It owns a private inherited SOCK_SEQPACKET socketpair, the same
+three zwrt_deviceui methods only while original provider has been stopped,
+[REDACTED_SENSITIVE_CONTEXT]
+registration conflict, invalid IPC or watchdog expiry causes failure/restore.
+It has no network listener or persistent config/logging.
+
+Sources: official OpenWrt headers pinned to installed package versions:
+[REDACTED_URL]
+The firmware .so files lack section headers. Build-only import stubs expose
+actual dynamic symbols/SONAMEs for the linker; those stubs are NEVER packaged.
+Hardware behavior remains unexecuted because the device is strictly read-only.

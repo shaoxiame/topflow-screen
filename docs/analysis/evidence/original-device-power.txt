@@ -1,0 +1,8 @@
+{
+	"mode_main_state": "mode_power_on_charger",
+	"quicken_power_on": "0",
+	"power_saver_mode": "",
+	"bat_temperature_level": "0"
+}
+
+STDERR:

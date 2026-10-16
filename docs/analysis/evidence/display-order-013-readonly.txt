@@ -1,0 +1,102 @@
+[126195.023844][T25685] [drm:qpic_display_pipe_disable] *ERROR* [REDACTED_ENCODED_OR_IDENTIFIER] 
+[126195.065957][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.065977][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.136101][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.136130][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.206042][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.206065][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.276372][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.276392][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.346272][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.346308][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.418928][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.418963][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.486148][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.486178][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.556065][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.556093][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.626139][T20435] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.626166][T20435] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.696011][T20435] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.696031][T20435] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.766547][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.766575][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.836485][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.836519][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.906255][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.906279][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126195.976341][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126195.976369][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.046099][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.046124][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.117775][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.117811][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.187011][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.187047][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.256454][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.256490][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.326102][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.326129][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.396198][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.396214][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.466799][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.466828][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.536118][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.536145][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.606105][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.606132][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.676032][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.676052][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.746032][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.746058][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.816412][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.816441][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.886392][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.886420][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126196.956005][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126196.956025][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.026136][ T4117] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.026153][ T4117] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.097280][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.097298][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.165996][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.166013][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.235935][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.235951][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.236208][T21420] [REDACTED_ENCODED_OR_IDENTIFIER]: power-cycle LCD,is_qpic_on 0 call [REDACTED_ENCODED_OR_IDENTIFIER] qpic_reset_sps_pipe
+[126197.236212][T21420] qpic is not on,return
+[126197.271857][   T38] audit: type=1400 audit([REDACTED_NUMBER].396:95006): avc:  denied  { write } for  pid=13425 comm="ubus" path="[REDACTED_ENCODED_OR_IDENTIFIER].lock" dev="tmpfs" ino=410764 scontext=u:r:ubus.subj tcontext=u:r:tmp.fs tclass=file permissive=1
+[126197.305956][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.305974][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.376192][T20435] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.376215][T20435] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.445964][T20435] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.445979][T20435] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.450259][T21420] [REDACTED_ENCODED_OR_IDENTIFIER]: power-cycle LCD,is_qpic_on 0 call [REDACTED_ENCODED_OR_IDENTIFIER] qpic_reset_sps_pipe
+[126197.450263][T21420] qpic is not on,return
+[126197.515932][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.515948][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.586024][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.586041][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.655938][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.655957][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.666671][T21420] [REDACTED_ENCODED_OR_IDENTIFIER]: power-cycle LCD,is_qpic_on 0 call [REDACTED_ENCODED_OR_IDENTIFIER] qpic_reset_sps_pipe
+[126197.666676][T21420] qpic is not on,return
+[126197.725973][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.725989][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.795959][T20435] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.795972][T20435] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.865984][ T8835] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.866001][ T8835] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126197.882758][T21420] [REDACTED_ENCODED_OR_IDENTIFIER]: power-cycle LCD,is_qpic_on 0 call [REDACTED_ENCODED_OR_IDENTIFIER] qpic_reset_sps_pipe
+[126197.882762][T21420] qpic is not on,return
+[126197.932552][T13964] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x0
+[126197.935990][T20435] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126197.936006][T20435] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126198.005982][T20435] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126198.005999][T20435] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126198.075991][T20435] stk3329b 1-0048: i2c_reg_read: failed to read reg:0x10
+[126198.076010][T20435] [STK]  [REDACTED_ENCODED_OR_IDENTIFIER] 204: i2c failed
+[126198.099387][T21420] [REDACTED_ENCODED_OR_IDENTIFIER]: power-cycle LCD,is_qpic_on 0 call [REDACTED_ENCODED_OR_IDENTIFIER] qpic_reset_sps_pipe
+
+STDERR:

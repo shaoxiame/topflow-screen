@@ -1,0 +1,15 @@
+[REDACTED_SENSITIVE_CONTEXT]
+✔ unknown model, firmware and clients remain unknown (0.6986ms)
+✔ hidden page cancels all active local reads and stops scheduling (0.7285ms)
+✔ stop aborts an in-flight automatic remote request (2.9285ms)
+✔ 429 honors Retry-After without identity churn (0.9791ms)
+✔ 400 is swallowed but schedules another heartbeat: integration needs publication gate (0.8502ms)
+✔ manual heartbeat is not canceled by stop: integration must use start chain only (0.9747ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 73.1962

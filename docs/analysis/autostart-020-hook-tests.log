@@ -1,0 +1,21 @@
+✔ documented UFI hook is inserted before early exit, remains idempotent and preserves unrelated bytes (6868.5381ms)
+✔ status is read-only and disable on absent shared script does not create it (1104.0294ms)
+✔ own newly created hook is removed completely but later foreign contents survive (8278.2061ms)
+✔ conflicting markers, path commands, invalid shell, binary text and unsupported formats remain untouched (6198.5624ms)
+✔ shared hard links and unknown transaction contents are rejected without deletion (989.2913ms)
+✔ recognized interrupted work is collected and an interrupted creation receipt is removed (2113.5188ms)
+✔ a concurrent foreign edit is detected before replacement and its contents survive (1999.8198ms)
+✔ busy editor and unknown ownership receipt never alter the shared script (605.4546ms)
+✔ duplicate or moved hook lines and lookalike heredoc contents are never deleted (3184.6478ms)
+✔ an interrupted creation receipt cannot delete another plugin empty boot file (2581.3089ms)
+✔ a foreign file created between the ownership receipt and boot commit survives both enable failure and disable (4481.8625ms)
+﹣ shared symbolic links never follow or modify their target (1.1323ms) # Host does not permit test symlinks
+✔ existing group and permission are forwarded unchanged when publishing a hook edit (2283.1506ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 40737.557

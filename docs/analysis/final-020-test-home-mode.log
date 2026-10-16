@@ -1,0 +1,1 @@
+PASS: actual navigation has one mode-dependent home in three pages; settings is a detail; hidden home aliases cannot bypass mode; enable/disable updates home; detail/form/modal navigation preserved; no control writes

@@ -1,0 +1,4 @@
+{
+  "zte_topsw_sleep_faw": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "zte_topsw_sleep_faw.init": "/etc/init.d/zte_topsw_sleep_faw"
+}

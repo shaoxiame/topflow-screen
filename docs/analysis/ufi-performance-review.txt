@@ -1,0 +1,34 @@
+UFI 插件加载/编辑性能审查，[REDACTED_NUMBER]
+
+已确定的入口缺失原因
+- src/ufi-plugin.js 原 attachEntry 将按钮追加到 .functions-container 内部末尾。
+- 真实 ufi-index.html:100 容器为 .collapse_menu，内部仅 .collapse_box 参与高度测量。
+- 真实 ufi-utils.js:490 createCollapseObserver 将外层高度设为 .collapse_box 高度并 overflow:hidden；追加在测量子区外的按钮会被裁掉。
+- 原遨游插件将卡片 insertAdjacentElement('afterend') 放在 .functions-container 外。根代理已用真实页面验证裁切；修复归属为 manager 作者。
+
+卡顿因果边界
+- 正式 manager-only 源码加载时无 setInterval、无设备请求、不调用 atob；唯一 MutationObserver 在 openPanel 后创建，只处理面板脱离 DOM，不扫描文本、不重建 DOM。
+- 保存 document.currentScript.textContent 保留大脚本文本，但不会循环读取或把整个归档反复塞进 innerHTML。
+[REDACTED_SENSITIVE_CONTEXT]
+- 实机只读延迟由根代理记录于 [REDACTED_ENCODED_OR_IDENTIFIER].json；服务端健康不等于浏览器渲染正常，本agent未访问设备。
+
+已测到的同步重复工作
+- 原路径及公开外部 payload 调用的 nativePayload 对约1.47MB archiveBase64作完整正则扫描。buildScreenCommand('status') 及其 ownershipGuard 各验证一次。
+[REDACTED_SENSITIVE_CONTEXT]
+- 可安全优化为：首次捕获普通数据副本与 members.slice，完整验证、冻结副本和members，仅缓存模块自己创建的不可变副本。不能信任外部被冻结但仍含getter的对象，也不能按可变对象身份盲缓存。
+- 缓存不应取消 tar SHA-256、成员清单、屏幕脚本SHA、上传大小与路径、设备安装前校验。
+- 最新 manager 已实现上述私有冻结副本缓存；注册后的实际面板状态路径为缓存命中。公开传入的 payload 仍完整验证；下述夹具未 register，不能将它的100次批量结果当成新面板反复扫描归档的证据。
+
+分块序列化独立核验
+- manager作者的 emitPayload 用1024 codeunit片段逐片 JSON.stringify，然后数组.join('')，同时处理archiveBase64和screenctlSource。
+- 独立读取当时 dist/topflow-screen.txt 并在VM还原：归档与 native/topflow-native.tar.gz 逐字节相同、archiveSha256匹配、screenctlSource与tar中screenctl.sh相同；仅一个script结束标签，最长源行1361。
+- 此改变降低超长单行编辑负担，没有减少归档或改变真实接口；是否消除用户当前浏览器卡顿仍需测量，不能据此声称已解决。
+
+真实浏览器本机性能夹具
+- analysis/ufi-perf-bench.html 和 analysis/serve-ufi-perf.py，只允许localhost:8879读取本机TXT/CSS；无设备路由，不运行安装代码。
+- DOMParser解析真实TXT；JS只以CommonJS导出方式初始化真实管理器，不register；输出nativePayload/status批量耗时；使用真实宿主CSS对同内容单行和1024分块textarea赋值、强制布局与单字符编辑作对照。
+- 根代理已在本机真实 Chrome 155、1280×720 运行，原始结果为 [REDACTED_ENCODED_OR_IDENTIFIER].json。测试TXT为1,533,960字节，最长行1361；DOMParser 5.6ms，编译及导出初始化3.0ms。
+- 同内容textarea首次/重复强制布局：单行119.7/97.7ms，分块74.9/80.2ms；本次两次布局均降低。单字符编辑：单行89.4/84.2ms，分块70.3/96.2ms，第二次分块反而更慢，因此不能声称编辑全部变快或所有卡顿已消除。
+- 公开 nativePayload 100次528.3ms、公开status命令100次1056.2ms，特意测的是未register的外部payload反复完整验证。实际新面板由register取得模块私有冻结副本，不能把该批量数当作新状态路径的用户延迟。
+- 此结果只证明本机该样本的解析及编辑布局开销，不代表用户手机、长期开启面板、设备服务CPU或其它插件的因果归属。入口被裁切有独立DOM证据；持续卡顿尚无单一确证根因。
+- 测量结束后已通过原本机exec会话终止8879性能夹具服务；保留用户8877预览服务。未删除测量证据或浏览器输出。

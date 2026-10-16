@@ -1,0 +1,179 @@
+{
+  "plugin": "TopFlow 屏幕",
+  "version": "0.1.7",
+  "defaultViewOnly": false,
+[REDACTED_SENSITIVE_CONTEXT]
+    "initial": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "sleep": "revoked",
+    "writes": "per-action-confirmation",
+[REDACTED_SENSITIVE_FIELD]
+    "manualEnableGate": false
+  },
+[REDACTED_SENSITIVE_CONTEXT]
+    "confirmedResult": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "encoding": "UTF16BE-hex",
+[REDACTED_SENSITIVE_CONTEXT]
+    "automaticRetry": false,
+[REDACTED_SENSITIVE_FIELD]
+[REDACTED_SENSITIVE_CONTEXT]
+    "deviceSendVerified": false,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 1
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "confirmation": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "target": "primary-modem-only",
+    "input": "numeric-keypad",
+    "automaticRetry": false,
+    "nrBand": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "cell.lock_lte",
+      "cell.lock_nr"
+    ],
+    "readback": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_CONTEXT]
+    "cancel": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+    "trigger": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+    "holdMilliseconds": 1000
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "deadbandLevels": 8,
+    "curve": "original-integer-lux",
+    "invalidOrStale": "freeze",
+    "confirmedApply": true,
+    "ui": "fixed-or-adaptive",
+    "sampleMilliseconds": 1000,
+[REDACTED_SENSITIVE_FIELD]
+    "rampMillisecondsMinimum": 100,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      5,
+      10,
+      25,
+      50,
+      75,
+      100
+    ],
+    "existingLifecycle": true,
+    "fixedDraftPercentStep": 1,
+    "filter": "median3-q8-quarter",
+    "rampLevelsMaximum": 3,
+    "steadyWrites": 0
+  },
+  "directSwitch": true,
+  "sensorAfterDrm": true,
+  "startupOrder": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "receiptVersion": 2,
+  "factoryBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "reviewOnly": false,
+  "diagnosticCandidate": false,
+  "adaptationFixCandidate": true,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_FIELD]
+    "homePageSlots": 1,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "normal",
+      "aggregate"
+    ],
+    "screenModeOverride": false,
+    "mainPageCount": 3,
+    "enabledOfflineView": "aggregate",
+    "modeDerivedFrom": "zwrt_router.network.[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "screenAggregationToggle": false,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "normal",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false
+  },
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+  "performanceFixCandidate": true,
+[REDACTED_SENSITIVE_FIELD]
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "rendering",
+    "animation",
+    "scrolling"
+  ],
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "cssEntriesLimit": 4,
+    "swipeBuffers": 2,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 16,
+    "touchMotion": "continuous-drag",
+    "cacheStorage": "process-memory-only",
+    "cssFileBytesLimit": 262144,
+    "pageSettleMilliseconds": 144,
+    "swipeBufferLifetime": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 160,
+    "lateFrames": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "glyphEntriesLimit": 512,
+    "glyphCoverageBytesLimit": 393216,
+    "retainedDocuments": 1,
+[REDACTED_SENSITIVE_FIELD]
+    "swipeBufferBytesMaximum": 1966080
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "connectionIndependent": true,
+    "display": "level-and-charge-state",
+    "chargeStatusField": "battery.charging",
+    "chargingIcon": "css-rectangles",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "percentInfersCharging": false,
+    "connectionField": "battery.charger_connect",
+    "chargeStatusEnum": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "unknown"
+  },
+  "confirmedLockCause": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+[REDACTED_SENSITIVE_FIELD]
+    "version": "0.1.4",
+    "successful": true
+  },
+  "pendingDeviceAcceptance": true,
+  "releaseBlocked": null,
+  "acceptanceStatus": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "bytes": 1609276,
+  "maxLineLength": 1361,
+  "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+  "nativeBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "factoryBusSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "hardwareTested": false,
+[REDACTED_SENSITIVE_FIELD]
+    "ufi-plugin.js"
+  ],
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "./",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+[REDACTED_SENSITIVE_CONTEXT]
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt"
+  ]
+}

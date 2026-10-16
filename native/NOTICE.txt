@@ -1,0 +1,53 @@
+TopFlow Screen native runtime
+
+Original TopFlow shell/controller in this source-publication edition:
+PolyForm Noncommercial License 1.0.0; see the repository LICENSE and
+docs/LICENSING.md, or the accompanying licenses/PolyForm-Noncommercial-1.0.0.txt.
+Required Notice: Copyright (c) 2026 shaoxiame (TopFlow Screen contributors).
+Third-party components retain their original licenses below. This publication
+does not revoke rights already lawfully granted under earlier licenses.
+
+Special thanks to UFI-TOOLS-ZWRT and its developers for the plugin platform.
+This is the final source-publication version. No maintenance, feedback,
+issue reports, feature requests, technical support, or pull requests accepted.
+
+This software is based in part on the work of the FreeType Team.
+FreeType is used under the FreeType License (FTL); see licenses/FreeType-FTL.txt.
+
+DRM/evdev/backlight/data/html rendering backends:
+https://github.com/33333s/u60pro-devui
+commit d1d0856e19d58a2a98104e47afbdcfc51e1dc3d1, MIT.
+Modifications: independent TopFlow main loop, cached raw JSON accessor,
+fail-closed DRM enumeration, Windows preview stat portability, maximum-path
+tap qualification and atomic latest-gesture consumption in the touch backend.
+The renderer also fails initialization for an unreadable/invalid font and exposes
+explicit readiness, so failed drawing cannot falsely satisfy the handover watchdog.
+The upstream htmlmain.c and scripts/start.sh are NOT included in the runtime build.
+
+litehtml: https://github.com/litehtml/litehtml
+commit 8836bc1bc35ca0cfd71dc0386ef841d5cbc3bd5e, BSD 3-clause.
+Bundled Gumbo parser: Apache 2.0.
+
+FreeType: https://gitlab.freedesktop.org/freetype/freetype
+The pinned commit and toolchain digest are recorded in build-manifest.json.
+Its bundled gzip implementation is subject to the zlib license; preserve the
+copyright and license from src/gzip/zlib.h in source and binary distributions.
+
+No ZTE binaries or fonts are redistributed. The runtime reads the original
+device CJK font without changing it. The final PC previews use a read-only local
+copy of that font for layout validation; the font is never included in a package.
+
+Offline single-character Pinyin data: https://github.com/mozillazg/pinyin-data
+commit 9193766130af24d2ac54230be979b2e98ac66223, MIT.
+See licenses/pinyin-data-MIT.txt. No input history or learning data is written.
+
+The factory bus helper dynamically uses the device's existing libubus/ubox.
+No device shared libraries, build import stubs, or closed SDK are redistributed.
+It implements the observed deviceui service and LCD/sleep messages; source-level
+protocol tests do not establish hardware equivalence.
+
+This source-publication edition was packaged and checked locally. Earlier user
+feedback confirmed display switching and touch in earlier development versions;
+it is not complete hardware acceptance of the final version. Display/touch,
+sleep/wake, startup and factory recovery still require device-specific checks.
+Source/build verification is not hardware validation.

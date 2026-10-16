@@ -1,0 +1,49 @@
+Native secondary UI alignment — [REDACTED_NUMBER], local-only
+
+Reference: src/screen.css and src/screen-ui.js, not a redesign of the browser UI.
+Common advanced shell now uses the same 28px status area,39px TOPFLOW CONNECT
+brand area,30px right chevron,17px section title,and white/dark card/field colors.
+The repeated full-width control-enable strip has been removed; its existing
+confirmed action remains a compact top-right status link. No write,auth or
+confirmation guard changed. Input pages do not repeat a control entry.
+
+Field labels and bounded editable boxes align with the web form hierarchy.
+Wi-Fi encryption and APN choices use compact touch grids instead of a long
+[REDACTED_SENSITIVE_CONTEXT]
+the same brand/header and fit320x480 without scrolling the input keyboard.
+Long settings/detail forms retain native vertical scrolling.
+
+Wi-Fi overview is native page22 / act:wifi:2.4GHz,5GHz,dual-band,guest.
+All entries retain existing business APIs. Return stacks now preserve
+Wi-Fi overview for primary band forms,guest,and dual-band settings.
+Tested child return to overview then main settings; no write occurs on open.
+
+Validation:
+- native/test-controls.ps1 compiled real production render/control modules;
+  existing contracts and new navigation tests passed. UTF-8 BOM retains
+  both PowerShell5 and PowerShell7 execution compatibility.
+- tests/native-extra.test.js + native-ufi.test.js:5 compiled C suites passed.
+- Original ZTEZhengYuan.ttf,actual litehtml engine:75 light/dark fixture pages
+[REDACTED_SENSITIVE_CONTEXT]
+  forbidden-hit checks passed. Header targets now center at286,48. Covered
+[REDACTED_SENSITIVE_CONTEXT]
+
+Remaining visual differences are intentional native adaptations: original
+device font/FreeType has different metrics from browser Segoe UI/YaHei;
+CSS2 touch grids replace HTML select widgets;native keyboard replaces the
+computer's browser/OS keyboard;long pages scroll as native documents.
+Main hero/chart and global style are owned separately by root/native agents.
+This review does not claim pixel equality or physical touch/display validation.
+Device was not contacted or modified during this work.
+
+Independent TXT loader audit:
+ufi-main.js97–125 parses stored head via DOMParser,clones style/link/meta and
+executes script.textContent in order. build.cjs supplies one style and one
+script with its modules in order;no nested KANO plugin markers. Manual import
+8755–8842 accepts raw text and wraps it with the uploaded filename. One real
+compatibility issue:already-present filename is skipped in manual import,
+not updated. Re-uploading topflow-screen.txt can therefore retain older code.
+Current inspected package1.67MB is below4MiB;native archive about1.1MB is below
+the base64 bound. No proven eager UFI-dependency call was found at registration;
+[REDACTED_SENSITIVE_CONTEXT]
+to root and the manager owner;no manager/build mutation was made here.

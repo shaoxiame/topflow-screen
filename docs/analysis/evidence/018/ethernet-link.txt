@@ -1,0 +1,5 @@
+/sys/class/net/eth0
+carrier=0
+operstate=down
+speed=-1
+duplex=unknown

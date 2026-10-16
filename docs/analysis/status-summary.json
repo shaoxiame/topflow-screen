@@ -1,0 +1,121 @@
+{
+  "sample_time_china": "2026-10-16T02:48:31+08:00",
+  "device": {
+    "alias_name": "[REDACTED_SENSITIVE_FIELD]",
+    "api_template": "MU5252",
+    "api_template_label": "[REDACTED_SENSITIVE_FIELD]",
+    "api_template_supported": 1,
+    "board_name": "[REDACTED_SENSITIVE_FIELD]",
+    "full_ubus": 1,
+    "hardware_version": "MU5252_HW1.0",
+    "market_name": "[REDACTED_SENSITIVE_FIELD]",
+    "model_name": "[REDACTED_SENSITIVE_FIELD]",
+    "profile": "mu5252",
+    "profile_source": "[REDACTED_SENSITIVE_FIELD]",
+    "vendor": "ZTE"
+  },
+  "datad": {
+    "name": "[REDACTED_SENSITIVE_FIELD]",
+    "version": "0.10.79"
+  },
+  "display": {
+    "resolution": [
+      320,
+      480
+    ],
+    "format": "RGB565 (DRM RG16)",
+    "driver": "drm_qpic",
+    "node": "[REDACTED_SENSITIVE_FIELD]",
+    "factory_process": "zte_topsw_devui",
+    "factory_pid": 18392,
+    "touch_node_at_capture": "[REDACTED_SENSITIVE_FIELD]",
+    "touch_driver": "sitronix_ts_spi"
+  },
+  "modems": [
+    {
+      "id": "[REDACTED_SENSITIVE_FIELD]",
+      "role": "integrated_5g",
+      "ifname": "[REDACTED_SENSITIVE_FIELD]",
+      "sim": {
+        "state": "sim ready",
+        "slot": 1
+      },
+      "net": {
+        "operator": "China Unicom",
+        "type": "SA",
+        "band": "n78",
+        "bars": 4,
+        "nr_rsrp": -100,
+        "lte_rsrp": -102
+      },
+      "traffic": {
+        "rx_speed": 103939,
+        "tx_speed": 9688
+      },
+      "wwan_status": "ipv4_ipv6_connected"
+    },
+    {
+      "id": "[REDACTED_SENSITIVE_FIELD]",
+      "role": "external_4g",
+      "ifname": "[REDACTED_SENSITIVE_FIELD]",
+      "sim": {
+        "state": "",
+        "slot": 0
+      },
+      "net": {
+        "operator": "",
+        "type": "",
+        "band": "",
+        "bars": 0,
+        "nr_rsrp": null,
+        "lte_rsrp": 0
+      },
+      "traffic": {
+        "rx_speed": 0,
+        "tx_speed": 0
+      },
+      "wwan_status": "disconnected"
+    },
+    {
+      "id": "[REDACTED_SENSITIVE_FIELD]",
+      "role": "external_4g",
+      "ifname": "[REDACTED_SENSITIVE_FIELD]",
+      "sim": {
+        "state": "",
+        "slot": 0
+      },
+      "net": {
+        "operator": "",
+        "type": "",
+        "band": "",
+        "bars": 0,
+        "nr_rsrp": null,
+        "lte_rsrp": 0
+      },
+      "traffic": {
+        "rx_speed": 0,
+        "tx_speed": 0
+      },
+      "wwan_status": "disconnected"
+    }
+  ],
+  "aggregation": {
+    "enabled": false,
+    "mode": "MULTIWAN",
+    "online": false,
+    "state": "disabled",
+    "provisioned": false
+  },
+  "battery": {
+    "percent": 80,
+    "temp": 34,
+    "charging": 2
+  },
+  "traffic": {
+    "rx_speed": 103939,
+    "tx_speed": 9688,
+    "rx_bytes": "[REDACTED_LARGE_NUMBER]",
+    "tx_bytes": "[REDACTED_LARGE_NUMBER]"
+  },
+  "sample_interval_ms": 1000
+}

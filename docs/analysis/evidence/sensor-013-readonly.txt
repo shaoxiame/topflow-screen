@@ -1,0 +1,87 @@
+SENSOR_NAME
+lightsensor-level
+ENABLE_RAW
+ 31 0a
+LUX_RAW
+ 35 20 6c 75 78
+SENSOR_PATHS
+lrwxrwxrwx    1 root     root             0 Jan  7  1970 /sys/class/input/input3 -> ../..[REDACTED_ENCODED_OR_IDENTIFIER]
+
+[REDACTED_ENCODED_OR_IDENTIFIER]:
+total 0
+-rw-rw-r--    1 root     root          4096 Oct 16 17:32 cali
+-r--r--r--    1 root     root          4096 Oct 16 17:32 code
+-rw-rw-r--    1 root     root          4096 Oct 16 17:27 enable
+-rw-rw-r--    1 root     root          4096 Oct 16 17:27 init
+-rw-rw-r--    1 root     root          4096 Oct 15 14:24 lux
+-rw-rw-r--    1 root     root          4096 Oct 16 17:32 raw
+-rw-r--r--    1 root     root          4096 Oct 16 17:32 registry
+-rw-rw-r--    1 root     root          4096 Oct 16 17:32 transmittance
+BRIGHTNESS
+0
+MODULE_NAMES
+r8125_ioss 24576 0 - Live 0xffffffdca0729000 (O)
+aqc_ioss 24576 0 - Live 0xffffffdca0722000 (O)
+r8168_ioss 24576 0 - Live 0xffffffdca0701000 (O)
+iemac_ioss 90112 0 - Live 0xffffffdca070b000 (O)
+ioss 176128 4 r8125_ioss,aqc_ioss,r8168_ioss,iemac_ioss, Live 0xffffffdca06b6000 (O)
+sitronix_ts_spi 397312 0 - Live 0xffffffdca0654000
+zte_http_redirect 20480 0 - Live 0xffffffdca064e000 (O)
+nf_nat_rtsp 16384 0 - Live 0xffffffdca0649000 (O)
+nf_conntrack_rtsp 16384 4 nf_nat_rtsp, Live 0xffffffdca0644000 (O)
+r8168 258048 1 r8168_ioss, Live 0xffffffdca0604000 (O)
+r8152_rtl 696320 0 - Live 0xffffffdca0559000 (O)
+rmnet_sch 28672 0 - Live 0xffffffdca0551000 (O)
+machine_dlkm 57344 0 - Live 0xffffffdca0542000 (O)
+wcd_core_dlkm 122880 1 machine_dlkm, Live 0xffffffdca0523000 (O)
+platform_dlkm 16384 0 - Live 0xffffffdca051e000 (O)
+stub_dlkm 16384 1 - Live 0xffffffdca0519000 (O)
+adsp_loader_dlkm 16384 0 - Live 0xffffffdca0514000 (O)
+audio_pkt_dlkm 28672 2 - Live 0xffffffdca050c000 (O)
+audpkt_ion_dlkm 28672 3 machine_dlkm,audio_pkt_dlkm, Live 0xffffffdca0504000 (O)
+audio_prm_dlkm 20480 1 machine_dlkm, Live 0xffffffdca04fe000 (O)
+spf_core_dlkm 16384 4 machine_dlkm,adsp_loader_dlkm,audio_pkt_dlkm,audio_prm_dlkm, Live 0xffffffdca04f9000 (O)
+gpr_dlkm 24576 3 audio_pkt_dlkm,audio_prm_dlkm,spf_core_dlkm, Live 0xffffffdca04f2000 (O)
+q6_notifier_dlkm 36864 2 audio_prm_dlkm,gpr_dlkm, Live 0xffffffdca04e8000 (O)
+q6_pdr_dlkm 16384 1 q6_notifier_dlkm, Live 0xffffffdca04e3000 (O)
+q6_dlkm 16384 0 - Live 0xffffffdca04de000 (O)
+snd_event_dlkm 20480 2 machine_dlkm,gpr_dlkm, Live 0xffffffdca04d8000 (O)
+hyfi_bridging 126976 0 - Live 0xffffffdca04b8000 (O)
+emesh_sp 102400 1 hyfi_bridging, Live 0xffffffdca049e000 (O)
+rmnet_eth 28672 0 - Live 0xffffffdca06f9000 (O)
+zte_client_useragent 16384 0 - Live 0xffffffdca06f4000 (O)
+zte_genl_kernel 24576 2 zte_http_redirect,zte_client_useragent, Live 0xffffffdca06ed000 (O)
+btpower 36864 0 - Live 0xffffffdca06e3000 (O)
+wlan [REDACTED_NUMBER] - Live 0xffffffdc9f8ea000 (O)
+signal_test 16384 2 wlan, Live 0xffffffdc9f8e5000 (O)
+cnss2 585728 1 wlan, Live 0xffffffdc9f855000 (O)
+cnss_prealloc 16384 2 wlan,cnss2, Live 0xffffffdc9f7aa000 (O)
+wlan_firmware_service 90112 1 cnss2,[permanent], Live 0xffffffdc9f83e000 (O)
+cnss_plat_ipc_qmi_svc 28672 1 cnss2, Live 0xffffffdc9f836000 (O)
+cnss_nl 20480 1 wlan, Live 0xffffffdc9f830000 (O)
+cnss_utils 24576 2 wlan,cnss2, Live 0xffffffdc9f7a3000 (O)
+r8125 188416 1 r8125_ioss, Live 0xffffffdc9f801000 (O)
+rmnet_core 327680 2 rmnet_eth, Live 0xffffffdc9f7b0000 (O)
+qcedev_mod_dlkm 172032 0 - Live 0xffffffdc9f778000 (O)
+smcinvoke_dlkm [REDACTED_NUMBER] - Live 0xffffffdc9f74c000 (O)
+tz_log_dlkm 28672 0 - Live 0xffffffdc9f744000 (O)
+qrng_dlkm 16384 0 - Live 0xffffffdc9f73f000 (O)
+qce50_dlkm 98304 1 qcedev_mod_dlkm, Live 0xffffffdc9f726000 (O)
+smem_mailbox 16384 1 cnss_utils, Live 0xffffffdc9f721000 (O)
+ipa_clientsm 286720 0 - Live 0xffffffdc9f6da000 (O)
+ecmipam 45056 1 ipa_clientsm, Live 0xffffffdc9f6ce000 (O)
+rndisipam 61440 1 ipa_clientsm, Live 0xffffffdc9f6be000 (O)
+ipanetm 16384 0 - Live 0xffffffdc9f6b9000 (O)
+ipam [REDACTED_NUMBER] ipa_clientsm,ecmipam,rndisipam,ipanetm, Live 0xffffffdc9f1f8000 (O)
+gsim 282624 2 ipa_clientsm,ipam, Live 0xffffffdc9f1b2000 (O)
+qca_phy 143360 0 - Live 0xffffffdc9f18e000 (O)
+DRIVER_REFERENCE
+SCREEN_POLICY
+1
+135
+30
+KERNEL_MODULE_PATHS
+FACTORY_PID
+17618
+
+STDERR:

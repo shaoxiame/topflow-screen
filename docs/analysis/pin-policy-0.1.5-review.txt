@@ -1,0 +1,53 @@
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_NUMBER]
+
+Finding
+[REDACTED_SENSITIVE_CONTEXT]
+Versions through 0.1.4 incorrectly used this raw value as an enabled boolean.
+[REDACTED_SENSITIVE_CONTEXT]
+
+Evidence from the downloaded original zte_topsw_devui B22 binary
+SHA256: [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_SENSITIVE_CONTEXT]
+
+1. The SDK getter at 0x11608 reads the UCI enum unchanged, parses an integer,
+   and stores it to the caller output. See sdk-display-lock-disasm.txt.
+2. Original wrapper 0x5133d0 calls ZTD_GetLcdLockStatus. Its GOT pointer is
+   0xefdc60. Wrapper 0x5133c0 calls ZTD_SetLcdLockStatus; GOT 0xefd5e8.
+   See [REDACTED_ENCODED_OR_IDENTIFIER].txt.
+3. Original boot 0x4343f8..0x434440 compares the raw getter result with zero,
+   uses CSET EQ to form the lockpin boolean, and passes that boolean onward.
+   Quick boot repeats this at 0x434a24..0x434a48.
+[REDACTED_SENSITIVE_CONTEXT]
+   wrapper 0x513430 -> ZTD_SetLockPinValue), then calls SetLcdLockStatus(0)
+[REDACTED_SENSITIVE_CONTEXT]
+   the requirement calls SetLcdLockStatus(1) at 0x4b8a40..0x4b8a50.
+[REDACTED_SENSITIVE_CONTEXT]
+5. LCD login is a separate normalized boolean, not this inverted enum.
+   SDK method 1001 returns lcd_login="ok" when its RAM login value is 1.
+   See [REDACTED_ENCODED_OR_IDENTIFIER].txt. TF_BUS_LOGIN=1 still means unlocked.
+
+Implementation
+- [REDACTED_ENCODED_OR_IDENTIFIER] validates raw 0/1 and normalizes at the
+  read boundary. Receipt and all internal policy use a true enabled boolean.
+[REDACTED_SENSITIVE_CONTEXT]
+  five-failure cooldown, protected RAM and bounded persisted retry state.
+- Sleep/wake rereads the enabled policy. Changed, invalid, or unreadable
+  policy exits toward original-screen recovery before another wake render.
+[REDACTED_SENSITIVE_CONTEXT]
+
+Local checks
+[REDACTED_ENCODED_OR_IDENTIFIER].ps1 passed: both original enum values; reject
+unknown values; disabled startup/sleep/wake unlocked; enabled remains locked;
+brightness policy and timeout regression checks.
+[REDACTED_SENSITIVE_CONTEXT]
+verification, cooldown, quarantine, input masking and invalid record checks.
+[REDACTED_SENSITIVE_CONTEXT]
+native/test-main-lock.ps1 passed: extracts the real main sleep/wake/lock and
+[REDACTED_SENSITIVE_CONTEXT]
+policy changes, read errors, malformed enum, failed login and render failure.
+
+Boundary
+These are local source, extracted-function, and policy tests. This subtask
+performed no device access or mutation. Physical behavior of 0.1.5 remains
+[REDACTED_SENSITIVE_CONTEXT]

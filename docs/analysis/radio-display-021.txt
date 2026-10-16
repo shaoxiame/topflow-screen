@@ -1,0 +1,32 @@
+TopFlow 0.2.1 — reported network type on home and lock screens
+
+The existing backend forwards each modem's net.type. It is distinct from the
+modem id (5G / 4G1 / 4G2), preferred network mode, physical SIM source, radio
+carrier aggregation and the separate aggregation network switch.
+
+Corrected display defects:
+- Home previously copied raw net.type into badges and called the main card a
+  fixed 5G card. Card numbers now identify the slot, and badges use explicit
+  current type labels. The hero title is 主卡实时速率.
+- Raw type/band could remain visible for an absent or disabled SIM. These
+  labels now require a detected, unlocked, error-free card and, for external
+  modems, a confirmed enabled module. Stale snapshots remain unavailable.
+- Native home QCI had no validity/range gate. It now uses the same per-card
+  readiness checks as card details and the 1..255 numeric range.
+
+Native radio_status.h and browser normalizeRadio use explicit spelling tables
+after [REDACTED_ENCODED_OR_IDENTIFIER] normalization. LTE maps to 4G; explicit LTE
+CA/LTE+/LTE-A maps to 4G+; NSA/ENDC and SA variants retain the NSA/SA suffix.
+Only an explicit 5GA / 5G-A / 5G Advanced type report maps to 5G-A. An NR CA
+list, multi-card aggregation flag, high speed or preferred mode such as Only_5G
+is never evidence of 5G-A. Unrecognized strings display an unavailable marker.
+
+[REDACTED_SENSITIVE_CONTEXT]
+ready SIM can show its reported radio type alongside the unchanged 未联网
+status. A type badge alone never claims successful internet connectivity.
+
+[REDACTED_SENSITIVE_CONTEXT]
+including all three modems, aliases, invalid types, unavailable SIMs, old QCI,
+disconnected ready SIMs and expired snapshots. No device writes or requests.
+Existing saved observations mainly show SA/NSA; this work does not claim that
+[REDACTED_SENSITIVE_CONTEXT]

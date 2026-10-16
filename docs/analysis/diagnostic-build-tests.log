@@ -1,0 +1,26 @@
+✔ browser registration only adds an entry and performs zero device requests (1.7104ms)
+✔ install start refuses an existing target and does not start any renderer (0.4094ms)
+✔ binary upload uses documented FormData endpoint and validates exact returned path (9.9242ms)
+✔ finish validates hash before extraction and never changes factory/startup files (0.2422ms)
+✔ screen controls are explicit, narrowly scoped and status is parsed without false success (1.2329ms)
+✔ package uses documented script format without store markers, below 4 MiB and current source (40.4541ms)
+✔ release gate rejects incomplete local verification and review payload blocks installation and activation (1.5504ms)
+✔ diagnostic candidate has a separate honest gate and cannot weaken the failed release gate (0.3884ms)
+✔ explicit diagnostic build emits only a distinct labeled candidate while the default release remains blocked (29.6826ms)
+✔ native archive inspection rejects symlinks before packaging (48.4946ms)
+✔ review packaging refuses stale native source, lifecycle scripts or UI even with valid archive checksums (0.6709ms)
+✔ both native executables require exact checksums and the ARM64 architecture (0.3871ms)
+✔ production validation rejects preview APIs and demo factories regardless of whether they are called (0.869ms)
+✔ native package must explicitly declare real data and CLOCK_MONOTONIC heartbeat (0.1727ms)
+✔ payload source uses bounded lines without changing archive bytes or recovery script (8.7744ms)
+✔ actual UFI manual importer accepts the complete generated TXT without treating embedded code as store metadata (4.2881ms)
+✔ actual UFI importer documents that manual same-filename imports are skipped, not upgraded (1.446ms)
+✔ the actual generated script registers from a UFI-style head injection with lexical API globals and zero device requests (23.1094ms)
+ℹ tests 18
+ℹ suites 0
+ℹ pass 18
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 199.9494

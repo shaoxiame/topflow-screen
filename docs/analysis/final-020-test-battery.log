@@ -1,0 +1,1 @@
+PASS: actual battery parser preserves enum/unknown/zero; charge versus plugged idle/full; 100% does not imply full; bounded icon fill

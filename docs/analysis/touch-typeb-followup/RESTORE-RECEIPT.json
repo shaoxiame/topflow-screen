@@ -1,0 +1,9 @@
+{
+  "purpose": "Type B follow-up candidate, excluded from 0.1.5 because existing touch confirmed working; new ioctls not device validated",
+  "restoredFrom": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "baselineManifest": "native/build-manifest.json (0.1.4 before rebuild)",
+  "touchSourceSha256": "[REDACTED_SENSITIVE_FIELD]",
+  "touchHeaderSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "headerVerification": "Reversing only this turn additions exactly matches export header after newline normalization",
+  "productionChanges": "none to touch c/h; devui_config.h upright orientation owned by root retained"
+}

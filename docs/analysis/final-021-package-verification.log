@@ -1,0 +1,232 @@
+{
+  "version": "0.2.1",
+  "txt": "dist/topflow-screen-0.2.1.txt",
+  "bytes": 1715331,
+  "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+  "nativeBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+[REDACTED_SENSITIVE_CONTEXT]
+  "directSwitch": true,
+  "sensorAfterDrm": true,
+  "startupOrder": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+  "touchBackendSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "enabledOfflineView": "aggregate",
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "normal",
+      "aggregate"
+    ],
+    "homePageSlots": 1,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "normal",
+    "screenAggregationToggle": false,
+    "screenModeOverride": false,
+[REDACTED_SENSITIVE_FIELD]
+    "mainPageCount": 3,
+    "modeDerivedFrom": "zwrt_router.network.[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "cacheStorage": "process-memory-only",
+    "glyphEntriesLimit": 512,
+    "cssEntriesLimit": 4,
+    "swipeBufferLifetime": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 160,
+    "touchMotion": "continuous-drag",
+    "glyphCoverageBytesLimit": 393216,
+    "lateFrames": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "swipeBuffers": 2,
+    "cssFileBytesLimit": 262144,
+    "retainedDocuments": 1,
+    "swipeBufferBytesMaximum": 1966080,
+    "pageSettleMilliseconds": 144,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 16,
+[REDACTED_SENSITIVE_FIELD]
+  },
+[REDACTED_SENSITIVE_CONTEXT]
+    "manualEnableGate": false,
+    "sleep": "revoked",
+    "writes": "per-action-confirmation",
+[REDACTED_SENSITIVE_FIELD]
+[REDACTED_SENSITIVE_CONTEXT]
+    "initial": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+[REDACTED_SENSITIVE_CONTEXT]
+    "encoding": "UTF16BE-hex",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 1,
+    "automaticRetry": false,
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_SENSITIVE_FIELD]
+[REDACTED_SENSITIVE_CONTEXT]
+    "deviceSendVerified": false,
+    "confirmedResult": "UFI-result-success"
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "disabledCancelsPending": true,
+    "hook": "[REDACTED_ENCODED_OR_IDENTIFIER].sh",
+    "integrity": "boot-integrity.sha256",
+    "failure": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "deviceBootVerified": false,
+    "uninstall": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "attemptsPerBoot": 1,
+    "retry": false,
+    "readinessSecondsMaximum": 120,
+    "defaultEnabled": false
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "hardwareTested": false,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "5G",
+      "4G1",
+      "4G2"
+    ],
+[REDACTED_SENSITIVE_FIELD]
+    "unit": "Mbps",
+[REDACTED_SENSITIVE_FIELD]
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 0,
+[REDACTED_SENSITIVE_FIELD]
+    "meaning": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "crossModemFallback": false,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "tx_speed",
+      "rx_speed",
+      "qci",
+      "ambr_ul",
+      "ambr_dl"
+    ]
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "carriers": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "noActiveProbe": true,
+    "quota": "aggregation.traffic.remaining_bytes",
+    "today": "aggregation.traffic.today_used_bytes",
+    "aggregationStatus": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "ethernet": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+[REDACTED_SENSITIVE_FIELD]
+    "readback": "raw-st_slot",
+[REDACTED_SENSITIVE_FIELD]
+      "removable",
+      "builtin"
+    ],
+    "unknownReadback": "unconfirmed",
+    "external": "sub_modem_switch_slot",
+[REDACTED_SENSITIVE_FIELD]
+      "4G2": 0,
+      "4G1": 1
+    },
+    "automaticRetry": false,
+    "externalMustBeEnabled": true,
+    "primary": "sim_switch_slot",
+    "presenceRequired": false,
+[REDACTED_SENSITIVE_FIELD]
+    "refresh": "on-demand",
+    "selection": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "deviceSwitchVerified": false,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "5G",
+      "4G1",
+      "4G2"
+    ]
+  },
+  "hardwareTested": false,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+[REDACTED_SENSITIVE_FIELD]
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_FIELD]
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      {
+        "file": "analysis/switch-0.2.1-js-migration-extra.log",
+        "tests": 1,
+        "passed": 1,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "analysis/switch-0.2.1-js-core.log",
+        "tests": 89,
+        "passed": 89,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "analysis/switch-0.2.1-js-ui.log",
+        "tests": 85,
+        "passed": 85,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "analysis/switch-0.2.1-js-package.log",
+        "tests": 21,
+        "passed": 21,
+        "failed": 0,
+        "skipped": 0
+      },
+      {
+        "file": "analysis/switch-0.2.1-js-center.log",
+        "tests": 32,
+        "passed": 32,
+        "failed": 0,
+        "skipped": 0
+      }
+    ],
+    "nativeArm64Build": "rebuilt from updated SIM, radio and animated lock-screen source code for aarch64-linux-musl",
+    "independentReview": "factory absolute SIM source contract, absent/present SIM selection, source unknown, per-modem mapping, normalized radio labels, lock-screen data and bounded animation, and 0.2.0 migration reviewed",
+[REDACTED_SENSITIVE_CONTEXT]
+  },
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_FIELD]
+    "version": "0.2.1",
+    "build": "28c615cb40f87fe0",
+[REDACTED_SENSITIVE_FIELD]
+    "target": "ZTE TopFlow / MU5252",
+    "status": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_FIELD]
+    "storeId": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+    "exactUninstallOwnership": "passed",
+    "savedUfiImporterLocalVm": "passed",
+    "currentDeviceImport": "not-executed"
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_FIELD]
+    "scope": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+    "onlineDownloadPerformed": false,
+    "oneConfirmation": true,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+    "restoreBeforeCleanup": true,
+    "busyLockAcrossMigration": true,
+    "recordPreserved": true,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 3,
+    "automaticRetry": false,
+    "localBrowser": "see local VM manager and importer tests",
+    "deviceUpdateExecuted": false
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "pluginId": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+    "sdkVersion": "2.0.0",
+    "sdkSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "telemetry": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "nativeBackgroundService": false,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "publicationPerformed": false,
+[REDACTED_SENSITIVE_FIELD]
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "0.1.8",
+[REDACTED_SENSITIVE_CONTEXT]
+    "coreAssetsAtInspection": 0
+  }
+}

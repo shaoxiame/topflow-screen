@@ -1,0 +1,64 @@
+{
+  "version": "0.1.8",
+  "scope": "Local same-engine 320x480 RGB565 + factory font. No device access.",
+  "hardwareVerified": false,
+  "findings": [
+    "Former >=600 weights used full 1px horizontal bitmap dilation; >=24px also full vertical dilation. Small Chinese strokes became visually coarse.",
+    "Rounded cards, buttons and icons formerly used binary corner masks.",
+    "RGB565 ordered-dither gradients produced visible grain on the home backgrounds."
+  ],
+  "changes": [
+    "Cached 20/64px semibold and 32/64px bold outline weights; regular native pixel size preserved.",
+    "4x4 fixed spatial coverage only near rounded edges, opaque interior fast path; no full-frame supersampling.",
+    "Solid home surfaces and thinner antialiased two-series chart lines.",
+    "Single-frame aggregate quota, three SIMs, cable status and thermal values; CA summary on second page and scrollable carrier/Ethernet details.",
+    "CA explicitly labelled primary-card radio carrier aggregation, independent from aggregation-network service."
+  ],
+  "fontCoverageRatio13px": 1.339,
+  "glyphCacheByteLimit": 393216,
+  "glyphCacheEntryLimit": 512,
+  "idleRedrawsAdded": 0,
+  "devicePollingAdded": 0,
+  "medianDesktopTimings": {
+    "home": {
+      "fullRenderMs": 8.188,
+      "retainedRepaintMs": 1.772
+    },
+    "home-dark": {
+      "fullRenderMs": 7.609,
+      "retainedRepaintMs": 1.776
+    },
+    "long-settings": "[REDACTED_SENSITIVE_FIELD]",
+    "long-settings-dark": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "timingCaveat": "Three repeats x 50 frames; desktop only, not device FPS. Initial 0.1.7 home repaint ~2.69ms; current ~1.77ms. Detail repaint ~1.13ms vs ~1.07ms baseline.",
+  "validation": {
+    "rendererStyle": true,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+    "dashboard": {
+      "pages": 14,
+      "hitChecks": 540
+    },
+    "displayAndCellForms": {
+      "pages": 10,
+      "hitChecks": 2664,
+      "brightnessApplyRect": [
+        24,
+        424,
+        272,
+        38
+      ],
+      "lockButtonRect": [
+        12,
+        119,
+        296,
+        38
+      ]
+    },
+    "lockViews": {
+      "pages": 10,
+      "hitChecks": 1528
+    }
+  },
+  "sourceSha256": "[REDACTED_SENSITIVE_FIELD]"
+}

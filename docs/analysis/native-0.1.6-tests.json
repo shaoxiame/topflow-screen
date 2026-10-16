@@ -1,0 +1,62 @@
+[
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: actual native snapshot parser+presentation matches browser fixtures: rate precision, primary metrics, QCI/title, disabled cards, totals/online count and stale gaps"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: TopFlow upright render/touch profile, actual chart/loading damage rectangles, clipping, overflow and slide direction"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: upright slide: next moves old page left, previous moves right; full endpoints; row pitch/padding; bounds"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: swipe order/wrap; thresholds; diagonal/vertical separation; modal/subpage exclusion; drag is not tap; TopFlow upright coordinates; no stale queued tap"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: actual display runtime receipt/map, guarded adopt, first-frame renewal cannot conceal an expired startup lease; later wakes acquire a new lease; level-only change, sleep, resync, [REDACTED_ENCODED_OR_IDENTIFIER] failures, unsafe wake rejection; own 180s idle lease precedes LCD off, repeated off never renews, dark adoption adds no lease, verified LCD-on releases, failures retain bounded lease without touching original locks\nPASS: main ownership/frame order, no brightness bypass, IPC hook cancellation"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: read-only preflight captures policy/locks; post-stop adoption never accesses unpowered sensor; DRM-ready gate precedes live sensor checks; bounded I/O retries and one enable require real lux, preserve guard/helper checks; persistent I/O, invalid value, missing identity, expired guard and stale lux fail closed; never writes UCI or vendor locks\nPASS: every production C/header ubus path matches the captured device executable\nPASS: production main orders guard -> DRM black frame -> sensor -> policy -> verify existing lease -> protected UI frame -> LCD ON -> heartbeat"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: production sensor callback follows observed OFF -> fixed init=1 -> guard recheck -> fixed enable=1; ON/unreadable state never resets; all open/write/close and ownership failures stop before subsequent writes"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: actual parent startup/poll code; stages 1..9 each timeout at 4000ms; early FATAL/EOF; bad ordering; setup failures; first safe code survives stop/reset; no external service execution\nPASS: actual DIRTYFB wrapper never converts unsupported/invalid/IO failures into frame readiness\nPASS: preflight and runtime contain no read-to-clear event path\nPASS: actual failure publisher validates owned directory/file, permissions/type/link count/size, NOFOLLOW, bounded exact record, EINTR and short-write; never saves stderr or payloads"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "Actual sanitized AoYou snapshot: 36 groups parsed\n[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 1,
+    "output": "[REDACTED_LOCAL_PATH] error: call to undeclared function 'html_view_set_clip_top'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]\n   37 | static void draw_rate_chart(void){html_view_set_clip_top(html_view_pinned_height());draw_rate_chart_content();html_view_set_clip_top(0);}\n      |                                   ^\n[REDACTED_LOCAL_PATH] error: call to undeclared function 'html_view_pinned_height'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]\n   37 | static void draw_rate_chart(void){html_view_set_clip_top(html_view_pinned_height());draw_rate_chart_content();html_view_set_clip_top(0);}\n      |                                                          ^\n[REDACTED_LOCAL_PATH] error: call to undeclared function 'tf_screen_damage'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]\n   38 | static int logical_damage(drm_disp_t*d,int x,int y,int w,int h){int r[4];return !tf_screen_damage(d->width,d->height,x,y,w,h,r)||drm_disp_dirty(d,r[0],r[1],r[2],r[3])>=0;}\n      |                                                                                  ^\n[REDACTED_LOCAL_PATH] error: no member named 'width' in 'drm_disp_t'\n   38 | static int logical_damage(drm_disp_t*d,int x,int y,int w,int h){int r[4];return !tf_screen_damage(d->width,d->height,x,y,w,h,r)||drm_disp_dirty(d,r[0],r[1],r[2],r[3])>=0;}\n      |                                                                                                   ~  ^\n[REDACTED_LOCAL_PATH] error: no member named 'height' in 'drm_disp_t'\n   38 | static int logical_damage(drm_disp_t*d,int x,int y,int w,int h){int r[4];return !tf_screen_damage(d->width,d->height,x,y,w,h,r)||drm_disp_dirty(d,r[0],r[1],r[2],r[3])>=0;}\n      |                                                                                                            ~  ^\n[REDACTED_LOCAL_PATH] error: call to undeclared function 'html_view_set_clip_top'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]\n   40 | static int chart_animation_tick(drm_disp_t*d,uint32_t now){html_view_set_clip_top(html_view_pinned_height());int [REDACTED_ENCODED_OR_IDENTIFIER](d,now);html_view_set_clip_top(0);return ok;}\n      |                                                            ^\n[REDACTED_LOCAL_PATH] error: call to undeclared function 'html_view_pinned_height'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]\n   40 | static int chart_animation_tick(drm_disp_t*d,uint32_t now){html_view_set_clip_top(html_view_pinned_height());int [REDACTED_ENCODED_OR_IDENTIFIER](d,now);html_view_set_clip_top(0);return ok;}\n      |                                                                                   ^\n7 errors generated.\nException: [REDACTED_LOCAL_PATH]\nLine |\n  43 |  if($LASTEXITCODE -ne 0){throw 'Chart test build failed'}\n     |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Chart test build failed"
+  }
+]

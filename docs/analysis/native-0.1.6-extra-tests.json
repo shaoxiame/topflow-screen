@@ -1,0 +1,37 @@
+[
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "factory-bus: protocol rejection, exact service contracts and event routing passed"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "test": "[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0,
+    "output": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "test": "[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0,
+    "output": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "test": "[REDACTED_SENSITIVE_CONTEXT]",
+    "exit": 0,
+    "output": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 1,
+    "output": "[REDACTED_LOCAL_PATH] error: use of undeclared identifier 'deferred_present'\n   13 | static int paint_frame(drm_disp_t*d,const char*html){if(!deferred_present)frame_ready=0;if(!html)return 0;int h=html_view_render_html(html);if(h<1)return 0;page_h=h;draw_rate_chart();if(deferred_present)return 1;if(drm_disp_dirty(d,0,0,d->width-1,d->height-1)<0)return 0;frame_ready=1;return 1;}\n      |                                                          ^\n[REDACTED_LOCAL_PATH] error: use of undeclared identifier 'deferred_present'\n   13 | static int paint_frame(drm_disp_t*d,const char*html){if(!deferred_present)frame_ready=0;if(!html)return 0;int h=html_view_render_html(html);if(h<1)return 0;page_h=h;draw_rate_chart();if(deferred_present)return 1;if(drm_disp_dirty(d,0,0,d->width-1,d->height-1)<0)return 0;frame_ready=1;return 1;}\n      |                                                                                                                                                                                           ^\n2 errors generated.\nException: [REDACTED_LOCAL_PATH]\nLine |\n  36 |  if($LASTEXITCODE -ne 0){throw 'Frame health test build failed'}\n     |                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n     | Frame health test build failed"
+  },
+  {
+    "test": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+    "exit": 0,
+    "output": "PASS: actual monotonic clock heartbeat, valid boot zero, suspended wall jump, backwards NTP, awake advance and failed-clock/no-frame refusal\nPASS: read-only clock CLI is the first main branch"
+  }
+]

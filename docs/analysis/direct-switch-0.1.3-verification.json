@@ -1,0 +1,23 @@
+{
+  "version": "0.1.3",
+  "txt": "dist/topflow-screen-0.1.3.txt",
+  "bytes": "[REDACTED_SENSITIVE_FIELD]",
+  "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "archiveSha256": "[REDACTED_SENSITIVE_FIELD]",
+  "nativeBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "sourceHashesVerified": "[REDACTED_SENSITIVE_FIELD]",
+  "archiveEntries": "[REDACTED_SENSITIVE_FIELD]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+  "privateKeyScan": "[REDACTED_SENSITIVE_FIELD]",
+  "directSwitch": true,
+  "receiptVersion": 2,
+  "hardwareTested": false,
+  "deviceActionsPerformed": false,
+  "localTests": {
+    "jsRegression": 176,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "[REDACTED_SENSITIVE_FIELD]",
+    "directHandoverExtended": 14,
+    "displayAndLifecycleC": "passed"
+  },
+  "boundary": "Local fix candidate; physical [REDACTED_ENCODED_OR_IDENTIFIER] acceptance remains pending."
+}

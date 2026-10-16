@@ -1,0 +1,12 @@
+✔ fixed factory protocol rejects malformed operations and [REDACTED_ENCODED_OR_IDENTIFIER] SIM state (150.8801ms)
+✔ device reboot and shutdown require current capabilities and confirmation, submit once and never claim completion (263.1501ms)
+✔ native SIM and WPS pages are read-only until confirmed, mask codes, recheck slot and read back once (519.4606ms)
+[REDACTED_SENSITIVE_CONTEXT]
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 984.5531

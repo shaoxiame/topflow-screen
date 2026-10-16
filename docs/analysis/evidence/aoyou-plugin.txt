@@ -1,0 +1,3 @@
+[REDACTED_SOURCE_MATERIAL]
+Raw capture contains sensitive context; the complete capture is withheld to avoid exposing multiline values.
+Historical material; this is not an original capture or a validation result.

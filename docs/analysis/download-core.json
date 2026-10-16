@@ -1,0 +1,10 @@
+{
+  "zte_topsw_devui": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "zte_topsw_devui.init": "/etc/init.d/zte_topsw_devui",
+  "zte_topsw_daemon.init": "/etc/init.d/zte_topsw_daemon",
+  "libzte_lvgl.so": "/usr/lib/libzte_lvgl.so",
+  "libzte_SDKowrt.so": "/usr/lib/libzte_SDKowrt.so",
+  "zte_topsw_daemon": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "ufi-service.sh": "/data/ufi-tools/service.sh",
+  "zwrt-datad-version.json": "[REDACTED_ENCODED_OR_IDENTIFIER].json"
+}

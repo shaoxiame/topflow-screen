@@ -1,0 +1,8 @@
+{
+  "factory-Chinese.ini": "[REDACTED_ENCODED_OR_IDENTIFIER].ini",
+  "factory-English.ini": "[REDACTED_ENCODED_OR_IDENTIFIER].ini",
+  "factory-test-Main.json": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+  "factory-test-Network.json": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+  "factory-test-Device.json": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+  "factory-test-DataUsage.json": "[REDACTED_ENCODED_OR_IDENTIFIER].json"
+}

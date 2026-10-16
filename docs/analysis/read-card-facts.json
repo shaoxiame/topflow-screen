@@ -1,0 +1,8 @@
+{
+  "card-sim-info": "ubus call zwrt_zte_mdm.api get_sim_info '{}'",
+  "card-v3t-info": "ubus call zwrt_zte_mdm.api get_v3t_sim_info '{}'",
+  "card-v3t-config": "[REDACTED_SENSITIVE_FIELD]",
+  "card-data-5g": "[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]",
+  "card-data-4g1": "[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]",
+  "card-data-4g2": "[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]"
+}

@@ -1,0 +1,1 @@
+PASS: swipe order/wrap; thresholds; diagonal/vertical separation; modal/subpage exclusion; drag is not tap; TopFlow upright coordinates; no stale queued tap

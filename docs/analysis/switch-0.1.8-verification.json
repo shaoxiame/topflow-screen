@@ -1,0 +1,115 @@
+{
+  "version": "0.1.8",
+  "txt": "dist/topflow-screen-0.1.8.txt",
+  "bytes": "[REDACTED_SENSITIVE_FIELD]",
+  "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "archiveSha256": "[REDACTED_SENSITIVE_FIELD]",
+  "nativeBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "sourceHashesVerified": "[REDACTED_SENSITIVE_FIELD]",
+  "archiveEntries": "[REDACTED_SENSITIVE_FIELD]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "[REDACTED_SENSITIVE_FIELD]",
+  "privateKeyScan": "[REDACTED_SENSITIVE_FIELD]",
+  "directSwitch": true,
+  "sensorAfterDrm": true,
+  "startupOrder": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "noPinStartup": "[REDACTED_SENSITIVE_FIELD]",
+  "touchBackendSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "nativeHomeNavigation": {
+    "enabledOfflineView": "aggregate",
+    "screenModeOverride": false,
+    "modeSource": "[REDACTED_SENSITIVE_FIELD]",
+    "homeSlotModes": [
+      "normal",
+      "aggregate"
+    ],
+    "screenAggregationToggle": false,
+    "mainPageCount": 3,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "modeDerivedFrom": "zwrt_router.network.[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "homePageSlots": 1
+  },
+  "nativePerformance": {
+    "glyphEntriesLimit": 512,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 160,
+    "swipeBuffers": 2,
+    "glyphCoverageBytesLimit": 393216,
+    "lateFrames": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "pinnedHeaderBufferBytes": "[REDACTED_SENSITIVE_FIELD]",
+    "pageSettleMilliseconds": 144,
+    "touchMotion": "continuous-drag",
+    "pinnedHeader": "[REDACTED_SENSITIVE_FIELD]",
+    "swipeBufferLifetime": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "swipeBufferBytesMaximum": 1966080,
+    "retainedDocuments": 1,
+    "cssFileBytesLimit": 262144,
+    "cssEntriesLimit": 4,
+    "cacheStorage": "process-memory-only"
+  },
+  "nativeSms": "[REDACTED_SENSITIVE_FIELD]",
+  "nativeNetwork": {
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "today": "aggregation.traffic.today_used_bytes",
+    "quota": "aggregation.traffic.remaining_bytes",
+    "carriers": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "noActiveProbe": true,
+    "ethernet": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "aggregationStatus": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  "nativeSimSource": "[REDACTED_SENSITIVE_FIELD]",
+  "hardwareTested": false,
+  "deviceAccess": "[REDACTED_SENSITIVE_CONTEXT]",
+  "localTests": {
+    "nativeScripts": "[REDACTED_SENSITIVE_FIELD]",
+    "jsTests": [
+      {
+        "file": "analysis/switch-0.1.8-js-core.log",
+        "tests": 173,
+        "passed": 173,
+        "failed": 0
+      },
+      {
+        "file": "analysis/switch-0.1.8-js-ui.log",
+        "tests": 31,
+        "passed": 31,
+        "failed": 0
+      },
+      {
+        "file": "analysis/switch-0.1.8-js-package.log",
+        "tests": 44,
+        "passed": 44,
+        "failed": 0
+      }
+    ],
+    "nativeArm64Build": "passed",
+    "independentReview": "[REDACTED_SENSITIVE_CONTEXT]"
+  },
+  "boundary": "[REDACTED_SENSITIVE_CONTEXT]",
+  "pluginMetadata": {
+    "name": "[REDACTED_SENSITIVE_FIELD]",
+    "version": "0.1.8",
+    "build": "c70590f02330fed1",
+    "author": "[REDACTED_SENSITIVE_FIELD]",
+    "description": "[REDACTED_SENSITIVE_FIELD]",
+    "target": "ZTE TopFlow / MU5252",
+    "status": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+    "kanoMetaFields": [],
+    "storeIdentityProvided": "[REDACTED_SENSITIVE_FIELD]",
+    "exactUninstallOwnership": "passed",
+    "savedUfiImporterLocalVm": "passed",
+    "currentDeviceImport": "not-executed"
+  },
+  "managerUpdate": {
+    "sourceSha256": "[REDACTED_SENSITIVE_FIELD]",
+    "scope": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "onlineReleaseSource": "[REDACTED_SENSITIVE_FIELD]",
+    "oneConfirmation": true,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 3,
+    "restoreBeforeCleanup": true,
+    "busyLockAcrossMigration": true,
+    "recordPreserved": true,
+    "automaticRetry": false,
+    "localBrowser": "raw final TXT loaded; old-custom update button visible; cancellation caused zero writes in isolated host",
+    "deviceUpdateExecuted": false
+  }
+}

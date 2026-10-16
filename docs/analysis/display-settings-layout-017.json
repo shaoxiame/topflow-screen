@@ -1,0 +1,1114 @@
+{
+  "scope": "local native litehtml + original ZTE font; no device access",
+  "results": [
+    {
+      "page": "display-fixed",
+      "height": 1071,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "act:display-mode:0",
+          "documentRect": [
+            30,
+            212,
+            126,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-mode:1",
+          "documentRect": [
+            163,
+            212,
+            126,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-step:-1",
+          "documentRect": [
+            30,
+            353,
+            61,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-step:1",
+          "documentRect": [
+            229,
+            353,
+            61,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:5",
+          "documentRect": [
+            30,
+            501,
+            81,
+            38
+          ],
+          "scroll": 391,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:10",
+          "documentRect": [
+            118,
+            501,
+            81,
+            38
+          ],
+          "scroll": 391,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:25",
+          "documentRect": [
+            207,
+            501,
+            82,
+            38
+          ],
+          "scroll": 391,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:50",
+          "documentRect": [
+            30,
+            546,
+            81,
+            38
+          ],
+          "scroll": 436,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:75",
+          "documentRect": [
+            118,
+            546,
+            81,
+            38
+          ],
+          "scroll": 436,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:100",
+          "documentRect": [
+            207,
+            546,
+            82,
+            38
+          ],
+          "scroll": 436,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-apply",
+          "documentRect": [
+            24,
+            424,
+            272,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:15",
+          "documentRect": [
+            24,
+            675,
+            272,
+            38
+          ],
+          "scroll": 565,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:30",
+          "documentRect": [
+            24,
+            719,
+            272,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:60",
+          "documentRect": [
+            24,
+            763,
+            272,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:120",
+          "documentRect": [
+            24,
+            807,
+            272,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:-1",
+          "documentRect": [
+            24,
+            851,
+            272,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:screen-lock",
+          "documentRect": [
+            12,
+            119,
+            296,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-refresh",
+          "documentRect": [
+            12,
+            1021,
+            296,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        }
+      ]
+    },
+    {
+      "page": "display-fixed-dark",
+      "height": 1071,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "act:display-mode:0",
+          "documentRect": [
+            30,
+            212,
+            126,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-mode:1",
+          "documentRect": [
+            163,
+            212,
+            126,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-step:-1",
+          "documentRect": [
+            30,
+            353,
+            61,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-step:1",
+          "documentRect": [
+            229,
+            353,
+            61,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:5",
+          "documentRect": [
+            30,
+            501,
+            81,
+            38
+          ],
+          "scroll": 391,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:10",
+          "documentRect": [
+            118,
+            501,
+            81,
+            38
+          ],
+          "scroll": 391,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:25",
+          "documentRect": [
+            207,
+            501,
+            82,
+            38
+          ],
+          "scroll": 391,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:50",
+          "documentRect": [
+            30,
+            546,
+            81,
+            38
+          ],
+          "scroll": 436,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:75",
+          "documentRect": [
+            118,
+            546,
+            81,
+            38
+          ],
+          "scroll": 436,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-preset:100",
+          "documentRect": [
+            207,
+            546,
+            82,
+            38
+          ],
+          "scroll": 436,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-apply",
+          "documentRect": [
+            24,
+            424,
+            272,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:15",
+          "documentRect": [
+            24,
+            675,
+            272,
+            38
+          ],
+          "scroll": 565,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:30",
+          "documentRect": [
+            24,
+            719,
+            272,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:60",
+          "documentRect": [
+            24,
+            763,
+            272,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:120",
+          "documentRect": [
+            24,
+            807,
+            272,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:-1",
+          "documentRect": [
+            24,
+            851,
+            272,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:screen-lock",
+          "documentRect": [
+            12,
+            119,
+            296,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-refresh",
+          "documentRect": [
+            12,
+            1021,
+            296,
+            38
+          ],
+          "scroll": 591,
+          "hitChecks": 9
+        }
+      ]
+    },
+    {
+      "page": "display-adaptive",
+      "height": 807,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "act:display-mode:0",
+          "documentRect": [
+            30,
+            212,
+            126,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-mode:1",
+          "documentRect": [
+            163,
+            212,
+            126,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:15",
+          "documentRect": [
+            24,
+            412,
+            272,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:30",
+          "documentRect": [
+            24,
+            456,
+            272,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:60",
+          "documentRect": [
+            24,
+            500,
+            272,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:120",
+          "documentRect": [
+            24,
+            544,
+            272,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:-1",
+          "documentRect": [
+            24,
+            588,
+            272,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:screen-lock",
+          "documentRect": [
+            12,
+            119,
+            296,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-refresh",
+          "documentRect": [
+            12,
+            757,
+            296,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        }
+      ]
+    },
+    {
+      "page": "display-adaptive-dark",
+      "height": 807,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "act:display-mode:0",
+          "documentRect": [
+            30,
+            212,
+            126,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-mode:1",
+          "documentRect": [
+            163,
+            212,
+            126,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:15",
+          "documentRect": [
+            24,
+            412,
+            272,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:30",
+          "documentRect": [
+            24,
+            456,
+            272,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:60",
+          "documentRect": [
+            24,
+            500,
+            272,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:120",
+          "documentRect": [
+            24,
+            544,
+            272,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-time:-1",
+          "documentRect": [
+            24,
+            588,
+            272,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:screen-lock",
+          "documentRect": [
+            12,
+            119,
+            296,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:display-refresh",
+          "documentRect": [
+            12,
+            757,
+            296,
+            38
+          ],
+          "scroll": 327,
+          "hitChecks": 9
+        }
+      ]
+    },
+    {
+      "page": "form-cell-nr",
+      "height": 483,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "act:edit:0",
+          "documentRect": [
+            12,
+            119,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:edit:1",
+          "documentRect": [
+            12,
+            190,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:edit:2",
+          "documentRect": [
+            12,
+            261,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:form-apply",
+          "documentRect": [
+            12,
+            433,
+            296,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        }
+      ]
+    },
+    {
+      "page": "form-cell-nr-dark",
+      "height": 483,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "act:edit:0",
+          "documentRect": [
+            12,
+            119,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:edit:1",
+          "documentRect": [
+            12,
+            190,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:edit:2",
+          "documentRect": [
+            12,
+            261,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:form-apply",
+          "documentRect": [
+            12,
+            433,
+            296,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        }
+      ]
+    },
+    {
+      "page": "form-cell-lte",
+      "height": 480,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "act:edit:0",
+          "documentRect": [
+            12,
+            119,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:edit:1",
+          "documentRect": [
+            12,
+            190,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:form-apply",
+          "documentRect": [
+            12,
+            344,
+            296,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        }
+      ]
+    },
+    {
+      "page": "form-cell-lte-dark",
+      "height": 480,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "act:edit:0",
+          "documentRect": [
+            12,
+            119,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:edit:1",
+          "documentRect": [
+            12,
+            190,
+            296,
+            61
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:form-apply",
+          "documentRect": [
+            12,
+            344,
+            296,
+            38
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        }
+      ]
+    },
+    {
+      "page": "keyboard-cell",
+      "height": 480,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            18,
+            193,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            115,
+            193,
+            89,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            211,
+            193,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            18,
+            248,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            115,
+            248,
+            89,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            211,
+            248,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            18,
+            303,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            115,
+            303,
+            89,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            211,
+            303,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            18,
+            358,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            115,
+            358,
+            89,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:edit-done",
+          "documentRect": [
+            211,
+            358,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        }
+      ]
+    },
+    {
+      "page": "keyboard-cell-dark",
+      "height": 480,
+      "pinnedHeight": "[REDACTED_SENSITIVE_FIELD]",
+      "headerPixelsInvariant": true,
+      "targets": [
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            18,
+            193,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            115,
+            193,
+            89,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            211,
+            193,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            18,
+            248,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            115,
+            248,
+            89,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            211,
+            248,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            18,
+            303,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            115,
+            303,
+            89,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            211,
+            303,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            18,
+            358,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "[REDACTED_SENSITIVE_CONTEXT]",
+          "documentRect": [
+            115,
+            358,
+            89,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        },
+        {
+          "action": "act:edit-done",
+          "documentRect": [
+            211,
+            358,
+            90,
+            48
+          ],
+          "scroll": 0,
+          "hitChecks": 9
+        }
+      ]
+    }
+  ],
+  "totalHitChecks": 2664,
+  "passed": true,
+  "sourceSha256": "[REDACTED_SENSITIVE_FIELD]",
+  "fixtureSha256": {
+    "display-fixed": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "display-fixed-dark": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "display-adaptive": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "display-adaptive-dark": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "form-cell-nr": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "form-cell-nr-dark": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "form-cell-lte": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "form-cell-lte-dark": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "keyboard-cell": "[REDACTED_SENSITIVE_FIELD]",
+    "keyboard-cell-dark": "[REDACTED_SENSITIVE_FIELD]"
+  },
+  "version": "0.1.7",
+  "validationLimits": "Local 320x480 RGB565 rendering, layout, and hit tests only. Device touch latency, brightness hardware response, and modem writes are not exercised."
+}

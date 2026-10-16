@@ -1,0 +1,74 @@
+TopFlow screen 0.1.3 — direct-switch implementation review
+Date: [REDACTED_NUMBER]
+Status: local fix candidate; device acceptance pending.
+
+Scope
+All development, builds and fault injection in this revision ran on the PC.
+No SSH commands, installation, device parameter changes, screen switching or
+device file uploads were performed by the developer in this revision.
+
+References
+Root TOPFLOW wallpaper JS: preserve the Sitronix touch driver while restarting
+the display service; this changes wallpaper in an original executable copy.
+Root Beacon U60 TXT and public 1.4.19 scripts: direct process stop/start and
+fallback are useful references, not proof of TopFlow sleep compatibility.
+[REDACTED_URL] [REDACTED_ENCODED_OR_IDENTIFIER]:
+its pinned original ELF SHA matches the previously captured local device ELF.
+It uses original-process LVGL injection. This revision retains our existing
+independent renderer and UI; it does not install the toolkit or its networking,
+charging, OTA, startup scripts, or preload library.
+
+Implemented changes
+[REDACTED_SENSITIVE_CONTEXT]
+   unobservable remainder of the original UI's 180-second dark-screen timer.
+[REDACTED_SENSITIVE_CONTEXT]
+   executable/service mounts, duplicate or changed original identities,
+   LD_PRELOAD and non-system executable shared-library mappings.
+[REDACTED_SENSITIVE_CONTEXT]
+   PID and birth time again immediately before service deletion. Persistent
+   policy values are checked again after the original process exits.
+4. Hold a finite own transition lease. Use a bounded procd service.delete call,
+   bypassing the factory stop hook that unloads touch. If necessary terminate
+   only the exact captured original PID/birth/executable. Allow QPIC teardown
+   time before starting the next display owner, including factory recovery.
+5. The internal display lock is deleted through the existing factory API only
+   when a stable complete map names the stopped original PID. The only kernel
+   vendor lock released is the exact display auto-sleep lock after exclusive
+   display ownership checks. sysZteSleepLock, zteSleepBacklight and all unrelated
+   locks are not directly released. Re-check lease, owner and original absence.
+6. Treat a stable empty internal lock map as valid, while rejecting truncated,
+   changing, duplicated, malformed and oversized maps.
+7. Separate persistent display policy from transient sensor observations.
+   In automatic mode, after verified display ownership, enable the identified
+   original light sensor at most once if needed and require real bounded
+   enable/lux readback. Do not call sensor init or invent measurements.
+8. Render the protected first frame before one guarded LCD-on transaction.
+   Brightness and the sleep service's LCD lock must be read back before ready
+   heartbeat. Later ON-to-OFF transitions retain the existing own 180s lease.
+9. Preserve exact-identity failure recovery, controller lifecycle locks,
+   recovery-only migration of trusted 0.1.0/0.1.1/0.1.2 and manifest-bounded
+   uninstall. Unknown files, identities or versions do not authorize deletion.
+10. Manager loads without device requests, reads status on opening, and limits
+    DOM observation to avoid reacting to every UFI rate display update.
+    Production TXT contains manager plus native archive, without PC demos.
+    Runtime diagnostics remain bounded fixed enums; no accumulating raw logs.
+
+Verification boundary
+The prior ADOPT_CONFIG record did not include the failing post-stop field.
+This revision fixes demonstrated policy/transient-state coupling and several
+handover defects, and reports precise policy/sensor failures if they recur.
+It does not assert that the previous device root cause was conclusively found.
+Original lock APIs do not offer atomic compare-and-delete. The transition
+depends on stopping the sole verified original producer and excluding another
+screen manager; it is not a system-wide atomic ownership protocol.
+Physical QPIC rendering, touch, sleep/wake, restoration and complete uninstall
+[REDACTED_SENSITIVE_CONTEXT]
+acceptance. Periodic factory wake remains unsupported and is rejected.
+
+Validation records
+[REDACTED_ENCODED_OR_IDENTIFIER].log: 176/176 non-packaging JS regression tests
+passed. Independently extended direct-handover suite: 14/14 passed.
+Display C [REDACTED_ENCODED_OR_IDENTIFIER], lifecycle/bus and bounded startup diagnostics
+passed local executable tests. ARM64 renderer was rebuilt locally.
+Final archive, source hashes, build contracts and TXT checks are recorded in
+the final 0.1.3 verification JSON generated alongside this review.

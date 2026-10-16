@@ -1,0 +1,51 @@
+Topflow 原厂屏幕静态分析（[REDACTED_NUMBER]）
+
+范围与方法
+仅分析已经下载至本机 analysis/evidence 的文件，没有连接设备，没有运行 ARM 程序，没有执行服务、SDK 或设备控制接口。
+主要输入：zte_topsw_devui、libzte_lvgl.so、libzte_SDKowrt.so、zte_topsw_daemon、两份 init 脚本、zte_topsw_daemon.conf、startdui.sh、devui-runtime.txt。
+使用本机 Python、pyelftools、Capstone 读取 ELF、动态符号、字符串及少量函数反汇编。分析依赖安装在 analysis/python-deps。原始证据文件未修改。
+
+一、已确认的实现结构
+1. 四份二进制均为 ELF64 / AArch64；section header 已移除，但 PT_DYNAMIC 与动态符号可以解析。
+2. zte_topsw_devui 动态依赖 libuci.so、libzte_lvgl.so、libpng16.so.16、libztelog.so、libzte_SDKowrt.so、libdrm.so.2、libzte_gesture.so、libgcc_s.so.1、libc.so。
+3. libzte_lvgl.so 导出 drm_init、drm_get_sizes、drm_flush、drm_flushToBlack、drm_wait_vsync、drm_exit，同时导入 DRM atomic/KMS、dumb buffer、framebuffer 操作相关 libdrm 接口。
+4. LVGL 中的 lv_disp_drv_* / lv_indev_drv_* / lv_timer_* / lv_draw_sw_* 与 src/lvgl/src/extra/... 源码路径属于 LVGL 8 风格 API 线索。没有找到可验证的精确版本号，不能指定 8.x.y 或保证与任意上游版本二进制兼容。
+5. 实际运行证据 devui-runtime.txt 显示原厂 UI 持有 /dev/dri/card0 映射；另据父任务采集，原厂 UI 为 DRM master，当前显示模式 320×480、格式 RG16，触摸 /dev/input/event5。这证明实际显示路径为 DRM，二进制中残留 /dev/fb0 字符串不能单独证明它正在用 fbdev。
+6. 二进制含 /usr/ui/skin/*.png、/usr/ui/anim/*、/usr/ui/fonts/、/usr/ui/language/{Chinese,English,...}.ini 等资源路径，以及普通/聚合模式、每卡状态、速率、设置等 UI 类字符串。
+
+二、切换与退出的关键限制
+1. 原厂 /etc/init.d/zte_topsw_devui 的 start_service 配置 procd respawn [REDACTED_NUMBER]。只结束 UI 进程可能触发 procd 重新拉起；不能把 kill 当作完整的切换流程。
+2. 原厂 stop_service 明确执行 killall -15 zte_topsw_devui、sleep 1、killall -9 zte_topsw_devui、sleep 1、rmmod sitronix_ts_spi.ko。它会尝试卸载触摸驱动，不能未经专门处理直接复用为自定义 UI 的停止/切换按钮。
+3. startdui.sh 也包含 killall -9、/dev/kmsg 写入及后台启动原厂 UI。本轮没有运行。该脚本并不能证明显示与触摸可无损热切换。
+4. libzte_lvgl.so 的 drm_exit（虚拟地址 0x22e54，56 字节）经 GOT 重定位核对为 close(drm_dev.fd)，随后 fd=-1。函数中没有恢复先前 CRTC、显式解除 framebuffer、触摸驱动或进程管理逻辑。
+5. zte_topsw_devui 导入 drm_init / drm_flush / drm_wait_vsync 等，但未导入 drm_exit。不能据此断言退出时不释放任何资源，也不能据此保证优雅退出。操作系统在进程退出时关闭 FD 是另一层机制，实际显示控制权交接仍需未来实机验证。
+6. 运行快照 SigCgt=0x14000 表明捕获 SIGTERM 与 SIGCHLD，不能假设 SIGTERM 必然立刻退出。SDK 导出的 handle_signal 实际字符串为 rtc timer callback，不足以认定为 SIGTERM 处理函数。
+7. zte_topsw_daemon.conf 中 sync ALL zte_topsw_devui 属于同步登记名单。daemon 二进制有 READY、REG_DONE、sync success、register success、zwrt_syncmsg、get_sync_info 等逻辑；已检查的定时器与处理流程是等待所有模块就绪/登记，并建立 [REDACTED_ENCODED_OR_IDENTIFIER].flag。没有找到把该 sync 项直接当成持续保活或重新启动程序的证据。应表述为“存在同步登记关系”，不能断言 daemon 会重启 devui。确切已知的拉起机制是 procd respawn。
+
+三、状态数据可用性
+1. devui 导入丰富的 getter：ZTD_GetSimState、[REDACTED_ENCODED_OR_IDENTIFIER]、ZTD_GetAggregateSimSlot、[REDACTED_ENCODED_OR_IDENTIFIER]、[REDACTED_ENCODED_OR_IDENTIFIER]、[REDACTED_ENCODED_OR_IDENTIFIER]、[REDACTED_ENCODED_OR_IDENTIFIER]、[REDACTED_ENCODED_OR_IDENTIFIER]、[REDACTED_ENCODED_OR_IDENTIFIER]、ZTD_GetAggregationMode、[REDACTED_ENCODED_OR_IDENTIFIER] 等。支持普通模式和聚合模式的数据来源确实存在。
+2. 已反汇编核实：ZTD_GetAggregationMode 读取 zwrt_router.network.opms_wan_mode，并与 SMULTIWAN 比较；相等时写出 1，否则 0。
+3. 已反汇编核实：[REDACTED_ENCODED_OR_IDENTIFIER] 读取 zwrt_router.tmp_router.icg_agg_status 并转为整数。
+4. 已反汇编核实：聚合实时速率 getter 在第二参数为 3 的分支，Rx 读 zwrt_router.tmp_router.[REDACTED_ENCODED_OR_IDENTIFIER]，Tx 读 zwrt_router.tmp_router.[REDACTED_ENCODED_OR_IDENTIFIER]；其他分支使用 SDK 缓存结构与卡槽映射。参数 3 的业务语义、具体单位、刷新周期仍需结合已有状态数据核实，不能凭名称推定 Mbps 或字节/秒。
+5. 字符串中另有 SIM 状态/运营商 UCI 键、zwrt_deviceui.Screen.*、zwrt_sigbar、zwrt_card_state_event、[REDACTED_ENCODED_OR_IDENTIFIER]、zwrt_deviceui_event.touchstatus/lcdstatus 等线索。字符串存在不等同于接口可直接、安全调用。
+6. 父任务已经通过本机转发对设备现有 [REDACTED_IP]:9460/state GET 成功读取所需状态。后续数据层应优先复用已核实的读取接口，避免为了显示状态额外初始化原厂 SDK。
+
+四、SDK 不应直接作为“只读探针”加载初始化
+1. ZTD_InitSdkBusiness 调用 sdkBusinessInit；后者读取亮度/屏幕间隔，并在条件分支中调用 ZTD_SetLcdOpenOrClose(1)，还会启动 server thread。
+2. zte_sdk_init_zbus 调用 zBusInit、msgget（创建标志）、回调登记、pthread_create。
+3. 即使最终只调用 Get 函数，SDK 初始化也可能改变屏幕/IPC 状态。不得在本轮设备上执行，也不能把整个初始化过程宣称为只读。
+
+五、可行性结论与尚未证实的部分
+有充分证据支持“可开发独立的 AArch64 本机屏幕程序，并通过插件管理其生命周期”的技术方向；原厂资源、程序可以保留，不需要先覆盖原厂二进制才能研发。状态展示与电脑本地 UI 原型可先独立完成。
+但本轮仅静态分析与已有只读快照，尚未证明“任意时刻切回原厂且始终不影响触摸、唤醒、熄屏、网络及 procd”已可可靠运行。
+未来需专门设计并实机验证：原厂监管与 respawn 的协调、DRM master 交接、触摸方向/坐标、亮灭屏/按键/唤醒事件、异常退出后的回退、重复切换、重启后默认选择。不得通过当前 stop_service 直接测试。
+本轮不提供实际部署/启停代码，不修改设备参数，不安装插件，不创建远端文件，不发送信号，不卸载模块。
+
+可复核的本机产物
+binary-static-index.json：动态依赖、符号、字符串索引。
+*.strings.txt：筛选出的二进制 ASCII 线索。
+libzte_lvgl.so.selected-disasm.txt：drm_init/drm_exit 等短函数。
+libzte_SDKowrt.so.selected-disasm.txt：getter、SDK 初始化等选定函数。
+zte_topsw_daemon.selected-disasm.txt：daemon 代码段。
+inspect_binaries_local.py、disasm_selected_local.py：本机静态分析脚本。
+注意：反汇编脚本的寄存器/字符串注释是便于人工检查的线性启发式，不是控制流完整模拟；跨分支或跨函数注释可能失真。本报告的关键结论逐段核对过原始指令与 GOT 重定位，未把未确认的注释当作事实。

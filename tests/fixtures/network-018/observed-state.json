@@ -1,0 +1,43 @@
+{
+  "aggregation": {
+    "enabled": false,
+    "online": false,
+    "mode": "MULTIWAN",
+    "state": "disabled",
+    "provisioned": false,
+    "controller": {
+      "icg_process_running": false,
+      "mwan3_running": true
+    },
+    "traffic": {
+      "remaining_bytes": 10000000000,
+      "remaining_raw": "10000000000",
+      "today_used_bytes": 100000,
+      "today_used_raw": "100000"
+    },
+    "tcp_tunnel_count": 0
+  },
+  "net": {
+    "type": "SA",
+    "band": "n78",
+    "nr_band": "n78",
+    "nr_bw": "100",
+    "nr_pci": 100,
+    "nr_channel": 627264,
+    "nr_rsrp": -93,
+    "nr_snr": "4.0",
+    "nrca": "",
+    "lteca": ""
+  },
+  "runtime": {
+    "link_rates": [
+      {
+        "interface": "eth0",
+        "source": "netdev",
+        "window_ms": 1343,
+        "rx_bps": 0,
+        "tx_bps": 0
+      }
+    ]
+  }
+}

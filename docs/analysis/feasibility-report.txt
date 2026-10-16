@@ -1,0 +1,77 @@
+中兴 TopFlow 屏幕插件：只读可行性调查
+调查日期：[REDACTED_NUMBER]（Asia/Shanghai）
+
+结论
+已有充分依据进入本地开发：UFI 网页插件可提供管理入口；独立 ARM64 屏幕程序可面向设备现有 DRM 显示与 evdev 触摸接口开发；现有 datad 服务可提供状态数据。可以按“保留原厂文件 + 独立安装自定义屏幕程序 + 显式切换/恢复”设计。
+但“随时切回原厂且不影响联网、触摸、休眠”尚未实机验证。当前用户仅授权读取与下载，因此没有执行接管、退出、驱动操作或恢复测试。本报告不等于已经完成可安装插件，也不保证切换已通过测试。
+
+一、实际设备与显示栈
+设备：ZTE TopFlow / MU5252，硬件 MU5252_HW1.0。
+系统：OpenWrt 23.05.4，aarch64，Linux 5.15.194-perf，musl。
+UFI：[REDACTED_ENCODED_OR_IDENTIFIER]；另有 zwrt-datad 0.10.79。
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+原厂屏幕程序：[REDACTED_ENCODED_OR_IDENTIFIER]。
+显示节点：/dev/dri/card0，驱动 drm_qpic，接口 card0-DIN-1。
+正在使用的显示模式：320 x 480，RG16（RGB565），行跨度 640 字节。
+原厂库：libzte_lvgl.so、libdrm.so.2.4.0、libzte_SDKowrt.so。
+触摸：sitronix_ts_spi，采集时为 /dev/input/event5；未来应按设备名识别，不能假定 event 编号永远固定。
+资源：/usr/ui，含 skin、anim、fonts、language 等目录；本次只下载所需配置和二进制，并未备份全部系统。
+证据：evidence/identity.txt、display.txt、drm-state.txt、devui-runtime.txt、ui-resource-list.txt。
+
+二、数据链路已实际读取成功
+通过现有 SSH 执行 curl GET [REDACTED_URL]
+精确版本 v0.10.79 的公开源码确认 /state 只返回内存中已有快照，不触发采样或控制动作。
+可用字段：
+  modems[].sim.state / slot：各基带的卡状态与卡槽。
+  modems[].net：运营商、网络制式、频段、信号。
+  modems[].traffic.rx_speed / tx_speed：各基带上下行速率。
+  modems[].wwan.status、interfaces：连接状态。
+  traffic：主链路速率与流量计数；展示总速率前需确认统计口径，避免重复汇总接口。
+  aggregation：聚合开关、模式、在线状态、流量等。
+  battery、thermal、system、wlan、clients：电池、温度、系统、Wi-Fi、连接数等。
+本次有两个状态快照，时间分别以原始 JSON 的 ts 为准；采样周期 1000 ms。
+最近采样（[REDACTED_IP]）：5G 主基带连接，SA / n78；4G1、4G2 显示断开且信息不完整，不能据此断言未插 SIM；聚合 enabled=false，mode=MULTIWAN。
+只读限制下未开启聚合，因此未验证聚合运行期间各字段的实际返回与变化。
+缺失或无效字段需要显示“未知/未连接”，不能一律补 0。
+原始快照包含设备与网络标识，仅保存在本地 evidence；对外展示应使用去标识的 status-summary.json。
+证据：evidence/datad-state.txt、datad-state-second.txt、datad-capabilities.txt；status-summary.json。
+
+三、UFI 插件机制
+实际下载的前端支持带 KANO_PLUGIN_START/END 与可选 KANO_META 的文本插件。
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+加载器注入 style/link/meta 与 script；管理面板 DOM 需由脚本创建。
+runShellWithRoot 对接 POST /api/run_shell，可作为未来屏幕程序的控制桥接入口。
+插件启停、删除的本质是修改网页文本；没有原生屏幕进程的生命周期回调。
+因此，关闭浏览器、禁用插件或删除插件不等同于恢复原厂屏幕，必须设计独立的恢复按钮及异常回退逻辑。
+本次仅下载前端文本，没有执行 UFI 页面的 JavaScript，也没有提交任何插件配置。
+注意：现有前端启动时可能迁移插件元数据并写回，不能以“只是打开后台”为由视为严格只读。
+详见 plugin-analysis.txt。
+
+四、保留原厂与切换的约束
+原厂服务由 procd 管理，设置 respawn [REDACTED_NUMBER]；直接杀进程可能被自动拉起。
+原厂进程目前持有 DRM master。同一显示设备的控制权需要明确交接；仅暂停原厂进程并不会自动释放其文件描述符或 DRM master。
+/etc/init.d/zte_topsw_devui 的 stop_service 会发送 TERM、KILL，并 rmmod sitronix_ts_spi.ko。因此不能直接把原厂 stop 命令当作安全切换方案。
+zte_topsw_daemon.conf 也列出 devui 作为 sync 对象；本地反汇编发现 READY/REG_DONE 同步登记逻辑，没有足够证据把它认定为持续保活。已明确的自动重启来自 procd；停止屏幕后的实际联动仍需验证。
+原厂 SDK 初始化存在非查询行为；不应为获取状态在只读调研中执行 SDK 初始化。现有 datad 缓存快照已经提供更合适的数据入口。
+未来切换器应保留原厂二进制、资源、启动配置；只在明确授权的实机阶段处理显示服务、控制权、输入与退出回退。不得顺带停止联网或系统守护服务。
+退出自定义界面后，需验证原厂显示、触摸、亮灭屏、休眠唤醒、联网与异常退出恢复；这些测试本次均未执行。
+静态分析细节见 display-binary-analysis.txt。
+
+同系列参考实现：33333s/u60pro-devui（核查 commit [REDACTED_ENCODED_OR_IDENTIFIER]）同样面向 320x480 RGB565、DRM/KMS、evdev，硬件接口高度相似。但未见 MU5252 专用兼容声明；其 start.sh 会停止原厂服务、杀进程、写文件，不能在本轮运行，也不能直接照搬到此设备。原版退出不自动恢复原厂。作者记录还指出需要保留原厂早期开机初始化，否则可能失去触摸或显示控制权。这支持独立渲染器的技术路径，同时进一步说明切换管理必须单独适配。
+
+五、本次操作范围与结束状态
+执行范围：非交互 SSH 查询、现有文件读取、HTTP GET、下载到本机、在本机静态解析。
+未上传/添加设备文件，未安装插件，未修改 UFI 或中兴配置，未重启或停止服务，未发送进程控制信号，未加载/卸载驱动，未写显示或输入设备。
+普通 SSH/HTTP 连接及文件读取可能由设备现有机制记录日志、统计或访问时间；本报告不声称设备所有字节完全不变。
+结束复核：原厂屏幕 PID 18392，仍持有 DRM master；触摸节点存在。UFI PID 3805/3960、datad PID 10392 与最初采样一致。此检查只证明所观察服务持续运行，不是所有功能的完整回归测试。
+设备不支持当前 SFTP 子系统，因此文件下载改用 SSH cat 将字节流接到本地；未在设备上部署传输工具。
+ubus 命令行接口枚举返回 Not found，没有为此改配置或启动额外服务；状态读取已通过现有 datad 完成。
+[REDACTED_SENSITIVE_CONTEXT]
+
+六、下一步
+由用户说明所需界面、信息层级与交互。先在电脑制作 320 x 480 本地预览和插件源码；当前只读限制继续有效。
+安装、运行自定义屏幕或执行切换会改变设备运行状态，须等用户另行明确授权后才进入实机阶段。
+
+公开来源（以实机版本与本地证据优先）
+[REDACTED_URL]
+最后一项是同系列屏幕项目参考，不代表其发行包已经在本台 TopFlow 验证；未运行其安装命令或脚本。

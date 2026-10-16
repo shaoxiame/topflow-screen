@@ -1,0 +1,12 @@
+[
+  {
+    "repository": "https://github.com/openwrt/ubus",
+    "commit": "f787c97b",
+    "archiveSha256": "d680a34cddefcf1592c358da1be32fedf117c88589012ec7fbd21a79e8a9a48e"
+  },
+  {
+    "repository": "https://github.com/openwrt/libubox",
+    "commit": "75a3b870",
+    "archiveSha256": "8d6e8538806072e48de020f130d7fe5c2434e74cb3b9457b06a813c3ad49eb3e"
+  }
+]

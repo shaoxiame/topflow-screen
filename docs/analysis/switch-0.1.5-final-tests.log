@@ -1,0 +1,44 @@
+✔ browser registration only adds an entry and performs zero device requests (1.9092ms)
+✔ install start refuses an existing target and does not start any renderer (0.4205ms)
+✔ binary upload uses documented FormData endpoint and validates exact returned path (9.6953ms)
+✔ finish validates hash before extraction and never changes factory/startup files (0.1765ms)
+✔ screen controls are explicit, narrowly scoped and status is parsed without false success (1.3039ms)
+✔ current final candidate uses the documented script format and exact live direct-switch native archive (52.9194ms)
+✔ release gate rejects incomplete local verification and review payload blocks installation and activation (0.6247ms)
+✔ diagnostic candidate has a separate honest gate and cannot weaken the failed release gate (0.303ms)
+✔ native archive inspection rejects symlinks before packaging (49.5951ms)
+✔ review packaging refuses stale native source, lifecycle scripts or UI even with valid archive checksums (1.0652ms)
+✔ both native executables require exact checksums and the ARM64 architecture (0.3126ms)
+✔ production validation rejects preview APIs and demo factories regardless of whether they are called (1.1507ms)
+✔ native package must explicitly declare real data and CLOCK_MONOTONIC heartbeat (0.3566ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ current install instructions describe direct switching and exact old-version migration without claiming hardware success (0.1522ms)
+✔ payload source uses bounded lines without changing archive bytes or recovery script (8.4882ms)
+✔ production manager retains lifecycle/auth helpers verbatim and contains no preview adapters or simulation API (2.3375ms)
+✔ production TXT manager needs no browser API modules, loads with zero calls and opens with exactly one read (15.5492ms)
+✔ production install and restore keep explicit confirmation and verified real control sequence (5.1938ms)
+✔ production failures preserve upload lock, failed recovery and review-only barriers (4.2682ms)
+✔ failure arriving on the final refresh preserves the native phase instead of the generic switch timeout (4.0424ms)
+✔ direct switching permits bounded slow handover and still requires three fresh healthy observations (5.4499ms)
+✔ direct-switch polling exits early with a late native failure after the old ten-read budget (3.7698ms)
+✔ direct-switch confirmation remains bounded when no target or failure is observed (6.6406ms)
+✔ a rejected start cannot attribute its error to the unchanged previous failure record (2.0278ms)
+✔ a new failure on a rejected start is read back with its current native phase (1.3907ms)
+✔ consecutive status read failures stop polling and report only bounded transport diagnostics (1.8034ms)
+✔ final recovery read exposes the latest native error without erasing repeated status-read failures (1.9086ms)
+✔ a transient status read failure still permits three fresh healthy observations (2.0783ms)
+✔ a refreshed newer failure supersedes the earlier poll phase and updates the recovery action (2.0965ms)
+✔ production uninstall removes only native components and the uniquely verified UFI record (2.1152ms)
+✔ entry remains outside the actual UFI collapse observer clipping region in both menu states (1.3485ms)
+✔ manager caches only its validated private snapshot; later public payload mutation cannot change lifecycle commands (0.8669ms)
+✔ actual UFI manual importer accepts the complete generated TXT without treating embedded code as store metadata (4.5594ms)
+✔ actual UFI importer documents that manual same-filename imports are skipped, not upgraded (1.307ms)
+✔ the actual generated script registers from a UFI-style head injection with lexical API globals and zero device requests (21.8895ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 196.2082

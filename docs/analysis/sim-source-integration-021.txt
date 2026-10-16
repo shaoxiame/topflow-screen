@@ -1,0 +1,98 @@
+TopFlow 0.2.1 — SIM source selection with present and empty card slots
+
+Scope
+-----
+Local source development and tests only. No connection to the device, no device
+commands, no installation or device configuration changes were made for this fix.
+
+Root cause
+----------
+The existing native source gate required raw current source to be 0 or 1 before
+it exposed either choice. The preserved factory read in
+[REDACTED_ENCODED_OR_IDENTIFIER].txt and the sanitized fixture
+[REDACTED_ENCODED_OR_IDENTIFIER].json contain empty v3t_1_st_slot and
+v3t_2_st_slot. Those empty values correctly parse as unknown (-1), but the old
+gate then prevented any source selection. SIM presence was already separate;
+loosening the AMBR/presence checks would not have fixed this source gate.
+
+A second entry issue hid all source and module controls when the independent
+datad network snapshot was stale, missing, or omitted that modem. A third issue
+left module enabling at the bottom of a long detail page and did not refresh
+source state immediately after verified enabling.
+
+Verified factory contract retained
+[REDACTED_ENCODED_OR_IDENTIFIER]
+All calls use the existing zwrt_zte_mdm.api methods. Sources are absolute targets:
+0 = removable card; 1 = built-in card. The setter does not calculate a toggle
+from the current value. Factory UI and SDK evidence already recorded in
+[REDACTED_ENCODED_OR_IDENTIFIER].txt, [REDACTED_ENCODED_OR_IDENTIFIER].txt and
+[REDACTED_ENCODED_OR_IDENTIFIER].txt establish the exact methods and parameter ids:
+
+5G:  get_sim_info.st_slot; sim_switch_slot {slot:0|1}
+4G1: get_v3t_sim_info.v3t_2_st_slot;
+     sub_modem_switch_slot {sub_modem_num:1,sub_modem_slot:0|1}
+4G2: get_v3t_sim_info.v3t_1_st_slot;
+     sub_modem_switch_slot {sub_modem_num:0,sub_modem_slot:0|1}
+
+Changes
+-------
+1. Preserve unknown source as unknown. Explicitly choosing either verified
+   absolute target is allowed with current=-1. No absent SIM or normalized slot
+   fallback is interpreted as the current source.
+2. Present, absent and unknown SIM states all allow source selection. Known
+   current source is labelled current and its redundant choice is not offered.
+3. External module enabled state must still be exactly known enabled. Disabled
+   modules expose their separate, confirmed enable button beside source choices;
+   unknown enabling state does not permit enabling or source writes. Source
+   selection never implicitly powers a modem or enables another modem.
+4. Source card appears immediately after the connection overview and before the
+   real-time/QCI/AMBR section. These independent factory controls remain visible
+   when datad network data is stale or lacks a modem object.
+5. Verified module enabling/disabling triggers one demand source refresh. It
+   adds no background polling, daemon, persistent file or log.
+6. Confirmation rereads selected card source and enabled state. Changed card,
+   changed source, changed enabled state, relock or cancellation aborts. The
+   existing single setter, exact raw source verification and 15-second bounded
+   timeout remain. Transport acceptance is never reported as source success.
+7. Unknown-source confirmation explicitly says the current source is unconfirmed
+   and names the absolute chosen target. Still-empty readback remains unconfirmed
+   and is never guessed from registration or SIM presence.
+8. AMBR, QCI and live rate validity rules were not loosened. Absent/unknown SIMs
+   still do not display cached AMBR limits as valid live card information.
+
+Local validation
+----------------
+[REDACTED_ENCODED_OR_IDENTIFIER].ps1: PASS.
+  Real sanitized raw source fixtures, reversed external mapping, empty/malformed
+  values, explicit unknown-source target selection, invalid source/target bounds,
+  disabled/unknown external-module guard, bounded calls, demand cache and cancel.
+
+native/test-controls.ps1: PASS.
+  Full native [REDACTED_ENCODED_OR_IDENTIFIER] flow: 3 modem ids x
+  3 presence states (present/absent/unknown) x 3 current-source states (-1/0/1)
+  x 2 target values = 54 combinations. Known-current requests produce no write;
+  the other 36 combinations perform one exact-target write with matched raw
+  readback. Other cards are unchanged and no module-enable calls occur in this
+  matrix. Also covers disabled/missing/stale datad entry, explicit module enable,
+  source refresh after verified enable, lost enabled state before confirmation,
+  unknown enabled state, empty post-submit readback timeout, no automatic retry,
+  relock/cancellation and existing control regressions.
+
+Generated detail previews from that same native renderer input:
+[REDACTED_ENCODED_OR_IDENTIFIER].html and -dark.html
+
+Files changed
+-------------
+native/sim_source_logic.h
+native/modem_pages.h
+[REDACTED_ENCODED_OR_IDENTIFIER].h (source refresh hook after verified module change only)
+[REDACTED_ENCODED_OR_IDENTIFIER].c
+native/test-controls.ps1
+
+Remaining hardware validation
+[REDACTED_ENCODED_OR_IDENTIFIER]
+This fix verifies dispatch and native UI locally. No claim is made that an
+[REDACTED_SENSITIVE_CONTEXT]
+raw st_slot after selection. A still-empty result is intentionally shown as
+[REDACTED_SENSITIVE_CONTEXT]
+upload/device test.

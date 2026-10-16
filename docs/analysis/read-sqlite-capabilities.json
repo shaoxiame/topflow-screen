@@ -1,0 +1,5 @@
+{
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "/usr/bin/sqlite3 -noinit ':memory:' \"select sqlite_version(),json_valid('{}');\"",
+  "sqlite-cli-options": "/usr/bin/sqlite3 --help 2>&1",
+  "ufi-database-sidecars": "ls -ln [REDACTED_ENCODED_OR_IDENTIFIER].db [REDACTED_ENCODED_OR_IDENTIFIER].db-wal [REDACTED_ENCODED_OR_IDENTIFIER].db-shm [REDACTED_ENCODED_OR_IDENTIFIER].db-journal 2>/dev/null"
+}

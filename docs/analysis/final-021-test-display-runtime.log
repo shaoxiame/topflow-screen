@@ -1,0 +1,2 @@
+PASS: actual display runtime receipt/map, guarded adopt, first-frame renewal cannot conceal an expired startup lease; later wakes acquire a new lease; level-only change, sleep, resync, [REDACTED_ENCODED_OR_IDENTIFIER] failures, unsafe wake rejection; own 180s idle lease precedes LCD off, repeated off never renews, dark adoption adds no lease, verified LCD-on releases, failures retain bounded lease without touching original locks
+PASS: main ownership/frame order, no brightness bypass, IPC hook cancellation

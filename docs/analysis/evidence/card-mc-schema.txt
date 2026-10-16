@@ -1,0 +1,32 @@
+-rwxr-xr-x    1 root     root        131188 Sep  5 04:00 /usr/lib/libzte_zbus-2.0.0.so
+-rwxr-xr-x    1 root     root         65644 Sep  5 04:00 /usr/lib/libzte_zbus.so
+/etc/init.d/zte_ubus_bsp_audio.init
+/etc/init.d/zte_ubus_bsp_eth.init
+/etc/init.d/zte_ubus_bsp_key.init
+/etc/init.d/zte_ubus_bsp_led.init
+/etc/init.d/zte_ubus_bsp_pm.init
+/etc/init.d/zte_ubus_bsp_pm_genl.init
+/etc/init.d/zte_ubus_bsp_rtc.init
+/etc/init.d/zte_ubus_bsp_thermal.init
+/etc/init.d/zte_ubus_bsp_usb.init
+/etc/rc.d/K01zte_ubus_bsp_usb.init
+/etc/rc.d/K09zte_ubus_bsp_key.init
+/etc/rc.d/K09zte_ubus_bsp_led.init
+/etc/rc.d/K10zte_ubus_bsp_audio.init
+/etc/rc.d/K10zte_ubus_bsp_eth.init
+/etc/rc.[REDACTED_ENCODED_OR_IDENTIFIER].init
+/etc/rc.d/K13zte_ubus_bsp_pm.init
+/etc/rc.[REDACTED_ENCODED_OR_IDENTIFIER].init
+/etc/rc.d/K15zte_ubus_bsp_rtc.init
+/etc/rc.d/S01zte_ubus_bsp_usb.init
+/etc/rc.d/S09zte_ubus_bsp_key.init
+/etc/rc.d/S09zte_ubus_bsp_led.init
+/etc/rc.d/S10zte_ubus_bsp_audio.init
+/etc/rc.d/S10zte_ubus_bsp_eth.init
+/etc/rc.[REDACTED_ENCODED_OR_IDENTIFIER].init
+/etc/rc.d/S13zte_ubus_bsp_pm.init
+/etc/rc.[REDACTED_ENCODED_OR_IDENTIFIER].init
+/etc/rc.d/S15zte_ubus_bsp_rtc.init
+
+STDERR:
+Command failed: Not found

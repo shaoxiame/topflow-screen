@@ -1,0 +1,34 @@
+TopFlow 原生屏幕深查记录（0.1.9 后续修订）
+[REDACTED_NUMBER] · 仅电脑本地开发和验证；本轮没有访问设备
+
+检查范围
+复核了原生卡片详情、网络/频段、短信表单与转发入口、Wi-Fi/访客/连接设备、APN、散热与供电、显示与锁屏的既有页面和确认/回读链；对照 final-feature-audit-018.txt、保存的 datad [REDACTED_ENCODED_OR_IDENTIFIER]、原厂/插件接口证据。没有改变屏幕接管、原厂恢复、休眠监管或卸载代码。没有新后台、轮询器、日志文件或设备写入。
+
+本轮修复
+1. 连接设备限制：原判断允许任意非 allow 字符串，被遗漏/损坏的过滤模式可能显示操作入口。现在仅接受官方 deny/disable；白名单和未知状态不可修改。限制只允许当前在线的 Wi-Fi 设备，解除只允许 deny 模式中确实列在黑名单的目标。确认时再次复查，已变化/有线/未知/已移除目标停止提交。回读必须明确 deny 模式，不能用未知或白名单模式下的空 blocked 数组冒充解除成功。官方 client.block 在 disable 模式开启黑名单的行为保留，并在确认页说明。
+2. 访客设置：此前只使用打开页面时的缓存。现在点击确认后调用既有 wifi.guest.status 只读动作，核实目标频段 supported、当前开关/时限/管理访问状态仍与所见一致，且数值有效；变化、未知、读取失败、锁屏/取消均在提交前停止。只发送一次 wifi.guest.set，成功仍要求后端 verified 和独立回读匹配。没有自动重试。访客 section 重复也不再取第一个。
+3. 访客详情：补上官方现有 clients、left_seconds 与 active_time_minutes，显示连接人数和有效期剩余；已启用且明确 0 分钟显示不限时，关闭/未知显示 —。只在既有进入/刷新请求中读取，不增加定时查询。
+[REDACTED_SENSITIVE_CONTEXT]
+
+接口依据
+[REDACTED_ENCODED_OR_IDENTIFIER].10.79/docs/STATE_SCHEMA.md：clients.acl_mode 仅 allow/deny/disable，blocked 只在 deny 模式呈现。
+[REDACTED_ENCODED_OR_IDENTIFIER].10.79/docs/CONTROL_API.md：Wi-Fi 黑白名单章节；client.block/unblock 维护黑名单，disable 下 block 开启 deny。
+[REDACTED_ENCODED_OR_IDENTIFIER].10.79/rust/src/control.rs：client_access 对 deny 模式写入和名单维护的实际实现。
+CONTROL_API.md 访客章节：wifi.guest.status 的 [REDACTED_ENCODED_OR_IDENTIFIER]；wifi.guest.set 仅修改传入项，active_time 允许 0/120/240/480/720。
+
+本轮变更文件
+native/service_pages.h
+native/control_logic.h
+native/test-controls.ps1
+无新增生产头文件、接口、额外软件依赖或新 proof 脚本。
+前一项 AMBR 改动已另行完成：三卡点开依次显示实时上行、实时下行、QCI、签约上行、签约下行，值按本卡 QoS 独立读取，单位 Mbps，不乘 8。
+
+本地验证
+[REDACTED_SENSITIVE_CONTEXT]
+native/test-modem-ambr.ps1、test-network-status.ps1、test-modem-source.ps1 通过。
+最终全原生回归、ARM 构建和包哈希由主代理在冻结后统一执行。本地验证不等于真实短信投递、切卡、热控效果、休眠唤醒或设备性能验收。
+
+仍未完整移植/仍需实机验收
+[REDACTED_SENSITIVE_CONTEXT]
+聚合只读补充的纯 IPv6 TCP 观测仍不支持，缺失则保留未知；CA 和聚合网络保持区分。自动亮度/原厂休眠、实时滑动帧率、实际短信发送/转发、切卡、恢复与卸载的设备效果不能靠本地测试作绝对保证。
+插件中心发布/更新 SDK 属于 UFI 管理页集成，由主代理独立处理；原生屏幕本轮没有联网下载或自升级逻辑。

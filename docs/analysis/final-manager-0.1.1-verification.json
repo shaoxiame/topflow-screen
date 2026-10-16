@@ -1,0 +1,19 @@
+{
+  "version": "0.1.1",
+  "artifact": "dist/topflow-screen-0.1.1.txt",
+  "artifactSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "bytes": "[REDACTED_SENSITIVE_FIELD]",
+  "maxLineLength": 1361,
+  "sameBytesAsCanonical": true,
+  "localSuites": {
+    "native-supervisor": 42,
+    "plugin-manager": 14,
+    "production-manager": 7,
+    "manager-cancel": 8,
+    "build": 14,
+    "ufi-loader-compat": 3
+  },
+  "allListedPassed": true,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": 0,
+  "hardwareTested": false
+}

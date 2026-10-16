@@ -1,0 +1,89 @@
+原厂 auto_sleep_lock 与接管前等待：独立静态复核
+日期：[REDACTED_NUMBER]。仅本机分析已下载原厂ELF；未调用任何设备接口或执行原厂代码。
+
+已确认的失败与状态
+[REDACTED_ENCODED_OR_IDENTIFIER].txt证实 /bin/ubus 存在、/sbin/ubus 不存在；旧native固定错误路径会拒绝provider预检。
+[REDACTED_ENCODED_OR_IDENTIFIER].txt在亮度0且内部Map不含devui时，kernel仍含[REDACTED_ENCODED_OR_IDENTIFIER]；32秒样本不足以推断该锁永久不释放。
+后续根代理只读长采样已观察到自然释放：[REDACTED_ENCODED_OR_IDENTIFIER].txt中uptime83667.74仍亮，
+83687.78已灭，83848.21仍有auto_sleep锁；[REDACTED_ENCODED_OR_IDENTIFIER].txt中83866.80起
+连续三次brightness0、内部无devui、kernel仅sysZteSleepLock，原厂PID18392保持不变。
+该区间与静态180秒灭屏计时一致；这是自然释放的实机只读证据，不是接管/休眠/唤醒写操作验收。
+
+kernel锁的精确原厂调用链
+1. 原SDK ZTD_AddSleepWakeLock@0x255dc -> libSleepWakeLock，名称固定[REDACTED_ENCODED_OR_IDENTIFIER]。
+   libzte_sleep libSleepWakeLock@0x2494生成echo NAME > /sys/power/wake_lock，不带timeout。
+   ZTD_AddSleepWakeUnLock@0x25670 -> libSleepWakeUnLock@0x2604，固定同名wake_unlock。
+[REDACTED_SENSITIVE_CONTEXT]
+2. 原UI主界面 processScreenBackLight@0x45c8ac：ON分支0x45cb00调用AddSleepWakeLock，
+   然后0x45cb14读取this+0x630的定时器，经GOT0xefaae0调用0x4e74d8。
+   该方法清active字节并调用lv_timer_pause。因此亮屏时暂停释放计时。
+3. 同一函数OFF分支0x45c94c读取this+0x630，经GOT0xefdf50调用0x4e74f4。
+   该方法设置active字节并依次lv_timer_reset、lv_timer_resume，开始重新计时。
+4. 定时器构造@0x45ff64..0x45ff80：callback从GOT0xefa8d0取得0x44e1fc，
+   period=0x2bf20=180000，存入this+0x630。构造器GOT0xeff260 ->0x4e7350，
+   将period原样传给lv_timer_create的毫秒参数。因此是灭屏后3分钟，而非30秒屏幕超时。
+5. 回调0x44e1fc明确字符串TUCallbackEventManager::[REDACTED_ENCODED_OR_IDENTIFIER]，
+   尾调用GOT0xefda38 -> wrapper0x5166a4 -> SDK ZTD_AddSleepWakeUnLock。
+   普通亮灭屏和boot animation亦有Add/UnLock调用；不能假定杀死进程自动释放命名kernel锁。
+
+内部Map生产者
+[REDACTED_ENCODED_OR_IDENTIFIER].txt：addLock@0x9788成功插入后0x99e4..0x9a18写Map；
+delLock@0x9b8c成功删除后0x9c88..0x9cac写Map；均调用writer@0x9334。
+writer以ofstream ios::out打开/tmp/wakelockMap.txt并逐行写name+PID后close。
+因此它不是仅Print输出，但有truncate写窗口；打开/写失败不能作为原子树查询。
+空、截断、变化中的镜像应为未知；稳定完整读可降低竞态，但不应声称有服务端原子快照保证。
+已列wakelock ubus schema无独立get/query；Print/Test有可能产生文件/日志，不应为只读开发调用。
+
+接管结论
+只等Map清除就停止原厂UI不完整：若kernel自动休眠锁仍活跃，停止UI会取消未来的3分钟回调，
+该不带租期的kernel锁可能残留，阻止休眠。该风险由调用链推得，未在用户设备执行故障试验。
+不干涉原系统的保守实现是原厂继续运行时被动等待内部锁与精确auto_sleep_lock均自然清除，
+并在停止前后重新检查；每次新亮屏重置等待条件。当前修复选择总等待360秒，超时保留原厂，
+不能为赶超时释放原厂锁、改屏幕超时或调用模拟熄屏。需要UI说明等待原厂自然休眠交接。
+如果要即时接管，必须完整复现原厂剩余定时器及归属交接；当前无已证实的剩余时间只读接口，
+不能把任意3分钟新计时或立即解锁称为无损继承。
+
+运行期同样要区分两个保护：10秒接管/回退事务guard不等于原厂熄屏后180秒延迟休眠。
+若自定义屏在LCD off事件确认后立即释放全部自有锁，可能比原厂提前进入系统睡眠。
+当前native已实现独立display_idle_guard.h：只允许自有名的固定180秒租约，在亮转暗之前取得；
+初次接管既有暗态不重新延后，重复off不续期，确认亮屏且zteSleepBacklight存在后释放。
+它与10秒接管事务guard分离，未使用原厂锁名。独立源码复核未发现该C状态转换的阻断问题；
+具体kernel租约计时、真实面板休眠唤醒仍未经过本插件实机验收。
+
+新旧组件管理
+src/ufi-plugin.js所有[REDACTED_ENCODED_OR_IDENTIFIER]原先都绑定当前TXT归档SHA。
+导入hash不同的修复TXT后，原已安装版本会被拒绝UNVERIFIED_OWNERSHIP；不能指导直接再次切换。
+当前管理器已加入唯一受信旧归档c3f71f86...8e4及完整manifest、四个执行文件的固定SHA验证；
+旧版只能恢复/移除，确认原厂及旧组件移除后才安装新版，不允许直接启动旧程序。
+若清理中断，仅严格.uninstalling标记及精确归属、无upload/owner时允许缺失已删除入口；
+尚存在的旧执行入口仍必须匹配SHA，未知版本继续拒绝。
+
+本轮取消/状态截止专项
+tests/manager-cancel.test.js：8/8通过，使用真实production-manager变换结果和本机deferred fetch，
+覆盖取消期间status失败/永不返回、恢复等待/失败/成功、迟到custom响应不覆盖结果、卸载期间不能并发取消，
+以及初次/切换前/切后首次状态15秒本地截止、busy恢复和deadline timer清理。没有真实设备请求。
+写请求网络结果未知时不能假定恢复成功；本地只读状态截止不能取消已提交的远程操作。
+
+最终shell修复复核
+supervisor恢复原厂后的guard_release失败原先被忽略，并会删掉renderer身份后报告factory-restored。
+该缺陷影响自有180秒租约的精确重试和完整卸载确认，当前代码已修复并经独立只读终审：
+释放未确认及原厂稳定未确认均保留固定失败码、supervisor/renderer PID+birth；start拒绝覆盖身份；
+controller在取得生命周期fd8后重新读取固定两份PID+birth记录，不再依赖last-status：
+这既覆盖本次取消后才产生的cleanup失败，也覆盖两个进程都被SIGKILL、来不及记录失败的情形。
+prepare_run先验证归属/目录/非链接单硬链；只重建上述记录的精确自有名，原厂稳定后逐一释放并回读，
+全部确认后才删身份及执行卸载。发信号仍需当前进程exe+birth匹配，保存的死PID不用于直接kill。
+start清除旧记录前同样只读检查每个精确名，有锁或读不清就保留记录并要求restore；无前缀扫描。
+释放曾失败但cleanup重试成功使用独立RECOVERED结果，不残留要求缺失身份重试的错误状态。
+管理器作者新增本机shell故障桩覆盖保留身份、后续重试及取消后才发布失败的时序；本agent未重复全套。
+
+结论边界
+后续补审更正：先前终审漏掉“renderer已经退出、helper仍存在”的首个cleanup分支，
+该分支原先也会丢失renderer身份。最新源码已加guard_cleanup_failed=1，并将RENDERER_STILL_ACTIVE
+纳入start拒绝及manager恢复路径。本agent已逐行核对最新实现和测试断言。
+管理器作者已报告helper存活、原厂provider恢复失败、双进程死亡卸载、start禁止覆盖专项通过；
+双死亡案例额外验证同PID但不同birth的其他锁保留，未向已死亡的PID发信号。
+本agent未增加或重复这组owner测试，当前具体修复范围未见新源码问题；不将其表述为所有故障均已穷尽。
+
+原厂的自然熄屏延迟释放已由根代理只读观察；
+新候选在实体设备上的接管显示、触摸、休眠/唤醒、退出恢复及完整卸载仍未硬件验收，不能以本机桩代替。
+本agent全部操作限本机源码、报告及测试，未向设备发请求、安装、改参或写文件。

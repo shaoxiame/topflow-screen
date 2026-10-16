@@ -1,0 +1,5 @@
+{
+  "screen-display-suspend": "cat [REDACTED_ENCODED_OR_IDENTIFIER]",
+  "screen-periodic-wakeup": "uci -q get zwrt_deviceui.Screen.screen_wakeup",
+  "sleep-provider-schema": "[REDACTED_SENSITIVE_FIELD]"
+}

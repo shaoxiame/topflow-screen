@@ -1,0 +1,7 @@
+html_view: cannot load font [REDACTED_ENCODED_OR_IDENTIFIER].ttf
+{"page": "home", "height": 480, "iterations": 50, "full_render_ms": 440.599, "scroll_repaint_ms": 84.091}
+{"page": "home-dark", "height": 480, "iterations": 50, "full_render_ms": 411.583, "scroll_repaint_ms": 82.466}
+{"page": "long-settings", "height": 750, "iterations": 50, "full_render_ms": 317.866, "scroll_repaint_ms": 58.768}
+{"page": "long-settings-dark", "height": 750, "iterations": 50, "full_render_ms": 322.917, "scroll_repaint_ms": 57.723}
+[REDACTED_ENCODED_OR_IDENTIFIER] limit=393216 entries_limit=512
+PASS: current typography fresh-vs-retained pixels/layout/hit targets; fixed light/dark header/back targets; deterministic cached glyphs; bounded glyph eviction; rotation/pitch; reinitialization and unavailable-document failures. Legacy raster is intentionally different and is not an equivalence target.

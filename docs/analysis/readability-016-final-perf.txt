@@ -1,0 +1,6 @@
+{"page": "home", "height": 480, "iterations": 50, "full_render_ms": 383.284, "scroll_repaint_ms": 135.065}
+{"page": "home-dark", "height": 480, "iterations": 50, "full_render_ms": 364.886, "scroll_repaint_ms": 135.603}
+{"page": "long-settings", "height": 658, "iterations": 50, "full_render_ms": 262.267, "scroll_repaint_ms": 55.102}
+{"page": "long-settings-dark", "height": 658, "iterations": 50, "full_render_ms": 265.348, "scroll_repaint_ms": 56.021}
+[REDACTED_ENCODED_OR_IDENTIFIER] limit=393216 entries_limit=512
+PASS: current typography fresh-vs-retained pixels/layout/hit targets; fixed light/dark header/back targets; deterministic cached glyphs; bounded glyph eviction; rotation/pitch; reinitialization and unavailable-document failures. Legacy raster is intentionally different and is not an equivalence target.

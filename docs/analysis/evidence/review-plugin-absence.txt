@@ -1,0 +1,3 @@
+both plugin directories absent
+
+STDERR:

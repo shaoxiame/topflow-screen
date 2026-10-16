@@ -1,0 +1,24 @@
+{
+  "version": "0.1.4",
+  "txt": "dist/topflow-screen-0.1.4.txt",
+  "bytes": "[REDACTED_SENSITIVE_FIELD]",
+  "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "archiveSha256": "[REDACTED_SENSITIVE_FIELD]",
+  "nativeBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "sourceHashesVerified": "[REDACTED_SENSITIVE_FIELD]",
+  "archiveEntries": "[REDACTED_SENSITIVE_FIELD]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "ADOPT_SENSOR_STATE",
+  "privateKeyScan": "[REDACTED_SENSITIVE_FIELD]",
+  "directSwitch": true,
+  "sensorAfterDrm": true,
+  "startupOrder": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "hardwareTested": false,
+  "deviceAccess": "Read-only bounded state, checksums, sensor and filtered kernel-log collection; no installation, parameter writes or execution of new binaries.",
+  "localTests": {
+    "jsRegression": 191,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "passed",
+    "startupDiagnostics": "passed",
+    "nativeApiContracts": 30
+  },
+  "boundary": "PC fix candidate. Physical [REDACTED_ENCODED_OR_IDENTIFIER] acceptance remains pending."
+}

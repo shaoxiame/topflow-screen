@@ -1,0 +1,5 @@
+{
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "ubus -v list zte_nwinfo_api",
+  "wps-api-schema": "ubus -v list zwrt_wlan",
+  "sim-api-schema": "ubus -v list zwrt_zte_mdm.api"
+}

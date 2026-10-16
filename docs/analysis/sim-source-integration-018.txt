@@ -1,0 +1,114 @@
+TopFlow 0.1.8 — physical SIM source integration (local development only)
+
+Implemented
+-----------
+The native card detail for 5G, 4G1 and 4G2 now displays current 插拔卡 / 内置卡,
+offers the other source with an explicit confirmation, and verifies exactly that
+modem's raw factory st_slot after one request. Source selection is separate from
+[REDACTED_SENSITIVE_CONTEXT]
+No generic main-baseband slot 1/2 control remains in the screen's card action path.
+The source card is directly after the card overview, before rate/signal details.
+
+Verified factory contract
+[REDACTED_ENCODED_OR_IDENTIFIER]
+                                  5G                 4G1                    4G2
+Raw read method                   get_sim_info       get_v3t_sim_info       get_v3t_sim_info
+[REDACTED_SENSITIVE_CONTEXT]
+Removable / built-in raw value    0 / [REDACTED_NUMBER] / [REDACTED_NUMBER] / 1
+SDK aggregate getter sub-id       1 / [REDACTED_NUMBER] / [REDACTED_NUMBER] / 4
+Write method                      sim_switch_slot    sub_modem_switch_slot  sub_modem_switch_slot
+Write parameters                  slot:0|1           sub_modem_num:1        sub_modem_num:0
+                                                     sub_modem_slot:0|1     sub_modem_slot:0|1
+All read/write methods use zwrt_zte_mdm.api, already present in the real schema.
+
+Evidence chain (no speculative endpoint / field)
+[REDACTED_ENCODED_OR_IDENTIFIER]
+1. [REDACTED_ENCODED_OR_IDENTIFIER].ini lines 459–462 explicitly define pSIM
+   as 插拔卡 and eSIM as the card fixed inside the device.
+2. [REDACTED_ENCODED_OR_IDENTIFIER].txt:
+   UI 0x4b09b0 binds TUFormNet_Label_pSIM to widget +0x98;
+   UI 0x4b0a00 binds TUFormNet_Label_eSIM to widget +0xa0.
+   The confirmation handlers compare the main / card2 / card3 aggregate slot
+   against 1/2, 5/6 and 3/4 respectively (0x4af624 onwards).
+3. [REDACTED_ENCODED_OR_IDENTIFIER].txt:
+   Widget +0x98 sends primary slot 0, card2 (num1,slot0), card3 (num0,slot0).
+   Widget +0xa0 sends primary slot 1, card2 (num1,slot1), card3 (num0,slot1).
+4. [REDACTED_ENCODED_OR_IDENTIFIER].txt:
+   ZTD_SetCurrentSimSlot sends field slot; [REDACTED_ENCODED_OR_IDENTIFIER] sends
+   fields sub_modem_num and sub_modem_slot unchanged.
+5. [REDACTED_ENCODED_OR_IDENTIFIER].txt:
+   SDK message type33 (constant at0x4f948; method table at0x71c20) maps to
+   zwrt_zte_mdm.api.sim_switch_slot. Type36 (0x4f950; table0x71ce8) maps to
+   zwrt_zte_mdm.api.sub_modem_switch_slot. Both agree with live schema in
+   [REDACTED_ENCODED_OR_IDENTIFIER].txt.
+6. [REDACTED_ENCODED_OR_IDENTIFIER].txt:
+   zte_sdk_parse_siminfo reads raw st_slot, converts '1' to aggregate2.
+   [REDACTED_ENCODED_OR_IDENTIFIER] reads v3t_1_st_slot ('1'→4, '0'→3) and
+   v3t_2_st_slot ('1'→6, '0'→5); GetAggregateSimSlot uses those cached fields.
+   Factory's fallback for empty string is not copied: this plugin treats empty,
+   invalid, missing, duplicate, boolean and out-of-range values as unknown.
+7. datad state.rs at1950 confirms UFI's reversed label order: 4G1=v3t_2,
+   4G2=v3t_1. Its integer().clamp(0,1) maps empty external raw slots to 0;
+   that normalized fallback is never used for source status or verification.
+[REDACTED_SENSITIVE_CONTEXT]
+   different addressing scheme. Neither is substituted for physical source ids.
+
+Observed device state (read-only)
+[REDACTED_ENCODED_OR_IDENTIFIER]
+Main get_sim_info st_slot='0' and current_sim_slot='1' were observed; raw source
+0 is the removable card. The newer get_v3t_sim_info response in
+[REDACTED_ENCODED_OR_IDENTIFIER].txt contains empty source strings for both disabled
+modules. Their source must remain 尚未确认, not 插拔卡. A separate read of
+[REDACTED_ENCODED_OR_IDENTIFIER] returned1 (source-active-slot.txt); it is deliberately
+not used as a substitute for the raw physical-source getter.
+Sanitized, identifier-free field fixtures: [REDACTED_ENCODED_OR_IDENTIFIER].
+Parent repeated the primary getter read-only during final review: the same
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+[REDACTED_ENCODED_OR_IDENTIFIER].txt. No source setter was executed.
+
+Control and resource behavior
+[REDACTED_ENCODED_OR_IDENTIFIER]
+Only opening card details, explicit refresh, confirmation and post-submit
+verification read factory source. There is no periodic source collection or
+additional daemon/file/log. Reads cache for3seconds unless explicitly refreshed.
+The existing bounded vendor_exec uses direct argv (no shell), ubus -t1, a bounded
+output buffer and process timeout. Raw response buffers are cleared after parsing;
+only source integers remain in memory.
+Disabled/unknown secondary modules cannot switch and are not implicitly enabled.
+Known raw source is independent of whether a card is physically present: switching
+away from an empty removable card is allowed when the module is enabled.
+Confirmation rechecks selected card, source, enabled state and unlocked control
+permission. After the last busy frame it rechecks cancellation/permission; the
+setter also rejects cancellation at entry. A second tap cannot resubmit.
+Transport errors can happen after a request was applied, so the code still reads
+back without retrying writes. Only a matching raw source is reported successful;
+no network-registration claim is made. Readback expires after15seconds.
+
+Validation completed on PC
+[REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_ENCODED_OR_IDENTIFIER].ps1 PASS: real raw field fixtures, all three modem
+mappings, [REDACTED_ENCODED_OR_IDENTIFIER] values, normalized fallback rejection,
+disabled/unknown guards, demand cache, exact direct argv, cancel-before-call.
+native/test-controls.ps1 PASS: actual generated detail pages and actual confirm/
+verify handlers; three modem targets; no setter before confirmation; one setter;
+exact return target; changed state/selection; relock; cancellation at the last
+busy frame; unknown/disabled source; readback timeout; ambiguous transport status
+followed by successful target readback; invalid href parameters.
+Production topflow_main.c compiled successfully for aarch64-linux-musl into a
+separate [REDACTED_ENCODED_OR_IDENTIFIER].o (no production bundle overwritten).
+Native FreeType/litehtml light/dark source-card images rendered at320x480:
+[REDACTED_ENCODED_OR_IDENTIFIER].png and [REDACTED_ENCODED_OR_IDENTIFIER].png.
+
+Not device-tested
+-----------------
+No agent source-switch setter has been sent to the real device, no module has
+been enabled and no device file/configuration has been added or changed.
+[REDACTED_SENSITIVE_CONTEXT]
+
+Files owned in this increment
+[REDACTED_ENCODED_OR_IDENTIFIER]
+native/sim_source_logic.h, [REDACTED_ENCODED_OR_IDENTIFIER].h,
+native/modem_logic.h, native/modem_pages.h,
+[REDACTED_ENCODED_OR_IDENTIFIER].h (only source verify/confirm dispatch hooks),
+[REDACTED_ENCODED_OR_IDENTIFIER].c/.ps1, native/test-controls.ps1 (source fixture/tests),
+[REDACTED_ENCODED_OR_IDENTIFIER]*, this evidence report and local derived disassembly.

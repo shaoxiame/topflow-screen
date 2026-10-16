@@ -1,0 +1,43 @@
+TopFlow native source and rebuild notes
+
+The editable local project contains native/topflow_main.c and the accompanying
+headers, static HTML/CSS, build scripts, tests and pinned open-source sources.
+The adapter and this project's code may be modified and rebuilt. The complete
+source workspace accompanies the review; no original device PIN or UFI secret
+is included in source, snapshots or generated packages.
+
+Local Windows builds from the project root:
+  pwsh -File native/build.ps1
+  pwsh -File native/build-factory-bus.ps1
+  pwsh -File native/package-native.ps1
+
+The main renderer uses Zig 0.14.1 and links its open-source rendering libraries
+statically. The factory bus helper dynamically links existing libubus and
+libubox and uses the device's existing musl loader. The helper source includes
+no closed SDK initialization. No device shared libraries or build-only import
+stubs are included in a deployment archive.
+
+Official dependency source refs:
+  https://github.com/openwrt/ubus/tree/f787c97b
+  https://github.com/openwrt/libubox/tree/75a3b870
+The public build-factory-bus.ps1 uses vendor/openwrt/link-imports.json: only
+required public ABI function declarations and the bool uloop_cancelled object.
+No private ELF input is used to generate link-only import stubs. A conventional AArch64 cross-toolchain can
+instead build against matching upstream development headers and libraries:
+  aarch64-linux-musl-gcc -Os -std=c11 -I <ubus-includes> -I <libubox-includes> \
+    native/factory_bus.c -lubus -lubox -o topflow-factory-bus-aarch64
+The helper's dynamic SONAME dependencies are recorded in build-manifest.json.
+The libraries may be rebuilt or replaced by compatible modified versions; the
+helper does not embed library signatures or prevent such modifications.
+
+See licenses/openwrt-NOTICE.txt and licenses/LGPL-2.1.txt for libubus and the
+copyright/license notices of the included OpenWrt headers. Other component
+licenses, including the offline Pinyin dictionary, are in licenses/.
+
+These commands build LOCAL review artifacts only. They do not connect to,
+install on, or start anything on the device. Hardware acceptance remains
+unperformed while the device is read-only. A successful local build or mock
+test does not prove actual display, touch, sleep or recovery behavior.
+
+Public build instructions, dependencies, font selection and test boundaries:
+  ../docs/BUILD.md

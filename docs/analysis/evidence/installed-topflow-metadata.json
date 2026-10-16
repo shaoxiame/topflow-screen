@@ -1,0 +1,30 @@
+{
+  "headBytes": 2262200,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": 2,
+  "pluginStartMarkers": 2,
+  "pluginEndMarkers": 2,
+  "plugins": [
+    {
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "hasTopflowPayload": "[REDACTED_SENSITIVE_FIELD]"
+    },
+    {
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "hasTopflowPayload": "[REDACTED_SENSITIVE_FIELD]"
+    }
+  ],
+  "topflow": [
+    {
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sourceSha256": "[REDACTED_SENSITIVE_FIELD]",
+      "reviewOnly": false,
+      "hardwareTested": false,
+      "releaseReadiness": null,
+      "archiveSha256": "[REDACTED_SENSITIVE_FIELD]",
+      "screenctlSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    }
+  ]
+}

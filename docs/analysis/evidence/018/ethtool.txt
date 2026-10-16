@@ -1,0 +1,25 @@
+{
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+		{
+			"dev": "eth0",
+			"lanwan_layer": "WAN/LAN",
+			"status": "DORMANT",
+			"speed": "-1",
+			"duplex": "unknown",
+			"rx_bytes": 3508469,
+			"rx_packets": 249562,
+			"rx_error": 0,
+			"rx_dropped": 0,
+			"rx_unicast": 0,
+			"rx_multicast": 0,
+			"rx_broadcast": 0,
+			"tx_bytes": 4076780,
+			"tx_packets": 52111,
+			"tx_error": 0,
+			"tx_dropped": 0,
+			"tx_unicast": 0,
+			"tx_multicast": 0,
+			"tx_broadcast": 0
+		}
+	]
+}

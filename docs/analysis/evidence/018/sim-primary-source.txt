@@ -1,0 +1,4 @@
+{
+  "current_sim_slot": "1",
+  "st_slot": "0"
+}

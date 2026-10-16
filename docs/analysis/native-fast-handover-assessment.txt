@@ -1,0 +1,91 @@
+TopFlow fast display handover assessment — [REDACTED_NUMBER]
+Scope: local static analysis only. No device connection, command, preflight,
+SDK initialization, lock operation or service change. Version 0.1.1 and its
+native [REDACTED_ENCODED_OR_IDENTIFIER] remain unchanged.
+
+Conclusion
+The current evidence does not establish a safe instantaneous handover through
+an existing public original API. This is an evidence limitation, not a claim
+that an alternative can never be engineered. Do not skip the waiting checks or
+delete the original locks based only on their names. The displayed remaining
+317 seconds is the remainder of the 360-second deadline, not a required delay:
+the current implementation continues as soon as both original locks clear.
+
+Confirmed public API and limits
+1. Captured [REDACTED_ENCODED_OR_IDENTIFIER].txt exposes internalDeleteWakelock with
+   sourceId:Integer and lockName:String. SDK ZTD_DeleteWakeLock@0x24808 sends
+   type80, sourceId=getpid(), [REDACTED_ENCODED_OR_IDENTIFIER]. invokeTable maps type80
+   to zwrt_zte_sleep_faw.wakelock.internalDeleteWakelock. This is a real API,
+[REDACTED_SENSITIVE_CONTEXT]
+   saved owner with sourceId. It is not a PID/starttime compare-and-delete.
+2. ZTD_SendReadytoSleep@0x248c0 only calls ZTD_DeleteWakeLock and returns1.
+   The lower SDK function submits the message and returns0. Neither result
+   proves ownership, atomic deletion, queue drainage or the timer deadline.
+   It does not release [REDACTED_ENCODED_OR_IDENTIFIER].
+3. Kernel auto-sleep lock release is ZTD_AddSleepWakeUnLock@0x25670, which
+   calls libSleepWakeUnLock@0x2604 with the fixed lock name. The library writes
+   wake_unlock. There is no PID, starttime, remaining-time or conditional-owner
+   parameter in that path. The name observed in /sys/power/wake_lock is not
+   a kernel ownership receipt. A stopped original PID does not by itself
+   prove that another same-name producer or queued operation cannot exist.
+4. Public WakeUnlock(fd:Integer) belongs to the separate external-lock API;
+   no evidence links its opaque descriptor to the original SDK's name-only
+   auto-sleep lock. Do not pass an original PID as if it were such a descriptor.
+5. set_ufi_sleep / datad sleep.set changes system sleep configuration. It is
+   not an LCD handover or a transfer of the existing 180-second timer.
+
+Active screen-off investigation
+The original SDK has the following real in-process functions:
+- [REDACTED_ENCODED_OR_IDENTIFIER]@0x114fc calls
+  setLCDOpenOrCloseForUI@0x1a078. It uses g_mutex, UICallback(80,"0"), a100ms
+  delay and ZTD_SetLcdOpenOrClose(0). It depends on initialized original state.
+- WebScreenBrightAction@0x18fa0 handles the string0/1; its off path calls
+  UICallback(80,"0") and RetsetSleeptime. The original UI then processes the
+  screen-close callback. It is not an independent headless setter contract.
+- callType index64 is [REDACTED_ENCODED_OR_IDENTIFIER]. The businessbackFun jump
+  table at0x49208 maps64 to0x19fbc, which invokes WebScreenBrightAction.
+- UICallback@0x2dfe4 invokes the registered in-process gCallback, then
+  businessbackFun. The current public zwrt_deviceui schema exposes only login
+  status, direct-power get and direct-power set; none is an LCD-off action.
+[REDACTED_SENSITIVE_CONTEXT]
+  do not yet identify a public action producing callback64. An executable
+  constant-name/string is not sufficient proof that an external API is live.
+- create_server_thread@0x17190 starts0x18dd4, which is the periodic LCD idle
+  timer loop, not an independently callable socket server.
+- CallbackFun@0x42e84 allocates memory and sends an intra-process pointer in
+  its SysV message. That queue is not a supported cross-process command API;
+  sending a pointer from a helper process would not be a safe substitute.
+- handle_signal@0x1a1cc logs the RTC callback only. It is not a proven signal
+  command for graceful display ownership transfer.
+
+Even a newly proven active-OFF API would only remove the display-timeout part
+of the wait: original processScreenBackLight OFF resets/resumes its180000ms
+LVGL timer, and the timer later releases the kernel auto-sleep lock. It does
+not export the remaining time or transfer its ownership. Killing the original
+immediately after OFF still cancels that timer owner.
+
+Conditions needed for an independently designed faster protocol
+- Prove exclusive producer/ownership of each original lock, including any
+  other SDK users and already queued messages, while preventing respawn.
+- Provide a confirmed, atomic or otherwise race-audited transfer/release
+  operation; a stable truncate-written map plus PID disappearance is not CAS.
+- Obtain/track the original timer's true remaining interval, or explicitly
+  accept and document a changed policy. Starting a fresh180s lease when the
+  original has already been dark for120s delays sleep by an extra120s and
+  cannot be described as preserving its remaining timer.
+- Hold only our finite protective lease through every transition, preserve
+[REDACTED_SENSITIVE_CONTEXT]
+  only prevents early sleep; it does not establish another lock's ownership.
+- Verify the original LCD [REDACTED_ENCODED_OR_IDENTIFIER] consistency
+  through that new protocol; never treat message delivery as applied state.
+No such new protocol is implemented or packaged in this research turn.
+
+Local evidence added
+[REDACTED_ENCODED_OR_IDENTIFIER].txt: exact SDK setters, ReadyToSleep and locks.
+[REDACTED_ENCODED_OR_IDENTIFIER].txt: business callback branch table target.
+[REDACTED_ENCODED_OR_IDENTIFIER].txt: server-named thread is an idle timer.
+[REDACTED_ENCODED_OR_IDENTIFIER].txt and ipc-callers.txt: callback and pointer IPC.
+[REDACTED_ENCODED_OR_IDENTIFIER].txt: actual GOT call sites.
+Prior evidence: [REDACTED_ENCODED_OR_IDENTIFIER].txt, [REDACTED_ENCODED_OR_IDENTIFIER].txt,
+sdk-invoke-table.txt, [REDACTED_ENCODED_OR_IDENTIFIER].txt, [REDACTED_ENCODED_OR_IDENTIFIER].txt,
+[REDACTED_ENCODED_OR_IDENTIFIER].txt and [REDACTED_ENCODED_OR_IDENTIFIER].txt.

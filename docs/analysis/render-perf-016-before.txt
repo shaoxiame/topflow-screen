@@ -1,0 +1,4 @@
+{"page": "home", "height": 480, "iterations": 50, "full_render_ms": 514.7, "scroll_repaint_ms": 514.7}
+{"page": "home-dark", "height": 480, "iterations": 50, "full_render_ms": 496.091, "scroll_repaint_ms": 496.091}
+{"page": "long-settings", "height": 658, "iterations": 50, "full_render_ms": 369.22, "scroll_repaint_ms": 369.22}
+{"page": "long-settings-dark", "height": 658, "iterations": 50, "full_render_ms": 375.971, "scroll_repaint_ms": 375.971}

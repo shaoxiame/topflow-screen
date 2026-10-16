@@ -1,0 +1,15 @@
+screen_pid
+18392
+screen_owner
+             command   pid dev master a   uid      magic
+     zte_topsw_devui [REDACTED_NUMBER]   y    y     [REDACTED_NUMBER]
+touch_device
+crw-------    1 root     root       13,  69 Oct 15 14:24 /dev/input/event5
+ufi_pids
+[REDACTED_NUMBER]
+datad_pid
+10392
+uptime
+73472.[REDACTED_NUMBER].08
+
+STDERR:

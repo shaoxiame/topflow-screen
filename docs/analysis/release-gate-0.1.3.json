@@ -1,0 +1,33 @@
+{
+  "schema": 3,
+  "version": "0.1.3",
+  "state": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "code": "[REDACTED_SENSITIVE_FIELD]",
+  "hardwareVerified": false,
+  "reviewOnly": false,
+  "localValidationPassed": true,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": [
+    "[REDACTED_SENSITIVE_CONTEXT]"
+  ],
+  "pendingDeviceAcceptance": true,
+  "reason": "本机直接切换、配置/光感接管、回退、卸载及旧版迁移修复已开发和审查，C/JS故障测试通过。旧ADOPT_CONFIG具体坏字段没有停后快照；仅生成用户手动测试的0.1.3修复候选，不宣称实机验收。",
+  "requiredNativeProtocol": 1,
+  "requiredReceiptVersion": 2,
+  "requiredArchiveChecks": "[REDACTED_SENSITIVE_FIELD]",
+  "evidence": [
+    "[REDACTED_ENCODED_OR_IDENTIFIER].1.3-review.txt",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].log",
+    "tests/direct-handover.test.js",
+    "tests/native-supervisor.test.js",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].test.js",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].ps1",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].ps1",
+    "[REDACTED_SENSITIVE_CONTEXT]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].ps1",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt"
+  ],
+  "allowedOutput": "[REDACTED_SENSITIVE_CONTEXT]",
+  "forbiddenClaim": "hardware verified, guaranteed lossless, fully factory-equivalent, or confirmed previous device root cause",
+  "devicePolicy": "No device commands, installs, changes or switch tests in this revision; all validation ran on PC.",
+  "previousGate": "analysis/release-gate-0.1.2.json"
+}

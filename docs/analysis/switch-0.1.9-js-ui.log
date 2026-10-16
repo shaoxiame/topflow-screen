@@ -1,0 +1,40 @@
+✔ persistent header and power/settings show actual charging states without font icons (19.6758ms)
+✔ clicking each card opens live rates, QCI and contract rates first in the requested order (3.4923ms)
+✔ card detail contract rates show unavailable markers instead of stale or fabricated zero values (3.9689ms)
+✔ card source labels use raw factory sources and never expose provision-slot controls (2.0023ms)
+✔ late source data for a previous card cannot overwrite the current card (0.972ms)
+✔ mounting, navigating every page and refreshing never perform hidden writes (2.9955ms)
+✔ three main screens expose each common function once and return through the actual entry hierarchy (4.3546ms)
+✔ native settings expose four distinct groups and WPS is discoverable in Wi-Fi only (0.4192ms)
+✔ global day/night button replaces page numbers, preserves parent navigation and changes no device state (1.7484ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ unreadable engine status is not presented as a stopped engine or doubled version prefix (0.7534ms)
+✔ destroy removes action handlers so remounting read-only cannot retain old control authority (0.5591ms)
+✔ changing Wi-Fi section retains its values and submits only edited fields, including unknown existing encryption (4.2778ms)
+✔ LTE and NR serving cell selection keeps PCI, channel and band in their own radio family (1.5737ms)
+✔ horizontal swipes cycle only main pages and reject vertical, edited, cancelled or mismatched gestures (2.9122ms)
+✔ home hides back navigation, detail headers return one level and no screen page exposes factory controls (3.6123ms)
+✔ device aggregation replaces the single home and three-page navigation never changes network mode (1.2999ms)
+✔ disabled or unknown aggregation returns home to normal independently of tunnel online state (1.3226ms)
+✔ aggregation home expires after five seconds and read failure immediately returns to normal (1.1962ms)
+✔ a mode change during a swipe cancels that gesture while a normal refresh preserves it (1.0826ms)
+✔ device mode updates do not navigate away from detail forms and back uses the latest home mode (1.4641ms)
+✔ a late read cannot recreate mode-expiry timers after the screen is destroyed (0.7635ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ read-only form submissions and toggles never build, execute or send an API action (0.9765ms)
+✔ per-card APN pages retain the target, parent navigation and exact protocol numbers (2.9874ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ a late APN response cannot replace the currently selected card configuration (1.6576ms)
+✔ guest Wi-Fi switch targets only its own guest band and waits for confirmation (1.1587ms)
+✔ new settings pages preserve unknown states and all readonly actions stay local (2.172ms)
+✔ cooling page treats always-on independently and readonly or unknown toggles never create writes (1.7387ms)
+✔ cooling switches keep their target and do not execute before confirmation or after cancellation (1.5562ms)
+✔ aggregation quota, physical port and second-page carrier details use normalized API values without writes (2.2232ms)
+ℹ tests 35
+ℹ suites 0
+ℹ pass 35
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 164.106

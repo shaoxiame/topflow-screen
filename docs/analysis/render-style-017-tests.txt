@@ -1,0 +1,1 @@
+PASS: actual CSS bold width/coverage, gradient stops/rounded corner, same-scale white/mint chart lines, inset latest markers, subtle guide-only data gaps, missing-vs-zero semantics, bounded chart cache/clipping, 180-degree rendering; 11/13/29px bold contrast glyphs retain all strokes on light/dark backgrounds

@@ -1,0 +1,3 @@
+{
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "printf 'SENSOR_KERNEL_WINDOW\\n'; dmesg | grep -E 'stk3|stk8|lightsensor|light_sensor|als_enable|sensor.*enable|topflow-screen|qpic_display_pipe' | tail -100; printf 'SENSOR_SYSFS_NAMES\\n'; ls /sys/bus/i2c/drivers; printf '[REDACTED_ENCODED_OR_IDENTIFIER]\\n'; find [REDACTED_ENCODED_OR_IDENTIFIER] -maxdepth 5 -iname '*stk*' -o -iname '*light*'; printf '[REDACTED_ENCODED_OR_IDENTIFIER]\\n'; cat [REDACTED_ENCODED_OR_IDENTIFIER]"
+}

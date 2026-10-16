@@ -1,0 +1,257 @@
+PID:18392
+Name:	zte_topsw_devui
+Umask:	0022
+State:	S (sleeping)
+Tgid:	18392
+Ngid:	0
+Pid:	18392
+PPid:	1
+TracerPid:	0
+Uid:	0	0	0	0
+Gid:	0	0	0	0
+FDSize:	64
+Groups:	 
+VmPeak:	   57948 kB
+VmSize:	   57540 kB
+VmLck:	       0 kB
+VmPin:	       0 kB
+VmHWM:	   24788 kB
+VmRSS:	   24420 kB
+RssAnon:	   12648 kB
+RssFile:	   11768 kB
+RssShmem:	       4 kB
+VmData:	   29508 kB
+VmStk:	     168 kB
+VmExe:	   11092 kB
+VmLib:	   15308 kB
+VmPTE:	     116 kB
+VmSwap:	       0 kB
+CoreDumping:	0
+THP_enabled:	0
+Threads:	7
+SigQ:	1/5910
+SigPnd:	[REDACTED_NUMBER]
+ShdPnd:	[REDACTED_NUMBER]
+SigBlk:	[REDACTED_NUMBER]
+SigIgn:	[REDACTED_NUMBER]
+SigCgt:	[REDACTED_NUMBER]
+CapInh:	[REDACTED_NUMBER]
+CapPrm:	000001ffffffffff
+CapEff:	000001ffffffffff
+CapBnd:	000001ffffffffff
+CapAmb:	[REDACTED_NUMBER]
+NoNewPrivs:	0
+Seccomp:	0
+Seccomp_filters:	0
+[REDACTED_ENCODED_OR_IDENTIFIER]:	not vulnerable
+[REDACTED_ENCODED_OR_IDENTIFIER]:	unknown
+Cpus_allowed:	f
+Cpus_allowed_list:	0-3
+Mems_allowed:	1
+Mems_allowed_list:	0
+voluntary_ctxt_switches:	[REDACTED_NUMBER]
+[REDACTED_ENCODED_OR_IDENTIFIER]:	563031
+[REDACTED_NUMBER]-00ed5000 r-xp [REDACTED_NUMBER]:32 2381                              [REDACTED_ENCODED_OR_IDENTIFIER]
+00eef000-00f00000 r--p 00adf000 103:32 2381                              [REDACTED_ENCODED_OR_IDENTIFIER]
+00f00000-00f01000 rw-p 00af0000 103:32 2381                              [REDACTED_ENCODED_OR_IDENTIFIER]
+00f01000-00f0a000 rw-p [REDACTED_NUMBER]:00 0 
+02c87000-02c88000 ---p [REDACTED_NUMBER]:00 0                                  [heap]
+02c88000-02c8f000 rw-p [REDACTED_NUMBER]:00 0                                  [heap]
+7f819f3000-7f81a39000 rw-p [REDACTED_NUMBER]:00 0 
+7f81a39000-7f81a3b000 ---p [REDACTED_NUMBER]:00 0 
+7f81a3b000-7f81a64000 rw-p [REDACTED_NUMBER]:00 0 
+7f81a65000-7f81a67000 rw-p [REDACTED_NUMBER]:00 0 
+7f81a67000-7f81a69000 ---p [REDACTED_NUMBER]:00 0 
+7f81a69000-7f81a92000 rw-p [REDACTED_NUMBER]:00 0 
+7f81a92000-7f81a94000 ---p [REDACTED_NUMBER]:00 0 
+7f81a94000-7f81ab5000 rw-p [REDACTED_NUMBER]:00 0 
+7f81ab5000-7f81ab7000 ---p [REDACTED_NUMBER]:00 0 
+7f81ab7000-7f81ad8000 rw-p [REDACTED_NUMBER]:00 0 
+7f81ad8000-7f81ada000 ---p [REDACTED_NUMBER]:00 0 
+7f81ada000-7f81b0c000 rw-p [REDACTED_NUMBER]:00 0 
+7f81b0c000-7f81b0e000 ---p [REDACTED_NUMBER]:00 0 
+7f81b0e000-7f81b2f000 rw-p [REDACTED_NUMBER]:00 0 
+7f81b30000-7f81b32000 rw-p [REDACTED_NUMBER]:00 0 
+7f81b47000-7f81b48000 rw-p [REDACTED_NUMBER]:00 0 
+7f81b4b000-7f81b57000 rw-p [REDACTED_NUMBER]:00 0 
+7f81b5a000-7f81b62000 rw-p [REDACTED_NUMBER]:00 0 
+7f81b63000-7f81b6b000 rw-p [REDACTED_NUMBER]:00 0 
+7f81b6d000-7f81b95000 rw-p [REDACTED_NUMBER]:00 0 
+7f81b96000-7f81c99000 rw-p [REDACTED_NUMBER]:00 0 
+7f81c99000-7f81ce4000 rw-s [REDACTED_NUMBER]:18 240                            /dev/dri/card0
+7f81ce4000-7f81d2f000 rw-s [REDACTED_NUMBER]:18 240                            /dev/dri/card0
+7f81d2f000-7f81d52000 rw-p [REDACTED_NUMBER]:00 0 
+7f81d52000-7f81d53000 r--s [REDACTED_NUMBER]:3a 90                            /etc/localtime.zoneinfo
+7f81d53000-7f81d7b000 rw-p [REDACTED_NUMBER]:00 0 
+7f81d7b000-7f81f4c000 r-xp [REDACTED_NUMBER]:32 3395                          /usr/lib/libstdc++.so.6.0.30
+7f81f4c000-7f81f5b000 r--p 001d1000 103:32 3395                          /usr/lib/libstdc++.so.6.0.30
+7f81f5b000-7f81f5c000 rw-p 001e0000 103:32 3395                          /usr/lib/libstdc++.so.6.0.30
+7f81f5c000-7f81f5f000 rw-p [REDACTED_NUMBER]:00 0 
+7f81f5f000-7f81f7e000 r-xp [REDACTED_NUMBER]:32 3078                          /usr/lib/liblog.so.0.0.0
+7f81f7e000-7f81f7f000 r--p 0000f000 103:32 3078                          /usr/lib/liblog.so.0.0.0
+7f81f7f000-7f81f80000 rw-p [REDACTED_NUMBER]:32 3078                          /usr/lib/liblog.so.0.0.0
+7f81f80000-7f81f9f000 r-xp [REDACTED_NUMBER]:32 3305                          /usr/lib/libqmi_encdec.so.1
+7f81f9f000-7f81fa0000 r--p 0000f000 103:32 3305                          /usr/lib/libqmi_encdec.so.1
+7f81fa0000-7f81fa1000 rw-p [REDACTED_NUMBER]:32 3305                          /usr/lib/libqmi_encdec.so.1
+7f81fa1000-7f8203a000 r-xp [REDACTED_NUMBER]:32 1470                          /lib/libmbedcrypto.so.16
+7f8203a000-7f82041000 r--p [REDACTED_NUMBER]:32 1470                          /lib/libmbedcrypto.so.16
+7f82041000-7f82042000 rw-p [REDACTED_NUMBER]:32 1470                          /lib/libmbedcrypto.so.16
+7f82042000-7f82044000 rw-p [REDACTED_NUMBER]:00 0 
+7f82044000-7f8208d000 r-xp [REDACTED_NUMBER]:32 3312                          /usr/lib/libqmiservices.so
+7f8208d000-7f820a4000 r--p [REDACTED_NUMBER]:32 3312                          /usr/lib/libqmiservices.so
+7f820a4000-7f820a6000 rw-p [REDACTED_NUMBER]:32 3312                          /usr/lib/libqmiservices.so
+7f820a6000-7f820c5000 r-xp [REDACTED_NUMBER]:32 3294                          /usr/lib/libqmi_cci.so.1
+7f820c5000-7f820c6000 r--p 0000f000 103:32 3294                          /usr/lib/libqmi_cci.so.1
+7f820c6000-7f820c7000 rw-p [REDACTED_NUMBER]:32 3294                          /usr/lib/libqmi_cci.so.1
+7f820c7000-7f820e6000 r-xp [REDACTED_NUMBER]:32 3514                          /usr/lib/libzteqmi.so
+7f820e6000-7f820e7000 r--p 0000f000 103:32 3514                          /usr/lib/libzteqmi.so
+7f820e7000-7f820e8000 rw-p [REDACTED_NUMBER]:32 3514                          /usr/lib/libzteqmi.so
+7f820e8000-7f82107000 r-xp [REDACTED_NUMBER]:32 3174                          /usr/lib/libnl-genl-3.so.200.26.0
+7f82107000-7f82108000 r--p 0000f000 103:32 3174                          /usr/lib/libnl-genl-3.so.200.26.0
+7f82108000-7f82109000 rw-p [REDACTED_NUMBER]:32 3174                          /usr/lib/libnl-genl-3.so.200.26.0
+7f82109000-7f82137000 r-xp [REDACTED_NUMBER]:32 3170                          /usr/lib/libnl-3.so.200.26.0
+7f82137000-7f82139000 r--p 0001e000 103:32 3170                          /usr/lib/libnl-3.so.200.26.0
+7f82139000-7f8213a000 rw-p [REDACTED_NUMBER]:32 3170                          /usr/lib/libnl-3.so.200.26.0
+7f8213a000-7f82159000 r-xp [REDACTED_NUMBER]:32 3005                          /usr/lib/libjson-c.so.5.2.0
+7f82159000-7f8215a000 r--p 0001f000 103:32 3005                          /usr/lib/libjson-c.so.5.2.0
+7f8215a000-7f8215b000 rw-p [REDACTED_NUMBER]:32 3005                          /usr/lib/libjson-c.so.5.2.0
+7f8215b000-7f8217a000 r-xp [REDACTED_NUMBER]:32 1464                          /lib/libblobmsg_json.so.[REDACTED_NUMBER]
+7f8217a000-7f8217b000 r--p 0000f000 103:32 1464                          /lib/libblobmsg_json.so.[REDACTED_NUMBER]
+7f8217b000-7f8217c000 rw-p [REDACTED_NUMBER]:32 1464                          /lib/libblobmsg_json.so.[REDACTED_NUMBER]
+7f8217c000-7f8219b000 r-xp [REDACTED_NUMBER]:32 1480                          /lib/libubus.so.[REDACTED_NUMBER]
+7f8219b000-7f8219c000 r--p 0000f000 103:32 1480                          /lib/libubus.so.[REDACTED_NUMBER]
+7f8219c000-7f8219d000 rw-p [REDACTED_NUMBER]:32 1480                          /lib/libubus.so.[REDACTED_NUMBER]
+7f8219d000-7f821bc000 r-xp [REDACTED_NUMBER]:32 3507                          [REDACTED_ENCODED_OR_IDENTIFIER].so
+7f821bc000-7f821bd000 r--p 0000f000 103:32 3507                          [REDACTED_ENCODED_OR_IDENTIFIER].so
+7f821bd000-7f821be000 rw-p [REDACTED_NUMBER]:32 3507                          [REDACTED_ENCODED_OR_IDENTIFIER].so
+7f821be000-7f821dd000 r-xp [REDACTED_NUMBER]:32 3499                          /usr/lib/libztecrypto.so
+7f821dd000-7f821de000 r--p 0000f000 103:32 3499                          /usr/lib/libztecrypto.so
+7f821de000-7f821df000 rw-p [REDACTED_NUMBER]:32 3499                          /usr/lib/libztecrypto.so
+7f821df000-7f821fe000 r-xp [REDACTED_NUMBER]:32 3487                          /usr/lib/libzte_sleep.so
+7f821fe000-7f821ff000 r--p 0000f000 103:32 3487                          /usr/lib/libzte_sleep.so
+7f821ff000-7f82200000 rw-p [REDACTED_NUMBER]:32 3487                          /usr/lib/libzte_sleep.so
+7f82200000-7f8221f000 r-xp [REDACTED_NUMBER]:32 2769                          [REDACTED_ENCODED_OR_IDENTIFIER].so
+7f8221f000-7f82220000 r--p 0000f000 103:32 2769                          [REDACTED_ENCODED_OR_IDENTIFIER].so
+7f82220000-7f82221000 rw-p [REDACTED_NUMBER]:32 2769                          [REDACTED_ENCODED_OR_IDENTIFIER].so
+7f82221000-7f82250000 r-xp [REDACTED_NUMBER]:32 3495                          /usr/lib/libzte_zbus-2.0.0.so
+7f82250000-7f82251000 r--p 0001f000 103:32 3495                          /usr/lib/libzte_zbus-2.0.0.so
+7f82251000-7f82252000 rw-p [REDACTED_NUMBER]:32 3495                          /usr/lib/libzte_zbus-2.0.0.so
+7f82252000-7f82254000 rw-p [REDACTED_NUMBER]:00 0 
+7f82254000-7f822e9000 r-xp [REDACTED_NUMBER]:32 3392                          /usr/lib/libssl.so.3
+7f822e9000-7f822f4000 r--p [REDACTED_NUMBER]:32 3392                          /usr/lib/libssl.so.3
+7f822f4000-7f822f8000 rw-p 000a0000 103:32 3392                          /usr/lib/libssl.so.3
+7f822f8000-7f82687000 r-xp [REDACTED_NUMBER]:32 2817                          /usr/lib/libcrypto.so.3
+7f82687000-7f826d8000 r--p 0037f000 103:32 2817                          /usr/lib/libcrypto.so.3
+7f826d8000-7f826db000 rw-p 003d0000 103:32 2817                          /usr/lib/libcrypto.so.3
+7f826db000-7f826dd000 rw-p [REDACTED_NUMBER]:00 0 
+7f826dd000-7f8270c000 r-xp [REDACTED_NUMBER]:32 3473                          /usr/lib/libz.so.1.3.1
+7f8270c000-7f8270d000 r--p 0001f000 103:32 3473                          /usr/lib/libz.so.1.3.1
+7f8270d000-7f8270e000 rw-p [REDACTED_NUMBER]:32 3473                          /usr/lib/libz.so.1.3.1
+7f8270e000-7f827f9000 r-xp [REDACTED_NUMBER]:32 2892                          /usr/lib/libfreetype.so.6.12.2
+7f827f9000-7f827fe000 r--p 000db000 103:32 2892                          /usr/lib/libfreetype.so.6.12.2
+7f827fe000-7f827ff000 rw-p 000e0000 103:32 2892                          /usr/lib/libfreetype.so.6.12.2
+7f827ff000-7f8281e000 r-xp [REDACTED_NUMBER]:32 1479                          /lib/libubox.so.[REDACTED_NUMBER]
+7f8281e000-7f8281f000 r--p 0000f000 103:32 1479                          /lib/libubox.so.[REDACTED_NUMBER]
+7f8281f000-7f82820000 rw-p [REDACTED_NUMBER]:32 1479                          /lib/libubox.so.[REDACTED_NUMBER]
+7f82820000-7f8284f000 r-xp [REDACTED_NUMBER]:32 1467                          /lib/libgcc_s.so.1
+7f8284f000-7f82850000 r--p 0001f000 103:32 1467                          /lib/libgcc_s.so.1
+7f82850000-7f82851000 rw-p [REDACTED_NUMBER]:32 1467                          /lib/libgcc_s.so.1
+7f82851000-7f82996000 r-xp [REDACTED_NUMBER]:32 3481                          /usr/lib/libzte_gesture.so
+7f82996000-7f829a1000 r--p [REDACTED_NUMBER]:32 3481                          /usr/lib/libzte_gesture.so
+7f829a1000-7f829a2000 rw-p [REDACTED_NUMBER]:32 3481                          /usr/lib/libzte_gesture.so
+7f829a2000-7f829a4000 rw-p [REDACTED_NUMBER]:00 0 
+7f829a4000-7f829d3000 r-xp [REDACTED_NUMBER]:32 2844                          /usr/lib/libdrm.so.2.4.0
+7f829d3000-7f829d4000 r--p 0001f000 103:32 2844                          /usr/lib/libdrm.so.2.4.0
+7f829d4000-7f829d5000 rw-p [REDACTED_NUMBER]:32 2844                          /usr/lib/libdrm.so.2.4.0
+7f829d5000-7f82a43000 r-xp [REDACTED_NUMBER]:32 3477                          /usr/lib/libzte_SDKowrt.so
+7f82a43000-7f82a45000 r--p 0005e000 103:32 3477                          /usr/lib/libzte_SDKowrt.so
+7f82a45000-7f82a4c000 rw-p [REDACTED_NUMBER]:32 3477                          /usr/lib/libzte_SDKowrt.so
+7f82a4c000-7f82ffa000 rw-p [REDACTED_NUMBER]:00 0 
+7f82ffa000-7f83019000 r-xp [REDACTED_NUMBER]:32 3509                          /usr/lib/libztelog.so
+7f83019000-7f8301a000 r--p 0000f000 103:32 3509                          /usr/lib/libztelog.so
+7f8301a000-7f8301b000 rw-p [REDACTED_NUMBER]:32 3509                          /usr/lib/libztelog.so
+7f8301b000-7f8306a000 r-xp [REDACTED_NUMBER]:32 3218                          /usr/lib/libpng16.so.16.39.0
+7f8306a000-7f8306b000 r--p 0003f000 103:32 3218                          /usr/lib/libpng16.so.16.39.0
+7f8306b000-7f8306c000 rw-p [REDACTED_NUMBER]:32 3218                          /usr/lib/libpng16.so.16.39.0
+7f8306c000-7f83257000 r-xp [REDACTED_NUMBER]:32 3482                          /usr/lib/libzte_lvgl.so
+7f83257000-7f8325c000 r--p 001db000 103:32 3482                          /usr/lib/libzte_lvgl.so
+7f8325c000-7f8325d000 rw-p 001e0000 103:32 3482                          /usr/lib/libzte_lvgl.so
+7f8325d000-7f8465f000 rw-p [REDACTED_NUMBER]:00 0 
+7f8465f000-7f8467e000 r-xp [REDACTED_NUMBER]:32 1481                          /lib/libuci.so
+7f8467e000-7f8467f000 r--p 0000f000 103:32 1481                          /lib/libuci.so
+7f8467f000-7f84680000 rw-p [REDACTED_NUMBER]:32 1481                          /lib/libuci.so
+7f84680000-7f84708000 r-xp [REDACTED_NUMBER]:32 1465                          /lib/libc.so
+7f84708000-7f8471a000 rw-p [REDACTED_NUMBER]:00 0 
+7f8471a000-7f8471b000 rw-s [REDACTED_NUMBER]:01 0                              /SYSV00001413 (deleted)
+7f8471b000-7f8471d000 r--p [REDACTED_NUMBER]:00 0                              [vvar]
+7f8471d000-7f8471e000 r-xp [REDACTED_NUMBER]:00 0                              [vdso]
+7f8471e000-7f84721000 rw-p 0008e000 103:32 1465                          /lib/libc.so
+7f84721000-7f84723000 rw-p [REDACTED_NUMBER]:00 0 
+7fdfee0000-7fdff0a000 rw-p [REDACTED_NUMBER]:00 0                              [stack]
+total 0
+lr-x------    1 root     root            64 Oct 15 14:24 0 -> /dev/null
+l-wx------    1 root     root            64 Oct 15 14:24 1 -> /dev/null
+lrwx------    1 root     root            64 Oct 15 14:24 10 -> socket:[47415]
+lrwx------    1 root     root            64 Oct 15 14:24 11 -> socket:[47416]
+lrwx------    1 root     root            64 Oct 15 14:24 12 -> socket:[46856]
+lrwx------    1 root     root            64 Oct 15 14:24 13 -> socket:[47420]
+lrwx------    1 root     root            64 Oct 15 14:24 14 -> /dev/input/event5
+l-wx------    1 root     root            64 Oct 15 14:24 2 -> /dev/null
+lr-x------    1 root     root            64 Oct 15 22:35 3 -> [REDACTED_ENCODED_OR_IDENTIFIER].ttf
+lrwx------    1 root     root            64 Oct 15 14:24 4 -> /dev/dri/card0
+lr-x------    1 root     root            64 Oct 15 22:48 5 -> [REDACTED_ENCODED_OR_IDENTIFIER].ttf
+lrwx------    1 root     root            64 Oct 15 14:17 6 -> socket:[[REDACTED_NUMBER]]
+lrwx------    1 root     root            64 Oct 15 14:24 7 -> anon_inode:[eventpoll]
+lr-x------    1 root     root            64 Oct 15 14:24 8 -> pipe:[47414]
+l-wx------    1 root     root            64 Oct 15 14:24 9 -> pipe:[47414]
+[REDACTED_ENCODED_OR_IDENTIFIER]
+/
+#!/bin/sh /etc/rc.common
+
+USE_PROCD=1
+START=48
+STOP=99
+[REDACTED_ENCODED_OR_IDENTIFIER]
+ 
+#. /lib/functions.sh
+ 
+start_service() {
+        procd_open_instance
+        procd_set_param command "$PROG"
+        procd_set_param respawn [REDACTED_NUMBER]
+        procd_close_instance
+}
+ 
+reload_service() {
+        restart
+}
+
+# for zte bsp dengqingtian unload sitr ko
+stop_service() {
+		killall -15 zte_topsw_devui
+		sleep 1
+		killall -9 zte_topsw_devui
+		sleep 1
+		rmmod sitronix_ts_spi.ko
+}
+#!/bin/sh /etc/rc.common
+
+USE_PROCD=1
+START=19
+STOP=8
+[REDACTED_ENCODED_OR_IDENTIFIER]
+ 
+#. /lib/functions.sh
+ 
+start_service() {
+        procd_open_instance
+        procd_set_param command "$PROG"
+        procd_set_param respawn
+        procd_close_instance
+}
+ 
+reload_service() {
+        restart
+}
+
+STDERR:

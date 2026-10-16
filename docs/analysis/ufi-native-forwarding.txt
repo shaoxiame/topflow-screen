@@ -1,0 +1,30 @@
+[REDACTED_SENSITIVE_CONTEXT]
+
+[REDACTED_SENSITIVE_CONTEXT]
+
+Authentication contract
+[REDACTED_SENSITIVE_CONTEXT]
+- Directory evidence gives [REDACTED_ENCODED_OR_IDENTIFIER].db. roots.txt confirms existing /usr/bin/sqlite3; root's later read-only evidence [REDACTED_ENCODED_OR_IDENTIFIER].txt confirms SQLite3.53.3 and JSON1. Root verified loopback UFI health at127.0.0.1:2333.
+[REDACTED_SENSITIVE_CONTEXT]
+- Nonempty WAL/journal, unknown file [REDACTED_ENCODED_OR_IDENTIFIER], query error/timeout, non64hex or extra output, or inode/mtime/SQLite change-counter movement reject the read. No journal mode changes, locks or source DB sidecars are created. The active source DB can remain unchanged; a concurrent update safely causes temporary unavailability rather than an automatic retry.
+[REDACTED_SENSITIVE_CONTEXT]
+
+UFI API mapping
+[REDACTED_SENSITIVE_CONTEXT]
+- GET [REDACTED_ENCODED_OR_IDENTIFIER] and POST same path?enable=0|1 with {}.
+[REDACTED_SENSITIVE_CONTEXT]
+
+Native integration
+[REDACTED_SENSITIVE_CONTEXT]
+
+Local verification
+[REDACTED_SENSITIVE_CONTEXT]
+
+[REDACTED_SENSITIVE_CONTEXT]
+
+Unverified live boundaries
+[REDACTED_SENSITIVE_CONTEXT]
+- Current root release gate is [REDACTED_ENCODED_OR_IDENTIFIER]. Original lifecycle handover/guard/provider protocols are implemented and tested locally. Physical screen/touch, original service coexistence, power policy, lossless restoration, authentication against the live database and actual channel delivery still require device acceptance. A local protocol test is not a physical acceptance result.
+
+Additional native original-API work
+[REDACTED_SENSITIVE_CONTEXT]

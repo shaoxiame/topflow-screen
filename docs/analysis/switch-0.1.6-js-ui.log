@@ -1,0 +1,58 @@
+✔ battery charge_status is distinct from charger presence and percentage (2.83ms)
+✔ normalizes byte rates, QoS, zero values and unknown secondary SIMs without identifiers (0.3672ms)
+✔ missing data stays unknown; valid zero is not conflated with unavailable (0.8884ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ primary cellular controls cannot silently target an external modem or overwrite unrelated fields (0.8696ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ downloaded exact-version snapshot can be normalized without network calls (0.8633ms)
+✔ APN protocol enums follow the vendor contract and unreadable targets never become writable (0.3101ms)
+✔ factory supplement distinguishes disabled cards from absence and expires through a single cached read (0.4613ms)
+✔ factory bridge permits only exact vendor reads and confirmed targeted writes with readback (0.5485ms)
+✔ factory work and boot settings use fixed original interfaces and refuse unknown readback (0.3251ms)
+✔ guest, client, traffic and power actions keep vendor types and sparse target semantics (0.6507ms)
+✔ cooling normalization preserves always-on independently from legacy enabled and instantaneous activity (0.1471ms)
+✔ cooling actions are exact boolean policies; readonly and unconfirmed control issue zero requests (0.4524ms)
+✔ cooling mock changes only local policies and returns to the documented thermal strategies (0.1642ms)
+✔ cooling live writes once and waits for matching independent policy readback (0.5159ms)
+✔ cooling stale cache, hardware policy failure and stopped liquid waveform never report verified success (0.9383ms)
+✔ builds exact UFI aggregation and cell payloads, rejects unsupported modem selection (0.343ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ read-only gate prevents all write transports, including a caller-supplied transport (0.1676ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ explicit live mode still requires confirmation and separately confirms external effects (0.1594ms)
+✔ mock actions are local, change readable state, and cannot mutate supplied input (1.0098ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ saved-but-test-failed forwarding responses preserve saved state without automatic retries (0.1445ms)
+✔ device errors and ambiguous success remain failures with no retry (0.0921ms)
+✔ UFI bridge preserves authenticated postData and does not log in (0.1216ms)
+✔ serving cell data drops sentinels and disconnected placeholders while retaining valid zero PCI/SINR (0.278ms)
+✔ frequency capabilities are read independently, extended LTE list outranks bitmask (0.1912ms)
+✔ automatic frequency restore uses the complete nonempty reported list, never empty string (0.2702ms)
+✔ band/mode reading never invokes cell collection; mock changes remain observable (0.2811ms)
+✔ current 4G_AND_5G is preserved for display without guessing a writable mapping (0.0888ms)
+✔ persistent header and power/settings show actual charging states without font icons (19.254ms)
+✔ mounting, navigating every page and refreshing never perform hidden writes (3.1054ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ unreadable engine status is not presented as a stopped engine or doubled version prefix (0.896ms)
+✔ destroy removes action handlers so remounting read-only cannot retain old control authority (0.6626ms)
+✔ changing Wi-Fi section retains its values and submits only edited fields, including unknown existing encryption (5.1808ms)
+✔ LTE and NR serving cell selection keeps PCI, channel and band in their own radio family (1.6533ms)
+✔ horizontal swipes cycle only main pages and reject vertical, edited, cancelled or mismatched gestures (3.3576ms)
+✔ home hides back navigation, detail headers return one level and no screen page exposes factory controls (3.596ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ read-only form submissions and toggles never build, execute or send an API action (1.0855ms)
+✔ per-card APN pages retain the target, parent navigation and exact protocol numbers (3.1094ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ a late APN response cannot replace the currently selected card configuration (1.5294ms)
+✔ guest Wi-Fi switch targets only its own guest band and waits for confirmation (0.9633ms)
+✔ new settings pages preserve unknown states and all readonly actions stay local (2.0149ms)
+✔ cooling page treats always-on independently and readonly or unknown toggles never create writes (1.5944ms)
+✔ cooling switches keep their target and do not execute before confirmation or after cancellation (1.9278ms)
+ℹ tests 53
+ℹ suites 0
+ℹ pass 53
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 181.9219

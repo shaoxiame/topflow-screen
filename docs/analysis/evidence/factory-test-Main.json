@@ -1,0 +1,451 @@
+{
+  "FeatureTest": [
+    {
+      "FeatureName": "[REDACTED_SENSITIVE_FIELD]",
+      "FeatureType": " ",
+      "Steps": [
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Scroll",
+          "ScrollInterval": 60,
+          "Points": [
+            {
+              "x": 240,
+              "y": 250
+            },
+            {
+              "x": 46,
+              "y": 250
+            }
+          ]
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Scroll",
+          "ScrollInterval": 60,
+          "Points": [
+            {
+              "x": 46,
+              "y": 250
+            },
+            {
+              "x": 240,
+              "y": 250
+            }
+          ]
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        }
+      ]
+    },
+    {
+      "FeatureName": "[REDACTED_SENSITIVE_FIELD]",
+      "FeatureType": " ",
+      "Steps": [
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Scroll",
+          "ScrollInterval": 60,
+          "Points": [
+            {
+              "x": 240,
+              "y": 250
+            },
+            {
+              "x": 46,
+              "y": 250
+            }
+          ]
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 75,
+            "y": 220
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "6"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 29,
+            "y": 52
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 218,
+            "y": 243
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "7"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 25,
+            "y": 47
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 60,
+            "y": 330
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "17"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 22,
+            "y": 54
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 222,
+            "y": 326
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "19"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 29,
+            "y": 59
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 56,
+            "y": 426
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "18"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 30,
+            "y": 53
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 222,
+            "y": 411
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "68"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 26,
+            "y": 52
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 152,
+            "y": 115
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "22"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 25,
+            "y": 49
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "6"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 30,
+            "y": 54
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Condition",
+          "Condition": "Form ID",
+          "Value": "0"
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 174,
+            "y": 146
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Click",
+          "Point": {
+            "x": 174,
+            "y": 146
+          },
+          "Times": 1
+        },
+        {
+          "Action": "Wait",
+          "Seconds": 1
+        },
+        {
+          "Action": "Scroll",
+          "ScrollInterval": 60,
+          "Points": [
+            {
+              "x": 72,
+              "y": 286
+            },
+            {
+              "x": 252,
+              "y": 260
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

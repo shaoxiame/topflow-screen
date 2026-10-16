@@ -1,0 +1,106 @@
+{
+  "scope": "[REDACTED_SENSITIVE_CONTEXT]",
+  "bytes": "[REDACTED_SENSITIVE_FIELD]",
+  "samples": [
+    {
+      "compileMs": 3.928,
+      "registerMs": 6.492,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    },
+    {
+      "compileMs": 0.014,
+      "registerMs": 5.876,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    },
+    {
+      "compileMs": 0.008,
+      "registerMs": 5.793,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    },
+    {
+      "compileMs": 0.01,
+      "registerMs": 5.352,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    },
+    {
+      "compileMs": 0.008,
+      "registerMs": 5.487,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    },
+    {
+      "compileMs": 0.01,
+      "registerMs": 5.703,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    },
+    {
+      "compileMs": 0.01,
+      "registerMs": 5.642,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    },
+    {
+      "compileMs": 0.01,
+      "registerMs": 5.441,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    },
+    {
+      "compileMs": 0.009,
+      "registerMs": 5.553,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    },
+    {
+      "compileMs": 0.008,
+      "registerMs": 5.5,
+      "counts": {
+        "entries": 1,
+        "requests": 0,
+        "timers": 0,
+        "observers": "[REDACTED_SENSITIVE_FIELD]"
+      }
+    }
+  ]
+}

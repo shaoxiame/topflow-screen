@@ -1,0 +1,39 @@
+TopFlow 0.1.8 聚合、网口与载波接口审计（[REDACTED_NUMBER]）
+
+本分支不连接设备，不写入设备。实际数据由主代理独立只读采集，所有代码验证在电脑完成。
+
+概念边界
+载波聚合（CA）是主蜂窝无线侧NR/LTE多载波，来源仅net.nrca/lteca。聚合网络是多卡/网口的网络聚合服务，来源aggregation.*及经验证原厂隧道；两者独立，CA数量、频段或带宽绝不作为聚合网络在线判据。第二页载波聚合（CA）与聚合网络保持分区。
+
+已确认问题
+1. 0.1.7 topflow_main.c 将 aggregation.enabled=true 且 online 非 true 一律显示“等待上线”。这混淆“未上线”与“接口没有成功观测隧道”。
+2. 官方剩余流量和今日用量实际已经在 aggregation.traffic.[REDACTED_ENCODED_OR_IDENTIFIER]，但原生画面没有绑定。
+3. runtime.link_rates 的 eth0 速率已有，但页面未呈现；接口字节计数不能证明插入网线，更不能证明外网已通。
+4. 第二主页面没有渲染 net.nrca/lteca 描述符，主载波100MHz带宽也未展示。
+
+证据
+- [REDACTED_ENCODED_OR_IDENTIFIER].json：实际聚合开关当前为false，MULTIWAN；剩余9316368043字节，今日125405字节；nrca/lteca为空；NR n78，100MHz；eth0当前rx/tx均为0。
+- [REDACTED_ENCODED_OR_IDENTIFIER].txt：当前carrier=0。[REDACTED_ENCODED_OR_IDENTIFIER].txt：原厂zwrt_router.api router_get_ethtool_info返回eth0 DORMANT、speed=-1、WAN/LAN。
+- [REDACTED_ENCODED_OR_IDENTIFIER].txt：已确认原厂可执行文件/usr/bin/zte_icg_agg。当前普通模式没有运行中的原厂聚合进程。
+- [REDACTED_ENCODED_OR_IDENTIFIER].10.79/docs/STATE_SCHEMA.md：聚合enabled/online语义、字节流量字段、11列NR/LTE载波描述符、runtime.link_rates单位为字节每秒。
+- 同版本rust/src/state.rs:436的TCP扫描没有在该函数自行枚举原厂fd，而仅接收[REDACTED_ENCODED_OR_IDENTIFIER]；空输入返回0与false。源码还读取TCP列末项，真实Linux inode位于第10列。因此不把legacy [REDACTED_ENCODED_OR_IDENTIFIER] flag直接当成离线事实。
+
+落地实现
+- native/network_status.h：区分模式开启、已证通道在线、fresh QUIC遥测连接中、未知。原厂false没有观测证明时写“聚合已开启／当前接口未提供隧道连接状态”。读取官方剩余和今日流量；未知保留“—”，有效0保留0。显示以十进制GB/MB/KB明确换算。
+- native/network_runtime.h：最多每3秒只读eth0 carrier/speed；只在状态明确原厂聚合开启时尝试读取/proc。固定comm及/usr/bin/zte_icg_agg路径，检查进程starttime、自己的fd socket inode与ESTABLISHED出站连接，排除监听源端口、回环/无效远端，二次校验进程与fd。依据官方STATE_SCHEMA，不用可能过期的静态服务器IP/端口限制云端动态下发的真实连接。32毫秒循环检查预算、4096目录项、256fd、8192TCP行、256匹配行。无shell、主动网络探测、ubus写入、日志或文件创建。无证据、超时、进程/fd变化一律未知。
+- root已在非滑动、非忙碌、亮屏周期集成上述缓存，超过6秒不再展示缓存证明。原厂proc正证据只能覆盖未知；不能覆盖custom QUIC失效信息。
+- 原生第二页渲染当前主载波（即便nrca为空也显示n78/100MHz），并显示最多8条经验证的NR/LTE载波频段、PCI、ARFCN、带宽、RSRP、SINR。无描述符只说未报告附加载波，不声称硬件未支持CA。
+- src/device-api.js、src/screen-ui.js同步聚合状态、剩余/今日、网口与第二页载波详情。浏览器无法直接读取物理carrier时仍明确未知，不按流量猜测。
+
+本机验证
+- [REDACTED_ENCODED_OR_IDENTIFIER].ps1 PASS：实际脱敏字段fixture，原厂观测缺失、custom遥测过期、流量0/无效数值、网口未知/插拔、官方载波描述符、坏/重复载波、HTML边界、主载波。
+- [REDACTED_ENCODED_OR_IDENTIFIER].ps1 PASS：实际生产读取函数针对本机假/proc目录，原厂出站连接、动态IP/端口和缺失配置、无所有权、入站/回环连接、错误exe、PID变更、fd变更、时间预算、3秒缓存、缓存过期、custom隔离、carrier/speed。
+[REDACTED_SENSITIVE_CONTEXT]
+- root另对实际main的presentation代码做集成验证。
+
+尚未确认
+- 当前设备没有启用聚合且严格保持只读，没有为测试推拨钮、启动聚合或修改网络。故原厂真实在线socket、动态下发服务器和满载速度仍需用户实机确认；未证实原厂持有出站连接时不能假称在线。
+- 此只读补充只检查IPv4原厂TCP；纯IPv6或不可读时会显示状态未提供。QUIC使用既有datad遥测。
+- 当前网口未插入，已证未插入读取正确；插入和协商速率由本机边界fixture验证，尚无实机插线样本。
+- 当前未报告附加载波，CA字段格式来自版本匹配官方文档，本机有契约fixture，未进行强制锁频/测速制造CA。
+- 以上均不承诺所有原厂设置已经完整移植；短信/锁屏和画质由其他分支修复，本报告不替其作硬件验收。

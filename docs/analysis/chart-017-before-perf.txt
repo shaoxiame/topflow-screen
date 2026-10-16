@@ -1,0 +1,1 @@
+{"scope": "desktop native micro-chart plus buffer reset", "iterations": 1000, "total_ms": 96.96, "per_chart_ms": 0.09696}

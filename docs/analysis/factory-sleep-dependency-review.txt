@@ -1,0 +1,106 @@
+Factory display / system-sleep dependency review
+Reviewed offline on [REDACTED_NUMBER]. No device methods were invoked and no device files
+or parameters were changed. The downloaded ELF files were parsed, never executed.
+
+Release decision: NO-GO for a lossless replacement claim.
+
+Concrete cross-process dependency
+
+1. [REDACTED_ENCODED_OR_IDENTIFIER].txt records [REDACTED_ENCODED_OR_IDENTIFIER] as an
+   independent running process. Its init script uses procd respawn, START=47;
+   zte_topsw_devui starts at 48. Stopping only the display does not stop the sleep
+   service, so preserving that process alone does not preserve its inputs.
+2. In zte_topsw_sleep_faw, the event-registration path references
+   zwrt_deviceui_event.lcdstatus at virtual address 0x529c. A relocation at
+   0x2faf0 resolves the stored callback to 0xcc44.
+3. Callback 0xcc44 identifies itself as [REDACTED_ENCODED_OR_IDENTIFIER] in its diagnostic
+   string and parses a string field named lcd_status (0xcd20). Parse failures or
+   missing fields log an error and return without running either state transition.
+4. The on comparison uses literal "on" at 0x14072, then dispatches an internal
+   state message and calls the function through GOT 0x2fd18 (RELA addend 0xbc34).
+   The off comparison uses literal "off" at 0x14deb, dispatches the opposite state
+   and calls GOT 0x2fc68 (RELA addend 0xbe08).
+5. The shared argument at 0x31168 is initialized from "zteSleepBacklight" at
+   0x5864. Function 0xbc34 builds an echo command ending in
+   /sys/power/wake_lock (0xbcc4); function 0xbe08 uses
+   /sys/power/wake_unlock (0xbe98). Both have bounded error retries.
+   This proves that the LCD event influences a kernel wake lock, not merely a
+   cosmetic screen-state label.
+
+Evidence files:
+- [REDACTED_ENCODED_OR_IDENTIFIER].txt: selected literal strings and offsets.
+- [REDACTED_ENCODED_OR_IDENTIFIER].selected-disasm.txt: event registration, callback,
+  backlight wake-lock name initialization and lock/unlock functions.
+- [REDACTED_ENCODED_OR_IDENTIFIER] and .init: downloaded originals.
+- [REDACTED_ENCODED_OR_IDENTIFIER].txt: the factory UI process maps
+  /usr/lib/libzte_SDKowrt.so and /usr/lib/libzte_lvgl.so.
+- libzte_SDKowrt.so contains zwrt_deviceui_event.lcdstatus at file offset 0x535d2;
+  the downloaded sleep binary contains it at 0x12af9.
+
+[REDACTED_SENSITIVE_CONTEXT]
+
+- SDK ZTD_SetLcdOpenOrClose at 0x18988 calls the imported-symbol address of
+  [REDACTED_ENCODED_OR_IDENTIFIER] at 0x18b24. The UI wrapper
+  setLCDOpenOrCloseForUI at 0x1a078 calls ZTD_SetLcdOpenOrClose at 0x1a13c and
+  resets the sleep timer; its off path joins that call at 0x1a1bc.
+- [REDACTED_ENCODED_OR_IDENTIFIER] at 0x4336c chooses "off" for zero and "on"
+  for nonzero. Literal addresses are 0x47bfb and 0x484f5. It creates an object
+  containing zbustype=3002 (double literal at 0x54318), pthread_id,
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+  at 0x43440.
+- The SDK eventTable entry at 0x70170 contains type 3002, flag 1 and a relocated
+  name pointer at 0x70178 resolving to 0x535d2, zwrt_deviceui_event.lcdstatus.
+  This links the actual LCD transition function to the event consumed by the
+  independently running sleep manager; it is stronger than a shared string alone.
+[REDACTED_SENSITIVE_CONTEXT]
+  SDK initialization or event-sending function was executed on the device.
+- Additional SDK methods ZTD_AddSleepWakeLock and ZTD_AddSleepWakeUnLock use
+  a separate [REDACTED_ENCODED_OR_IDENTIFIER]. Their complete transition contract
+  has not been validated, so this is another dependency to trace, not a proposed
+  event-replacement implementation.
+
+Practical consequence / uncertainty
+
+The current native replacement has no zwrt_deviceui_event.lcdstatus emission or
+corresponding factory wake-lock lifecycle. A last on event can therefore leave the
+sleep manager's backlight lock unchanged after factory exit; a last off event can
+leave it unaware that the replacement display became active. This can alter
+suspend eligibility or wake behavior. Those are inferences from the demonstrated
+[REDACTED_SENSITIVE_CONTEXT]
+paths have not been proven to compensate. A custom framebuffer heartbeat neither
+updates this kernel lock nor proves that system sleep still behaves correctly.
+
+Do not patch this by guessing and blindly sending a single off/on event. A correct
+replacement needs the full sleep/wake protocol, state restoration and transitions,
+[REDACTED_SENSITIVE_CONTEXT]
+An absolute trial lease would only limit exposure; it would not prove equivalence.
+
+touch_status_get / direct_power interfaces
+
+[REDACTED_ENCODED_OR_IDENTIFIER].txt:94-97 confirms the live zwrt_deviceui
+object and its three methods. SDK invokeTable entries 128-130 (ids [REDACTED_NUMBER])
+contain [REDACTED_ENCODED_OR_IDENTIFIER] and [REDACTED_ENCODED_OR_IDENTIFIER]. The sleep
+binary does not contain those three method strings, so this review does not claim
+that sleep_faw directly calls them or invent their caller-specific error behavior.
+Removing their process-hosted provider still makes those service paths unavailable;
+the full set of callers and recovery semantics remains to be demonstrated.
+
+Direct power is not wholly owned by that UI object: official datad 0.10.79
+rust/src/control.rs direct_supply uses independent zwrt_bsp.charger list/set and
+five readback attempts. SDK ZTD_SetDirectPowerMode likewise builds a
+[REDACTED_ENCODED_OR_IDENTIFIER] enable/disable payload; ZTD_GetDirectPowerMode reads
+zwrt_deviceui.Device.[REDACTED_ENCODED_OR_IDENTIFIER] via UCI. A working independent
+charger method is evidence for that one operation, not proof that the stopped
+UI's policies, callbacks and compatibility endpoints are all replaced.
+
+Required release gates
+
+- Preserve the original provider while acquiring the display safely, or implement
+  and validate equivalent [REDACTED_ENCODED_OR_IDENTIFIER] behavior; simply keeping files
+  and the touch driver is not sufficient.
+- Map every factory-owned service/event and critical policy used by remaining
+  processes. Unknown dependencies remain a release blocker.
+- Verify normal use, screen timeout, wake, charging/direct supply, temperature
+[REDACTED_SENSITIVE_CONTEXT]
+- Until then deliver source, local UI preview and this review as an uninstalled
+  review candidate. Do not label the TXT a ready, harmless or fully adapted release.

@@ -1,0 +1,94 @@
+TopFlow 0.1.1 — UFI compatibility and preflight correction review
+Date: [REDACTED_NUMBER]
+
+CURRENT FROZEN LOCAL PACKAGE
+Files: dist/topflow-screen-0.1.1.txt and dist/topflow-screen.txt (identical bytes)
+Bytes: 1556739
+TXT SHA256: [REDACTED_ENCODED_OR_IDENTIFIER]
+Native archive SHA256: [REDACTED_ENCODED_OR_IDENTIFIER]
+Main binary SHA256: [REDACTED_ENCODED_OR_IDENTIFIER]
+Bus helper SHA256: [REDACTED_ENCODED_OR_IDENTIFIER]
+Maximum source line: 1361 characters. One script, manager-only JS,
+[REDACTED_SENSITIVE_CONTEXT]
+
+DEVICE POLICY AND EVIDENCE
+This agent performed no device request or mutation. Root collected only reads.
+[REDACTED_SENSITIVE_CONTEXT]
+not been activated or write-tested. hardwareTested remains false.
+Earlier absent-path and zero-saved-plugin evidence was a historical snapshot;
+it does not describe the current installed state. Later switch-failure evidence
+confirms the original c3f71f86 native archive is installed, its files match, the
+preflight exited, and the original PID18392 still owns the display.
+
+ESTABLISHED CAUSES AND CORRECTIONS
+1. Real UFI entry clipping: .functions-container height follows only its inner
+   .collapse_box, overflow:hidden; our appended button was outside the measured
+   box but inside the clipping parent. It now sits after that parent. The actual
+   downloaded collapse observer is exercised in local visible-placement tests.
+2. The old C runtime called /sbin/ubus; device evidence proves that path absent
+   and /bin/ubus present. Native calls now use the actual installed binary.
+3. Native preflight stderr was discarded, while the manager polled a generic
+   target process. Only bounded whitelisted failure codes now survive cleanup
+   and status, and the manager returns the exact reason immediately.
+4. Original internal-lock map updates may truncate; the native reader requires
+   two complete, stable snapshots. Only transient [REDACTED_ENCODED_OR_IDENTIFIER]
+   lock codes permit bounded passive retries with the original still running.
+5. The original UI holds a kernel autosleep lock until a 180-second userspace
+   timer after display-off. Stopping it early could orphan that lock. The new
+   preflight/adopt both require natural release. Root's passive device reading
+   observed the release with factory PID18392 unchanged. No original lock is
+   cleared by this plugin. Own runtime on-to-off uses a separate finite180s
+   idle lease; the ten-second transaction guard stays separate.
+
+MANAGER AND LIFECYCLE
+- Waiting is at most360 suspend-inclusive seconds (/proc/uptime), retried every
+  five seconds; heartbeat remains CLOCK_MONOTONIC. Countdown requires the exact
+  live supervisor. Unsupported/always-on configurations fail without changes.
+- Cancellation can interrupt pending read-only status requests; it does not
+  report success until the explicit restore barrier and factory readback finish.
+  All status reads have a local15-second deadline. Late replies cannot overwrite
+  confirmed cancellation; a pending or failed restore never becomes success.
+- Restore/uninstall hold [REDACTED_ENCODED_OR_IDENTIFIER] locks. They reconstruct
+  only exact own guard names from root-owned published PID/birth records, even
+  after both custom processes die. Signalling still requires a live matching
+  executable and birth time. Original stability precedes every guard release.
+- Unconfirmed restore, surviving helper, or unconfirmed own-lock release retains
+  identities. Start cannot overwrite those records or any still-active exact
+  saved lock. Successful release/readback is required before clearing identities
+  or reporting complete component removal. No prefix lock scan is used.
+- Only exact delivered old c3f71f86 archive ownership, member list and four
+  executable SHA256 values are accepted for recovery/update. Old executable
+  bytes are never launched as if they were new. A single confirmed update uses
+  the new embedded controller to restore/remove, verify absence, install and
+  start the new archive while retaining the current UFI record. Unknown or
+  changed installations are preserved. A verifiable interrupted uninstall may
+  omit already-deleted executables; every remaining executable still hashes.
+
+UFI IMPORT CONTRACT
+The real handlePluginFileUpload updates editor/RAM; the separate Save action
+[REDACTED_SENSITIVE_CONTEXT]
+Users must remove the old TopFlow record, save/refresh, then import and save the
+versioned0.1.1 TXT; simply renaming and stacking a duplicate is not an upgrade.
+Use the independent “TopFlow 屏幕 · 管理” entry, not its source-editor filename.
+Documented run_shell and upload_file response/directory contracts are preserved.
+[REDACTED_SENSITIVE_CONTEXT]
+uses the documented dedicated name API only after two exact unique-block reads;
+it verifies only this block disappeared or reports the remaining manual step.
+
+LOCAL VALIDATION (not physical-device acceptance)
+- Native shell42 + manager14 + production7 + cancellation/timeout8:71/71 passed.
+- Builder14 + actual downloaded UFI import/save/full-script tests3:17/17 passed.
+- Shell tests redirect every device/proc/service path locally. Real POSIX child
+  shell descriptors and inode barriers cover controller ABA/subshell cases;
+  Windows flock/kill/ubus operations are simulated, not hardware proof.
+- Migration tests use the exact retained old archive and real crypto SHA256
+  checks; no recovery behavior is inferred merely from a shared member list.
+- Builder verifies all69 native source hashes, current script/UI contents,
+  both ELF hashes, display-compatibility fields and bounded script source lines.
+Root is responsible for the separate final whole-test-suite and browser pass.
+
+KNOWN LIMIT
+The native [REDACTED_ENCODED_OR_IDENTIFIER] behavior and corrected switch/restore must
+[REDACTED_SENSITIVE_CONTEXT]
+of complete factory equivalence or lossless operation. No claim that all prior
+reported slowness was reproduced or fixed is made.

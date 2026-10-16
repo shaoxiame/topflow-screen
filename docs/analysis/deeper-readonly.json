@@ -1,0 +1,8 @@
+{
+  "deeper-tools": "command -v ubus; command -v uci; ls -l /bin/ubus /sbin/ubus /usr/bin/ubus /usr/sbin/ubus /var/run/ubus/ubus.sock 2>/dev/null; ubus -h 2>&1",
+  "deeper-procd-read": "[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]",
+  "deeper-deviceui-config": "[REDACTED_SENSITIVE_FIELD]",
+  "deeper-router-mode": "uci -q get zwrt_router.network.opms_wan_mode; uci -q get zwrt_router.tmp_router.icg_agg_status",
+  "deeper-state": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]",
+  "deeper-capabilities": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]"
+}

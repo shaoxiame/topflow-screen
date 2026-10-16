@@ -1,0 +1,39 @@
+TopFlow 0.2.0 开机启动生命周期审查
+日期：[REDACTED_NUMBER]；全部检查仅在本机文件和隔离 Shell fixture 上进行，未访问设备。
+
+实现位置
+- native/screenctl.sh：自启开关、状态、有限等待 worker、每次启动一次、取消/恢复/卸载联动。
+- native/boot-hook.sh：UFI 文档规定的 [REDACTED_ENCODED_OR_IDENTIFIER].sh 精确行编辑。
+- 不修改原厂 init、rc.local、UFI 服务、网络配置；沿用现有监管器和显示接管/失败恢复路径。
+
+调用与状态
+- autostart-enable --confirmed：只注册以后开机执行，不在当前操作接管屏幕。
+- autostart-disable --confirmed：移除自有启动行、关闭配置并取消本次尚未启动的 worker；不停止已工作的插件屏幕。
+- autostart-run：由 UFI 约开机 20 秒后的标准 hook 后台调用。最多等待 120 秒就绪，然后只调用一次原有 start --confirmed --autostart。
+- status 附加 autostart.[REDACTED_ENCODED_OR_IDENTIFIER]，固定枚举、无日志内容和凭据。
+- 原有 start 退出 0 仅说明监管器 PID 已发布，worker 另外要求三次健康状态，不能把命令提交当作成功。
+
+并发与恢复
+- 开始等待前持 lifecycle/control 锁，记录唯一 boot_id 尝试和 PID+进程出生时间后释放这两把锁。
+- 等待期间仅持自有 autostart.lock；原厂正常运行，界面可以操作。
+- 真正接管前重新取得同一安装的 lifecycle/control 锁，核对 inode、安装标记、自启许可、共享入口、完整文件校验、取消标记和本次 boot_id。
+- 一次失败不自动重试。既有 supervisor 负责恢复原厂，worker 不创建第二套显示监管，不反复抢占屏幕。
+- 手动恢复原厂写入本次启动取消标记并仅停止身份匹配的 worker，保留下一次开机自启配置。
+- start 的监管进程显式关闭 fd 6，启动完成后没有额外常驻自启进程或自启锁继承。
+
+归属与清理
+- 静态 boot-integrity.sha256 由打包器生成，覆盖包内全部普通文件，排除自身，避免自引用。
+- 持久许可绑定安装 archive hash 与 integrity manifest hash；所有入口拒绝链接、非单链接文件、校验不一致及不明共享启动行。
+- shared hook 只能是 shebang 后第 2 行的精确唯一命令；保留其它插件原字节/权限。未知或重复相似命令拒绝更改。
+- 卸载先移除自有 hook、取消并确认 worker 消失，再沿现有显示恢复与组件清理流程。旧版本无新 helper 且无本插件 hook 时兼容恢复/卸载。
+- 自有目录只增加有限标记/锁；/tmp 只覆盖固定 [REDACTED_ENCODED_OR_IDENTIFIER]，不追加日志。
+
+验证
+- tests/autostart-native.test.js：真实控制器逻辑 + 隔离 proc/service 文件；就绪超时、一次启动、失败不重试、取消、身份复核、同锁检查、开关、原厂恢复、完整卸载。
+- 真实 screenctl + 真实 boot-hook 联合用例：已有他方启动行 → enable → status → disable → enable → uninstall；共享文件原字节恢复，插件 root/run 均消失。
+- 原有 native-supervisor 的只读状态、未完成安装和失败阶段回读三个严格断言已适配新增字段并通过。
+- 固化旧版 0.1.9 的受信迁移、文件改动拒绝和中断卸载恢复测试已通过。
+- 完整日志：[REDACTED_ENCODED_OR_IDENTIFIER].log、[REDACTED_ENCODED_OR_IDENTIFIER].log；共享 hook 独立审查另见 [REDACTED_ENCODED_OR_IDENTIFIER].log。
+
+限制
+- 本次未重启设备、未安装新包、未启用设备自启。UFI 实际开机时序、实体屏接管和重启后验收仍需用户上传后验证。

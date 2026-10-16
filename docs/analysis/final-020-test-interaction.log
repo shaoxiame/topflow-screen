@@ -1,0 +1,1 @@
+PASS: continuous gesture [REDACTED_ENCODED_OR_IDENTIFIER], monotonic settle skips late frames, no offscreen DRM submit, pinned swipe rows, scrolled-source commit/cancel document/scroll, retained scroll repaint, actual main branches preserve new input and exclude 200ms preparation from animation, sleep cancels to source before policy and frees motion buffers

@@ -1,0 +1,82 @@
+TopFlow native lifecycle readiness — offline review, [REDACTED_NUMBER]
+
+Current status: NOT READY for a claim of lossless factory replacement.
+No device installation, process control or device writes were performed by this agent.
+
+The supervisor preserves factory files and the loaded touch driver, stops only the
+verified zte_topsw_devui procd service, and restores it after its own renderer exits,
+stalls for more than 12 seconds, or conflicts with a reappearing factory process.
+Restore waits for verified PID/start-time ownership and the supervisor lifetime lock;
+uninstall checks the same factory PID/start-time on three consecutive observations.
+These checks establish process and first-frame-heartbeat evidence, not visual,
+touch, power-management or factory-service equivalence.
+
+There is currently no default absolute test lease. A healthy renderer heartbeat can
+keep the custom display running indefinitely. A separate 60/120-second trial lease
+could bound a future explicit experiment, but would not establish compatibility.
+SIGKILL, power loss and kernel failure can bypass shell cleanup; no absolute rollback
+guarantee is made.
+
+New blocking evidence reported by root/native review: the factory UI also hosts
+zwrt_deviceui [REDACTED_ENCODED_OR_IDENTIFIER]* and SDK logic for automatic brightness,
+screen timeout, screen lock, fan and liquid cooling. Stopping the factory UI can
+remove those services and policies. Leaving files/driver intact is insufficient to
+[REDACTED_SENSITIVE_CONTEXT]
+and lifecycle behavior need an equivalent implementation or a different ownership
+architecture before recommending the package for normal use.
+
+Uninstall scope and boundaries:
+- Before upload, the manager writes a fixed manifest and archive ownership marker.
+- The TXT contains the same fixed controller source as its archive and can execute
+  it in a shell subprocess from memory, even when extraction never produced scripts.
+- The manager compares the complete expected manifest and exact archive hash before
+  status/recovery/cleanup of an existing directory. Missing or mismatched ownership
+[REDACTED_SENSITIVE_CONTEXT]
+- Deletion is limited to [REDACTED_ENCODED_OR_IDENTIFIER] and /tmp/topflow-screen;
+  unknown entries, links (including hard links), non-regular objects and nested
+  mounts refuse deletion. No recursive rm, factory file changes or boot hooks.
+- Runtime cleanup completes before the remaining ownership manifest is removed,
+  preserving an ownership anchor through most interrupted-cleanup stages.
+- A crash between mkdir and a complete ownership manifest, or during final metadata
+  removal, can leave a directory that cannot be proven owned. It is intentionally
+  preserved. This is a safe refusal boundary, not an automatic complete-cleanup claim.
+- UFI's supplied API section 16 documents /api/plugin/uninstall{name}; AoYou 2.10
+  uses this same endpoint. Following root's explicit direction, the manager now
+  implements it after native cleanup: two unchanged reads identify exactly one
+  matching script and safe actual .txt basename, then a dedicated single-record
+  call, followed by verification that only that block disappeared. An unavailable
+  endpoint, unknown/error response or failed state verification explicitly falls
+[REDACTED_SENSITIVE_CONTEXT]
+  The backend does not document compare-and-swap; two reads cannot eliminate a
+  concurrent mutation between the second read and the API call. No real deletion
+  request was sent to the device during development.
+- Upload completion and extraction share fd9 with the lifecycle controller and
+  recheck ownership after acquisition. An active upload marker blocks uninstall.
+  Only a completed upload API response releases it. A lost connection or closed
+  client with unknown upload outcome stays blocked, because elapsed silence cannot
+  prove that the backend will not write a delayed uploaded file. This is another
+  explicit refusal boundary, not a claim of perfect cleanup after every failure.
+
+Local verification at this review: build, manager and shell lifecycle tests passed
+37/37, including cancelled writes, upload failure with subsequent explicit cleanup,
+in-memory partial-install status/cleanup, mismatched ownership, hard-link refusal,
+unknown-file refusal, orphan process ownership and factory restore ordering.
+All shell paths, /proc entries, locks, service calls and signals were local fixtures.
+
+Machine-enforced release boundary:
+- analysis/release-gate.json records [REDACTED_ENCODED_OR_IDENTIFIER].
+- Default tools/build.cjs refuses output. Explicit --review-only produces only
+  review/topflow-screen.UNVERIFIED.html and refuses dist or its descendants.
+- The embedded reviewOnly payload blocks install preparation, archive upload,
+  extraction and renderer start. UI buttons reflect the blocked state; direct
+  handler invocation is also blocked before an installation confirmation.
+- Factory restoration and ownership-verified uninstall remain available for an
+  already-installed matching component set, with normal explicit confirmation.
+- Earlier dist outputs were preserved under dist/unverified with .UNVERIFIED
+  suffixes. They are obsolete unverified artifacts and must not be uploaded.
+- Local host checks reviewOnly before executing the generated candidate; all
+  device transports are local stubs and native writes are rejected.
+- The builder additionally verifies native manifest source hashes against the
+  current workspace and compares both archived lifecycle scripts and all archived
+  native UI resources byte-for-byte. Stale archives refuse packaging even if their
+  original archive/binary checksums are otherwise valid.

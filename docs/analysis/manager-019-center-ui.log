@@ -1,0 +1,35 @@
+✔ reviewed SDK bundles without overwriting another plugin export or making requests (1.6023ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ production manager retains lifecycle/auth helpers verbatim and contains no preview adapters or simulation API (2.1687ms)
+✔ production TXT manager needs no browser API modules, loads with zero calls and opens with exactly one read (16.4463ms)
+✔ optional plugin center uses the real version once and stops as soon as uninstall is confirmed (4.8781ms)
+✔ production install and restore keep explicit confirmation and verified real control sequence (6.8376ms)
+✔ version panel compares only the imported TXT with components and never checks an invented remote release (4.1502ms)
+✔ update from a running old screen restores and replaces components in one confirmation and preserves the UFI record (3.5559ms)
+✔ update preserves review, upload, wait, changed-version and failed-read barriers (10.0529ms)
+✔ update cannot install after failed factory recovery or unconfirmed cleanup and cannot claim a failed new start succeeded (9.0906ms)
+✔ update readiness cannot accept a healthy process belonging to a replaced old or incomplete component set (18.7893ms)
+✔ update holds one busy lock across cleanup, upload and start and suppresses duplicate clicks and refresh (3.2888ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✔ production failures preserve upload lock, failed recovery and review-only barriers (4.1442ms)
+✔ failure arriving on the final refresh preserves the native phase instead of the generic switch timeout (4.7147ms)
+✔ direct switching permits bounded slow handover and still requires three fresh healthy observations (5.5314ms)
+✔ direct-switch polling exits early with a late native failure after the old ten-read budget (6.2082ms)
+✔ direct-switch confirmation remains bounded when no target or failure is observed (9.3535ms)
+✔ a rejected start cannot attribute its error to the unchanged previous failure record (2.7516ms)
+✔ a new failure on a rejected start is read back with its current native phase (1.697ms)
+✔ consecutive status read failures stop polling and report only bounded transport diagnostics (2.5544ms)
+✔ final recovery read exposes the latest native error without erasing repeated status-read failures (2.2727ms)
+✔ a transient status read failure still permits three fresh healthy observations (2.6638ms)
+✔ a refreshed newer failure supersedes the earlier poll phase and updates the recovery action (2.0252ms)
+✔ production uninstall removes only native components and the uniquely verified UFI record (1.9973ms)
+✔ entry remains outside the actual UFI collapse observer clipping region in both menu states (1.5383ms)
+✔ manager caches only its validated private snapshot; later public payload mutation cannot change lifecycle commands (1.9972ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 198.4552

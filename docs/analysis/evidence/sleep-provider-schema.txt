@@ -1,0 +1,3 @@
+'zwrt_zte_sleep_faw.power_status' @0a421f71
+
+STDERR:

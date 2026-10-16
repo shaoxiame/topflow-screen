@@ -1,0 +1,62 @@
+[
+  {
+    "start": "0x4285c4",
+    "size": "0x4cc",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetLcdTouchStatus wrapper"
+  },
+  {
+    "start": "0x43eafc",
+    "size": "0x1e8",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetTouchUILoginState wrapper"
+  },
+  {
+    "start": "0x444920",
+    "size": "0xdc",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetTouchUILoginState wrapper"
+  },
+  {
+    "start": "0x448e78",
+    "size": "0x6a8",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetTouchUILoginState wrapper"
+  },
+  {
+    "start": "0x44a74c",
+    "size": "0x120",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetTouchUILoginState wrapper"
+  },
+  {
+    "start": "0x450980",
+    "size": "0x22c",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetTouchUILoginState wrapper"
+  },
+  {
+    "start": "0x45c8ac",
+    "size": "0x6b4",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetTouchUILoginState wrapper"
+  },
+  {
+    "start": "0x45c8ac",
+    "size": "0x6b4",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetTouchUILoginState wrapper"
+  },
+  {
+    "start": "0x45c8ac",
+    "size": "0x6b4",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetTouchUILoginState wrapper"
+  },
+  {
+    "start": "0x45db58",
+    "size": "0x864",
+    "instruction": "[REDACTED_SENSITIVE_FIELD]",
+    "symbol": "SetTouchUILoginState wrapper"
+  }
+]

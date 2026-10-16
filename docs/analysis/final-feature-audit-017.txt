@@ -1,0 +1,60 @@
+TopFlow 0.1.7 最终功能审计（电脑本地，[REDACTED_NUMBER]）
+
+审计范围与结论
+本轮只读取本地源码、先前下载的原厂/UFI证据和本地测试结果，没有连接设备、安装、切换、发送短信、修改设置或卸载设备组件。下述“已接”指存在真实接口与界面路径且可做本机契约回归，不等于相应物理功能已在本版本实机验收。
+明确点名的主要功能已具备原生实现路径；本轮发现的手动小区输入原生缺口已补齐，并完成源码交叉回审及本机实际处理器回归。旧“需启用本次控制”文案及设备设置重复入口已修正。不能将此版本描述为原厂所有功能完全等效。
+
+1. 三主屏与普通/聚合
+- native/home_mode.h 定义3个主页面：首页、网络、功能；index.html / aggregate.html 共用首页slot，并非两个常驻可选页。
+- topflow_main.c 仅用新鲜状态中的 aggregation.enabled 决定首页。开启但 online=false 仍显示聚合等待上线；关闭、未知、数据过期回普通首页。在子页不强行跳走，回首页时重新解析模式。
+- 本机参考 rust/src/state.rs 将 mode==SMULTIWAN 定义为 enabled；online 是独立隧道状态。该字段是拨钮对应的有效网络模式，不是原始GPIO档位，其他软件修改模式也会反映在这里。
+- 首页没有聚合写开关，设置只提示通过实体拨钮切换。主屏横滑及日夜主题仅改变本地显示；主屏无返回，子页返回实际父页。
+- 功能页只有 Wi-Fi、短信、遨游世界、设备设置4入口；设置只有显示、散热与电源、流量、连接设备4入口，运行状态位于其后。旧more菜单仅保留内部兼容，正常UI不再暴露。
+- WPS唯一可达入口移至Wi-Fi总览。实际factory_extra_action捕获父页22；本地C回归验证进入与返回均无写动作。
+
+2. 三卡与速率、网络参数
+[REDACTED_SENSITIVE_CONTEXT]
+- 缺失、非有限数、负数、未确认可用的速率显示“—”。明确无卡/停用对合计贡献0；其他未知使合计不可用，避免缺卡时伪造实时数值。
+- 首页及卡片详情显示各卡上下行、状态、频段、QCI；详情保留原始SIM/基带状态。QCI只显示正值。信号/PCI/频道等字段排除sentinel和越界；PCI=0合法。
+[REDACTED_SENSITIVE_CONTEXT]
+- 网络→频段与基站是唯一主入口，包含制式、实际支持LTE/NR SA/NSA频段、当前小区锁定/解除。
+- 审计发现并补齐：原生原先只有“锁当前小区”，浏览器手动PCI/ARFCN表单被生产包剥离，不能算原生完成。现cell_form.h/form_kind=5提供LTE/NR手动数字表单，GET /capabilities确认接口存在；确认前重新读fresh状态与NR支持频段，再比对草稿payload，通过官方cell.lock_lte/nr单次POST并复用配置回读。不是小区采集，也不将锁定配置一致宣称为已驻留目标小区。
+- 独立回审：PCI 0合法、LTE 0..503/NR 0..1007、频道1..262143/3279165；纯数字且长度有界。NR band在1..512且仅接受SA/NSA支持列表并集，TF_BANDS=513无索引越界，短路保护无效数组。确认待办先清除，重复confirm不发第二次；返回清草稿，锁屏沿既有form_reset撤销。手动表单回网络控制时保留modem_network_parent，从卡片进入可继续回原卡详情及原首页。
+- 不启用邻区/小区采集。主卡控制不伪装成外卡能力。
+
+3. Wi-Fi、短信、转发、遨游
+[REDACTED_SENSITIVE_CONTEXT]
+- 返回链：功能→Wi-Fi→主频段编辑/双频/访客/WPS→Wi-Fi→功能；访客编辑→访客。未发现本轮调整造成父页错误。
+[REDACTED_SENSITIVE_CONTEXT]
+- 收件/发件/未读来自现有32条服务快照；查看不会自动标已读。完整历史分页、批量删除未实现。
+[REDACTED_SENSITIVE_CONTEXT]
+- 转发授权到期、退出和锁屏擦除会话及草稿；凭据不写源码、日志、包或新文件。SQLite读取使用只读immutable且拒绝活动WAL/journal，遇并发更新暂时不可用，不修改数据库。
+[REDACTED_SENSITIVE_CONTEXT]
+
+4. 电源、散热、亮度和门禁
+- CPU/电池温度、CPU/内存占用、实际电量与充电状态由既有服务读取；未知或过期保留未知。风扇驱动百分比不冒充RPM。
+- 风扇常开、液冷常开使用cooling.*.set_enabled；关闭恢复原策略，不等于停止散热。回读检查always_on、mode、应用错误及原厂同步状态。
+- 直接供电、系统休眠、快速开机、六个已证工作模式、能力允许的重启/关机有真实操作路径，所有写操作仍需最终确认。
+- 无额外“启用控制”手动开关：初始化/锁屏撤权，PIN验证或无PIN本地长按完成后，经原策略与LOGIN回读才可操作。旧@enable不能授权。长按完成及松手帧会消费触摸，不穿透到业务按钮。
+- PIN优先，不通过本地无PIN保护绕过原厂锁屏码。睡眠清除待确认操作和敏感输入，取消滑动时恢复源页面及滚动位置。
+- 原厂休眠/显示生命周期、光感曲线和自动亮度平滑已由独立本机测试覆盖。display_pages.h新增固定/自适应明确选择，固定亮度按1%调节及预设只改RAM草稿，点击应用后确认一次。自动模式不接受固定亮度apply；确认重新读配置，display_native.h setter再次核对PIN策略、传感器和manual/auto。亮度范围10..255；改变熄屏超时不触发亮度动作。已只读独立回审，test-display-settings实际处理器回归通过。
+
+5. 管理、资源与卸载
+- 恢复原厂、启用插件、卸载仅在UFI插件管理器，屏幕页面不含这些动作。生产manager移除浏览器演示、mock和附加业务网页段，只管理原生组件。
+- screenctl.sh/supervisor.sh 使用安装标记、路径/链接/所有权核验、生命周期锁、PID+出生时间和可执行路径确认，失败走恢复；不改写原厂二进制、不新增开机启动。
+- 恢复确认原厂进程和服务稳定后才可删除；卸载检查文件清单，删除已拥有组件、运行目录和自身UFI记录。遇未知文件/进程/恢复失败会停止清理，不能把“拒绝破坏未知内容”误报为完整卸载成功。
+[REDACTED_SENSITIVE_CONTEXT]
+- 本轮未测本版本实机CPU/RSS、持续运行温升、真实短信到达或卸载后文件系统。不能承诺零硬件影响、零系统日志、绝对无残留或绝不黑屏；本机证据支持有限资源和失败恢复设计。
+
+6. 原厂全量覆盖边界（不能隐瞒为已完成）
+[REDACTED_SENSITIVE_CONTEXT]
+
+7. 本轮实际修正与验证
+- native/service_pages.h：旧“启用本次控制”改为解锁后可操作、每次确认。
+- [REDACTED_ENCODED_OR_IDENTIFIER].js / native/ui/settings.html：去除重复more入口，工作模式说明可发现；settings-more预览滚动220，文档高度725未越界。
+- [REDACTED_ENCODED_OR_IDENTIFIER].h：只在Wi-Fi总览追加WPS；src/screen-ui.js同步设置说明。
+- tests/ui-contract.test.js：检查浏览器4设置入口与原生4入口、WPS唯一可达位置。
+- tests/native-extra.test.js：实际C处理器验证WPS父页22、导航零写，不stub控制逻辑。
+[REDACTED_SENSITIVE_CONTEXT]
+- native/test-controls.ps1手动小区新增本机回归已通过，覆盖取消、能力丢失、草稿修改、支持频段变化、数据过期、非法值、权限撤销、错误action、重复确认及配置回读；[REDACTED_ENCODED_OR_IDENTIFIER].ps1覆盖固定/自适应、1%草稿、上下界、取消、单次提交、失效配置/传感器与mode变化保护。独立代码回审未发现这两个新增流程的阻断问题。
+- 前轮独立本机soft-lock/main-lock回归通过；辅助C fixture补lookup后native-extra/native-ufi 5/5通过，analysis/switch-0.1.7-js-native-adapters.log。最新全量发布验证由root在所有变更冻结后执行，不以旧日志替代最终包校验。

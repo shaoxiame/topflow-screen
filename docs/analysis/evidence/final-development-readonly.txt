@@ -1,0 +1,33 @@
+screen_pid
+18392
+screen_owner
+             command   pid dev master a   uid      magic
+     zte_topsw_devui [REDACTED_NUMBER]   y    y     [REDACTED_NUMBER]
+touch_device
+crw-------    1 root     root       13,  69 Oct 15 14:24 /dev/input/event5
+ufi_pids
+[REDACTED_NUMBER]
+datad_pid
+10392
+original_checksums
+[REDACTED_ENCODED_OR_IDENTIFIER]  [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_ENCODED_OR_IDENTIFIER]  /etc/init.d/zte_topsw_devui
+plugin_path
+ABSENT
+uptime
+81062.[REDACTED_NUMBER].45
+original_services
+'zwrt_deviceui' @ca783b59
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+own_paths
+ABSENT [REDACTED_ENCODED_OR_IDENTIFIER]
+ABSENT /tmp/topflow-screen
+ABSENT /etc/init.d/topflow-screen
+wake_locks
+sysZteSleepLock
+datad_health
+ok
+ufi_health
+{"ok": true, "service": "ufi-tools-zwrt"}
+
+STDERR:

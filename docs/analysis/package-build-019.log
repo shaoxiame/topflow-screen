@@ -1,0 +1,257 @@
+{
+  "plugin": "TopFlow 屏幕",
+  "version": "0.1.9",
+  "defaultViewOnly": false,
+[REDACTED_SENSITIVE_CONTEXT]
+    "sleep": "revoked",
+[REDACTED_SENSITIVE_FIELD]
+[REDACTED_SENSITIVE_CONTEXT]
+    "initial": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "writes": "per-action-confirmation",
+    "manualEnableGate": false
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "carriers": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "aggregationStatus": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "ethernet": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "today": "aggregation.traffic.today_used_bytes",
+    "quota": "aggregation.traffic.remaining_bytes",
+    "noActiveProbe": true
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "hardwareTested": false,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "tx_speed",
+      "rx_speed",
+      "qci",
+      "ambr_ul",
+      "ambr_dl"
+    ],
+[REDACTED_SENSITIVE_FIELD]
+    "meaning": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 0,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "5G",
+      "4G1",
+      "4G2"
+    ],
+[REDACTED_SENSITIVE_FIELD]
+    "unit": "Mbps",
+[REDACTED_SENSITIVE_FIELD]
+    "crossModemFallback": false
+  },
+[REDACTED_SENSITIVE_FIELD]
+    "external": "sub_modem_switch_slot",
+[REDACTED_SENSITIVE_FIELD]
+    "deviceSwitchVerified": false,
+    "refresh": "on-demand",
+    "externalMustBeEnabled": true,
+    "readback": "raw-st_slot",
+[REDACTED_SENSITIVE_FIELD]
+      "4G2": 0,
+      "4G1": 1
+    },
+    "primary": "sim_switch_slot",
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "5G",
+      "4G1",
+      "4G2"
+    ],
+[REDACTED_SENSITIVE_FIELD]
+      "removable",
+      "builtin"
+    ],
+[REDACTED_SENSITIVE_FIELD]
+    "automaticRetry": false
+  },
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_SENSITIVE_FIELD]
+    "deviceSendVerified": false,
+[REDACTED_SENSITIVE_CONTEXT]
+    "encoding": "UTF16BE-hex",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 1,
+[REDACTED_SENSITIVE_CONTEXT]
+    "confirmedResult": "UFI-result-success",
+    "automaticRetry": false
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "input": "numeric-keypad",
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "cell.lock_lte",
+      "cell.lock_nr"
+    ],
+    "readback": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "confirmation": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "nrBand": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "automaticRetry": false,
+    "target": "primary-modem-only"
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_CONTEXT]
+    "cancel": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+    "trigger": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "holdMilliseconds": 1000,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": true
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      5,
+      10,
+      25,
+      50,
+      75,
+      100
+    ],
+    "filter": "median3-q8-quarter",
+    "confirmedApply": true,
+    "curve": "original-integer-lux",
+    "deadbandLevels": 8,
+    "rampMillisecondsMinimum": 100,
+    "ui": "fixed-or-adaptive",
+    "fixedDraftPercentStep": 1,
+    "rampLevelsMaximum": 3,
+    "sampleMilliseconds": 1000,
+    "invalidOrStale": "freeze",
+[REDACTED_SENSITIVE_FIELD]
+    "steadyWrites": 0,
+    "existingLifecycle": true
+  },
+  "directSwitch": true,
+  "sensorAfterDrm": true,
+  "startupOrder": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "receiptVersion": 2,
+  "factoryBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "reviewOnly": false,
+  "diagnosticCandidate": false,
+  "adaptationFixCandidate": true,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "enabledOfflineView": "aggregate",
+[REDACTED_SENSITIVE_FIELD]
+    "modeDerivedFrom": "zwrt_router.network.[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "screenAggregationToggle": false,
+    "homePageSlots": 1,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "normal",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "mainPageCount": 3,
+    "screenModeOverride": false,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+      "normal",
+      "aggregate"
+    ]
+  },
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+  "performanceFixCandidate": true,
+[REDACTED_SENSITIVE_FIELD]
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "rendering",
+    "animation",
+    "scrolling"
+  ],
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "cacheStorage": "process-memory-only",
+    "retainedDocuments": 1,
+    "touchMotion": "continuous-drag",
+[REDACTED_SENSITIVE_FIELD]
+    "glyphEntriesLimit": 512,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 16,
+    "cssEntriesLimit": 4,
+    "swipeBufferLifetime": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 160,
+    "cssFileBytesLimit": 262144,
+    "swipeBufferBytesMaximum": 1966080,
+    "swipeBuffers": 2,
+    "lateFrames": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "glyphCoverageBytesLimit": 393216,
+    "pageSettleMilliseconds": 144,
+[REDACTED_SENSITIVE_FIELD]
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "connectionIndependent": true,
+    "connectionField": "battery.charger_connect",
+    "display": "level-and-charge-state",
+    "chargingIcon": "css-rectangles",
+    "percentInfersCharging": false,
+    "chargeStatusField": "battery.charging",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": "unknown",
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "chargeStatusEnum": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+  "confirmedLockCause": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+[REDACTED_SENSITIVE_FIELD]
+    "successful": true,
+    "version": "0.1.4"
+  },
+  "pendingDeviceAcceptance": true,
+  "releaseBlocked": null,
+  "acceptanceStatus": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "bytes": 1666292,
+  "maxLineLength": 1361,
+  "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+  "nativeBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "factoryBusSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "hardwareTested": false,
+[REDACTED_SENSITIVE_FIELD]
+    "vendor/ufi-device-sdk-2.0.0.js",
+    "plugin-center.js",
+    "ufi-plugin.js"
+  ],
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "./",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+[REDACTED_SENSITIVE_CONTEXT]
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    ".[REDACTED_ENCODED_OR_IDENTIFIER].txt"
+  ],
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_FIELD]
+    "version": "0.1.9",
+    "build": "02457c841cb456c0",
+[REDACTED_SENSITIVE_FIELD]
+    "target": "ZTE TopFlow / MU5252",
+    "status": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+  },
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    "pluginId": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_FIELD]
+    "sdkVersion": "2.0.0",
+    "sdkSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "telemetry": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+[REDACTED_SENSITIVE_CONTEXT]
+    "nativeBackgroundService": false,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": false,
+    "publicationPerformed": false
+  }
+}

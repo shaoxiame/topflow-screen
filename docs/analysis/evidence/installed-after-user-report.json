@@ -1,0 +1,21 @@
+{
+  "headBytes": 2255257,
+  "payloadMentions": "[REDACTED_SENSITIVE_FIELD]",
+  "managerMentions": 0,
+  "plugins": [
+    {
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "topflow": false,
+      "hasBrowserUI": false,
+      "hasManagerEntry": false
+    },
+    {
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "topflow": true,
+      "hasBrowserUI": false,
+      "hasManagerEntry": true
+    }
+  ]
+}

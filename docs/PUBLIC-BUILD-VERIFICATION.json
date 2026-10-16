@@ -1,0 +1,71 @@
+{
+  "version": "0.2.1",
+  "edition": "public-source-final",
+  "deviceAccess": false,
+  "hardwareVerified": false,
+  "userHardwareAcceptance": {
+    "confirmed": true,
+    "basis": "The owner explicitly confirmed completed real-device acceptance and that the supplied photographs show the actual device.",
+    "scope": "Owner-reported acceptance; this public-source rebuild did not reconnect to the device or rerun automated hardware tests."
+  },
+  "sourceBuild": {
+    "renderer": "aarch64-linux-musl",
+    "helper": "public-ABI-link-imports-only",
+    "preview": "x86_64-windows-gnu",
+    "font": "developer-supplied Windows font; not redistributed"
+  },
+  "checks": {
+    "publicJavascript": {
+      "tests": 191,
+      "passed": 189,
+      "skipped": 2,
+      "failed": 0,
+      "skips": [
+        "private historical datad snapshot",
+        "private UFI WebUI observer source"
+      ]
+    },
+    "packageJavascript": {
+      "tests": 17,
+      "passed": 17
+    },
+    "nativeLogic": [
+      "battery",
+      "modem-source",
+      "network-status",
+      "lockscreen"
+    ],
+    "nativePreview": {
+      "renderedPages": 22,
+      "inputs": "synthetic"
+    },
+    "localPreviewServer": [
+      "GET-only allowlist",
+      "127.0.0.1 only",
+      "CSP connect-src none",
+      "POST rejected",
+      "unlisted files rejected"
+    ],
+    "integrity": [
+      "native source hashes",
+      "both ARM ELF hashes",
+      "boot manifest",
+      "noncommercial license payload",
+      "FreeType gzip zlib payload",
+      "no KANO_META or preview fixtures"
+    ]
+  },
+  "privateImportReplay": {
+    "input": "previously downloaded UFI importer and AoYou plugin reference; neither redistributed",
+    "reproducibleFromPublicClone": false,
+    "tests": 4,
+    "passed": 4,
+    "failed": 0
+  },
+  "artifact": {
+    "file": "topflow-screen-0.2.1.txt",
+    "bytes": 1719617,
+    "sha256": "da8422e8c5df8a536ea0c94dc565013671d1e1e19e02911eef1796d0c0a09c34",
+    "nativeArchiveSha256": "b08e18c9cda493699229eaf94e37a11939b0b4b9ab31aaf6ec4c1322cdd5f258"
+  }
+}

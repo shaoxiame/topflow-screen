@@ -1,0 +1,797 @@
+{
+  "reviewedAt": "[REDACTED_NUMBER]",
+  "scope": "仅本地静态审查；从未执行原厂 FeatureTest 或二进制；接口写动作未实机执行。",
+  "evidenceRules": [
+    "语种资源存在不等于当前机型开放功能；binaryOffset>=0仅证明该下载二进制包含键/符号。",
+    "factory-test-*.json是随固件附带的动作脚本，不是测试成功报告；只用作设计流程旁证。",
+    "液冷、充电宝、NFC、DSDA/国际卡必须读实际能力，不默认支持。",
+    "普通/聚合与三卡证据包含TopFlow特定文案、已编译Aggregate接口及既有只读快照；其余标注不夸大为已实机操作。",
+    "implementation是初期调查记录；currentImplementation是最终本机代码复核状态。每项hardwareVerified=false；未执行设备写入。"
+  ],
+  "items": [
+    {
+      "category": "主屏",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "首页左右切换",
+      "confidence": "当前机型证据强",
+      "implementation": "普通/聚合主页与三卡速率已实现；聚合控制由真实API能力决定",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 46057
+        },
+        {
+          "symbol": "ZTD_GetAggregationMode",
+          "binaryOffset": 45550
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生普通/聚合、三卡详情、蜂窝合计、独立有线速率与真实采样趋势均已实现。未启用/未插卡/未知分开；单卡无可靠速率显示—，明确无卡或禁用对合计贡献0。主页面横滑切换。物理显示待设备验收。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "主屏",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "首页摘要；设备页详情",
+      "confidence": "当前机型证据强",
+      "implementation": "电池/温度/CPU/内存已实现；CPU占用为UFI新增",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 43574
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 45981
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生显示电池、接入数、CPU/电池温度、CPU/内存占用；短信入口与操作提示已接。未完整复刻所有原厂通知类别。数据显示来自既有服务。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "卡片深层",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "点击卡片后的二级详情",
+      "confidence": "当前机型证据强",
+      "implementation": "三卡详情已实现；NR/LTE独立，未知值不虚填",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 46057
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 45652
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "原生各卡详情显示独立状态、运营商、速率、QCI和可确认的小区指标。PCI 0保留；缺失、冲突、sentinel不造值。每卡字段仍受既有服务能力限制。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "卡片深层",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "卡片详情 > 身份信息",
+      "confidence": "已编译原厂功能",
+      "implementation": "归一化接口已有部分字段；UI需逐项核对，不公开展示完整标识",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_SENSITIVE_CONTEXT]",
+          "binaryOffset": 42848
+        },
+        {
+          "symbol": "[REDACTED_SENSITIVE_CONTEXT]",
+          "binaryOffset": 45499
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 43728
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    },
+    {
+      "category": "卡片深层",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "卡片详情 > 数据连接",
+      "confidence": "已编译原厂功能",
+      "implementation": "主卡连接API已实现；4G1/4G2启用控制仍需独立契约，不能套主卡接口",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 46312
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 43297
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生主卡连接/断开、已知双卡槽切换与漫游已接；4G1/4G2通过原厂V3E2/V3E1飞行模式接口启停并回读。未提供外卡独立拨号/全部卡槽控制，不以未启用推断无SIM。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "卡片深层",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "卡片详情 > 流量管理",
+      "confidence": "已编译原厂功能",
+      "implementation": "主卡流量限制API正在合入；不等同原厂所有三卡套餐/时间提醒",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 44445
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 45759
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 45573
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生主卡日/月流量、统计字节校正和清零日已接。套餐阈值仅只读，limit.type业务含义未确认，未开放伪枚举；外卡独立套餐/所有提醒未覆盖。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "卡片深层",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "主卡详情 > SIM选择",
+      "confidence": "已编译且能力条件化",
+      "implementation": "接口仅在dual_sim=true开放；不能把APN slotId当实体卡槽",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 50654
+        },
+        {
+          "symbol": "ZTD_GetCurrentSimSlot",
+          "binaryOffset": 43460
+        },
+        {
+          "symbol": "ZTD_SetCurrentSimSlot",
+          "binaryOffset": 50089
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生主卡在dual_sim确认可用且卡槽状态已知时提供1/2切换与回读；外卡空字段映射0不当作确认实体卡，未提供未经核实的外卡切槽。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "卡片深层",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "主卡详情 > 仅能力存在时显示",
+      "confidence": "通用/变体条目",
+      "implementation": "未证明当前机型全部开放；不默认显示可用",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 47149
+        },
+        {
+          "symbol": "ZTD_SetSimAutoSwitch",
+          "binaryOffset": 50824
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "未实现智能双卡、DSDA及国际虚拟卡业务管理；资源字符串不能证明机型能力。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "网络",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "网络 > 制式/频段",
+      "confidence": "已编译原厂功能",
+      "implementation": "网页/原生均有；按实际支持频段和已验证枚举生成，不照抄语种所有选项",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_SetNetworkSelect",
+          "binaryOffset": 45631
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 51109
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 48939
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生新增主卡网络制式：六个既有UFI枚举、能力检查、二次确认和状态回读。当前4G_AND_5G原样显示，不映射为其他值；LTE/NR SA/NSA频段网格使用实际支持列表。外卡频段/制式未扩写。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "网络",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "主卡详情 > 网络选择",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前UI缺少完整搜索/选择流程；需真实结果及异步状态",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 45712
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 43406
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生主卡已实现只读已存扫描结果、显式确认启动扫描、选择PLMN+RAT及自动选择，短命原厂ubus适配器校验结果/当前卡状态。无结果或未知格式不伪选；外卡未复用主卡操作。实机扫描注册未测试。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "网络",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "主卡详情 > 漫游",
+      "confidence": "已编译原厂功能",
+      "implementation": "主卡漫游API已实现；国内漫游不可默认复用一般漫游开关",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 44474
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 50216
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生主卡数据漫游开关已接并回读；国内漫游独立策略未获得足够契约，不宣称等效。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "网络",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "卡片详情 > APN",
+      "confidence": "已编译读取；新API支持编辑",
+      "implementation": "三个APN命名空间已核对5G=1/4G1=201/4G2=101；附卡固定配置不能新增/删除",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 46026
+        },
+        {
+          "symbol": "ZTD_GetApnModeAggregate",
+          "binaryOffset": 50280
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    },
+    {
+      "category": "网络",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "网络 > 基站",
+      "confidence": "新增UFI集成功能",
+      "implementation": "网页LTE/NR分别输入；实体屏当前小区按钮；不得用未知/邻区参数冒充服务小区",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_SetNr5gBandLock",
+          "binaryOffset": 46905
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "原生主卡当前LTE/NR小区锁定和全部解锁已接，PCI 0合法且频道/频段必须有效。原生不提供任意未验证小区输入；外卡锁定未覆盖。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "网络",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "网络 > 诊断，只读优先",
+      "confidence": "已编译诊断文本；设置能力未证实",
+      "implementation": "当前缺详细诊断；原厂文字包含建议WebUI处理，不能据此宣称实体屏有全部编辑",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_GetNetworkStatus",
+          "binaryOffset": 46057
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "有线链路速率已显示；未实现全部RJ45工作模式、WAN、UPnP、DMZ及诊断设置。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 屏幕",
+      "confidence": "已编译原厂功能",
+      "implementation": "需区分自定义屏幕临时设置与原厂持久设置；本轮native在补",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_SetLcdBrightness",
+          "binaryOffset": 44424
+        },
+        {
+          "symbol": "ZTD_SetNVLcdBrightness",
+          "binaryOffset": 46765
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 46451
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生已接原厂亮度/自动亮度/显示超时配置、原厂整数lux曲线、传感器只读采样、显式设置确认和读回。亮度变化与LCD事件/内核锁观察组成有界事务；传感器状态未知拒绝启用。实际硬件亮度体验待验收。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 电源与功耗",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前自定义屏灭屏不等同设备休眠；原厂设备休眠完整流程需补",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_SetDeviceSleepTime",
+          "binaryOffset": 50736
+        },
+        {
+          "symbol": "ZTD_GetSleepState",
+          "binaryOffset": 46549
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生已接sleep.set已证时长；同名原厂三方法兼容服务、独立LCD/LOGIN/TOUCH事件、sleep/wake通知、真实亮度与zteSleepBacklight锁观测已实现，失败恢复。screen_wakeup=0支持；周期自动唤醒=1拒绝接管。全部实际休眠/按键/自动唤醒组合尚未设备验收。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 电源与功耗",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前待能力/接口UI合入；不能用静态按钮假成功",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 51183
+        },
+        {
+          "symbol": "ZTD_SetDirectPowerMode",
+          "binaryOffset": 49531
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 50372
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "直供电经独立charger接口确认及回读；快速开机经原厂接口读取/设置已接。省电模式读值未知时未开放，不能称所有电源模式覆盖。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 工作模式",
+      "confidence": "已编译原厂功能",
+      "implementation": "各选项需实际模式枚举及能力映射，不能只变本地标签",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_GetAggregationMode",
+          "binaryOffset": 45550
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "六个已证原厂工作模式已接并回读：AI、直播、会议、游戏、视频、均衡。极速模式未确认枚举，不开放。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 温控",
+      "confidence": "液冷明确为版本限定",
+      "implementation": "风扇接口待能力核验；液冷条目必须受硬件能力控制",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_GetFanSwitchStatus",
+          "binaryOffset": 48636
+        },
+        {
+          "symbol": "ZTD_SetFanSwitchStatus",
+          "binaryOffset": 44339
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 48979
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "原生风扇常开/液冷常开已接既有datad接口；只使用always_on，关闭回原温控/自动策略。校验mode、策略应用/错误及驱动可用状态，提交一次后只读回；不把PWM占比当RPM，不声称物理散热已测试。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 电源，仅能力存在时显示",
+      "confidence": "通用/变体条目",
+      "implementation": "编译符号不证明当前TopFlow具备反向充电硬件",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 44221
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 51478
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "未实现充电宝/小电流模式；缺乏已验证独立控制及设备能力契约。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 关于",
+      "confidence": "已编译原厂功能",
+      "implementation": "已有电池和系统摘要，完整版本与证书/预测时间仍需字段核验",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_GetSWversion",
+          "binaryOffset": 44138
+        },
+        {
+          "symbol": "ZTD_GetHardwareVersion",
+          "binaryOffset": 44532
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生显示型号/固件和电量概况；证书、完整设备信息及充满/剩余时间算法未完整复刻。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 显示与语言",
+      "confidence": "已编译通用功能",
+      "implementation": "当前自定义UI中文；不因为资源有多语言就声明本插件支持",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [],
+      "testProgram": null,
+      "currentImplementation": "原生中文界面、浅/深色和逐字离线拼音输入已实现；未实现完整多语言资源切换。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 系统管理 > 高风险操作",
+      "confidence": "已编译原厂功能",
+      "implementation": "目前未实现；与恢复原厂屏幕完全不同，不能混用",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_SetPoweroffState",
+          "binaryOffset": 50867
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "原生设备重启/关机仅在capabilities明确存在时显示，确认前复查，单次提交只报告请求接受。设备恢复出厂设置未接；切回原厂屏幕只在UFI插件管理，不等同重置设备。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "设备",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 系统管理 > 升级",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前未实现；需保留真实原厂更新流程，不自行构造升级命令",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_GetFotaUpdateResult",
+          "binaryOffset": 47911
+        },
+        {
+          "symbol": "ZTD_SetDmUpdateMode",
+          "binaryOffset": 50352
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "未接固件检测、自动升级、下载及安装；不执行未知升级接口。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "WiFi",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "Wi-Fi主页面 > 单频配置",
+      "confidence": "已编译原厂功能",
+      "implementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_SetWifiState",
+          "binaryOffset": 44022
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 45306
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    },
+    {
+      "category": "WiFi",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "Wi-Fi > 高级",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前需要独立能力及section映射；不要把访客写到主AP",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 44765
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 45260
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    },
+    {
+      "category": "WiFi",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "Wi-Fi > 接入设备 > 单设备",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前已有数量；详细列表/屏蔽/解除尚需完整UI及接口映射",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 51232
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 42916
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    },
+    {
+      "category": "WiFi",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "Wi-Fi > WPS",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前未实现；必须真实倒计时/结果反馈",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_WPSPair_Main2g",
+          "binaryOffset": 50805
+        },
+        {
+          "symbol": "ZTD_WPSPair_Main5g",
+          "binaryOffset": 43529
+        },
+        {
+          "symbol": "ZTD_SetWPSEnble",
+          "binaryOffset": 47287
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "原生2.4/5GHz WPS开始、停止及原厂状态读取已接。仅idle且remaining=0才可开始，确认和短命helper再次核验，正在配对不重复启动。物理配对结果待实机验收。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "WiFi",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "Wi-Fi > 高级",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前未实现；实际支持上限从设备能力读，不抄资源占位值",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 49985
+        },
+        {
+          "symbol": "ZTD_SetWifiCoverage",
+          "binaryOffset": 42784
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "未实现最大连接数及无线覆盖范围设置；不凭资源名称猜参数。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "WiFi",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "Wi-Fi > 仅硬件能力存在时显示",
+      "confidence": "通用/变体条目",
+      "implementation": "原厂编译有NFC接口，但当前实机硬件/启用未证明",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_GetWifiNFCSetting",
+          "binaryOffset": 46925
+        },
+        {
+          "symbol": "ZTD_SetWifiNFCSetting",
+          "binaryOffset": 45172
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "未实现NFC配网及相关硬件功能。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "短信",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "短信 > 详情",
+      "confidence": "已编译原厂功能",
+      "implementation": "网页已收/发/详情；批量删除需核对当前UI",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_SENSITIVE_CONTEXT]",
+          "binaryOffset": 46429
+        },
+        {
+          "symbol": "[REDACTED_SENSITIVE_CONTEXT]",
+          "binaryOffset": 42804
+        },
+        {
+          "symbol": "[REDACTED_SENSITIVE_CONTEXT]",
+          "binaryOffset": 50304
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "原生短信详情与全部/收件/发件/未读筛选已接，按现有tag 0/1收件、2/3发件，未知不猜；目前仅现有服务32条快照。查看不自动改已读；批量删除和完整历史分页未实现。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "短信",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "短信 > 编写/转发设置",
+      "confidence": "新增UFI集成功能",
+      "implementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_SENSITIVE_CONTEXT]",
+          "binaryOffset": 43899
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    },
+    {
+      "category": "安全",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "卡片详情 > SIM安全",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前未实现完整原厂安全流程；必须显示剩余次数并保护输入",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_VerifyPin",
+          "binaryOffset": 50464
+        },
+        {
+          "symbol": "ZTD_UnblockPin",
+          "binaryOffset": 43684
+        },
+        {
+          "symbol": "ZTD_ChangePin",
+          "binaryOffset": 44321
+        },
+        {
+          "symbol": "ZTD_ChangePinMode",
+          "binaryOffset": 44321
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    },
+    {
+      "category": "安全",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 安全 > 屏幕锁",
+      "confidence": "已编译原厂功能",
+      "implementation": "当前未实现；替换屏不得声称继承原厂锁屏语义",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_SetLcdLockStatus",
+          "binaryOffset": 48448
+        },
+        {
+          "symbol": "ZTD_SetLockPinValue",
+          "binaryOffset": 45739
+        }
+      ],
+      "testProgram": "[REDACTED_ENCODED_OR_IDENTIFIER].json",
+      "currentImplementation": "原生继承原厂启用状态和四位锁屏码验证，实际PIN只在运行验证瞬间读取RAM。首次接管/程序重启独立300秒保护等待，五次错码另等300秒，计数有界单文件；锁屏撤销控制并清秘密。支持立即锁屏；修改锁屏码/启用标志尚无UI，未绕过原厂配置。",
+      "hardwareVerified": false
+    },
+    {
+      "category": "安全",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "设备 > 安全/首次引导，仅状态需要时显示",
+      "confidence": "通用/条件化功能",
+      "implementation": "不应默认暴露常规操作；原厂状态及失败剩余次数契约未接入",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "ZTD_SetSimNet_unlock",
+          "binaryOffset": 49510
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 50551
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    },
+    {
+      "category": "业务",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "[REDACTED_SENSITIVE_CONTEXT]",
+      "confidence": "TopFlow特定编译证据强",
+      "implementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 45472
+        },
+        {
+          "symbol": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+          "binaryOffset": 45068
+        }
+      ],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    },
+    {
+      "category": "业务",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "layer": "服务 > 遨游世界",
+      "confidence": "新增UFI集成，GET已实读",
+      "implementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "resources": "[REDACTED_SENSITIVE_FIELD]",
+      "api": [],
+      "testProgram": null,
+      "currentImplementation": "[REDACTED_SENSITIVE_CONTEXT]",
+      "hardwareVerified": false
+    }
+  ],
+  "releaseStatus": "[REDACTED_SENSITIVE_CONTEXT]"
+}

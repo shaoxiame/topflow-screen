@@ -1,0 +1,11 @@
+✔ installed 0.1.6 is readable and recoverable through the new controller without starting the old renderer (7098.4053ms)
+✔ 0.1.6 migration rejects modified executable bytes, an altered member list or unknown ownership before writes (2021.5294ms)
+✔ an exactly owned interrupted 0.1.6 uninstall can finish without running a missing old entry point (4081.4147ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 13268.6048

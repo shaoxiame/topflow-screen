@@ -1,0 +1,5 @@
+{
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "ubus -v list zwrt_zte_sleep_faw.wakelock",
+  "sleep-current-wakelocks": "cat /sys/power/wake_lock",
+  "ufi-loopback-health": "[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]"
+}

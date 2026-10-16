@@ -1,0 +1,10 @@
+{
+  "scope": "local native engine / factory font / RGB565",
+  "pages": 14,
+  "hitChecks": 540,
+  "aggregateSingleFrame": true,
+  "caSummaryVisible": true,
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+  "headerPixelsInvariant": true,
+  "passed": true
+}

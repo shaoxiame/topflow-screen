@@ -1,0 +1,82 @@
+[
+  {
+    "page": "index",
+    "renderer": "chart-rect=26,176,268,37 samples=30\r\nlayout-height=480\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "aggregate",
+    "renderer": "chart-rect=26,176,268,37 samples=30\r\nlayout-height=480\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "network",
+    "renderer": "layout-height=538\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "apps",
+    "renderer": "layout-height=480\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "settings",
+    "renderer": "layout-height=849\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "renderer": "layout-height=480\r\nclick=",
+[REDACTED_SENSITIVE_CONTEXT]
+  },
+  {
+    "page": "index-large",
+    "renderer": "chart-rect=26,176,268,37 samples=30\r\nlayout-height=480\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "aggregate-large",
+    "renderer": "chart-rect=26,176,268,37 samples=30\r\nlayout-height=480\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "index-dark",
+    "renderer": "chart-rect=26,176,268,37 samples=30\r\nlayout-height=480\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "aggregate-dark",
+    "renderer": "chart-rect=26,176,268,37 samples=30\r\nlayout-height=480\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "network-dark",
+    "renderer": "layout-height=538\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "apps-dark",
+    "renderer": "layout-height=480\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "settings-dark",
+    "renderer": "layout-height=849\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+[REDACTED_SENSITIVE_CONTEXT]
+    "renderer": "layout-height=480\r\nclick=",
+[REDACTED_SENSITIVE_CONTEXT]
+  },
+  {
+    "page": "settings-more",
+    "renderer": "layout-height=849\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  },
+  {
+    "page": "settings-more-dark",
+    "renderer": "layout-height=849\r\nclick=",
+    "png": "[REDACTED_LOCAL_PATH]"
+  }
+]

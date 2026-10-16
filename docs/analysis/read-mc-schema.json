@@ -1,0 +1,3 @@
+{
+  "mc-device-schemas": "ubus -v list 'zwrt_mc*'"
+}

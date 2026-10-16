@@ -1,0 +1,7 @@
+{
+  "devui-runtime": "p=$(pidof zte_topsw_devui); echo PID:$p; for n in status maps; do cat /proc/$p/$n; done; ls -l /proc/$p/fd; readlink /proc/$p/exe; readlink /proc/$p/cwd; cat /etc/init.d/zte_topsw_devui; cat /etc/init.d/zte_topsw_daemon",
+  "drm-state": "ls -la /sys/class/drm /sys/kernel/debug/dri /sys/kernel/debug/dri/0 /sys/class/backlight 2>/dev/null; for p in /sys/class/drm/card0-*; do [ -d \"$p\" ] || continue; echo \"$p\"; for n in status enabled modes; do [ ! -r \"$p/$n\" ] || { echo \"$n\"; cat \"$p/$n\"; }; done; done; cat [REDACTED_ENCODED_OR_IDENTIFIER] [REDACTED_ENCODED_OR_IDENTIFIER] [REDACTED_ENCODED_OR_IDENTIFIER] 2>/dev/null",
+  "ufi-layout": "ls -la /data/ufi-tools /data/plugins /data/zwrt-datad /usr/share /usr/zte_web 2>/dev/null; find /data/ufi-tools -maxdepth 3 -type f -name '*plugin*'; find /data/plugins -maxdepth 3 -type f; ls -l /usr/lib/*lv* /usr/lib/*drm* /usr/lib/*devui* /usr/lib/*zte* /lib/*musl* /lib/*ld-* 2>/dev/null",
+  "ubus-schema": "ubus list -v 2>/dev/null",
+  "network-counters": "cat /proc/net/dev; cat /proc/uptime; ls -la /sys/class/net; cat /proc/net/unix"
+}

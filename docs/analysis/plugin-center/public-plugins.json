@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "plugins": [
+    {
+      "id": "[REDACTED_SENSITIVE_FIELD]",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "description": "[REDACTED_SENSITIVE_FIELD]",
+      "author": "[REDACTED_SENSITIVE_FIELD]",
+      "category": "屏幕插件",
+      "device_models": [
+        "topflow"
+      ],
+      "version": "0.1.8",
+      "size": 1635929,
+      "notes": "",
+      "published_at": "2026-10-16T12:08:03Z",
+      "download_count": 2
+    },
+    {
+      "id": "[REDACTED_SENSITIVE_FIELD]",
+      "name": "[REDACTED_SENSITIVE_FIELD]",
+      "description": "[REDACTED_SENSITIVE_FIELD]",
+      "author": "[REDACTED_SENSITIVE_FIELD]",
+      "category": "梦想工程",
+      "device_models": [
+        "topflow",
+        "U60Pro"
+      ],
+      "version": "2.13.0",
+      "size": 747682,
+      "notes": "2.13.0 插件中心在线内核更新\n\n1. 新增“检查在线版本”和“在线安装配套内核”，按设备架构从插件中心获取已发布配套文件，无需手动下载上传。\n2. 平台清单与插件内置版本、大小、压缩及解压 SHA-256 双重核对；下载期间代理继续运行，文件校验通过后才短暂停启替换。\n[REDACTED_SENSITIVE_CONTEXT]\n4. 文件中心统一托管 ARM64、ARMv7、AMD64 配套内核与对应源码，管理员可发布切换、下载和查看历史。\n\n本版配套内核 v1.19.32-ayw.2 包含新域名 DNS 修复。插件更新本身不自动安装内核或重启代理；按需点击在线安装。无后台更新轮询。实体 UFI 未直接连接，验证范围详见发布报告。",
+      "published_at": "2026-10-16T12:07:09Z",
+      "download_count": 50
+    }
+  ]
+}

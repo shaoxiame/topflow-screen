@@ -1,0 +1,217 @@
+{
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": {
+    "download-core.json": {
+      "zte_topsw_devui": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+      "zte_topsw_devui.init": "/etc/init.d/zte_topsw_devui",
+      "zte_topsw_daemon.init": "/etc/init.d/zte_topsw_daemon",
+      "libzte_lvgl.so": "/usr/lib/libzte_lvgl.so",
+      "libzte_SDKowrt.so": "/usr/lib/libzte_SDKowrt.so",
+      "zte_topsw_daemon": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+      "ufi-service.sh": "/data/ufi-tools/service.sh",
+      "zwrt-datad-version.json": "[REDACTED_ENCODED_OR_IDENTIFIER].json"
+    },
+    "download-support.json": {
+      "zwrt-datad": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+      "miniuiconfig.ini": "[REDACTED_SENSITIVE_FIELD]",
+      "startdui.sh": "/usr/ui/startdui.sh",
+      "zte_topsw_daemon.conf": "[REDACTED_ENCODED_OR_IDENTIFIER].conf",
+      "zte_nwinfo": "/etc/config/zte_nwinfo"
+    }
+  },
+  "web_asset_manifest": {
+    "ufi-index.html": "[REDACTED_URL]",
+    "ufi-main.js": "[REDACTED_URL]",
+    "ufi-requests.js": "[REDACTED_URL]",
+    "ufi-utils.js": "[REDACTED_URL]",
+    "ufi-datad-app.js": "[REDACTED_URL]"
+  },
+  "notes": [
+    "All commands executed through SSH exec without PTY.",
+    "All artifacts written on the PC only.",
+    "[REDACTED_SENSITIVE_CONTEXT]",
+    "Failed SFTP and ubus discovery did not lead to device changes.",
+    "Existing files were streamed through cat; device programs and scripts were not executed."
+  ],
+  "evidence_files": [
+    {
+      "file": "datad-capabilities.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "datad-selected-strings.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "datad-state-second.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "datad-state.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "devui-runtime.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "display.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "drm-state.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "final-running-check.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "identity.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "libzte_lvgl.so",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "libzte_SDKowrt.so",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "miniuiconfig.ini",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "mounts.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "network-counters.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "processes.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "roots.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "startdui.sh",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ubus-schema-explicit.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ubus-schema.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ufi-datad-app.js",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ufi-index.html",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ufi-layout.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ufi-main.js",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ufi-requests.js",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ufi-service.sh",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ufi-utils.js",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "ui-resource-list.txt",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "zte_nwinfo",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "zte_topsw_daemon",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "zte_topsw_daemon.conf",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "zte_topsw_daemon.init",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "zte_topsw_devui",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "zte_topsw_devui.init",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "zwrt-datad",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    },
+    {
+      "file": "zwrt-datad-version.json",
+      "bytes": "[REDACTED_SENSITIVE_FIELD]",
+      "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]"
+    }
+  ]
+}

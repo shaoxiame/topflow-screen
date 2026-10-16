@@ -1,0 +1,129 @@
+UFI plugin/static frontend analysis — [REDACTED_NUMBER]
+
+Scope: Static reading only of the four previously downloaded files ufi-main.js,
+ufi-requests.js, ufi-utils.js, ufi-index.html. No device connections, no browser
+JavaScript execution, no API calls, no remote writes, no deployment performed.
+Line references below refer to those local evidence files.
+
+1. Plugin package format and actual execution model
+
+- ufi-main.js:[REDACTED_NUMBER]: manual import accepts .txt or .js only, reads text with
+  FileReader.readAsText, rejects files over 4 * 1024 * 1024 bytes.
+- ufi-main.js:[REDACTED_NUMBER]: a package can contain one or multiple blocks:
+    <!-- [KANO_PLUGIN_START] Stable plugin name -->
+    <!-- [KANO_META] sid=stable-id;v=0.1.0;pub=topflow-screen.txt -->
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+    <!-- [KANO_PLUGIN_END] Stable plugin name -->
+  START and END names must match. Without block markers the importer wraps the
+  complete file with file.name as the block name. Manual same-name imports are
+  skipped; store imports replace matching blocks. UTF-8 is the practical package
+  format; store import explicitly uses fatal UTF-8 decoding at 9565.
+- ufi-main.js:93-125 is the actual loader: getCustomHead(), DOMParser text/html,
+  clone style/link/meta into document.head, recreate and append each script.
+  Ordinary arbitrary body HTML is not inserted. Bare JavaScript in a .js file
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+  wrapper and create any panel DOM from script. The scripts execute in the UFI
+  page context, with no dedicated sandbox shown in these files.
+- ufi-main.js:[REDACTED_NUMBER] defines optional metadata: sid = stable store id,
+  v = version (parsed property ver), no = integer plugin number, pub = public
+  filename, sha = exactly 64 hexadecimal characters. Values are semicolon
+  separated, not JSON. Metadata is removed from content while editing and
+[REDACTED_SENSITIVE_CONTEXT]
+  plugin installation modifies device-side persistent state; it is outside the
+[REDACTED_SENSITIVE_CONTEXT]
+
+2. Lifecycle and consequences for a physical-screen plugin
+
+[REDACTED_SENSITIVE_CONTEXT]
+  then reloads the page after two seconds. Page startup reloads scripts.
+- ufi-main.js:[REDACTED_NUMBER]: disable wraps code in an HTML comment using the
+  [kano_disabled] marker; enable removes its first and last marker lines. These
+  changes take effect after submit/reload. Disabled flag is spelled disabed in
+  the internal parsed object (8947).
+- ufi-main.js:[REDACTED_NUMBER]: delete removes the block and browser version ledger;
+  a subsequent submit persists this removal. It does not execute plugin cleanup.
+- No native-process [REDACTED_ENCODED_OR_IDENTIFIER] hook is present in this
+  lifecycle. Removing/disabling the web script cannot be assumed to stop a
+  previously launched native screen process or restore the factory renderer.
+  A future implementation needs its own explicit switch/recovery/cleanup logic.
+- ufi-requests.js:716-725 exposes runShellWithRoot(cmd, timeoutMs), calling POST
+  /api/run_shell with JSON {cmd, timeout: timeoutMs}, returning the backend JSON
+  directly (documented as {success, content}). This is a general root shell
+  bridge, not a read-only or screen-specific API. The frontend alone does not
+  prove the backend execution environment, privileges, or physical display path.
+- Feasibility supported by this subset: UFI can host the management panel and
+  bridge to a separate native screen renderer. The web plugin itself is not a
+  physical-screen application. Display ownership and safe factory/custom
+  switching require the separate device/runtime evidence.
+
+3. Read-oriented data APIs and observed field consumers
+
+- ufi-requests.js:493-503 getData(URLSearchParams) issues GET
+  [REDACTED_ENCODED_OR_IDENTIFIER] with requested cmd, isTest=false and a
+[REDACTED_SENSITIVE_CONTEXT]
+  frontend's status-reading path, not the POST goform write API.
+- ufi-requests.js:579-632 getUFIData reads that status path with UFI_STATUS_CMD
+  plus GET /api/baseDeviceInfo concurrently, then merges results. The complete
+  cmd inventory is at 260-284. Core sections include net, thermal, battery,
+  wlan, nfc, modems, cooling, aggregation.
+- ufi-main.js:84-91 and [REDACTED_NUMBER] define and populate window.UFI_DATA. A web
+  management panel can reuse the current snapshot without polling again.
+- ufi-requests.js:303-311 defines GET /api/events?cmd=...&ticket=...; however
+  ticket generation at 286-300 is POST /api/events/ticket, so do not describe the
+  entire SSE startup sequence as a pure-GET workflow.
+[REDACTED_SENSITIVE_CONTEXT]
+  mc_modem_main_state, puknumber, pinnumber, sim_pinnumber.
+
+SIM / modem state (ufi-main.js:[REDACTED_NUMBER]):
+  modems[]: id, role, ifname, subid
+  modems[].sim: state, slot
+  modems[].wwan.status
+  modems[].interfaces.ipv4.up
+  modems[].usb.present
+  modems[].net: operator, type, band, operate_mode, nr_rsrp, nr_snr, nr_pci,
+                nr_cell_id, lte_rsrp, lte_snr, lte_pci, cell_id
+  Connected is inferred by the current UI from ipv4.up === true or a wwan status
+  ending in _connected (except disconnected). Ready/offline is separately
+  inferred; preserve these distinctions in a custom display.
+  MU5252/TopFlow mapping is explicit at ufi-requests.js:9 and :33-37.
+  ufi-main.js:[REDACTED_NUMBER] says this model uses physical IDs 5G, 4G1, 4G2, with each
+  external 4G modem's own net data; do not reuse primary 5G/LTE state for all SIMs.
+
+Rates:
+  Aggregate/legacy read fields real_rx_speed, real_tx_speed:
+    ufi-requests.js:268; UI consumes them at ufi-main.js:2455.
+  Per modem modems[].traffic.rx_speed and tx_speed:
+    ufi-main.js:1845, 1873.
+  aggregation.interface_rates[] with interface, rx_bps, tx_bps:
+    ufi-main.js:[REDACTED_NUMBER] uses interface === eth0 for the wired card.
+  Current UI feeds all the above rate values to formatBytes(...)+/s.
+  formatBytes at ufi-utils.js:200-219 scales by 1024 and labels B/KB/MB/GB.
+  Thus the observed UI treats these values as bytes/s despite some _bps names;
+  confirm backend units against counters before exposing Mbps in a new display.
+  Traffic byte/time fields are listed at ufi-requests.js:266-277: month_tx_bytes,
+  month_rx_bytes, month_time, day_rx_bytes, day_tx_bytes, realtime_time,
+  total_tx_bytes, total_rx_bytes.
+
+Aggregation:
+  aggregation.enabled, aggregation.mode: ufi-main.js:[REDACTED_NUMBER].
+  aggregation.interface_rates: ufi-main.js:[REDACTED_NUMBER].
+  These four source files do not independently establish all aggregation backend
+  fields or semantics. Differentiate multi-link aggregation from modem carrier
+  aggregation (nrca/lteca) listed at ufi-requests.js:279-282.
+  The write control aggregation.set at ufi-main.js:[REDACTED_NUMBER] is out of bounds for
+  this read-only stage.
+
+4. Critical read-only workflow finding
+
+- ufi-main.js:[REDACTED_NUMBER] automatically repairs duplicate plugin blocks and
+  migrates version metadata at startup. Both paths can call setCustomHead without
+[REDACTED_SENSITIVE_CONTEXT]
+  content is also executed on startup at 93-125.
+- Therefore executing the full downloaded UFI frontend against the live device
+  is not a reliably read-only inspection method. Use static analysis and narrowly
+  reviewed read requests only. A local mock UI should not import/execute these
+[REDACTED_SENSITIVE_CONTEXT]
+
+Limits of this report: All field/API claims describe source behavior. This
+analysis did not invoke endpoints and does not prove each field is populated on
+the current device or that factory/custom screen switching has been tested.

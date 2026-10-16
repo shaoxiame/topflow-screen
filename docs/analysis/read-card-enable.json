@@ -1,0 +1,4 @@
+{
+  "card-power-status": "for k in V3E1_lpr_flight_status V3E2_lpr_flight_status; do printf '%s=' \"$k\"; uci -q get \"zwrt_zte_mc.mc_status.$k\"; done",
+  "card-mc-schema": "ubus -v list 'zwrt_zte_mc*'; ls -l /usr/lib/libzte_zbus*; find /etc -maxdepth 2 -iname '*zbus*' -o -iname '*ubus*'"
+}

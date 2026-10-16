@@ -1,0 +1,22 @@
+PASS lock-entry: native 320x480; layout, bounds, hit targets and state
+PASS lock-entry-dark: native 320x480; layout, bounds, hit targets and state
+PASS lock-handover: native 320x480; layout, bounds, hit targets and state
+PASS lock-handover-dark: native 320x480; layout, bounds, hit targets and state
+PASS lock-cooldown: native 320x480; layout, bounds, hit targets and state
+PASS lock-cooldown-dark: native 320x480; layout, bounds, hit targets and state
+PASS soft-lock: native 320x480; layout, bounds, hit targets and state
+PASS soft-lock-dark: native 320x480; layout, bounds, hit targets and state
+PASS soft-lock-progress: native 320x480; layout, bounds, hit targets and state
+PASS soft-lock-progress-dark: native 320x480; layout, bounds, hit targets and state
+PASS lock-normal-021: native 320x480; layout, bounds, hit targets and state
+PASS lock-normal-021-dark: native 320x480; layout, bounds, hit targets and state
+PASS lock-aggregate-021: native 320x480; layout, bounds, hit targets and state
+PASS lock-aggregate-021-dark: native 320x480; layout, bounds, hit targets and state
+PASS lock-stale-021: native 320x480; layout, bounds, hit targets and state
+PASS lock-stale-021-dark: native 320x480; layout, bounds, hit targets and state
+PASS lock-hold-021: native 320x480; layout, bounds, hit targets and state
+PASS lock-hold-021-dark: native 320x480; layout, bounds, hit targets and state
+[REDACTED_SENSITIVE_CONTEXT]
+PASS native lock animation light: actual 0/90/180/320ms frames; curves and digits change only their regions; settles with no idle redraw
+PASS native lock animation dark: actual 0/90/180/320ms frames; curves and digits change only their regions; settles with no idle redraw
+PASS: 20 actual lock renders and 4464 hit targets; 8 real animation frames; static/full and partial rate repaint pixels identical

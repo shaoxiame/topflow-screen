@@ -1,0 +1,2 @@
+PASS: auto brightness rejects low-light jitter and isolated spikes; sustained changes ramp monotonically <=3 levels/100ms; steady-state zero writes; invalid/stale readings freeze; sleep/wake/manual/clock wrap preserved; unavailable sensor does not disable fixed brightness or timeout
+PASS: production ramp is deferred during swipe and uses the existing lifecycle

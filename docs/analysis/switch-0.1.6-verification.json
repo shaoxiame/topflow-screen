@@ -1,0 +1,66 @@
+{
+  "version": "0.1.6",
+  "txt": "dist/topflow-screen-0.1.6.txt",
+  "bytes": "[REDACTED_SENSITIVE_FIELD]",
+  "sha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "archiveSha256": "[REDACTED_SENSITIVE_FIELD]",
+  "nativeBinarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "sourceHashesVerified": "[REDACTED_SENSITIVE_FIELD]",
+  "archiveEntries": "[REDACTED_SENSITIVE_FIELD]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "[REDACTED_SENSITIVE_FIELD]",
+  "privateKeyScan": "[REDACTED_SENSITIVE_FIELD]",
+  "directSwitch": true,
+  "sensorAfterDrm": true,
+  "startupOrder": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "noPinStartup": "[REDACTED_SENSITIVE_FIELD]",
+  "touchBackendSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "nativePerformance": {
+    "pageSettleMilliseconds": 144,
+    "glyphEntriesLimit": 512,
+    "retainedDocuments": 1,
+    "[REDACTED_ENCODED_OR_IDENTIFIER]": 160,
+    "swipeBufferBytesMaximum": 1966080,
+    "swipeBuffers": 2,
+    "cssEntriesLimit": 4,
+    "touchMotion": "continuous-drag",
+    "swipeBufferLifetime": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "cacheStorage": "process-memory-only",
+    "pinnedHeader": "[REDACTED_SENSITIVE_FIELD]",
+    "pinnedHeaderBufferBytes": "[REDACTED_SENSITIVE_FIELD]",
+    "glyphCoverageBytesLimit": 393216,
+    "lateFrames": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+    "cssFileBytesLimit": 262144
+  },
+  "hardwareTested": false,
+  "deviceAccess": "No device access or writes during this release. Development, mocks, renderer benchmarks and builds ran only on PC.",
+  "localTests": {
+    "nativeScripts": "[REDACTED_SENSITIVE_FIELD]",
+    "jsTests": [
+      {
+        "file": "analysis/switch-0.1.6-js-core.log",
+        "tests": 126,
+        "passed": 126,
+        "failed": 0
+      },
+      {
+        "file": "analysis/switch-0.1.6-js-ui.log",
+        "tests": 53,
+        "passed": 53,
+        "failed": 0
+      },
+      {
+        "file": "analysis/switch-0.1.6-js-package.log",
+        "tests": 36,
+        "passed": 36,
+        "failed": 0
+      }
+    ],
+    "nativeArm64Build": "passed",
+    "independentReview": "passed; main branches and renderer reviewed; regression tests reject the prior broken behaviors"
+  },
+  "benchmarkEvidence": [
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt",
+    "[REDACTED_ENCODED_OR_IDENTIFIER].txt"
+  ],
+  "boundary": "[REDACTED_SENSITIVE_CONTEXT]"
+}

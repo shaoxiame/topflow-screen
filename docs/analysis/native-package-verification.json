@@ -1,0 +1,12 @@
+{
+  "archiveSha256": "[REDACTED_SENSITIVE_FIELD]",
+  "archiveBytes": "[REDACTED_SENSITIVE_FIELD]",
+  "sourceHashesVerified": "[REDACTED_SENSITIVE_FIELD]",
+  "payloadFilesVerified": "[REDACTED_SENSITIVE_FIELD]",
+  "binarySha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "factoryBusSha256": "[REDACTED_ENCODED_OR_IDENTIFIER]",
+  "releaseReadiness": "DIAGNOSTIC_CANDIDATE",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": true,
+  "hardwareTested": false,
+  "scriptSha256": "[REDACTED_SENSITIVE_FIELD]"
+}

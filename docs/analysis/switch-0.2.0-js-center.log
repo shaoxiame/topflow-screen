@@ -1,0 +1,37 @@
+[REDACTED_SENSITIVE_CONTEXT]
+✔ unknown model, firmware and clients remain unknown (0.709ms)
+✔ hidden page cancels all active local reads and stops scheduling (0.7422ms)
+✔ stop aborts an in-flight automatic remote request (3.0573ms)
+✔ 429 honors Retry-After without identity churn (0.7074ms)
+✔ 400 is swallowed but schedules another heartbeat: integration needs publication gate (0.5678ms)
+✔ manual heartbeat is not canceled by stop: integration must use start chain only (0.8443ms)
+✔ public catalog uses only fixed anonymous HTTPS XHR; exact version starts private SDK (1.593ms)
+✔ initialization and concurrent checks are merged without directory polling (2.3617ms)
+✔ newer catalog versions are advertised without starting wrong-version telemetry (0.2471ms)
+✔ older published version does not downgrade or impersonate current build (0.1958ms)
+✔ missing plugin is unpublished and waits for explicit check (0.548ms)
+✔ all localhost and file previews skip public/device requests even if enabled (0.4573ms)
+✔ disabled adapter and invalid local release version never request (0.2323ms)
+✔ remote version cannot inject arbitrary labels or HTML (0.2592ms)
+✔ duplicate own ID, invalid catalog and excessive list length are rejected (0.5078ms)
+✔ oversized, redirected and timed-out responses stop safely (0.831ms)
+✔ hidden initial page waits; visibility resumes one catalog read (0.7521ms)
+✔ hiding cancels in-flight catalog and discards late response (0.7358ms)
+✔ pagehide suspends SDK and pageshow restores without extra catalog polling (0.1872ms)
+✔ stop aborts pending directory, removes all listeners and check cannot restart (0.1318ms)
+✔ UI disposal during checking callback prevents the pending network request (0.0689ms)
+✔ stop terminates SDK and all handlers; late callbacks cannot reactivate it (0.0902ms)
+✔ network failures use bounded backoff and never schedule automatic retries (0.6309ms)
+✔ 429 respects Retry-After and imposes an upper bound without timers (0.1674ms)
+✔ previously started telemetry stops when explicit recheck reports a new release (0.0849ms)
+✔ semver release ordering handles prerelease numerically and never treats metadata as exact (0.1891ms)
+✔ callback and SDK exceptions cannot escape into screen initialization (0.8016ms)
+[REDACTED_SENSITIVE_CONTEXT]
+ℹ tests 30
+ℹ suites 0
+ℹ pass 30
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71.2313

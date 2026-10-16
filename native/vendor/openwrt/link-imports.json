@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "purpose": "Link-only public ABI declarations required by factory_bus.c. Never deploy these stubs.",
+  "target": "aarch64-linux-musl",
+  "libraries": {
+    "libubus.so.20230605": {
+      "functions": ["ubus_connect", "ubus_add_object", "ubus_free", "ubus_register_subscriber", "ubus_register_event_handler", "ubus_lookup_id", "ubus_invoke_fd", "ubus_send_event", "ubus_unsubscribe", "ubus_subscribe", "ubus_send_reply"],
+      "objects": {}
+    },
+    "libubox.so.20230523": {
+      "functions": ["uloop_init", "uloop_fd_add", "uloop_timeout_cancel", "uloop_done", "uloop_timeout_set", "uloop_run_timeout", "blob_buf_init", "blobmsg_open_nested", "blob_nest_end", "blob_buf_free", "blobmsg_add_field", "blobmsg_parse"],
+      "objects": {"uloop_cancelled": 1}
+    }
+  },
+  "notes": [
+    "Function declarations come from the pinned OpenWrt public headers; uloop_cancelled is declared bool.",
+    "The symbol set matches the helper's required dynamic imports; this is not a copy of firmware library code.",
+    "SONAMEs are an existing deployment compatibility requirement, not a claim of compatibility with every OpenWrt build.",
+    "A successful local link does not verify runtime layout, service behavior, or device ABI."
+  ]
+}

@@ -1,0 +1,1 @@
+PASS: two actual scopes, 30-sample ring, duplicate/zero/gap semantics, finite four-frame 180ms transition, no idle redraw, upright dirty bounds, pinned header clipping reset and flush failure

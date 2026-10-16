@@ -1,0 +1,207 @@
+TopFlow native runtime — final local implementation, [REDACTED_NUMBER]
+
+Scope and release state
+Only local files/builds/tests were changed by this agent. No device connection,
+installation, upload, start, firmware/config write or runtime test was performed.
+[REDACTED_SENSITIVE_CONTEXT]
+exited after preflight and restored the original; that startup cause is unresolved.
+It is not a claim that all original functions or physical behavior were verified.
+Each of the 37 original feature groups has an updated currentImplementation and
+hardwareVerified=false in [REDACTED_ENCODED_OR_IDENTIFIER].json.
+
+Architecture
+Independent AArch64 static litehtml/FreeType renderer for the original 320x480
+RGB565 DRM screen, original device font, rotated evdev input, five horizontal
+swipe pages, vertical scrolling subpages, light/dark themes, finite swipe
+transitions, bounded busy feedback, real RAM-only rate history. It is not a
+browser: no JavaScript DOM is executed on the device. Native templates and C
+routes share the visible design of the separate browser preview.
+
+The current native main pages follow the existing browser layout at 320x480.
+Large rate values, labels and card status use the same presentation rules;
+1000.0+ Mbps values reduce font size without removing their units. CSS font
+weight now affects both measured width and raster coverage. Native RGB565
+gradients use fixed ordered dithering, with no temporal noise or extra redraw.
+The blue hero contains actual download/upload lines and subtle area shading.
+Two independent histories retain at most 30 primary/aggregate samples in RAM;
+missing samples form gaps, never zeros. New samples can interpolate over four
+45ms frames; idle data never starts an animation loop. No preview fixture or
+chart file is loaded by the ARM runtime. The upstream forced-HSR environment/
+temporary-file debug override has also been removed from the data backend.
+
+The helper dynamically links only the existing musl/libubus/libubox ABI. It uses
+a private socketpair, observed original service methods and LCD/LOGIN/TOUCH and
+sleep/wake contracts. It does not load or initialize the original closed SDK.
+[REDACTED_SENSITIVE_CONTEXT]
+included in the payload. Pinned open-source provenance/licenses are included.
+
+Lifecycle and display
+Preflight runs while the original process and its service are alive, validates
+[REDACTED_ENCODED_OR_IDENTIFIER] [REDACTED_ENCODED_OR_IDENTIFIER]
+lock/LCD wake lock/provider schemas, and emits a strict typed receipt. The
+supervisor checks that receipt and obtains its own bounded transition guard
+before removing the original procd service. It never runs the dangerous upstream
+start script or the original stop script that unloads touch. The native process
+rechecks current facts after original exit and owns the replacement provider
+before DRM. Its first safe locked frame must succeed before a guarded LCD/lock
+adoption transaction can generate readiness. Failed [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_ENCODED_OR_IDENTIFIER] exit for bounded original recovery. This is tested
+with local failure stubs, not actual device handover.
+
+Readiness heartbeat and supervisor age use CLOCK_MONOTONIC, which excludes
+actual suspended time and is unaffected by wall-clock/NTP adjustment. The
+renderer exposes a minimal --monotonic-seconds CLI before all initialization.
+Shell handling retains the last valid heartbeat across a short truncate/write
+window; only a real age timeout causes recovery. Clock and truncation behavior
+are tested locally, not claimed as physical suspend acceptance.
+
+Automatic brightness uses the original integer lux curve and existing light
+sensor. Manual brightness, automatic mode and screen timeout use the verified
+original config keys only after explicit confirmation and readback. LCD changes
+are coordinated through bounded own guard, actual brightness readback, LCD event,
+observed zteSleepBacklight lock, then own guard release. Sleep and wake events
+[REDACTED_SENSITIVE_CONTEXT]
+an owned finite guard, submits a safe locked frame, verifies that guard is still
+active, then performs the brightness/LCD-lock transaction. No live suspend getter
+has been proven. Kernel logs revealed the old debugfs read consumes a history
+[REDACTED_SENSITIVE_CONTEXT]
+replaces it. DIRTYFB errors including EINVAL/ENOSYS are failures, never readiness.
+Actual bright pressed input sends distinct TOUCH1 on first press and at most
+[REDACTED_SENSITIVE_CONTEXT]
+Black-screen input/release/physical keys do not fabricate TOUCH events. Periodic
+automatic screen wake=1 remains unsupported and causes preflight refusal.
+
+Startup diagnostics (local candidate, not a confirmed device fix)
+The helper reports nine fixed startup stages over its existing private socketpair;
+the parent retains its 4000ms total cutoff. No longer timeout or blind retry was
+introduced. A first-error-only fixed code is stored in renderer.failure, at most
+64 bytes, in the owned 0700 runtime directory. The file must be root-owned 0600,
+regular, and singly linked; symlink following is rejected. No raw stderr, request,
+[REDACTED_SENSITIVE_CONTEXT]
+but do not identify its actual cause. New tests execute extracted production C
+for all nine startup-stage timeouts, early FATAL/EOF, invalid order, first error
+survival after cleanup, record validation and strict DIRTYFB behavior.
+
+[REDACTED_SENSITIVE_CONTEXT]
+Original enabled status is inherited. Only at a permitted runtime verification
+attempt is the original four-digit code privately read through an anonymous pipe
+[REDACTED_SENSITIVE_CONTEXT]
+handover or native restart waits a complete conservative 300 seconds, with an
+explicit initial-protection message. Five wrong attempts cause a separate 300s
+[REDACTED_SENSITIVE_CONTEXT]
+The native UI does not edit the original lock code or enable flag. It rechecks
+[REDACTED_SENSITIVE_CONTEXT]
+
+Controls and inputs
+Device controls default off per native process and require explicit activation
+plus per-action confirmation. Success requires precise backend acceptance and
+independent readback where applicable; unknown outcomes never retry a write.
+[REDACTED_SENSITIVE_CONTEXT]
+network lock, SIM error and contradictory state. Slot 0 from an empty external
+field is not presented as a confirmed physical slot. No valid rate means —.
+
+Implemented: primary data connect/disconnect, roaming and confirmed dual slot;
+external module enable via verified original V3E2/V3E1 interface; each card APN
+read/edit/mode/enable with namespace guards; primary APN add/delete; six verified
+primary network modes with unknown current mode shown literally; LTE/NR SA/NSA
+frequency grids and current-cell lock/unlock; primary operator scan/select/auto;
+[REDACTED_SENSITIVE_CONTEXT]
+dual-band merge; Wi-Fi-only client deny/unblock; primary traffic calibration and
+clear day; six work modes; direct supply, quick boot, system sleep choices;
+fan/liquid always-on with exact policy verification; capability-guarded reboot
+[REDACTED_SENSITIVE_CONTEXT]
+
+Native keyboard supports ASCII plus an offline single-character Pinyin dictionary
+[REDACTED_SENSITIVE_CONTEXT]
+unread flags. Unknown tags are not guessed; current service snapshot is limited
+to 32 messages. Viewing does not mark read. Full history/bulk delete is not added.
+[REDACTED_SENSITIVE_CONTEXT]
+read-only SQLite config, never hardcoded, logged or borrowed from a browser;
+[REDACTED_SENSITIVE_CONTEXT]
+Auth expires after ten minutes and is wiped on lock/exit/domain leave/401; page-
+[REDACTED_SENSITIVE_CONTEXT]
+message have explicit confirmation; partial saved failures are not retried.
+
+Known boundaries
+The inventory is authoritative for per-feature detail. No all-37-features claim.
+[REDACTED_SENSITIVE_CONTEXT]
+intelligent [REDACTED_ENCODED_OR_IDENTIFIER] business; full LAN/WAN/UPnP/DMZ;
+package limit semantics; [REDACTED_ENCODED_OR_IDENTIFIER]; full multilingual UI;
+factory device reset/firmware upgrade; complete Wi-Fi coverage/max-client and
+[REDACTED_SENSITIVE_CONTEXT]
+cooling/network/control effects and restoration still need device acceptance.
+
+Historical first switch incident and the 0.1.1 revision (superseded by the diagnostic changes above)
+[REDACTED_SENSITIVE_CONTEXT]
+read-only evidence confirms the installed hashes matched that package, the
+original process 18392 still owned DRM, and no custom process was running.
+The agent did not execute the installed binary or its preflight on the device.
+The immediate deterministic defect was seven native/helper uses of /sbin/ubus;
+the actual executable is /bin/ubus and /sbin/ubus is absent. All are corrected,
+including provider checks, original modem/APN/power adapters and helper direct
+power. A new local C test checks every production source for this target path.
+
+A second legitimate handover condition is now handled explicitly. The original
+display owns an internal zte_topsw_devui map entry while active. Its SDK deletes
+that entry when ready for sleep. The separate kernel
+[REDACTED_ENCODED_OR_IDENTIFIER] is released by an original-process timer 180000ms
+after the screen turns off; lighting the screen pauses that timer and acquires
+the lock. Stopping the original before that timer fires could strand its lock.
+The correction waits for both locks to disappear naturally while the original
+continues to run. It never deletes a vendor lock or changes the screen timeout.
+The controller provides bounded waiting and specific diagnostic codes; a known
+always-on configuration with the internal lock active refuses immediately.
+
+The map writer truncates then rewrites its full tree on add/delete. Therefore a
+zero-length or incomplete read is not proof of no lock. Native reads now require
+a nonempty newline-complete map, unchanged inode/size/mtime/ctime before and
+after each read, and two identical snapshots 100ms apart. Unknown syntax/read
+errors refuse; transient incomplete/changing snapshots are reported separately.
+After the original stops, both the stable map and exact kernel lock are checked
+again before any replacement provider registration or DRM operation. A race
+returns to original recovery rather than clearing the original lock.
+
+The new local preflight/adopt test executes the actual [REDACTED_ENCODED_OR_IDENTIFIER]
+[REDACTED_SENSITIVE_CONTEXT]
+13 policy, path failures, map truncation/change, active and always-on locks,
+[REDACTED_SENSITIVE_CONTEXT]
+file is opened, and test callbacks reject configuration/lock writes. Its former
+[REDACTED_SENSITIVE_CONTEXT]
+
+Historical 0.1.1 packaging verification, not the current diagnostic candidate
+Corrected main is static ELF64 AArch64, compiled with -Wall -Wextra -Werror.
+0.1.1 SHA256 [REDACTED_ENCODED_OR_IDENTIFIER].
+Helper SHA256 [REDACTED_ENCODED_OR_IDENTIFIER].
+Corrected archive SHA256 [REDACTED_ENCODED_OR_IDENTIFIER],
+1,108,497 bytes; main2,277,256 bytes and helper24,552 bytes. The diagnostic/waiting
+and guarded-recovery scripts were frozen before packaging. All69 source hashes,
+25 payload files, both binary/checksum entries and current script/UI bytes were
+verified. No font, shared library, database, evidence or preview fixture is in
+the payload; hardwareTested remains false. See [REDACTED_ENCODED_OR_IDENTIFIER].json.
+The previous c3f71f86 archive does not contain this incident correction.
+Passive read-only sampling now corroborates the factory's 180000ms timer:
+the original PID18392 remained alive, the display stayed dark, and the exact
+auto_sleep lock naturally disappeared by uptime83866.80 after being present
+at83848.21. No plugin/preflight was executed for that observation.
+Custom runtime now preserves the same post-off delay with a separate finite
+[REDACTED_ENCODED_OR_IDENTIFIER] 180000000000ns lease. It is acquired before a
+real bright-to-dark write, retained while dark without renewal, and released
+only after a later bright state has the original LCD lock. Dark adoption adds
+no delay. Re-registration protects a newly observed dark state before its off
+event. Exit leaves the own finite lease for validated stable-original recovery;
+no original lock is ever acquired/released by this implementation. The actual
+runtime fault suite covers order, expiry, repeated-off, dark adoption, resync,
+[REDACTED_SENSITIVE_CONTEXT]
+Local C suites cover controls, display policy/runtime/TOUCH failures,
+[REDACTED_SENSITIVE_CONTEXT]
+UFI/extra and shell tests are recorded separately. Same-engine original-font
+light/dark layouts and hit-tests were produced without device execution. New
+tests cover actual renderer [REDACTED_ENCODED_OR_IDENTIFIER] pixels, bounded
+four-frame chart updates, real [REDACTED_ENCODED_OR_IDENTIFIER] presentation parity,
+oversized-rate font choices, stale data and monotonic heartbeat clock failure.
+The updated renderer passed 75 secondary light/dark variants and 119 actual
+hit-tests. Keyboards remain 480 pixels tall. The coordinating agent refreshed
+16 [REDACTED_ENCODED_OR_IDENTIFIER] previews and verified 68 light/dark hits.
+The lifecycle agent reports 30 shell tests, 12 manager tests and five
+production tests passed, including suspend/NTP, valid boot-zero clocks,
+failed clocks, partial heartbeat writes, inherited locks and uninstall races.

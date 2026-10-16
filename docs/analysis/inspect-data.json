@@ -1,0 +1,5 @@
+{
+  "ubus-schema-explicit": "ubus -s /var/run/ubus/ubus.sock list -v",
+  "ui-resource-list": "[REDACTED_SENSITIVE_FIELD]",
+  "[REDACTED_ENCODED_OR_IDENTIFIER]": "[REDACTED_SENSITIVE_FIELD]"
+}

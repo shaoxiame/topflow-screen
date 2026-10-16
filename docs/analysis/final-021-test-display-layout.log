@@ -1,0 +1,1 @@
+PASS: 10 actual display/cell-lock renders, 2664 hit checks; header pixels unchanged at every target scroll.

@@ -1,0 +1,156 @@
+✔ browser registration only adds an entry and performs zero device requests (2.0014ms)
+✔ install start refuses an existing target and does not start any renderer (0.4242ms)
+✔ binary upload uses documented FormData endpoint and validates exact returned path (10.8129ms)
+✔ finish validates hash before extraction and never changes factory/startup files (0.2672ms)
+✔ screen controls are explicit, narrowly scoped and status is parsed without false success (1.6092ms)
+✖ current final candidate uses the documented script format and exact live direct-switch native archive (43.9784ms)
+✔ release gate rejects incomplete local verification and review payload blocks installation and activation (0.7607ms)
+✔ diagnostic candidate has a separate honest gate and cannot weaken the failed release gate (0.2244ms)
+✔ native archive inspection rejects symlinks before packaging (51.0075ms)
+✔ review packaging refuses stale native source, lifecycle scripts or UI even with valid archive checksums (5.061ms)
+✔ both native executables require exact checksums and the ARM64 architecture (0.3102ms)
+✔ production validation rejects preview APIs and demo factories regardless of whether they are called (1.3712ms)
+✔ native package must explicitly declare real data and CLOCK_MONOTONIC heartbeat (0.3178ms)
+[REDACTED_SENSITIVE_CONTEXT]
+✖ current install instructions describe direct switching and exact old-version migration without claiming hardware success (0.2848ms)
+✔ payload source uses bounded lines without changing archive bytes or recovery script (8.5248ms)
+✔ boot package covers every byte with checksums and declares disabled-by-default bounded startup (13.2175ms)
+✔ saved UFI manual importer accepts raw source and preserves the AoYou-style public header without internal store metadata (10.4815ms)
+✔ actual UFI importer documents that manual same-filename imports are skipped, not upgraded (2.4007ms)
+✔ raw TopFlow import preserves other installed plugin blocks and their host-owned metadata (5.0669ms)
+✔ the actual generated script registers from a UFI-style head injection with lexical API globals and zero device requests (23.2407ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 19
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 215.7719
+
+✖ failing tests:
+
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+✖ current final candidate uses the documented script format and exact live direct-switch native archive (43.9784ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^\/\/ @version 0\.2\.0$/m. Input:
+  
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+    '// TopFlow 屏幕 v0.2.1 — UFI-TOOLS-ZWRT 原生屏幕插件\n' +
+    '// @name TopFlow 屏幕\n' +
+    '// @version 0.2.1\n' +
+    '// @build cb604358ffa42c82\n' +
+    '// @author TopFlow Screen\n' +
+    '// @description 中兴 TopFlow 原生屏幕；开机自启、原厂切换、三卡卡源与 UFI 功能集成\n' +
+    '// @target ZTE TopFlow / MU5252\n' +
+    '// @status [REDACTED_ENCODED_OR_IDENTIFIER]\n' +
+    'globalThis.TopFlowPackagePayload={};\n' +
+    'globalThis.TopFlowPackagePayload["version"]="0.2.1";\n' +
+    'globalThis.TopFlowPackagePayload["defaultViewOnly"]=false;\n' +
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+[REDACTED_SENSITIVE_CONTEXT]
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    'globalThis.TopFlowPackagePayload["directSwitch"]=true;\n' +
+    'globalThis.TopFlowPackagePayload["sensorAfterDrm"]=true;\n' +
+    'globalThis.TopFlowPackagePayload["startupOrder"]="[REDACTED_ENCODED_OR_IDENTIFIER]";\n' +
+    'globalThis.TopFlowPackagePayload["hardwareTested"]=false;\n' +
+    'globalThis.TopFlowPackagePayload["reviewOnly"]=false;\n' +
+    'globalThis.TopFlowPackagePayload["diagnosticCandidate"]=false;\n' +
+    'globalThis.TopFlowPackagePayload["adaptationFixCandidate"]=true;\n' +
+    'globalThis.TopFlowPackagePayload["[REDACTED_ENCODED_OR_IDENTIFIER]"]=true;\n' +
+    'globalThis.TopFlowPackagePayload["[REDACTED_ENCODED_OR_IDENTIFIER]"]=true;\n' +
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    'globalThis.TopFlowPackagePayload["[REDACTED_ENCODED_OR_IDENTIFIER]"]=false;\n' +
+    'globalThis.TopFlowPackagePayload["[REDACTED_ENCODED_OR_IDENTIFIER]"]=false;\n' +
+    'globalThis.TopFlowPackagePayload["performanceFixCandidate"]=true;\n' +
+    'globalThis.TopFlowPackagePayload["[REDACTED_ENCODED_OR_IDENTIFIER]"]="0.1.5";\n' +
+    'globalThis.TopFlowPackagePayload["[REDACTED_ENCODED_OR_IDENTIFIER]"]=false;\n' +
+    'globalThis.TopFlowPackagePayload["performanceScope"]=["rendering","animation","scrolling"];\n' +
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    'globalThis.TopFlowPackagePayload["confirmedLockCause"]="[REDACTED_ENCODED_OR_IDENTIFIER]";\n' +
+    'globalThis.TopFlowPackagePayload["[REDACTED_ENCODED_OR_IDENTIFIER]"]=true;\n' +
+    'globalThis.TopFlowPackagePayload["[REDACTED_ENCODED_OR_IDENTIFIER]"]=true;\n' +
+    'globalThis.TopFlowPackagePayload["factoryPinEnum"]="0-enabled-1-disabled";\n' +
+    'globalThis.TopFlowPackagePayload["noPinStartup"]="hold-to-unlock-local";\n' +
+    'globalThis.TopFlowPackagePayload["noPinWake"]="hold-to-unlock-local";\n' +
+[REDACTED_STRUCTURED_CAPTURE_FRAGMENT]
+    'globalThis.TopFlowPackagePayload["pendingDeviceAcceptance"]=true;\n' +
+    'globalThis.TopFlowPackagePayload["acceptanceStatus"]="[REDACTED_ENCODED_OR_IDENTIFIER]";\n' +
+    'globalThis.TopFlowPackagePayload["releaseBlocked"]=null;\n' +
+    'globalThis.TopFlowPackagePayload["archiveSha256"]="[REDACTED_ENCODED_OR_IDENTIFIER]";\n' +
+    'globalThis.TopFlowPackagePayload["screenctlSha256"]="[REDACTED_ENCODED_OR_IDENTIFIER]";\n' +
+[REDACTED_SENSITIVE_CONTEXT]
+    'globalThis.TopFlowPackagePayload.archiveBase64=[\n' +
+    '"[REDACTED_ENCODED_OR_IDENTIFIER]",\n' +
+    '"[REDACTED_ENCODED_OR_IDENTIFIER]",\n' +
+    '"[REDACTED_ENCODED_OR_IDENTIFIER]'... 1685375 more characters
+  
+      at TestContext.<anonymous> ([REDACTED_LOCAL_PATH]
+[REDACTED_SENSITIVE_CONTEXT]
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+[REDACTED_LONG_LINE_OR_EMBEDDED_PAYLOAD]
+    expected: /^\/\/ @version 0\.2\.0$/m,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+[REDACTED_EMBEDDED_SOURCE_OR_COMMAND]
+✖ current install instructions describe direct switching and exact old-version migration without claiming hardware success (0.2848ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /功能检查-0\.2\.0\.txt/. Input:
+  
+  'TopFlow 屏幕 0.2.1 — 三卡签约速率与插件中心接入版\n' +
+    '状态：[REDACTED_ENCODED_OR_IDENTIFIER]；hardwareTested=false，本版界面、聚合首页、默认操作与短信改进尚未实机验收。\n' +
+    '用户已确认 0.1.5 可以使用。现固定三个主页面：首页、网络、功能；普通/聚合共用一个首页位置。\n' +
+    '首页随设备最新回读的聚合开关状态切换；未启用、未知或过期时显示普通页，已启用但离线仍显示聚合页。\n' +
+    '屏幕取消手动模式选择和聚合开关；读取现有设备状态，不新增GPIO读取，也不判断是谁操作了开关。\n' +
+    '保留0.1.6跟手拖动：横向翻页与纵向滚动跟随手指；松手后翻页按144毫秒目标收尾，慢帧跳进当前进度。\n' +
+    '顶部状态和返回栏固定；文字改用细分字重，圆角抗锯齿，减少图表和背景颗粒；物理分辨率仍为320×480。\n' +
+    '顶部电池区分充电、插电未充电、满电和未知状态；不会按电量百分比猜测是否充电。\n' +
+    '缓存仅在进程内存：字形覆盖图上限384KiB、最多512项；两张翻页缓冲仅在横滑与收尾期间保留。\n' +
+[REDACTED_SENSITIVE_CONTEXT]
+    '亮度可选固定或自适应；固定亮度支持1%草稿微调与预设，确认后生效。自适应沿原曲线滤波渐变。\n' +
+    '接管并解锁后默认可操作，无需额外启用；原厂PIN仍须验证，每次修改和短信发送仍需确认。\n' +
+    '第二页加入主载波/多载波明细及网口插线、协商速率与吞吐；主基带手动LTE/NR锁小区保留，回读配置不等同驻留。\n' +
+    '聚合页显示官方剩余与今日流量；区分开启、在线与监测未知，不再把未知统一显示等待上线。\n' +
+    '各卡详情依次显示实时上行、实时下行、QCI、签约上行、签约下行；签约值读取本卡AMBR（Mbps），非测速，未知显示—。\n' +
+    '保留各卡插拔卡/内置卡切换，按该模组原厂接口提交并回读；卡源未知仍可明确选择；未启用需先启用。\n' +
+[REDACTED_SENSITIVE_CONTEXT]
+    '保留原厂切换、休眠和PIN保护；显示配置与光感瞬态失败分开，立即锁屏独立；本轮未访问设备。\n' +
+    '\n' +
+    '安装：在已登录UFI的插件管理中选择 topflow-screen-0.2.1.txt，再点击“保存”，等待完成后刷新。\n' +
+    '“功能列表”折叠区域外的“TopFlow 屏幕 · 管理”才是操控页；插件列表文件名打开源码，无需编辑。\n' +
+    '更新0.1.0/0.1.1/0.1.2/0.1.3/0.1.4/0.1.5/0.1.6/0.1.7/0.1.8/0.1.9/0.2.0：旧屏幕可保持运行，移除旧TopFlow插件记录、保存并刷新，\n' +
+    '再导入本包并保存刷新。UFI跳过同名导入，不会覆盖旧记录；不要改名叠加，也不要删除其他插件。\n' +
+    '管理器仅识别已交付且列入核验清单的旧归档；固定归属、清单和执行文件哈希匹配后，\n' +
+    '顶部检查已导入TXT与设备组件；发现旧版显示“更新到 v0.2.1”，一次确认自动恢复原厂、清理、安装并启动，无需手动来回切换。\n' +
+    '检查在线版本只读插件中心公开目录；正式发布后由UFI商店更新TXT，再用管理页按钮更新组件。未知或被改动版本拒绝迁移。\n' +
+[REDACTED_SENSITIVE_CONTEXT]
+    '\n' +
+[REDACTED_SENSITIVE_CONTEXT]
+    '不再要求等待原厂自然熄屏。实际安全前置检查失败会停止接管并显示具体代码。\n' +
+    '若旧版仍返回等待状态，可在管理页取消并确认恢复结果。关闭页面不会自动切换实体屏。\n' +
+    '恢复：点击切换回原厂并确认，页面验证进程与服务；画面、触摸仍须用户观察。\n' +
+    '卸载：先确认原厂稳定，再清理本插件路径及唯一UFI记录；归属不明、未知文件、上传或记录删除未确认时停止，不假报卸净。\n' +
+    '若失败，请保留页面主错误、固定阶段码和退出状态，先恢复原厂；不要重复盲目启用。\n' +
+    '\n' +
+[REDACTED_SENSITIVE_CONTEXT]
+    '开机自启动默认关闭：更新组件后在管理页开启；使用UFI官方启动项，服务就绪后尝试一次；关闭取消待执行任务，卸载移除本插件启动项。\n' +
+    '本版修复和未支持能力见 功能检查-0.2.1.txt；不宣称与原厂全部功能等价。\n' +
+    '版本 0.2.1；TXT 100 字节；与既有遨游约728KB合计约 728190 字节。\n' +
+    '本项目限制单TXT小于4MiB；UFI全部自定义头部上限5MB，其它插件也计入。\n' +
+    'TXT SHA-256：a\n' +
+    '原生归档 SHA-256：b\n'
+  
+      at TestContext.<anonymous> ([REDACTED_LOCAL_PATH]
+[REDACTED_SENSITIVE_CONTEXT]
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+[REDACTED_LONG_LINE_OR_EMBEDDED_PAYLOAD]
+    expected: /功能检查-0\.2\.0\.txt/,
+    operator: 'match',
+    diff: 'simple'
+  }

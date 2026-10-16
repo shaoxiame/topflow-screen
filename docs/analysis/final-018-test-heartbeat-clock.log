@@ -1,0 +1,2 @@
+PASS: actual monotonic clock heartbeat, valid boot zero, suspended wall jump, backwards NTP, awake advance and failed-clock/no-frame refusal
+PASS: read-only clock CLI is the first main branch

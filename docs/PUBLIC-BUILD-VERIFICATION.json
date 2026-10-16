@@ -15,6 +15,14 @@
     "font": "developer-supplied Windows font; not redistributed"
   },
   "checks": {
+    "cleanCloneGithubActions": {
+      "tests": 191,
+      "passed": 188,
+      "skipped": 3,
+      "failed": 0,
+      "additionalSkip": "Official SDK download was deliberately not performed in source-only CI.",
+      "url": "https://github.com/shaoxiame/topflow-screen/actions/runs/38913466039"
+    },
     "publicJavascript": {
       "tests": 191,
       "passed": 189,

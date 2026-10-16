@@ -10,4 +10,4 @@ SHA-256：`da8422e8c5df8a536ea0c94dc565013671d1e1e19e02911eef1796d0c0a09c34`。�
 
 用户已确认完成实机验收，并提供真实设备测试照片。本次公开整理在电脑上重新构建、脱敏和检查，未再次连接设备。验证结果见 [公开构建记录](../docs/PUBLIC-BUILD-VERIFICATION.json)，适用范围与已知限制见 [项目主页](../README.md)。
 
-这是最终版本，不再维护，不接受反馈或技术支持请求。原创部分适用 PolyForm Noncommercial 1.0.0；第三方许可保留。
+这是最终版本，不再维护。仓库、Issues、Discussions 和 Pull Requests 保持开放，但不承诺处理反馈、合并改动或提供技术支持。原创部分适用 PolyForm Noncommercial 1.0.0；第三方许可保留。

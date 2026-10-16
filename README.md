@@ -178,7 +178,7 @@ Required Notice: Copyright (c) 2026 shaoxiame (TopFlow Screen contributors).
 
 管理页包含插件中心版本检查和官方 SDK 接入。只有本 TXT 版本与中心已发布版本一致时，才按实现条件在可见 UFI 页面发送宿主持久匿名 UUID、设备型号/固件、插件版本和 Wi-Fi 终端数量；隐藏页面暂停。它不发送密码、短信、SSID 或终端明细，没有新增原生常驻统计进程。连接失败不阻断屏幕控制。
 
-本 GitHub 源码公开不等于已向插件中心发布。自行修改或派生时，应审阅 [官方开发文档](https://plugin.shaneyun.com/developers)，使用自己合法管理的插件身份，不能冒用原项目发布身份。
+本 GitHub 源码公开不等于已向插件中心发布。自行修改或派生时，应审阅 [官方开发文档](https://tapan.top/UFITOOLS-U60Pro/1.0.0%E6%96%B0%E7%89%88%E6%9C%AC%E6%96%87%E6%A1%A3)，使用自己合法管理的插件身份，不能冒用原项目发布身份。
 
 ## 致谢与授权
 

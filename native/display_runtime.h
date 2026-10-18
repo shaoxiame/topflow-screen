@@ -12,7 +12,10 @@ static tf_factory_guard factory_guard;
 static tf_display_idle_guard display_idle_guard;
 static tf_factory_lifecycle factory_lifecycle;
 static int factory_bus_active=0,display_runtime_ready=0,display_runtime_fault=0,display_frame_guard=0;
-static int display_direct_wake=0,display_startup_guard_pending=0;
+static int display_direct_wake=0,display_startup_guard_pending=0,display_startup_dormant=0;
+/* The main loop supplies a fresh read-only OEM power-state gate. A normal
+ * sleep/wakeup notification is not proof that quick-boot shutdown ended. */
+static int(*display_power_on_hook)(void)=NULL;
 static int display_runtime_wake_sensor(void);
 /* The vendor debugfs sleep indicator is a read-to-clear history event, not a
  * live panel state. Never consume it in either preflight or our runtime. */
@@ -92,6 +95,7 @@ static int display_preflight_receipt(char*out,size_t cap){
  * These SDK wrappers write the two fixed attributes below; no SDK-wide init,
  * shell, driver reload or persistent configuration is involved. */
 static int display_sensor_write_attribute(const char*path){
+ if(display_power_on_hook&&!display_power_on_hook())return 0;
 #ifdef __linux__
  int fd=tf_guard_open_sysfs(path,O_WRONLY);if(fd<0)return 0;
  ssize_t n;do{n=write(fd,"1\n",2);}while(n<0&&errno==EINTR);int closed=close(fd);return n==2&&closed==0;
@@ -151,14 +155,25 @@ static int display_runtime_startup_frame(void){
  if(!display_sensor_guard_alive()||!tf_guard_acquire(&factory_guard)||tf_guard_observe(&factory_guard,factory_guard.name)!=1){native_failure_note("ADOPT_GUARD_ACTIVE");return 0;}return 1;
 }
 static int display_runtime_after_drm(int pipe_ready){
+ display_startup_dormant=0;
  if(!pipe_ready){native_failure_note("DRM_INIT");return 0;}
  if(!display_sensor_guard_alive()){native_failure_note("ADOPT_GUARD_ACTIVE");return 0;}
+ if(display_power_on_hook&&!display_power_on_hook()){display_startup_dormant=1;return display_read_output(&display_config)&&display_runtime_startup_frame()?2:0;}
  tf_display_config observed;
- if(!display_read_policy_observed(&observed)){native_failure_note(display_config_failure);return 0;}
+ if(!display_read_policy_observed(&observed)){
+  if(display_power_on_hook&&!display_power_on_hook()){display_startup_dormant=1;return display_read_output(&display_config)&&display_runtime_startup_frame()?2:0;}
+  native_failure_note(display_config_failure);return 0;
+ }
+ if(display_power_on_hook&&!display_power_on_hook()){display_startup_dormant=1;return display_read_output(&display_config)&&display_runtime_startup_frame()?2:0;}
  if(observed.pin_enabled!=display_config.pin_enabled){native_failure_note("ADOPT_PIN_POLICY");return 0;}
  if(!tf_display_same_policy(&display_config,&observed)){native_failure_note("ADOPT_POLICY_CHANGED");return 0;}
  display_config=observed;
- if(!display_read_output(&display_config)||!display_sensor_prepare(&display_config,display_sensor_write_enabled,display_sensor_guard_alive)){native_failure_note(display_config_failure);return 0;}
+ if(!display_read_output(&display_config)){native_failure_note(display_config_failure);return 0;}
+ if(display_power_on_hook&&!display_power_on_hook()){display_startup_dormant=1;return display_runtime_startup_frame()?2:0;}
+ if(!display_sensor_prepare(&display_config,display_sensor_write_enabled,display_sensor_guard_alive)){
+  if(display_power_on_hook&&!display_power_on_hook()){display_startup_dormant=1;return display_runtime_startup_frame()?2:0;}
+  native_failure_note(display_config_failure);return 0;
+ }
  if(!tf_display_valid(&display_config)){native_failure_note("ADOPT_CONFIG");return 0;}
  /* Preserve continuous protection across the bounded sensor check, then
   * renew only an observed live lease before font/PIN/first-frame work. */
@@ -203,7 +218,12 @@ static int display_runtime_adopt(void){
   * start a new awake period, and confirm brightness + the original LCD lock
   * before the caller publishes its first heartbeat. This is not a claim to
   * reproduce the old UI's unknown remaining idle timer. */
- if(display_direct_wake){
+ int power_on=!display_startup_dormant&&(!display_power_on_hook||display_power_on_hook());
+ if(!power_on){
+  display_direct_wake=0;tf_display_sleep(&display_policy);
+  if(!tf_idle_before_off(&display_idle_guard,live,0))return display_runtime_fail();
+  tf_fl_start_transition(&factory_lifecycle,0,tick(),1);
+ }else if(display_direct_wake){
   display_direct_wake=0;
   if(tf_display_wake(&display_policy,tick())!=TF_DISPLAY_LEVEL)return display_runtime_fail();
   /* Preserve the observed live level while selecting the newly requested
@@ -214,6 +234,7 @@ static int display_runtime_adopt(void){
  return display_runtime_drive();
 }
 static int display_runtime_request(int level){
+ if(level>0&&display_power_on_hook&&!display_power_on_hook()){tf_display_sleep(&display_policy);level=0;}
  int previous=factory_lifecycle.brightness;
  if(display_frame_guard&&tf_guard_observe(&factory_guard,factory_guard.name)!=1)return display_runtime_fail();
  if(!display_runtime_ready||!tf_fl_request(&factory_lifecycle,level,frame_ready,tick())||!tf_idle_before_off(&display_idle_guard,previous,level))return display_runtime_fail();return display_runtime_drive();
@@ -221,8 +242,15 @@ static int display_runtime_request(int level){
 static int display_runtime_resync(void){
  int previous=factory_lifecycle.brightness,live;
  if(!display_frame_guard||tf_guard_observe(&factory_guard,factory_guard.name)!=1)return display_runtime_fail();
- if(!display_read_number("/sys/class/leds/led:lcd/brightness",0,255,&live)||!tf_fl_resync(&factory_lifecycle,1,live,frame_ready,tick())||!tf_idle_before_off(&display_idle_guard,previous,live))return display_runtime_fail();
- factory_bus.resync=0;if(live>0&&!display_runtime_wake_sensor())return display_runtime_fail();display_policy.on=live>0;display_policy.brightness=live;tf_display_smoothing_reset(&display_policy,tick());backlight_init();return display_runtime_drive();
+ if(!display_read_number("/sys/class/leds/led:lcd/brightness",0,255,&live)||!tf_fl_resync(&factory_lifecycle,1,live,frame_ready,tick()))return display_runtime_fail();
+ int target=(!display_power_on_hook||display_power_on_hook())?live:0;
+ if(target!=live)tf_fl_start_transition(&factory_lifecycle,target,tick(),1);
+ if(!tf_idle_before_off(&display_idle_guard,previous>live?previous:live,target))return display_runtime_fail();
+ factory_bus.resync=0;if(target>0){int sensor_ready=display_runtime_wake_sensor();
+  if(sensor_ready==2||(display_power_on_hook&&!display_power_on_hook())){target=0;tf_fl_start_transition(&factory_lifecycle,0,tick(),1);if(!tf_idle_before_off(&display_idle_guard,previous>live?previous:live,0))return display_runtime_fail();}
+  else if(!sensor_ready)return display_runtime_fail();
+ }
+ display_policy.on=target>0;display_policy.brightness=target;tf_display_smoothing_reset(&display_policy,tick());backlight_init();return display_runtime_drive();
 }
 static int display_runtime_login(int unlocked){return factory_bus_active&&tf_fb_command(&factory_bus,TF_BUS_LOGIN,(uint32_t)(unlocked!=0),2500)?1:display_runtime_fail();}
 static int display_runtime_touch(int pressed,uint32_t now){
@@ -230,14 +258,18 @@ static int display_runtime_touch(int pressed,uint32_t now){
  if(!pressed||!display_runtime_ready||factory_lifecycle.phase!=TF_FL_READY||factory_lifecycle.brightness<=0){held=0;return 1;}
  /* Original touch activity is independent of authentication and LCD state.
   * Never synthesize release=0 or wake=2; held fingers refresh the idle timer. */
+ if(held&&(uint32_t)(now-sent)<250){tf_display_activity(&display_policy,now);return 1;}
+ if(display_power_on_hook&&!display_power_on_hook()){held=0;return 1;}
  tf_display_activity(&display_policy,now);
- if(held&&(uint32_t)(now-sent)<250)return 1;
  if(!factory_bus_active||!tf_fb_command(&factory_bus,TF_BUS_TOUCH,1,2500))return display_runtime_fail();
  held=1;sent=now;return 1;
 }
 static int display_runtime_unlock_policy(void){
+ if(display_power_on_hook&&!display_power_on_hook())return 0;
  char response[32];char*const args[]={"uci","-q","get","zwrt_deviceui.Screen.Lock_Screen_PIN_Enable_State",NULL};int raw_pin,enabled;
- if(vendor_exec("/sbin/uci",args,NULL,response,sizeof response)||!tf_display_integer(response,0,1,&raw_pin)||!tf_display_factory_pin_enabled(raw_pin,&enabled)||enabled!=display_policy.config.pin_enabled)return display_runtime_fail();return 1;
+ int result=vendor_exec("/sbin/uci",args,NULL,response,sizeof response);
+ if(display_power_on_hook&&!display_power_on_hook())return 0;
+ if(result||!tf_display_integer(response,0,1,&raw_pin)||!tf_display_factory_pin_enabled(raw_pin,&enabled)||enabled!=display_policy.config.pin_enabled)return display_runtime_fail();return 1;
 }
 static void display_runtime_cleanup(void){
  display_runtime_ready=0;display_startup_guard_pending=0;if(factory_bus_active){tf_fb_stop(&factory_bus);factory_bus_active=0;}
@@ -265,12 +297,17 @@ static int display_runtime_accept_observed(const tf_display_config*observed){
  * insufficient: wake must restore the same observed sensor under our owned
  * frame guard, after a complete DRM frame and before choosing wake brightness.
  * This does not reinitialize DRM, change UCI, or start the factory renderer. */
+/* 1=ready, 2=cancelled by OEM power state, 0=real failure. A later ON
+ * snapshot cannot retroactively make an interrupted preparation complete. */
 static int display_runtime_wake_sensor(void){
- if(!frame_ready||!display_sensor_guard_alive()){native_failure_note("WAKE_SENSOR_GUARD");return 0;}
- tf_display_config observed;if(!display_read_policy_observed(&observed)){native_failure_note("WAKE_POLICY_READ");return 0;}
+ if(display_power_on_hook&&!display_power_on_hook())return 2;
+ if(!frame_ready||!display_sensor_guard_alive()){if(display_power_on_hook&&!display_power_on_hook())return 2;native_failure_note("WAKE_SENSOR_GUARD");return 0;}
+ tf_display_config observed;if(!display_read_policy_observed(&observed)){if(display_power_on_hook&&!display_power_on_hook())return 2;native_failure_note("WAKE_POLICY_READ");return 0;}
+ if(display_power_on_hook&&!display_power_on_hook())return 2;
  if(!tf_display_external_policy_compatible(&display_policy.config,&observed)){native_failure_note("WAKE_POLICY_CHANGED");return 0;}
- if(!display_sensor_prepare(&observed,display_sensor_write_enabled,display_sensor_guard_alive)){native_failure_note("WAKE_SENSOR_PREPARE");return 0;}
- if(!display_sensor_guard_alive()){native_failure_note("WAKE_SENSOR_GUARD");return 0;}
+ if(!display_sensor_prepare(&observed,display_sensor_write_enabled,display_sensor_guard_alive)){if(display_power_on_hook&&!display_power_on_hook())return 2;native_failure_note("WAKE_SENSOR_PREPARE");return 0;}
+ if(display_power_on_hook&&!display_power_on_hook())return 2;
+ if(!display_sensor_guard_alive()){if(display_power_on_hook&&!display_power_on_hook())return 2;native_failure_note("WAKE_SENSOR_GUARD");return 0;}
  /* Wake already owns the complete-frame guard. Adopt fresh mutable policy
   * only after sensor readiness and a final guard check; do not alter PIN,
   * activity, locked state, or wake/sleep ownership here. */
@@ -283,7 +320,7 @@ static int display_runtime_wake_sensor(void){
 /* Invoked only by the confirmed auto-brightness setter. This prepares a live
  * sample without changing the fixed-mode preference or brightness. The caller
  * rereads policy before its single UCI commit. */
-static int display_auto_sensor_guard_alive(void){return display_sensor_guard_alive()&&!factory_bus.power_event&&!factory_bus.resync;}
+static int display_auto_sensor_guard_alive(void){return display_sensor_guard_alive()&&!factory_bus.power_event&&!factory_bus.resync&&(!display_power_on_hook||display_power_on_hook());}
 static int display_runtime_prepare_auto_sensor(void){
  if(tf_http_cancelled||factory_bus.power_event||factory_bus.resync||!display_runtime_ready||!frame_ready||factory_lifecycle.phase!=TF_FL_READY||factory_lifecycle.brightness<=0){display_config_failure="DISPLAY_AUTO_NOT_READY";return 0;}
  int level=factory_lifecycle.brightness;if(!display_runtime_begin_frame())return 0;

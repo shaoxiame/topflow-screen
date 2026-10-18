@@ -1,21 +1,21 @@
 {
-  "version": "0.2.5",
-  "edition": "ufi-state-synchronization",
+  "version": "0.2.6",
+  "edition": "factory-quick-boot-and-ufi-glass",
   "deviceAccess": false,
   "deviceWrites": false,
   "hardwareVerified": false,
-  "hardwareBoundary": "All checks ran on the computer using synthetic state, mocked network/transport and disposable filesystem/process fixtures. No device connection, installation or setting changes were performed. Historical v0.2.1 acceptance is not extended to v0.2.5.",
+  "hardwareBoundary": "Checks ran on the computer using synthetic state, mocked I/O and disposable files. No device connection, installation or setting changes. Historical acceptance does not cover v0.2.6. Browser automation was unavailable; no new rendered-browser screenshot or visual pass is claimed.",
   "sourceBuild": {
     "renderer": "aarch64-linux-musl",
     "rendererRebuilt": true,
     "helper": "unchanged public ABI imports build",
-    "changedNativeMembersFromPublic024": [
+    "changedNativeMembersFromPublic025": [
       "boot-integrity.sha256",
       "build-manifest.json",
       "topflow-screen",
       "topflow-screen.sha256"
     ],
-    "nativeRuntimeByteIdenticalToPublic024": [
+    "nativeRuntimeByteIdenticalToPublic025": [
       "boot-hook.sh",
       "NOTICE.txt",
       "REBUILD.txt",
@@ -60,29 +60,55 @@
       "failed": 0,
       "skipped": 0,
       "rootProofs": [
-        "tests/native-power-menu.test.js",
-        "tests/manager-wallpaper-migration-audit.test.js",
-        "tests/native-band-state-sync.test.js",
-        "tests/native-wallpaper-files.test.js",
-        "tests/native-wallpaper.test.js",
-        "tests/manager-wallpaper-migration.test.js",
-        "tests/native-page-state-sync.test.js",
-        "tests/native-power-key.test.js",
         "tests/native-ufi.test.js",
+        "tests/native-power-menu.test.js",
+        "tests/native-page-state-sync.test.js",
+        "tests/native-wallpaper.test.js",
+        "tests/native-wifi-integration.test.js",
         "tests/native-wifi-state.test.js",
-        "tests/native-wifi-integration.test.js"
-      ],
-      "note": "Counts are per gate invocation; pure migration tests also run in the public JS suite."
+        "tests/native-band-state-sync.test.js",
+        "tests/manager-wallpaper-migration-audit.test.js",
+        "tests/native-wallpaper-files.test.js",
+        "tests/manager-wallpaper-migration.test.js",
+        "tests/native-power-key.test.js"
+      ]
     },
     "historical024Migration": {
       "tests": 8,
       "passed": 8,
       "failed": 0,
       "skipped": 0,
-      "exactOldArchiveSha256": "e8b51b443aa0207d8384ae9c7fe6408bc77d78dac3e1eade5de989369bcebea0",
-      "transport": "production shell redirected to temporary PC paths"
+      "exactOldArchiveSha256": "e8b51b443aa0207d8384ae9c7fe6408bc77d78dac3e1eade5de989369bcebea0"
+    },
+    "historical025Migration": {
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "exactOldArchiveSha256": "0702ffaf6ff94b0974bf617926e5232dcabc27f7d8770b87b4038c0eb885bc1c"
     },
     "displayPolicySuites": [
+      {
+        "file": "native/test-factory-power.ps1",
+        "result": "passed"
+      },
+      {
+        "file": "native/test-main-lock.ps1",
+        "result": "passed"
+      },
+      {
+        "file": "native/test-soft-lock.ps1",
+        "result": "passed"
+      },
+      {
+        "file": "native/test-sensor-handover.ps1",
+        "result": "passed"
+      },
+      {
+        "file": "native/test-display-preflight.ps1",
+        "result": "passed",
+        "privateDeviceEvidence": "skipped-not-distributed"
+      },
       {
         "file": "native/test-display-external-sync.ps1",
         "result": "passed"
@@ -109,24 +135,21 @@
       }
     ],
     "packageJavascript": {
-      "tests": 18,
-      "passed": 18,
+      "tests": 22,
+      "passed": 22,
       "failed": 0,
       "skipped": 0
     },
-    "nativeControlRegression": {
-      "script": "native/test-controls.ps1",
-      "result": "passed",
-      "historicalPrivateInputsUsed": true,
-      "privateInputsRedistributed": false
-    },
-    "nativePosixTransport": {
-      "crossCompiled": true,
-      "hardwareExecuted": false,
-      "schedulingTests": "real C scheduler with controlled transport on Windows"
+    "managerUi": {
+      "hostCardAlpha": true,
+      "transparentInnerCards": true,
+      "hostBlurRadius": true,
+      "independentModalSurface": true,
+      "themeAndConfirmationTests": true,
+      "browserVisualValidation": false
     },
     "officialMetadata": {
-      "filename": "topflow-screen-0.2.5.txt.meta.json",
+      "filename": "topflow-screen-0.2.6.txt.meta.json",
       "author": "善恶",
       "device_models": [
         "TOPFLOW"
@@ -136,34 +159,22 @@
     },
     "integrity": [
       "native source hashes",
-      "11 root proof hashes",
+      "root proof hashes",
       "AArch64 ELF hashes",
       "boot manifest",
       "manager/source gate hashes",
       "TXT below 4 MiB"
-    ],
-    "privacy": {
-      "files": 929,
-      "payloadMembers": 33,
-      "checkedBytes": 25025825,
-      "knownCredentialRepresentationMatches": 0,
-      "findings": 0,
-      "sourceIntegrity": true,
-      "binaryIntegrity": true,
-      "bootIntegrity": true,
-      "payloadLicenseMatches": true
-    },
-    "testMaintenance": "Existing source-order assertions were updated to allow the new worker cancellation before lock/cleanup; package version and help-length expectations were updated for 0.2.5. Final reruns passed."
+    ]
   },
   "artifact": {
-    "file": "topflow-screen-0.2.5.txt",
-    "bytes": 1816075,
-    "sha256": "827868d228fb75aa1f95b40894f35d4a2b711a228469b9210ac2df484681ba5c",
-    "metadataFile": "topflow-screen-0.2.5.txt.meta.json",
-    "metadataSha256": "65ce11c2eef4bfa357742ebf28da81458b9bec1cb3d20bf5173a937376149e99",
-    "nativeArchiveSha256": "0702ffaf6ff94b0974bf617926e5232dcabc27f7d8770b87b4038c0eb885bc1c",
-    "nativeRendererSha256": "1481dc28d814c6e996876e6709131a40151f38b1dbb2b066912e268eafc92dec",
+    "file": "topflow-screen-0.2.6.txt",
+    "bytes": 1825526,
+    "sha256": "489969c49933b1042c19b688b599017af036bc6fa67d141b629a41cfadff5adc",
+    "metadataFile": "topflow-screen-0.2.6.txt.meta.json",
+    "metadataSha256": "ca540a838c4442c7315d4d75449d7e5e816303810e12d448f81e0c763613ac0f",
+    "nativeArchiveSha256": "9ee81fb2d503aee5222e66ffbfde100a82491bc65e859e202a34d5bca79c140c",
+    "nativeRendererSha256": "90e42c66e6673ac0991a275916455ee3a112d2844fc3398fc81103baa3271576",
     "nativeHelperSha256": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28"
   },
-  "checkedAt": "2026-10-18T17:14:35.013Z"
+  "checkedAt": "2026-10-18T17:43:55.184Z"
 }

@@ -141,7 +141,10 @@ test('manager uses scoped host themes, sharp readable controls and normal homepa
   assert.match(css,/\.tf-package-shell\[data-tf-theme="dark"\]/);assert.match(css,/text-shadow:\s*none\s*!important/);
   const homepageCss=css.slice(0,css.indexOf('.tf-package-shell.tf-confirm-overlay'));
   assert(homepageCss.length>0);assert.match(homepageCss,/backdrop-filter:\s*none\s*!important/);
-  assert.doesNotMatch(homepageCss,/position:\s*fixed|backdrop-filter:\s*blur|100dvh/);
+  assert.doesNotMatch(homepageCss,/position:\s*fixed|100dvh/);
+  assert.match(homepageCss,/backdrop-filter:blur\(var\(--blur-rate,4px\)\)/);
+  assert.match(homepageCss,/--tf-bg:var\(--dark-card-bg,/);
+  assert.match(homepageCss,/--tf-surface:transparent/);
   assert.match(css,/\.tf-package-shell\.tf-confirm-overlay\{position:fixed/);
   assert.match(css,/\.tf-confirm-card\{[^}]*max-width:460px/);
   for(const size of css.matchAll(/font-size:\s*(\d+)px/g))assert(Number(size[1])>=12,'manager text must be at least 12px');

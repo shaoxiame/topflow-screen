@@ -13,6 +13,7 @@ $source=@'
 #include <stdio.h>
 #include "display_policy.h"
 static tf_display_policy display_policy;
+static int test_power_on=1;static int test_power_gate(void){return test_power_on;}static int(*display_power_on_hook)(void)=test_power_gate;
 static tf_display_config display_config,observed;
 static int frame_ready,guard,owner,tf_http_cancelled,enabled,enable_reads,lux_reads,sensor_writes,policy_reads;
 static int read_fail,policy_fail,identity_fail,lux_fail,write_fail,expire_after_write;
@@ -37,8 +38,9 @@ static void native_failure_note(const char*code){failure=code;}
 PRODUCTION_PREPARE
 PRODUCTION_WAKE
 PRODUCTION_AUTO
-static void reset(void){observed=(tf_display_config){0,1,135,30,0,-1,-1,0,255};display_policy.config=display_config=observed;frame_ready=guard=1;owner=tf_http_cancelled=enabled=enable_reads=lux_reads=sensor_writes=policy_reads=read_fail=policy_fail=identity_fail=lux_fail=write_fail=expire_after_write=0;display_runtime_ready=1;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=135;factory_bus.power_event=factory_bus.resync=0;begin_calls=release_calls=begin_fail=release_fail=event_after_write=event_after_release=event_during_guard=0;now=100;failure=NULL;display_config_failure="none";}
+static void reset(void){test_power_on=1;observed=(tf_display_config){0,1,135,30,0,-1,-1,0,255};display_policy.config=display_config=observed;frame_ready=guard=1;owner=tf_http_cancelled=enabled=enable_reads=lux_reads=sensor_writes=policy_reads=read_fail=policy_fail=identity_fail=lux_fail=write_fail=expire_after_write=0;display_runtime_ready=1;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=135;factory_bus.power_event=factory_bus.resync=0;begin_calls=release_calls=begin_fail=release_fail=event_after_write=event_after_release=event_during_guard=0;now=100;failure=NULL;display_config_failure="none";}
 int main(void){
+ reset();test_power_on=0;assert(display_runtime_wake_sensor()==2&&!sensor_writes&&!policy_reads&&!failure);test_power_on=1;assert(display_runtime_wake_sensor()==1&&sensor_writes==1&&!failure);
  reset();assert(display_runtime_wake_sensor()&&sensor_writes==1&&enabled==1&&display_policy.config.sensor_enabled==1&&display_policy.config.sensor_lux==41&&display_config.sensor_lux==41);assert(display_runtime_wake_sensor()&&sensor_writes==1);
  reset();enabled=1;assert(display_runtime_wake_sensor()&&!sensor_writes&&lux_reads==1);
  reset();frame_ready=0;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!policy_reads&&!strcmp(failure,"WAKE_SENSOR_GUARD"));

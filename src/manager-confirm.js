@@ -4,7 +4,7 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
   var serial = 0;
-  var colors = ['--tf-bg', '--tf-surface', '--tf-text', '--tf-muted', '--tf-line', '--tf-accent', '--tf-soft', '--tf-soft-text', '--tf-danger', '--tf-focus'];
+  var colors = ['--tf-bg', '--tf-surface', '--tf-modal-bg', '--tf-text', '--tf-muted', '--tf-line', '--tf-accent', '--tf-soft', '--tf-soft-text', '--tf-danger', '--tf-focus'];
 
   function create(root, sourcePanel) {
     var doc = root && root.document, pending = null, disposed = false;

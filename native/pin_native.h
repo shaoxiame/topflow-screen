@@ -6,6 +6,7 @@
 #include "pin_policy.h"
 static tf_pin_policy pin_policy;
 static int pin_state_fd=-1,pin_fault=0;
+static int(*pin_power_on_hook)(void)=NULL;
 static char pin_boot[37],pin_feedback[128];
 static uint64_t pin_now(void){struct timespec t;if(clock_gettime(CLOCK_MONOTONIC,&t))return 0;return(uint64_t)t.tv_sec*1000+(uint64_t)t.tv_nsec/1000000;}
 static int pin_boot_shape(const char*s){if(strlen(s)!=36)return 0;for(int i=0;i<36;i++){if(i==8||i==13||i==18||i==23){if(s[i]!='-')return 0;}else if(!isxdigit((unsigned char)s[i]))return 0;}return 1;}
@@ -15,5 +16,19 @@ static int pin_open_state(void){char boot[64];if(!display_read_text("/proc/sys/k
 static int pin_native_init(int enabled){memset(&pin_policy,0,sizeof pin_policy);pin_policy.locked=1;if(enabled!=0&&enabled!=1){native_failure_note("ADOPT_PIN_POLICY");return 0;}pin_policy.enabled=enabled;pin_policy.locked=enabled;if(!enabled)return 1;if(prctl(PR_SET_DUMPABLE,0)<0||mlock(&pin_policy,sizeof pin_policy)<0){native_failure_note("PIN_PROTECT");return 0;}if(!pin_open_state()){pin_fault=1;return 0;}return 1;}
 static int pin_native_poll(void){if(tf_pin_poll(&pin_policy,pin_now())&&!pin_store()){pin_fault=1;return 0;}return !pin_fault;}
 static void pin_native_cleanup(void){tf_pin_clear(&pin_policy);if(pin_state_fd>=0){close(pin_state_fd);pin_state_fd=-1;}munlock(&pin_policy,sizeof pin_policy);memset(&pin_policy,0,sizeof pin_policy);memset(pin_feedback,0,sizeof pin_feedback);}
-static int pin_native_attempt(void){if(tf_pin_seconds(&pin_policy,pin_now()))return TF_PIN_WAIT;if(pin_policy.input_len!=4)return TF_PIN_INVALID;char credential[16];memset(credential,0,sizeof credential);if(mlock(credential,sizeof credential)<0){pin_fault=1;return TF_PIN_INVALID;}char*const args[]={"uci","-q","get","zwrt_deviceui.Screen.Lock_Screen_PIN_Value",NULL};int ok=vendor_exec("/sbin/uci",args,NULL,credential,sizeof credential)==0;size_t n=strlen(credential);while(n&&(credential[n-1]=='\n'||credential[n-1]=='\r'))credential[--n]=0;int result=ok?tf_pin_attempt(&pin_policy,credential,pin_now()):TF_PIN_INVALID;volatile char*wipe=credential;for(size_t i=0;i<sizeof credential;i++)wipe[i]=0;munlock(credential,sizeof credential);if(result==TF_PIN_INVALID||!pin_store()){pin_fault=1;pin_policy.locked=1;return TF_PIN_INVALID;}return result;}
+static int pin_native_attempt(void){
+ if(pin_power_on_hook&&!pin_power_on_hook()){tf_pin_lock(&pin_policy);return TF_PIN_WAIT;}
+ if(tf_pin_seconds(&pin_policy,pin_now()))return TF_PIN_WAIT;if(pin_policy.input_len!=4)return TF_PIN_INVALID;
+ char credential[16];memset(credential,0,sizeof credential);if(mlock(credential,sizeof credential)<0){pin_fault=1;return TF_PIN_INVALID;}
+ char*const args[]={"uci","-q","get","zwrt_deviceui.Screen.Lock_Screen_PIN_Value",NULL};
+ int ok=vendor_exec("/sbin/uci",args,NULL,credential,sizeof credential)==0;
+ int cancelled=pin_power_on_hook&&!pin_power_on_hook();
+ size_t n=strlen(credential);while(n&&(credential[n-1]=='\n'||credential[n-1]=='\r'))credential[--n]=0;
+ int result=cancelled?TF_PIN_WAIT:ok?tf_pin_attempt(&pin_policy,credential,pin_now()):TF_PIN_INVALID;
+ volatile char*wipe=credential;for(size_t i=0;i<sizeof credential;i++)wipe[i]=0;munlock(credential,sizeof credential);
+ /* OEM shutdown cancels this attempt; it is neither a wrong PIN nor a
+  * damaged credential store. Preserve retry counters and do not restart UI. */
+ if(cancelled){tf_pin_lock(&pin_policy);return TF_PIN_WAIT;}
+ if(result==TF_PIN_INVALID||!pin_store()){pin_fault=1;pin_policy.locked=1;return TF_PIN_INVALID;}return result;
+}
 #endif

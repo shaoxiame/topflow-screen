@@ -33,6 +33,7 @@ static int tf_http_timeout(int port,const char*method,const char*endpoint,const 
 typedef struct{int unused;}drm_disp_t;
 static int on=1,wakes,sleeps,motions,activities;static int display_policy;
 static uint32_t tick(void){return 1000;}
+static int test_oem_on=1;static int runtime_factory_power_read(int force){(void)force;return test_oem_on;}
 static int backlight_is_on(void){return on;}
 static void motion_cancel(void){motions++;}
 static void tf_display_activity(void*p,uint32_t now){activities++;}
@@ -70,9 +71,10 @@ int main(int argc,char**argv){assert(argc==2);drm_disp_t d={0};
  reset();strcpy(verifying,"previous-operation");power_menu_open();release_touch();power_menu_action("power-menu-off");power_menu_action("power-menu-confirm");assert(!writes&&reads==1&&!strcmp(verifying,"previous-operation")&&power_menu.result==-2);
  reset();power_menu_open();release_touch();power_menu_action("power-menu-off");pin_policy.locked=1;power_menu_action("power-menu-confirm");assert(!writes);power_menu_reset();assert(!power_menu.active&&!power_menu.choice&&!power_menu.submitted);
  reset();on=0;assert(runtime_key_event(&d,KEY_EV_LONG)&&wakes==1&&power_menu.active&&soft_lock.locked&&!controls_enabled&&!writes&&!reads);theme_dark=1;output(argv[1],"power-locked");release_touch();power_menu_action("power-menu-off");assert(!writes);assert(runtime_key_event(&d,KEY_EV_SHORT)&&sleeps==1&&!power_menu.active);assert(runtime_key_event(&d,KEY_EV_SHORT)&&wakes==2&&on&&!power_menu.active);assert(runtime_key_event(&d,KEY_EV_NONE)&&wakes==2);
- puts("power menu contracts passed: current API, explicit confirmation, no retry, locks preserved, no long-key relock");return 0;
+ reset();on=0;test_oem_on=0;assert(runtime_key_event(&d,KEY_EV_SHORT)&&!on&&!wakes&&!reads);assert(runtime_key_event(&d,KEY_EV_LONG)&&!on&&!wakes&&!reads&&!power_menu.active);test_oem_on=1;assert(runtime_key_event(&d,KEY_EV_SHORT)&&on&&wakes==1);
+ puts("power menu contracts passed: current API, explicit confirmation, no retry, locks preserved, no long-key relock, OEM power-off ignores local short/long-key wake");return 0;
 }
-`.replace('KEY_HANDLER',range('static int runtime_key_event(', 'int main('));
+`.replace('KEY_HANDLER',range('static int runtime_key_event(', '/* Quick-boot power-off'));
 const dir=path.join(native,'build-preview');fs.mkdirSync(dir,{recursive:true});fs.mkdirSync(path.join(native,'preview'),{recursive:true});const file=path.join(dir,'test-power-menu.c'),exe=path.join(dir,'test-power-menu.exe');fs.writeFileSync(file,src);
 const build=cp.spawnSync(path.join(native,'toolchain/zig-x86_64-windows-0.14.1/zig.exe'),['cc','-target','x86_64-windows-gnu','-std=c11','-D_GNU_SOURCE','-O2','-UNDEBUG','-I'+native,'-I'+path.join(native,'upstream/include'),file,path.join(native,'upstream/src/json.c'),'-o',exe],{encoding:'utf8'});assert.equal(build.status,0,build.stderr);const run=cp.spawnSync(exe,[path.join(native,'preview')],{encoding:'utf8'});assert.equal(run.status,0,run.stdout+run.stderr);
 });

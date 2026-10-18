@@ -693,6 +693,76 @@
     "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e"
   }
 });
+  // Exact public 0.2.5 archive: verify every packaged file before recovery/removal.
+  recoveryArchives.push({
+  "archiveSha256": "0702ffaf6ff94b0974bf617926e5232dcabc27f7d8770b87b4038c0eb885bc1c",
+  "members": [
+    "./",
+    "./boot-hook.sh",
+    "./boot-integrity.sha256",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    "./topflow-factory-bus-aarch64",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+    "./ui/subpages/sms.html",
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/FreeType-gzip-zlib.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    "./licenses/LLVM-libcxxabi.txt",
+    "./licenses/musl-COPYRIGHT.txt",
+    "./licenses/openwrt-NOTICE.txt",
+    "./licenses/pinyin-data-MIT.txt",
+    "./licenses/PolyForm-Noncommercial-1.0.0.txt",
+    "./licenses/u60pro-devui-MIT.txt"
+  ],
+  "files": {
+    "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e",
+    "boot-integrity.sha256": "ce07618791d111cd18a20427d8229afc8d559403936d15c8e0a6fe816d618792",
+    "build-manifest.json": "b2da1e063af78a7c417415ee19ce2a3d574032da765519ae4d4bd4267fd980ad",
+    "NOTICE.txt": "f05b46f010573e07874c1fd5292a9f9a96763b007d05b61fdf27d060fb27f1fd",
+    "REBUILD.txt": "a0d0d7acf10c22a97e8ee3ab5f85b047b217239721e4c38c78dc7a313c12294e",
+    "screenctl.sh": "f3d9ffba5ebc80fb55483a404014eccb4bb243973a01414c0e09169d688e9856",
+    "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+    "topflow-factory-bus-aarch64": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28",
+    "topflow-screen": "1481dc28d814c6e996876e6709131a40151f38b1dbb2b066912e268eafc92dec",
+    "topflow-screen.sha256": "1cfa105aa0f02c388a1a3844d2a80aeaea060fff3349e0147064606a19a6a5a8",
+    "ui/aggregate.html": "31929d40ca085b727c94670e7f8c204f8b696044f37a52fdddb46a052c436502",
+    "ui/apps.html": "b9c1f80c11cd3edc3cfdfc8d4dccde5ca7aaad7cefcb8762138eeb82bef6bd0b",
+    "ui/index.html": "3e226952ac7f77300e865154f48d05c1d30fad2b7be05f5f7405bd3d85528ddf",
+    "ui/network.html": "366e854491a3f937c1ae527d312495070b00809c9e9efc7e5ab4db89f24d7bb3",
+    "ui/settings.html": "432e2b209f67b6ac44c2b7cb6449176852082e2d94ab5e615eff1cce983c0c20",
+    "ui/style.css": "94e1e5bc230a19efa19193d21c5b6b68fa86670d5a49499c35429f7bebfbff80",
+    "ui/subpages/sms.html": "dd628099fe4d3ec24f3de5ece4df2bf28c40139d604cb8cc391c48b74c831227",
+    "licenses/FreeType-FTL.txt": "308dca54b5aaa4a6ba0880621fe3bcf287956821aa948430263062a8333625c0",
+    "licenses/FreeType-gzip-zlib.txt": "c9e67393c37f15f3f9c02b708d4c6b739881db9c1bbcd504d3c7b65880c5509a",
+    "licenses/gumbo-Apache.txt": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+    "licenses/LGPL-2.1.txt": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+    "licenses/litehtml-BSD.txt": "7cf682bdf6081258672857ab473389e40d31620fbff847449db52c23ec422bf9",
+    "licenses/LLVM-libcxx.txt": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b",
+    "licenses/LLVM-libcxxabi.txt": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c",
+    "licenses/musl-COPYRIGHT.txt": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af",
+    "licenses/openwrt-NOTICE.txt": "81200142b6ecf5d1476cbb6ec707d4bd93c5e991f3f5d7b3439c4c18657dbfae",
+    "licenses/pinyin-data-MIT.txt": "9c048697be2502a16e8bcb282d5d465a07295b2def0ffb05a269c5d39dbe1586",
+    "licenses/PolyForm-Noncommercial-1.0.0.txt": "c0ea4a896d2c8c394b29f9427589996db826cd501c512279ff0ed3ef48fabbe5",
+    "licenses/u60pro-devui-MIT.txt": "fccf401e30d878bdff5d8fec7fbc3663a5c4a40ffe1b5f7b52fe91fc3849e844"
+  }
+});
   function error(code, message) { var e = new Error(message); e.code = code; return e; }
   function failureMessage(code) {
     var messages = {

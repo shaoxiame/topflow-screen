@@ -31,7 +31,8 @@ Copy-Item "$root/toolchain/zig-x86_64-windows-0.14.1/lib/libcxxabi/LICENSE.TXT" 
 Copy-Item "$root/vendor/pinyin/LICENSE" "$payload/licenses/pinyin-data-MIT.txt" -Force
 Copy-Item "$root/vendor/openwrt/LGPL-2.1.txt","$root/vendor/openwrt/openwrt-NOTICE.txt" "$payload/licenses" -Force
 $manifest=@{
- schema=1; version='0.2.5'; target='aarch64-linux-musl'; application='topflow-screen'; hardwareTested=$false
+ schema=1; version='0.2.6'; target='aarch64-linux-musl'; application='topflow-screen'; hardwareTested=$false
+ nativeFactoryPower=@{source='/etc/config/zwrt_zte_mc_tmp';section='mode';field='mode_main_state';off='mode_power_off*';on=@('mode_power_on','mode_power_on_charger');settingIsPowerState=$false;unknownAfterOff='remain-dark';inputDuringOff='discard';writesFactoryMode=$false;additionalProcesses=0;hardwareTested=$false}
  nativeAutostart=@{defaultEnabled=$false;hook='/data/plugins/ufi_tools_boot.sh';readinessSecondsMaximum=120;attemptsPerBoot=1;retry=$false;failure='existing-factory-rollback';disabledCancelsPending=$true;uninstall='remove-owned-hook-and-bounded-state';systemStartupFilesModified=$false;integrity='boot-integrity.sha256';deviceBootVerified=$false}
  defaultViewOnly=$false; physicalScreenProgramSwitch=$false
  nativeControlAuthorization=@{initial='blocked-until-adopt-and-unlock';noPin='hold-to-unlock-local';pin='requires-pin-policy-and-login';sleep='revoked';writes='per-action-confirmation';manualEnableGate=$false}
@@ -76,6 +77,7 @@ foreach($proof in @('test-display-external-sync.ps1','test-modem-source.ps1','te
 $manifest.sourceSha256['test-startup-diagnostics.ps1']=(Get-FileHash -LiteralPath "$root/test-startup-diagnostics.ps1" -Algorithm SHA256).Hash.ToLowerInvariant()
 $manifest.sourceSha256['test-modem-ambr.ps1']=(Get-FileHash -LiteralPath "$root/test-modem-ambr.ps1" -Algorithm SHA256).Hash.ToLowerInvariant()
 $manifest.sourceSha256['test-lockscreen.ps1']=(Get-FileHash -LiteralPath "$root/test-lockscreen.ps1" -Algorithm SHA256).Hash.ToLowerInvariant()
+$manifest.sourceSha256['test-factory-power.ps1']=(Get-FileHash -LiteralPath "$root/test-factory-power.ps1" -Algorithm SHA256).Hash.ToLowerInvariant()
 foreach($publicSource in @('preview/font.js','vendor/openwrt/link-imports.json')){$manifest.sourceSha256[$publicSource]=(Get-FileHash -LiteralPath "$root/$publicSource" -Algorithm SHA256).Hash.ToLowerInvariant()}
 foreach($powerSource in @('upstream/include/key_input.h','upstream/src/key_input.c')){$manifest.sourceSha256[$powerSource]=(Get-FileHash -LiteralPath "$root/$powerSource" -Algorithm SHA256).Hash.ToLowerInvariant()}
 foreach($rootProof in @('tests/manager-wallpaper-migration-audit.test.js','tests/manager-wallpaper-migration.test.js','tests/native-band-state-sync.test.js','tests/native-page-state-sync.test.js','tests/native-ufi.test.js','tests/native-wifi-integration.test.js','tests/native-wifi-state.test.js','tests/native-power-key.test.js','tests/native-power-menu.test.js','tests/native-wallpaper.test.js','tests/native-wallpaper-files.test.js')){$manifest.rootProofSha256[$rootProof]=(Get-FileHash -LiteralPath (Join-Path (Split-Path $root -Parent) $rootProof) -Algorithm SHA256).Hash.ToLowerInvariant()}

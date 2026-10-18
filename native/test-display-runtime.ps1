@@ -20,7 +20,8 @@ static struct{int ready,failed,resync;}factory_bus;
 static tf_factory_guard factory_guard;
 static tf_display_idle_guard display_idle_guard;
 static tf_display_policy display_policy;
-static int display_direct_wake,display_startup_guard_pending;
+static int display_direct_wake,display_startup_guard_pending,display_startup_dormant;
+static int test_oem_on;static int test_oem_gate(void){return test_oem_on;}static int(*display_power_on_hook)(void)=test_oem_gate;
 static const char*failure_code;
 static int helper_stops;
 static int reported_pin,login_value,login_count;
@@ -44,8 +45,8 @@ static void backlight_set(int value){write_count++;live=bad_level?value+1:value;
 static int display_read_number(const char*p,int lo,int hi,int*out){(void)p;(void)lo;(void)hi;*out=live;return 1;}
 static void native_failure_note(const char*code){assert(code&&*code);if(!failure_code)failure_code=code;}
 static int display_factory_process(void){return 0;}
-static int wake_sensor_calls,wake_sensor_failed;
-static int display_runtime_wake_sensor(void){assert(frame_ready&&display_frame_guard&&own&&!factory_bus.resync);wake_sensor_calls++;return !wake_sensor_failed;}
+static int wake_sensor_calls,wake_sensor_failed,power_cut_sensor,power_cancel_sensor;
+static int display_runtime_wake_sensor(void){assert(frame_ready&&display_frame_guard&&own&&!factory_bus.resync);wake_sensor_calls++;if(power_cut_sensor){test_oem_on=0;return 0;}return power_cancel_sensor?2:!wake_sensor_failed;}
 static int tf_fb_command(void*x,int type,uint32_t value,int timeout){(void)x;assert(timeout==2500);if(type==TF_BUS_TOUCH){assert(value==1);touch_count++;return !bad_touch;}if(type==TF_BUS_LOGIN){login_value=(int)value;login_count++;if(expire_on_login)own=0;}if(type==TF_BUS_LCD){event_count++;if(bad_event)return 0;if(!bad_observe)lcd=(int)value;}return 1;}
 static void backlight_init(void){}
 #define tf_guard_acquire test_guard_acquire
@@ -54,6 +55,7 @@ static void backlight_init(void){}
 '@
 $suffix=@'
 static void reset(void){
+ test_oem_on=1;power_cut_sensor=power_cancel_sensor=0;display_startup_dormant=0;
  memset(&factory_bus,0,sizeof factory_bus);factory_bus.ready=1;factory_bus_active=1;
  tf_guard_io io={NULL,idle_read,idle_write};assert(tf_guard_init(&factory_guard,123,456,io));assert(tf_idle_init(&display_idle_guard,&factory_guard));
  idle_held=idle_writes=idle_releases=idle_fail_read=idle_fail_write=0;idle_expires=0;
@@ -105,7 +107,13 @@ int main(void){
  reset();assert(display_runtime_unlock_policy());reported_pin=0;assert(!display_runtime_unlock_policy()&&!running);
  reset();assert(start_adopt());assert(display_runtime_touch(1,100)&&touch_count==0);assert(display_runtime_request(13));display_policy.initialized=1;display_policy.on=1;display_policy.locked=1;assert(display_runtime_touch(1,200)&&touch_count==1&&display_policy.locked);assert(display_runtime_touch(1,449)&&touch_count==1&&display_policy.last_activity==449);assert(display_runtime_touch(1,450)&&touch_count==2);assert(display_runtime_touch(0,451)&&touch_count==2);assert(display_runtime_touch(1,452)&&touch_count==3);assert(display_runtime_request(0));assert(display_runtime_touch(1,800)&&touch_count==3);assert(display_runtime_request(13));bad_touch=1;assert(!display_runtime_touch(1,900)&&!running&&display_runtime_fault&&tf_http_cancelled);
  reset();assert(!display_runtime_adopt()&&!running);reset();assert(display_runtime_begin_frame());own=0;assert(!display_runtime_adopt()&&!running);reset();assert(start_adopt());assert(display_runtime_request(13));assert(display_runtime_begin_frame());int releases=release_count;assert(display_runtime_request(13)&&!own&&release_count==releases+1);
- puts("PASS: actual display runtime receipt/map, guarded adopt, first-frame renewal cannot conceal an expired startup lease; later wakes acquire a new lease; level-only change, sleep, resync, provider/guard/write/event/observe/timeout/release failures, unsafe wake rejection; own 180s idle lease precedes LCD off, repeated off never renews, dark adoption adds no lease, verified LCD-on releases, failures retain bounded lease without touching original locks");return 0;
+ reset();display_startup_dormant=1;display_direct_wake=1;assert(test_oem_on&&start_adopt()&&running&&!live&&!lcd&&!display_policy.on&&!write_count);
+ reset();test_oem_on=0;display_direct_wake=1;assert(start_adopt()&&running&&!live&&!lcd&&!display_policy.on&&!write_count&&!idle_writes);assert(display_runtime_request(135)&&!live&&!write_count);assert(display_runtime_touch(1,400)&&!touch_count);
+ reset();display_direct_wake=1;live=135;lcd=1;test_oem_on=0;assert(start_adopt()&&running&&!live&&!lcd&&!display_policy.on&&write_count==1&&idle_writes==1);assert(display_runtime_request(100)&&idle_writes==1&&!live);
+ reset();assert(start_adopt());assert(display_runtime_request(135));test_oem_on=0;int old_touch=touch_count;assert(display_runtime_touch(1,500)&&touch_count==old_touch);assert(display_runtime_request(150)&&!live&&idle_writes==1);live=50;lcd=1;factory_bus.resync=1;assert(start_resync()&&!live&&!lcd&&!display_policy.on&&!wake_sensor_calls&&idle_writes==1&&running);test_oem_on=1;assert(display_runtime_request(90)&&live==90&&lcd==1);
+ reset();assert(start_adopt());live=77;lcd=0;factory_bus.resync=1;power_cut_sensor=1;assert(start_resync()&&running&&!live&&!lcd&&!display_policy.on&&wake_sensor_calls==1);
+ reset();assert(start_adopt());live=77;lcd=0;factory_bus.resync=1;power_cancel_sensor=1;assert(test_oem_on&&start_resync()&&running&&!live&&!lcd&&!display_policy.on&&!failure_code&&wake_sensor_calls==1);
+ puts("PASS: actual display runtime receipt/map, guarded adopt and errors; OEM OFF blocks direct adoption, brightness, touch and resync wakes, normal ON restores control; finite idle lease is never renewed during repeated OFF; original locks remain untouched");return 0;
 }
 '@
 [IO.File]::WriteAllText("$root/build-preview/test-display-runtime.c",$prefix+"`n"+$implementation+"`n"+$suffix)

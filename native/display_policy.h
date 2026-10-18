@@ -66,6 +66,13 @@ static int tf_display_accept_external(tf_display_policy*p,const tf_display_confi
 }
 static int tf_display_init_supported(tf_display_policy*p,const tf_display_config*c,uint32_t now,int pin_handover){memset(p,0,sizeof *p);p->locked=1;if(!c)return 0;p->config=*c;if(tf_display_preflight_reason_supported(c,pin_handover)||!tf_display_valid(c))return 0;p->initialized=1;p->on=c->live_brightness>0;p->locked=c->pin_enabled;p->brightness=c->live_brightness;p->last_activity=now;tf_display_smoothing_reset(p,now);return 1;}
 static inline int tf_display_init(tf_display_policy*p,const tf_display_config*c,uint32_t now){return tf_display_init_supported(p,c,now,0);}
+/* A shutdown observed during takeover cannot justify preparing a disabled
+ * light sensor. Initialize a dark policy from known persistent settings and
+ * real output metadata; a later verified ON must prepare a fresh sensor. */
+static int tf_display_init_dormant(tf_display_policy*p,const tf_display_config*c,uint32_t now){
+ if(!p||tf_display_preflight_reason_supported(c,1))return 0;
+ memset(p,0,sizeof *p);p->config=*c;p->initialized=1;p->locked=c->pin_enabled;p->last_activity=now;tf_display_smoothing_reset(p,now);return 1;
+}
 static void tf_display_activity(tf_display_policy*p,uint32_t now){if(p->initialized&&p->on)p->last_activity=now;}
 static int tf_display_wake(tf_display_policy*p,uint32_t now){if(!p->initialized)return TF_DISPLAY_INVALID;p->on=1;p->locked=p->config.pin_enabled;p->last_activity=now;p->brightness=p->config.automatic?tf_display_curve(p->config.sensor_lux):p->config.brightness;tf_display_smoothing_reset(p,now);return p->brightness>0?TF_DISPLAY_LEVEL:TF_DISPLAY_INVALID;}
 static int tf_display_sleep(tf_display_policy*p){if(!p->initialized)return TF_DISPLAY_INVALID;p->on=0;p->locked=p->config.pin_enabled;p->brightness=p->auto_target=0;return TF_DISPLAY_SLEEP;}

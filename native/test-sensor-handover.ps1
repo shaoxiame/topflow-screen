@@ -14,9 +14,11 @@ $prefix=@'
 #include <fcntl.h>
 #include <stdint.h>
 #include <sys/types.h>
+#include "factory_power_state.h"
 /* Execute the production Linux branch with sysfs calls replaced in-process. */
 #define __linux__ 1
 static int tf_http_cancelled,owner=1,identity=1,state_read=1,enabled,guard=1;
+static int power_on=1,power_off_after_init,power_pulse_after_init;static tf_factory_power_watch power_watch;static int power_gate(void){tf_factory_power_observe(&power_watch,power_on?TF_FACTORY_POWER_ON:TF_FACTORY_POWER_UNKNOWN,0);if(power_pulse_after_init&&!power_on)power_on=1;return tf_factory_power_can_use(&power_watch);}static int(*display_power_on_hook)(void)=power_gate;
 static int open_count,write_count,close_count,open_fail,write_fail,short_write,close_fail,expire_after_init,expire_during_read;
 static char opened[2][64],written[2][4];
 static const char*display_config_failure="ADOPT_SENSOR_ENABLE";
@@ -36,12 +38,12 @@ static ssize_t test_write(int fd,const void*data,size_t n){
  memcpy(written[fd-10],data,n);write_count++;
  if(write_fail==fd-9){errno=EIO;return -1;}if(short_write==fd-9)return 1;return 2;
 }
-static int test_close(int fd){assert(fd>=10&&fd<=11);close_count++;if(fd==10&&expire_after_init)guard=0;return close_fail==fd-9?-1:0;}
+static int test_close(int fd){assert(fd>=10&&fd<=11);close_count++;if(fd==10&&expire_after_init)guard=0;if(fd==10&&(power_off_after_init||power_pulse_after_init))power_on=0;return close_fail==fd-9?-1:0;}
 #define write test_write
 #define close test_close
 '@
 $suffix=@'
-static void reset(void){tf_http_cancelled=0;owner=identity=state_read=guard=1;enabled=0;open_count=write_count=close_count=open_fail=write_fail=short_write=close_fail=expire_after_init=expire_during_read=0;memset(opened,0,sizeof opened);memset(written,0,sizeof written);display_config_failure="ADOPT_SENSOR_ENABLE";}
+static void reset(void){memset(&power_watch,0,sizeof power_watch);power_on=1;power_off_after_init=power_pulse_after_init=0;tf_http_cancelled=0;owner=identity=state_read=guard=1;enabled=0;open_count=write_count=close_count=open_fail=write_fail=short_write=close_fail=expire_after_init=expire_during_read=0;memset(opened,0,sizeof opened);memset(written,0,sizeof written);display_config_failure="ADOPT_SENSOR_ENABLE";}
 static void refused(const char*code,int expected_open){assert(!display_sensor_write_enabled());assert(!strcmp(display_config_failure,code)&&open_count==expected_open);}
 int main(void){
  reset();assert(display_sensor_write_enabled()&&open_count==2&&write_count==2&&close_count==2);assert(!strcmp(written[0],"1\n")&&!strcmp(written[1],"1\n"));
@@ -61,6 +63,9 @@ int main(void){
  reset();write_fail=2;refused("ADOPT_SENSOR_ENABLE",2);assert(close_count==2);
  reset();short_write=2;refused("ADOPT_SENSOR_ENABLE",2);assert(close_count==2);
  reset();close_fail=2;refused("ADOPT_SENSOR_ENABLE",2);
+ reset();power_on=0;assert(!display_sensor_write_enabled()&&!open_count&&!write_count);power_on=1;
+ reset();power_off_after_init=1;assert(!display_sensor_write_enabled()&&open_count==1&&write_count==1&&close_count==1);power_off_after_init=0;power_on=1;
+ reset();power_pulse_after_init=1;assert(!display_sensor_write_enabled()&&open_count==1&&write_count==1&&power_on);assert(!power_gate()&&power_watch.interrupted);power_watch.interrupted=0;assert(power_gate());
  puts("PASS: production sensor callback follows observed OFF -> fixed init=1 -> guard recheck -> fixed enable=1; ON/unreadable state never resets; all open/write/close and ownership failures stop before subsequent writes");
  return 0;
 }

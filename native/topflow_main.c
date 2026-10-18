@@ -39,6 +39,7 @@
 #include "modem_logic.h"
 #include "radio_status.h"
 #include "local_http.h"
+#include "factory_power_state.h"
 #include "wifi_state_runtime.h"
 #include "aoyou_native.h"
 #include "network_status.h"
@@ -100,6 +101,13 @@ static void stop_signal(int sig){(void)sig;running=0;tf_http_cancelled=1;}
 static long long monotonic_seconds(void){struct timespec value;if(clock_gettime(CLOCK_MONOTONIC,&value))return -1;return (long long)value.tv_sec;}
 static void heartbeat(void){if(!frame_ready)return;long long now=monotonic_seconds();if(now<0)return;FILE*f=fopen("/tmp/topflow-screen/heartbeat","w");if(f){fprintf(f,"%lld\n",now);fclose(f);}}
 static uint32_t tick(void){struct timespec t;clock_gettime(CLOCK_MONOTONIC,&t);return(uint32_t)(t.tv_sec*1000+t.tv_nsec/1000000);}
+static tf_factory_power_watch factory_power;
+static int factory_power_quiet=0,factory_power_unknown_quiet=0;
+static int runtime_factory_power_read(int force){
+ uint32_t now=tick();if(force||tf_factory_power_due(&factory_power,now))tf_factory_power_observe(&factory_power,tf_factory_power_read_path("/etc/config/zwrt_zte_mc_tmp"),now);
+ return tf_factory_power_can_use(&factory_power);
+}
+static int runtime_factory_power_ready(void){return runtime_factory_power_read(1);}
 /* Only called for an explicit confirmation. Routine refresh stays asynchronous. */
 static int wifi_status_read_now(void){
  wifi_status_invalidate();char*body=malloc(TF_WIFI_RESPONSE_LIMIT+1);if(!body)return 0;
@@ -214,8 +222,8 @@ static int valid_page(const char*p){size_t n=strlen(p);if(n<6||n>80||strstr(p,".
 static void change_page(const char*p,int sub){if(!valid_page(p))return;if(!sub)p=tf_resolve_home_page(p,aggregate_home);char path[256];snprintf(path,sizeof path,"%s/%s%s",UI,sub?"subpages/":"",p);if(access(path,R_OK))return;snprintf(previous,sizeof previous,"%s",page);snprintf(page,sizeof page,"%s%s",sub?"subpages/":"",p);scroll_y=0;sms_id=-1;pending[0]=0;}
 static void sync_home_page(void){if(advanced_page||pending[0]||sms_id>=0)return;const char*target=tf_resolve_home_page(page,aggregate_home);if(strcmp(page,target)){snprintf(page,sizeof page,"%s",target);scroll_y=0;}}
 static void show_notice(const char*s){snprintf(notice,sizeof notice,"%s",s);notice_until=tick()+5000;}
-static void busy_tick(void){if(factory_bus_active){if(!tf_fb_tick(&factory_bus)){display_runtime_fail();return;}if(factory_bus.power_event||factory_bus.resync){tf_http_cancelled=1;return;}}if(!busy_visible||!active_display||!frame_ready||tick()-busy_last<120)return;busy_last=tick();int r=theme_dark?39:222,g=theme_dark?55:233,b=theme_dark?78:252;html_view_fill_round_rect(70,260,180,6,3,r,g,b,255);int step=busy_phase++%22;if(step>11)step=22-step;html_view_fill_round_rect(70+step*14,260,26,6,3,83,137,255,255);if(!logical_damage(active_display,70,260,180,6)){frame_ready=0;running=0;tf_http_cancelled=1;}else if(tick()-busy_heartbeat>=1000){busy_heartbeat=tick();heartbeat();}}
-static void show_busy(const char*message){if(!active_display)return;char label[1024],html[4096];esc(label,sizeof label,message);snprintf(html,sizeof html,"<html><head><link rel='stylesheet' href='style.css'></head><body class='%s'><div style='padding:140px 20px 0;min-height:480px'><div class='card' style='height:160px;padding:25px 18px;text-align:center'><h3 style='font-size:17px'>%s</h3><p class='note' style='margin-top:14px'>正在等待现有接口响应</p></div></div></body></html>",theme_dark?"dark":"light",label);html_view_set_scroll(0);if(!paint_frame(active_display,html)){running=0;tf_http_cancelled=1;return;}busy_visible=1;busy_phase=0;busy_last=0;busy_tick();}
+static void busy_tick(void){if(!runtime_factory_power_read(0)){tf_http_cancelled=1;return;}if(factory_bus_active){if(!tf_fb_tick(&factory_bus)){display_runtime_fail();return;}if(factory_bus.power_event||factory_bus.resync){tf_http_cancelled=1;return;}}if(!busy_visible||!active_display||!frame_ready||tick()-busy_last<120)return;busy_last=tick();int r=theme_dark?39:222,g=theme_dark?55:233,b=theme_dark?78:252;html_view_fill_round_rect(70,260,180,6,3,r,g,b,255);int step=busy_phase++%22;if(step>11)step=22-step;html_view_fill_round_rect(70+step*14,260,26,6,3,83,137,255,255);if(!logical_damage(active_display,70,260,180,6)){frame_ready=0;running=0;tf_http_cancelled=1;}else if(tick()-busy_heartbeat>=1000){busy_heartbeat=tick();heartbeat();}}
+static void show_busy(const char*message){if(!runtime_factory_power_read(0)){tf_http_cancelled=1;return;}if(!active_display)return;char label[1024],html[4096];esc(label,sizeof label,message);snprintf(html,sizeof html,"<html><head><link rel='stylesheet' href='style.css'></head><body class='%s'><div style='padding:140px 20px 0;min-height:480px'><div class='card' style='height:160px;padding:25px 18px;text-align:center'><h3 style='font-size:17px'>%s</h3><p class='note' style='margin-top:14px'>正在等待现有接口响应</p></div></div></body></html>",theme_dark?"dark":"light",label);html_view_set_scroll(0);if(!paint_frame(active_display,html)){running=0;tf_http_cancelled=1;return;}busy_visible=1;busy_phase=0;busy_last=0;busy_tick();}
 static int control(const char*payload){char body[8192];if(tf_http(9460,"POST","/control",NULL,payload,body,sizeof body)!=200)return-1;return tf_control_success(body,payload)?0:-1;}
 #include "advanced_controls.h"
 #include "page_state_sync.h"
@@ -261,7 +269,7 @@ static int screen_soft_input(drm_disp_t*d,uint32_t now,int pressed,int x,int y,i
  if(pin_policy.enabled){tf_soft_lock_reset(&soft_lock,1);return 0;}
  int consumed=soft_lock.locked||soft_lock.block_release;
  int result=tf_soft_lock_touch(&soft_lock,now,pressed,x,y,!blocked&&display_runtime_ready&&factory_lifecycle.phase==TF_FL_READY&&backlight_is_on());
- if(result==TF_SOFT_UNLOCK){motion_cancel();if(!screen_unlock_complete())return -1;*dirty=1;}
+ if(result==TF_SOFT_UNLOCK){motion_cancel();if(!screen_unlock_complete()){if(!runtime_factory_power_read(1)){tf_soft_lock_reset(&soft_lock,pin_policy.enabled);return 1;}return -1;}*dirty=1;}
  else if(result==TF_SOFT_PROGRESS&&backlight_is_on()&&frame_ready){
   int dark=theme_dark||lock_wallpaper.current;
   /* Only the integrated progress line changes while holding. The label and
@@ -274,6 +282,7 @@ static int screen_soft_input(drm_disp_t*d,uint32_t now,int pressed,int x,int y,i
 }
 static void action(const char*a){
  tf_page_state_cancel();
+ if(!runtime_factory_power_read(1)){tf_http_cancelled=1;return;}
  if(!a||strncmp(a,"act:",4))return;a+=4;
  if(!display_runtime_ready||factory_lifecycle.phase!=TF_FL_READY||factory_lifecycle.brightness<=0)return;
  if(power_menu_action(a))return;
@@ -332,9 +341,15 @@ static int repaint_scroll(drm_disp_t*d){
  if(h<1)return render(d);page_h=h;draw_rate_chart();chart_animation.active=0;int top=html_view_pinned_height();return logical_damage(d,0,top,d->width,d->height-top);
 }
 static int runtime_wake(drm_disp_t*d){
- screen_lock();if(!running||!display_runtime_begin_frame()||!render(d))return display_runtime_fail();
- if(!display_runtime_wake_sensor())return display_runtime_fail();
- if(tf_display_wake(&display_policy,tick())!=TF_DISPLAY_LEVEL)return display_runtime_fail();if(!display_runtime_request(display_policy.brightness))return 0;controls_enabled=!pin_policy.locked&&!soft_lock.locked;return 1;
+ if(!runtime_factory_power_read(1))return 1;
+ screen_lock();if(!running)return display_runtime_fail();if(!runtime_factory_power_read(1))return 1;
+ if(!display_runtime_begin_frame()||!render(d))return display_runtime_fail();
+ if(!runtime_factory_power_read(1)){tf_display_sleep(&display_policy);return display_runtime_request(0);}
+ int sensor_ready=display_runtime_wake_sensor();
+ if(sensor_ready==2){tf_display_sleep(&display_policy);return display_runtime_request(0);}
+ if(!runtime_factory_power_read(1)){tf_display_sleep(&display_policy);return display_runtime_request(0);}
+ if(!sensor_ready)return display_runtime_fail();
+ if(tf_display_wake(&display_policy,tick())!=TF_DISPLAY_LEVEL)return display_runtime_fail();if(!display_runtime_request(display_policy.brightness))return 0;controls_enabled=runtime_factory_power_read(0)&&display_policy.on&&!pin_policy.locked&&!soft_lock.locked;return 1;
 }
 static int runtime_sleep(void){screen_lock();tf_display_sleep(&display_policy);return running&&display_runtime_request(0);}
 /* Original power notifications distinguish sleep from wake. A duplicate wake
@@ -343,24 +358,46 @@ static int runtime_power_event(drm_disp_t*d,int event){if(event==1)return runtim
 /* A held power key opens a local overlay, never a second wake transaction on
  * an already lit screen. Physical short presses retain the original policy. */
 static int runtime_key_event(drm_disp_t*d,int key_event){
+ if(!runtime_factory_power_read(1))return 1;
  if(key_event==KEY_EV_SHORT)return backlight_is_on()?runtime_sleep():runtime_wake(d);
  if(key_event!=KEY_EV_LONG)return 1;
  if(!backlight_is_on()&&!runtime_wake(d))return 0;
  if(!running||!display_runtime_ready||factory_lifecycle.phase!=TF_FL_READY)return 0;
  motion_cancel();tf_display_activity(&display_policy,tick());power_menu_open();return running;
 }
+/* Quick-boot power-off is neither a normal screen timeout nor process exit.
+ * Keep the renderer/provider alive and the supervisor heartbeat valid, but
+ * discard every local interaction and stop data work. Do not query or change
+ * OEM preferences while its control services are shutting down. */
+static void runtime_factory_discard(void){
+ tf_page_state_close();tf_wifi_runtime_close(&wifi_runtime);data_backend_close();
+ power_menu_reset();lock_wallpaper_invalidate();motion_cancel();controls_enabled=busy_visible=0;
+ lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);
+ tf_soft_lock_reset(&soft_lock,pin_policy.enabled);tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;
+ pending[0]=pending_label[0]=verifying[0]=notice[0]=pin_feedback[0]=0;notice_until=0;
+ form_reset();sms_forward_cleanup();factory_extra_cleanup();scroll_y=0;
+}
+static int runtime_factory_power_off(void){
+ if(factory_power_quiet)return 1;runtime_factory_discard();
+ tf_display_sleep(&display_policy);
+ /* Existing LCD transaction retains the finite own 180 s idle lease. It
+  * does not delete a vendor lock or restart either original service. */
+ if(!display_runtime_login(0)||!display_runtime_request(0))return 0;
+ factory_power_quiet=1;return 1;
+}
 int main(int argc,char**argv){
  if(argc==2&&!strcmp(argv[1],"--monotonic-seconds")){long long value=monotonic_seconds();if(value<0)return 7;printf("%lld\n",value);return 0;}
  signal(SIGINT,stop_signal);signal(SIGTERM,stop_signal);signal(SIGPIPE,SIG_IGN);
+ display_power_on_hook=runtime_factory_power_ready;pin_power_on_hook=runtime_factory_power_ready;
  tf_network_runtime_init(&network_runtime);
  tf_wifi_runtime_init(&wifi_runtime);
  int preflight_only=argc==2&&!strcmp(argv[1],"--display-preflight");
  if(!preflight_only&&(argc!=3||strcmp(argv[1],"--display-adopt"))){fprintf(stderr,"Verified supervisor handover required\n");return 2;}
  /* This path is read-only and runs before DRM, evdev, brightness or datad.
   * The supervisor also runs it before stopping the original screen. */
- if(preflight_only){char receipt[384];if(!display_preflight_receipt(receipt,sizeof receipt)){fprintf(stderr,"%s\n",display_refusal?display_refusal:"DISPLAY_LIFECYCLE_PREFLIGHT_FAILED");return 7;}puts(receipt);return 0;}
+ if(preflight_only){char receipt[384];if(!runtime_factory_power_read(1)){fprintf(stderr,"FACTORY_POWER_NOT_ON\n");return 7;}if(!display_preflight_receipt(receipt,sizeof receipt)){fprintf(stderr,"%s\n",display_refusal?display_refusal:"DISPLAY_LIFECYCLE_PREFLIGHT_FAILED");return 7;}puts(receipt);return 0;}
  atexit(native_failure_publish);
- if(!display_prepare_adopt(argv[2])){fprintf(stderr,"DISPLAY_HANDOVER_UNAVAILABLE\n");return 7;}
+ if(!runtime_factory_power_read(1)||!display_prepare_adopt(argv[2])){fprintf(stderr,"DISPLAY_HANDOVER_UNAVAILABLE\n");return 7;}
  if(!pin_native_init(display_config.pin_enabled)){display_runtime_cleanup();pin_native_cleanup();fprintf(stderr,"PIN_STATE_UNAVAILABLE\n");return 7;}
  tf_soft_lock_reset(&soft_lock,pin_policy.enabled);
  const char*font=getenv("DEVUI_FONT");if(!font||!*font)font="/usr/ui/fonts/ZTEZhengYuan.ttf";
@@ -369,19 +406,49 @@ int main(int argc,char**argv){
  drm_disp_t d;if(drm_disp_init(&d)){native_failure_note("DRM_INIT");display_runtime_cleanup();pin_native_cleanup();return 3;}
  if(d.width!=320||d.height!=480){native_failure_note("DRM_DIMENSIONS");display_runtime_cleanup();pin_native_cleanup();drm_disp_close(&d);return 4;}
  if(!display_runtime_after_drm(d.fd>=0&&d.fb!=NULL)){display_runtime_cleanup();pin_native_cleanup();drm_disp_close(&d);return 7;}
- if(!tf_display_init_supported(&display_policy,&display_config,tick(),1)){native_failure_note("DISPLAY_POLICY_INIT");display_runtime_cleanup();pin_native_cleanup();drm_disp_close(&d);return 7;}
+ if(!(!display_startup_dormant&&runtime_factory_power_read(1)?tf_display_init_supported(&display_policy,&display_config,tick(),1):tf_display_init_dormant(&display_policy,&display_config,tick()))){native_failure_note("DISPLAY_POLICY_INIT");display_runtime_cleanup();pin_native_cleanup();drm_disp_close(&d);return 7;}
  touch_input_t touch;if(touch_input_init(&touch,320,480)){native_failure_note("TOUCH_INIT");display_runtime_cleanup();pin_native_cleanup();drm_disp_close(&d);return 5;}
  key_input_t key;key_input_init(&key);backlight_init();html_view_init(d.fb,d.width,d.height,d.pitch_px,DEVUI_ROTATE_180,font);html_view_set_uidir(UI);
  if(!html_view_ready()){native_failure_note("FONT_INIT");display_runtime_cleanup();pin_native_cleanup();touch_input_close(&touch);key_input_close(&key);drm_disp_close(&d);return 6;}
  active_display=&d;tf_http_wait_hook=busy_tick;
- int result=0;if(!display_runtime_startup_frame()){result=7;goto cleanup;}vendor_refresh(0);if(!render(&d)){native_failure_note("FIRST_FRAME");result=6;goto cleanup;}if(!display_runtime_adopt()){native_failure_note("DISPLAY_ADOPT");result=7;goto cleanup;}controls_enabled=!pin_policy.locked&&!soft_lock.locked;display_level_hook=display_runtime_request;display_auto_sensor_hook=display_runtime_prepare_auto_sensor;heartbeat();data_backend_init();data_backend_commit_latest();uint32_t last=tick(),gesture_block_until=0,last_interaction=0;int refresh_pending=1;time_t minute=time(NULL)/60;
+ int result=0;if(!display_runtime_startup_frame()){result=7;goto cleanup;}vendor_refresh(0);if(!render(&d)){native_failure_note("FIRST_FRAME");result=6;goto cleanup;}if(!display_runtime_adopt()){native_failure_note("DISPLAY_ADOPT");result=7;goto cleanup;}if(display_startup_dormant){display_startup_dormant=0;if(!runtime_factory_power_off()){result=7;goto cleanup;}}controls_enabled=!pin_policy.locked&&!soft_lock.locked;display_level_hook=display_runtime_request;display_auto_sensor_hook=display_runtime_prepare_auto_sensor;heartbeat();if(!factory_power_quiet){data_backend_init();data_backend_commit_latest();}uint32_t last=tick(),gesture_block_until=0,last_interaction=0;int refresh_pending=1;time_t minute=time(NULL)/60;
+ int power_release_block=0;
  while(running){uint32_t now=tick();int dirty=0,x,y,pressed;
+  /* A transient UNKNOWN inside sensor/PIN/HTTP work cancels that whole
+   * transaction. Discard its input before allowing the next ON cycle. */
+  if(factory_power.interrupted&&!factory_power.off_latched&&!factory_power_quiet&&!factory_power_unknown_quiet){runtime_factory_discard();factory_power_unknown_quiet=1;power_release_block=1;}
+  factory_power.interrupted=0;runtime_factory_power_read(0);
   if(!tf_fb_tick(&factory_bus)){native_failure_note("BUS_RUNTIME");result=7;break;}
+  /* OEM quick-boot keeps Linux alive after power-off. Ignore ordinary wake
+   * notifications and local inputs until the OEM explicitly reports ON. */
+  if(factory_power.off_latched||factory_power_quiet){
+   if(factory_power.observed==TF_FACTORY_POWER_ON&&factory_power_quiet){
+    factory_power.off_latched=0;tf_http_cancelled=0;
+    if(!runtime_wake(&d)){result=7;break;}
+    if(display_policy.on&&tf_factory_power_can_use(&factory_power)){factory_power_quiet=0;data_backend_init();data_backend_commit_latest();refresh_pending=1;power_release_block=1;gesture_block_until=tick()+300;dirty=1;}
+    else factory_power.off_latched=1;
+   }else if(!runtime_factory_power_off()){result=7;break;}
+   factory_bus.power_event=0;
+   if(factory_bus.resync){if(!display_runtime_begin_frame()||!display_runtime_resync()){result=7;break;}}
+   touch_input_read(&touch,&x,&y,&pressed);touch_input_clear_taps(&touch);key_input_poll(&key,now);tf_key_press_baseline(&key.press,key.press.pressed||key.press.ignore_until_release||key.press.sync_lost);
+   if(factory_power_quiet||factory_power.off_latched){tf_http_cancelled=1;if((uint32_t)(now-last)>=1000){last=now;heartbeat();}usleep(30000);continue;}
+  }
+  if(!tf_factory_power_can_use(&factory_power)){
+   /* An incomplete/unknown snapshot cannot authorize a wake or API action.
+    * Keep a previously dark screen dark; do not infer OFF from read errors. */
+   tf_http_cancelled=1;if(!factory_power_unknown_quiet){runtime_factory_discard();factory_power_unknown_quiet=1;}
+   if(tf_display_tick(&display_policy,now,-1,0,0)==TF_DISPLAY_SLEEP&&!runtime_sleep()){result=7;break;}
+   touch_input_read(&touch,&x,&y,&pressed);touch_input_clear_taps(&touch);key_input_poll(&key,now);tf_key_press_baseline(&key.press,key.press.pressed||key.press.ignore_until_release||key.press.sync_lost);power_release_block=1;
+   if((uint32_t)(now-last)>=1000){last=now;heartbeat();}usleep(30000);continue;
+  }
+  if(factory_power_unknown_quiet){factory_power_unknown_quiet=0;tf_http_cancelled=0;data_backend_init();data_backend_commit_latest();controls_enabled=!pin_policy.locked&&!soft_lock.locked;refresh_pending=dirty=1;}
   if(factory_bus.power_event){int event=factory_bus.power_event;factory_bus.power_event=0;tf_http_cancelled=0;if(!runtime_power_event(&d,event)){result=7;break;}touch_input_clear_taps(&touch);gesture_block_until=tick()+300;dirty=1;}
   if(factory_bus.resync){tf_http_cancelled=0;screen_lock();if(!running||!display_runtime_begin_frame()||!render(&d)||!display_runtime_resync()){result=7;break;}controls_enabled=!pin_policy.locked&&!soft_lock.locked;dirty=1;}
   if(!running){result=7;break;}tf_http_cancelled=0;
   /* Read input before background reconnection or configuration polling. */
-  touch_input_read(&touch,&x,&y,&pressed);if(!display_runtime_touch(pressed,now)){result=7;break;}
+  touch_input_read(&touch,&x,&y,&pressed);
+  if(power_release_block){touch_input_clear_taps(&touch);key_input_poll(&key,now);tf_key_press_baseline(&key.press,key.press.pressed||key.press.ignore_until_release||key.press.sync_lost);if(!pressed){power_release_block=0;gesture_block_until=tick()+300;}else{if((uint32_t)(now-last)>=1000){last=now;heartbeat();}usleep(30000);continue;}}
+  if(!display_runtime_touch(pressed,now)){result=7;break;}
   if(gesture_block_until){if((int32_t)(gesture_block_until-now)>0)touch_input_clear_taps(&touch);else gesture_block_until=0;}
   int k=key_input_poll(&key,now);if(k==KEY_EV_LONG||k==KEY_EV_SHORT){int ok=runtime_key_event(&d,k);if(!ok){result=7;break;}touch_input_clear_taps(&touch);gesture_block_until=tick()+300;dirty=1;}
   if(power_menu_filter_touch(pressed)){touch_input_clear_taps(&touch);gesture_block_until=tick()+120;}

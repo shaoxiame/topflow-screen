@@ -29,6 +29,7 @@ static int reads,logins,login_value,policy_ok=1,login_ok=1,cancelled,damage,cont
 static char painted[64];
 static uint32_t test_clock,gesture_block_until;static int queued,clear_calls,take_calls;static struct{int mode;}drag;static struct{int active;}settle;
 static uint32_t tick(void){return test_clock;}
+static int tf_http_cancelled,test_oem_on=1;static int runtime_factory_power_read(int force){(void)force;return test_oem_on;}static void tf_page_state_cancel(void){}
 static void touch_input_clear_taps(int*t){queued=0;clear_calls++;}
 static int touch_input_take_latest_gesture(int*t,int*x0,int*y0,int*x1,int*y1,int*tap){take_calls++;int was=queued;queued=0;return was;}
 typedef struct{int unused;}drm_disp_t;
@@ -56,7 +57,7 @@ static void loop_frame(drm_disp_t*display,uint32_t clock,int pressed,int x,int y
 DISPATCH
 GESTURE
 }while(0);assert(!result);}
-static void reset(int pin){pin_policy.enabled=pin;pin_policy.locked=pin;tf_soft_lock_reset(&soft_lock,pin);controls_enabled=0;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=100;display_runtime_ready=on=policy_ok=login_ok=1;reads=logins=cancelled=damage=content_actions=pin_calls=0;gesture_block_until=queued=clear_calls=take_calls=0;}
+static void reset(int pin){test_oem_on=1;pin_policy.enabled=pin;pin_policy.locked=pin;tf_soft_lock_reset(&soft_lock,pin);controls_enabled=0;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=100;display_runtime_ready=on=policy_ok=login_ok=1;reads=logins=cancelled=damage=content_actions=pin_calls=0;gesture_block_until=queued=clear_calls=take_calls=0;}
 int main(void){drm_disp_t d={0};int dirty=0;
  reset(0);assert(render(&d)&&!strcmp(painted,"HOLD ONLY"));action("act:confirm");assert(!content_actions&&!controls_enabled&&!reads&&!logins);
  /* A finger already down at entry cannot satisfy the hold. */
@@ -73,6 +74,7 @@ int main(void){drm_disp_t d={0};int dirty=0;
  reset(1);assert(render(&d)&&!strcmp(painted,"PIN ONLY"));screen_soft_input(&d,0,0,0,0,0,&dirty);screen_soft_input(&d,100,1,100,390,0,&dirty);screen_soft_input(&d,2000,1,100,390,0,&dirty);assert(pin_policy.locked&&!controls_enabled&&!reads&&!logins&&!soft_lock.locked);action("act:theme");assert(pin_calls==1&&!content_actions);
  /* Completion rechecks unchanged original policy and login acknowledgement. */
  reset(0);screen_soft_input(&d,0,0,0,0,0,&dirty);screen_soft_input(&d,1,1,100,390,0,&dirty);policy_ok=0;assert(screen_soft_input(&d,1001,1,100,390,0,&dirty)==-1&&!controls_enabled&&reads==1&&!logins);
+ reset(0);screen_soft_input(&d,0,0,0,0,0,&dirty);screen_soft_input(&d,1,1,100,390,0,&dirty);policy_ok=0;test_oem_on=0;assert(screen_soft_input(&d,1001,1,100,390,0,&dirty)==1&&soft_lock.locked&&!controls_enabled);test_oem_on=1;
  reset(0);screen_soft_input(&d,0,0,0,0,0,&dirty);screen_soft_input(&d,1,1,100,390,0,&dirty);login_ok=0;assert(screen_soft_input(&d,1001,1,100,390,0,&dirty)==-1&&!controls_enabled&&logins==1);
  /* Wrap-around and exact rectangle bounds, including right/bottom exclusion. */
  tf_soft_lock q;tf_soft_lock_reset(&q,0);tf_soft_lock_touch(&q,UINT32_MAX-600,0,20,366,1);tf_soft_lock_touch(&q,UINT32_MAX-500,1,20,366,1);assert(tf_soft_lock_touch(&q,499,1,299,425,1)==TF_SOFT_UNLOCK);assert(!tf_soft_lock_inside(300,390)&&!tf_soft_lock_inside(100,426)&&!tf_soft_lock_inside(19,366)&&!tf_soft_lock_inside(20,365));

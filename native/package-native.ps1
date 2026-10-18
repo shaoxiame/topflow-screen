@@ -31,7 +31,7 @@ Copy-Item "$root/toolchain/zig-x86_64-windows-0.14.1/lib/libcxxabi/LICENSE.TXT" 
 Copy-Item "$root/vendor/pinyin/LICENSE" "$payload/licenses/pinyin-data-MIT.txt" -Force
 Copy-Item "$root/vendor/openwrt/LGPL-2.1.txt","$root/vendor/openwrt/openwrt-NOTICE.txt" "$payload/licenses" -Force
 $manifest=@{
- schema=1; version='0.2.6'; target='aarch64-linux-musl'; application='topflow-screen'; hardwareTested=$false
+ schema=1; version='0.2.7'; target='aarch64-linux-musl'; application='topflow-screen'; hardwareTested=$false
  nativeFactoryPower=@{source='/etc/config/zwrt_zte_mc_tmp';section='mode';field='mode_main_state';off='mode_power_off*';on=@('mode_power_on','mode_power_on_charger');settingIsPowerState=$false;unknownAfterOff='remain-dark';inputDuringOff='discard';writesFactoryMode=$false;additionalProcesses=0;hardwareTested=$false}
  nativeAutostart=@{defaultEnabled=$false;hook='/data/plugins/ufi_tools_boot.sh';readinessSecondsMaximum=120;attemptsPerBoot=1;retry=$false;failure='existing-factory-rollback';disabledCancelsPending=$true;uninstall='remove-owned-hook-and-bounded-state';systemStartupFilesModified=$false;integrity='boot-integrity.sha256';deviceBootVerified=$false}
  defaultViewOnly=$false; physicalScreenProgramSwitch=$false

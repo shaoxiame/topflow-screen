@@ -17,6 +17,8 @@ const historicalMigration=fs.existsSync(path.join(root,'.cache/recovery-024/topf
 if(historicalMigration){const legacyResult=cp.spawnSync(process.execPath,['--test','tests/manager-migration-024.test.js'],{cwd:root,stdio:'inherit'});if(legacyResult.error)throw legacyResult.error;if(legacyResult.status!==0)throw Error('Exact 0.2.4 migration test failed');}
 const historical025Migration=fs.existsSync(path.join(root,'.cache/recovery-025/topflow-native.tar.gz'));
 if(historical025Migration){const legacyResult=cp.spawnSync(process.execPath,['--test','tests/manager-migration-025.test.js'],{cwd:root,stdio:'inherit'});if(legacyResult.error)throw legacyResult.error;if(legacyResult.status!==0)throw Error('Exact 0.2.5 migration test failed');}
+const historical026Migration=fs.existsSync(path.join(root,'.cache/recovery-026/topflow-native.tar.gz'));
+if(historical026Migration){const legacyResult=cp.spawnSync(process.execPath,['--test','tests/manager-migration-026.test.js'],{cwd:root,stdio:'inherit'});if(legacyResult.error)throw legacyResult.error;if(legacyResult.status!==0)throw Error('Exact 0.2.6 migration test failed');}
 const archive=fs.readFileSync(path.join(root,'native/topflow-native.tar.gz'));
 const members=builder.tarMembers(archive);
 const manifest=JSON.parse(members.find(m=>m.name==='./build-manifest.json').content);
@@ -27,7 +29,7 @@ builder.verifyBootIntegrity(manifest,members);
 builder.verifyNativeLiveContract(manifest);
 builder.verifyNativeReleaseContract(manifest,{});
 const gate={schema:1,version:manifest.version,state:'device-acceptance-pending',code:'DEVICE_ACCEPTANCE_PENDING',hardwareVerified:false,
- historical024MigrationVerified:historicalMigration,historical025MigrationVerified:historical025Migration,localValidationPassed:true,localImplementationReviewed:true,adaptationFixCandidate:true,
+ historical024MigrationVerified:historicalMigration,historical025MigrationVerified:historical025Migration,historical026MigrationVerified:historical026Migration,localValidationPassed:true,localImplementationReviewed:true,adaptationFixCandidate:true,
  reason:'Public-source local tests, source/archive integrity and release contracts passed. No new hardware acceptance is asserted.',
  validationScope:['public-js-tests','factory-quick-boot-off-display-input-gate','native-wifi-and-page-state-sync','native-display-external-policy-and-security','wallpaper-memory-migration','native-power-key-menu-C-harness','native-wallpaper-loader-and-file-lifecycle','native-source-hashes','root-proof-hashes','native-ELF-architecture','boot-file-integrity','existing-release-contracts'],
  exclusions:['private-firmware-evidence-tests','device-installation','device-ABI-validation','display-touch-sleep-hardware-tests'],

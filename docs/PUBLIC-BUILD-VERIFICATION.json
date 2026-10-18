@@ -1,27 +1,22 @@
 {
-  "version": "0.2.6",
-  "edition": "factory-quick-boot-and-ufi-glass",
-  "deviceAccess": false,
+  "version": "0.2.7",
+  "edition": "ufi-shell-length-fix",
+  "deviceAccess": true,
   "deviceWrites": false,
   "hardwareVerified": false,
-  "hardwareBoundary": "Checks ran on the computer using synthetic state, mocked I/O and disposable files. No device connection, installation or setting changes. Historical acceptance does not cover v0.2.6. Browser automation was unavailable; no new rendered-browser screenshot or visual pass is claimed.",
+  "hardwareBoundary": "Build, migration, package and native regression checks ran on the computer. UFI was contacted only for fixed printf/comment probes and the reviewed status action; no files or settings were changed and no screen switch/installation was performed. No new display/touch/sleep hardware acceptance or browser screenshot is claimed.",
   "sourceBuild": {
     "renderer": "aarch64-linux-musl",
-    "rendererRebuilt": true,
-    "helper": "unchanged public ABI imports build",
-    "changedNativeMembersFromPublic025": [
-      "boot-integrity.sha256",
-      "build-manifest.json",
-      "topflow-screen",
-      "topflow-screen.sha256"
-    ],
-    "nativeRuntimeByteIdenticalToPublic025": [
+    "rendererRebuilt": false,
+    "runtimeByteIdenticalToPublic026": [
       "boot-hook.sh",
       "NOTICE.txt",
       "REBUILD.txt",
       "screenctl.sh",
       "supervisor.sh",
       "topflow-factory-bus-aarch64",
+      "topflow-screen",
+      "topflow-screen.sha256",
       "ui/aggregate.html",
       "ui/apps.html",
       "ui/index.html",
@@ -41,15 +36,19 @@
       "licenses/pinyin-data-MIT.txt",
       "licenses/PolyForm-Noncommercial-1.0.0.txt",
       "licenses/u60pro-devui-MIT.txt"
+    ],
+    "changedNativeMembersFromPublic026": [
+      "boot-integrity.sha256",
+      "build-manifest.json"
     ]
   },
   "checks": {
     "publicJavascript": {
-      "tests": 225,
-      "passed": 224,
+      "tests": 229,
+      "passed": 228,
       "failed": 0,
       "skipped": 1,
-      "files": 14,
+      "files": 15,
       "skips": [
         "private historical datad snapshot"
       ]
@@ -60,17 +59,17 @@
       "failed": 0,
       "skipped": 0,
       "rootProofs": [
+        "tests/native-wifi-integration.test.js",
+        "tests/native-band-state-sync.test.js",
+        "tests/native-page-state-sync.test.js",
+        "tests/manager-wallpaper-migration.test.js",
+        "tests/manager-wallpaper-migration-audit.test.js",
         "tests/native-ufi.test.js",
         "tests/native-power-menu.test.js",
-        "tests/native-page-state-sync.test.js",
-        "tests/native-wallpaper.test.js",
-        "tests/native-wifi-integration.test.js",
-        "tests/native-wifi-state.test.js",
-        "tests/native-band-state-sync.test.js",
-        "tests/manager-wallpaper-migration-audit.test.js",
+        "tests/native-power-key.test.js",
         "tests/native-wallpaper-files.test.js",
-        "tests/manager-wallpaper-migration.test.js",
-        "tests/native-power-key.test.js"
+        "tests/native-wifi-state.test.js",
+        "tests/native-wallpaper.test.js"
       ]
     },
     "historical024Migration": {
@@ -86,6 +85,13 @@
       "failed": 0,
       "skipped": 0,
       "exactOldArchiveSha256": "0702ffaf6ff94b0974bf617926e5232dcabc27f7d8770b87b4038c0eb885bc1c"
+    },
+    "historical026Migration": {
+      "tests": 8,
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0,
+      "exactOldArchiveSha256": "9ee81fb2d503aee5222e66ffbfde100a82491bc65e859e202a34d5bca79c140c"
     },
     "displayPolicySuites": [
       {
@@ -140,16 +146,24 @@
       "failed": 0,
       "skipped": 0
     },
+    "shellBudget": {
+      "limitBytes": 98304,
+      "actualStatusBytes": 88266,
+      "maximumFullActionBytes": 91913,
+      "utf8CountVerified": true,
+      "oversizeRequestsSent": 0,
+      "retryOnOversize": false,
+      "realUfiReadonlyStatusVerified": true
+    },
     "managerUi": {
       "hostCardAlpha": true,
       "transparentInnerCards": true,
       "hostBlurRadius": true,
       "independentModalSurface": true,
-      "themeAndConfirmationTests": true,
       "browserVisualValidation": false
     },
     "officialMetadata": {
-      "filename": "topflow-screen-0.2.6.txt.meta.json",
+      "filename": "topflow-screen-0.2.7.txt.meta.json",
       "author": "善恶",
       "device_models": [
         "TOPFLOW"
@@ -167,14 +181,14 @@
     ]
   },
   "artifact": {
-    "file": "topflow-screen-0.2.6.txt",
-    "bytes": 1825526,
-    "sha256": "489969c49933b1042c19b688b599017af036bc6fa67d141b629a41cfadff5adc",
-    "metadataFile": "topflow-screen-0.2.6.txt.meta.json",
-    "metadataSha256": "ca540a838c4442c7315d4d75449d7e5e816303810e12d448f81e0c763613ac0f",
-    "nativeArchiveSha256": "9ee81fb2d503aee5222e66ffbfde100a82491bc65e859e202a34d5bca79c140c",
+    "file": "topflow-screen-0.2.7.txt",
+    "bytes": 1831139,
+    "sha256": "f47e5396864ad1d4d404c18978a7cf5a061b9fa068527a3ef11303a749a7223c",
+    "metadataFile": "topflow-screen-0.2.7.txt.meta.json",
+    "metadataSha256": "3842c062415305f640091d053389019ce4b42de24f8aa1e068ad8f31856bbe14",
+    "nativeArchiveSha256": "542d911f5c01746511b25066f9e4931a3da48f38d21df0996061ff7b43bd8600",
     "nativeRendererSha256": "90e42c66e6673ac0991a275916455ee3a112d2844fc3398fc81103baa3271576",
     "nativeHelperSha256": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28"
   },
-  "checkedAt": "2026-10-18T17:43:55.184Z"
+  "checkedAt": "2026-10-18T17:55:45.312Z"
 }

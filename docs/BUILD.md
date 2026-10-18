@@ -1,6 +1,6 @@
 # 本地构建与验证
 
-公开目录为 0.2.6 最终版。构建脚本只操作电脑上的文件，不连接、安装或启动设备上的程序。源码包含真实接口实现；浏览器预览另用纯合成数据，预览代码不会进入插件 TXT。用户对 0.2.1 的实机验收与本次 0.2.6 的电脑检查分别记录。
+公开目录为 0.2.7 最终版。构建脚本只操作电脑上的文件，不连接、安装或启动设备上的程序。源码包含真实接口实现；浏览器预览另用纯合成数据，预览代码不会进入插件 TXT。用户对 0.2.1 的实机验收、本次电脑检查与 UFI 只读状态验证分别记录。
 
 ## 不需要设备的源码检查
 
@@ -13,7 +13,7 @@ npm run preview
 
 预览默认只绑定 `127.0.0.1:8877`。可通过 `TF_PREVIEW_PORT` 指定其他本地端口。服务器只读取固定白名单文件，没有设备代理、执行命令、上传或遥测功能；浏览器 CSP 禁止网络连接。模式与表单操作仅在浏览器内存演示。关闭终端即停止。
 
-`npm test` 明确运行十四个公开测试文件：device-api、ui-contract、network-status、plugin-manager、production-manager、manager-cancel、manager-theme、manager-confirm、manager-wallpaper、manager-wallpaper-ui、manager-wallpaper-migration、aoyou-adapter、aoyou-ufi-transport、no-remote-integration。所有接口由 mock 提供。原始设备快照未公开，对应历史证据测试明确显示 SKIP；不会把缺失私有输入当作通过。旧商店 SDK 及其下载步骤、遥测测试已移除。
+`npm test` 明确运行十五个公开测试文件：device-api、ui-contract、network-status、plugin-manager、production-manager、manager-shell-size、manager-cancel、manager-theme、manager-confirm、manager-wallpaper、manager-wallpaper-ui、manager-wallpaper-migration、aoyou-adapter、aoyou-ufi-transport、no-remote-integration。所有接口由 mock 提供。原始设备快照未公开，对应历史证据测试明确显示 SKIP；不会把缺失私有输入当作通过。旧商店 SDK 及其下载步骤、遥测测试已移除。
 
 ### UFI 管理页外观预览
 
@@ -112,13 +112,13 @@ npm run prepare:release
 npm run build
 ```
 
-v0.2.6 继续不含旧商店在线目录查询、遥测 SDK 或数据上报。官方文档入口只供用户主动阅读；没有把旧 SDK 换域名继续运行，也不自动改变 UFI 的内置商店或设备授权服务。
+v0.2.7 继续不含旧商店在线目录查询、遥测 SDK 或数据上报。官方文档入口只供用户主动阅读；没有把旧 SDK 换域名继续运行，也不自动改变 UFI 的内置商店或设备授权服务。
 
-package 会生成源码哈希、AArch64 ELF 和启动文件完整性清单，并携带适用许可证（含 FreeType gzip 的 zlib 声明）。`prepare:release` 重新运行公开 JS 检查、Wi-Fi / 页面 / 频段 / UFI 同步测试、原生电源键/菜单与锁屏壁纸测试、外部显示配置与休眠回归，核对原生归档源码/二进制/启动完整性及发布契约后生成与源码哈希绑定的本地门禁。`build` 再次检查并输出 `dist/topflow-screen-0.2.6.txt`、稳定别名 `dist/topflow-screen.txt`，以及各自完整文件名加 `.meta.json` 的元信息旁文件。门禁保留 `hardwareVerified=false` / `DEVICE_ACCEPTANCE_PENDING` 表示本次构建未自动执行新的设备验收，不否认用户对旧版的实机反馈。
+package 会生成源码哈希、AArch64 ELF 和启动文件完整性清单，并携带适用许可证（含 FreeType gzip 的 zlib 声明）。`prepare:release` 重新运行公开 JS 检查、Wi-Fi / 页面 / 频段 / UFI 同步测试、原生电源键/菜单与锁屏壁纸测试、外部显示配置与休眠回归，核对原生归档源码/二进制/启动完整性及发布契约后生成与源码哈希绑定的本地门禁。`build` 再次检查并输出 `dist/topflow-screen-0.2.7.txt`、稳定别名 `dist/topflow-screen.txt`，以及各自完整文件名加 `.meta.json` 的元信息旁文件。门禁保留 `hardwareVerified=false` / `DEVICE_ACCEPTANCE_PENDING` 表示本次构建未自动执行新的设备验收，不否认用户对旧版的实机反馈。
 
-0.2.6 的管理器识别已核验的 0.2.5、0.2.4、0.2.3、0.2.2，以及公开版和早期私发 0.2.1 归档。导入新 TXT、在 UFI 点击“提交”并刷新后，可通过本地更新完成原厂恢复、旧组件清理及新组件启用，无需先手动卸载。未知或被修改的归档不因版本号相同而获得迁移许可。重新构建也不承诺复现历史归档的相同字节。
+0.2.7 的管理器识别已核验的 0.2.6、0.2.5、0.2.4、0.2.3、0.2.2，以及公开版和早期私发 0.2.1 归档。导入新 TXT、在 UFI 点击“提交”并刷新后，可通过本地更新完成原厂恢复、旧组件清理及新组件启用，无需先手动卸载。未知或被修改的归档不因版本号相同而获得迁移许可。重新构建也不承诺复现历史归档的相同字节。
 
-024 / 025 → 026 更新通过固定分块只读导出、完整头部与 SHA 校验，在浏览器内存保留壁纸。卸载前与恢复 prepare/commit 均在现有生命周期锁内再次比对状态，防止覆盖其他管理页新上传的壁纸。恢复仍使用原有 nonce / boot / offset 绑定上传协议，不新增备份目录或后台服务。`tests/manager-wallpaper-migration.test.js` 和 `tests/manager-wallpaper-migration-audit.test.js` 分别验证内存迁移及生产 Shell 的锁内竞态。`tests/manager-migration-024.test.js` 需要从公开 v0.2.4 原始 TXT 中提取并校验内嵌的精确归档，放入 `.cache/recovery-024/topflow-native.tar.gz`；历史文件缺失不算验证通过。
+024 / 025 / 026 → 027 更新通过固定分块只读导出、完整头部与 SHA 校验，在浏览器内存保留壁纸。卸载前与恢复 prepare/commit 均在现有生命周期锁内再次比对状态，防止覆盖其他管理页新上传的壁纸。恢复仍使用原有 nonce / boot / offset 绑定上传协议，不新增备份目录或后台服务。`tests/manager-wallpaper-migration.test.js` 和 `tests/manager-wallpaper-migration-audit.test.js` 分别验证内存迁移及生产 Shell 的锁内竞态。`tests/manager-migration-024.test.js` 需要从公开 v0.2.4 原始 TXT 中提取并校验内嵌的精确归档，放入 `.cache/recovery-024/topflow-native.tar.gz`；历史文件缺失不算验证通过。
 
 ## 按官方规范导入与发布
 
@@ -126,13 +126,13 @@ package 会生成源码哈希、AArch64 ELF 和启动文件完整性清单，并
 
 TXT 是 UTF-8 原始插件，必须保留完整 `<script>...</script>` / 样式包装；不得添加 `KANO_META` 或商店内部安装 ID。单次插件导入上限为 4 MiB。宿主“插件功能 → 插件商店”的一键安装/更新写入编辑区，之后须点击“提交”；“仅下载”不安装。
 
-元信息旁文件供源维护者使用，其文件名必须是完整插件文件名加 `.meta.json`，对象中 `version` 为 `0.2.6`，不是外套一个 `meta` 属性。旁文件不执行、无需导入面板，也不意味着已在官方商店上架。
+元信息旁文件供源维护者使用，其文件名必须是完整插件文件名加 `.meta.json`，对象中 `version` 为 `0.2.7`，不是外套一个 `meta` 属性。旁文件不执行、无需导入面板，也不意味着已在官方商店上架。
 
 官方内置商店由宿主管理；自定义源留空或“恢复内置源”可恢复该入口，本插件不会自动执行这项设置。若自行发布静态源，按规范提供 HTTPS `plugins.json`、下载根地址、`res.code:200`、`res.data.content` 及推荐的大小/SHA-256。保持文件名稳定，使用最终分发字节更新 `meta.version` 与清单；不要把文档地址或 GitHub 文件预览页当作源地址。
 
 最终 TXT 不包括合成数据、原厂字体、设备库、密码、开发日志或链接桩。可发布成品不代表支持任意固件，也不表示本次公开整理重新完成了触摸、休眠、亮度、短信和恢复原厂的实机测试。
 
-## v0.2.6 快速开机假关机联动
+## v0.2.7 快速开机假关机联动
 
 运行 `pwsh -NoProfile -File native/test-factory-power.ps1` 检查原厂状态解析、假关机期间显示/输入门禁和恢复路径。状态文件和设备调用均由电脑测试夹具提供，不连接设备。`prepare:release` 包含这项检查及原有锁屏、显示与休眠回归。
 

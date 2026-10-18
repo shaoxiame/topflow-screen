@@ -763,6 +763,76 @@
     "licenses/u60pro-devui-MIT.txt": "fccf401e30d878bdff5d8fec7fbc3663a5c4a40ffe1b5f7b52fe91fc3849e844"
   }
 });
+  // Exact public 0.2.6 archive, including every packaged file.
+  recoveryArchives.push({
+  "archiveSha256": "9ee81fb2d503aee5222e66ffbfde100a82491bc65e859e202a34d5bca79c140c",
+  "members": [
+    "./",
+    "./boot-hook.sh",
+    "./boot-integrity.sha256",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    "./topflow-factory-bus-aarch64",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+    "./ui/subpages/sms.html",
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/FreeType-gzip-zlib.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    "./licenses/LLVM-libcxxabi.txt",
+    "./licenses/musl-COPYRIGHT.txt",
+    "./licenses/openwrt-NOTICE.txt",
+    "./licenses/pinyin-data-MIT.txt",
+    "./licenses/PolyForm-Noncommercial-1.0.0.txt",
+    "./licenses/u60pro-devui-MIT.txt"
+  ],
+  "files": {
+    "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e",
+    "boot-integrity.sha256": "c78b40c72e0e445485990933c2e0e6f9770f1bc8d6c50f26f0b7749a243019ff",
+    "build-manifest.json": "d0ad9bf8d29e97cefdfb77933e3d0f8cb0056d955d6b30762600506ff58ad741",
+    "NOTICE.txt": "f05b46f010573e07874c1fd5292a9f9a96763b007d05b61fdf27d060fb27f1fd",
+    "REBUILD.txt": "a0d0d7acf10c22a97e8ee3ab5f85b047b217239721e4c38c78dc7a313c12294e",
+    "screenctl.sh": "f3d9ffba5ebc80fb55483a404014eccb4bb243973a01414c0e09169d688e9856",
+    "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+    "topflow-factory-bus-aarch64": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28",
+    "topflow-screen": "90e42c66e6673ac0991a275916455ee3a112d2844fc3398fc81103baa3271576",
+    "topflow-screen.sha256": "2a503cae0ff21ebb2e8c919dc9bc0f8d9d859bf19e064d7d012370d3b2f3311e",
+    "ui/aggregate.html": "31929d40ca085b727c94670e7f8c204f8b696044f37a52fdddb46a052c436502",
+    "ui/apps.html": "b9c1f80c11cd3edc3cfdfc8d4dccde5ca7aaad7cefcb8762138eeb82bef6bd0b",
+    "ui/index.html": "3e226952ac7f77300e865154f48d05c1d30fad2b7be05f5f7405bd3d85528ddf",
+    "ui/network.html": "366e854491a3f937c1ae527d312495070b00809c9e9efc7e5ab4db89f24d7bb3",
+    "ui/settings.html": "432e2b209f67b6ac44c2b7cb6449176852082e2d94ab5e615eff1cce983c0c20",
+    "ui/style.css": "94e1e5bc230a19efa19193d21c5b6b68fa86670d5a49499c35429f7bebfbff80",
+    "ui/subpages/sms.html": "dd628099fe4d3ec24f3de5ece4df2bf28c40139d604cb8cc391c48b74c831227",
+    "licenses/FreeType-FTL.txt": "308dca54b5aaa4a6ba0880621fe3bcf287956821aa948430263062a8333625c0",
+    "licenses/FreeType-gzip-zlib.txt": "c9e67393c37f15f3f9c02b708d4c6b739881db9c1bbcd504d3c7b65880c5509a",
+    "licenses/gumbo-Apache.txt": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+    "licenses/LGPL-2.1.txt": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+    "licenses/litehtml-BSD.txt": "7cf682bdf6081258672857ab473389e40d31620fbff847449db52c23ec422bf9",
+    "licenses/LLVM-libcxx.txt": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b",
+    "licenses/LLVM-libcxxabi.txt": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c",
+    "licenses/musl-COPYRIGHT.txt": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af",
+    "licenses/openwrt-NOTICE.txt": "81200142b6ecf5d1476cbb6ec707d4bd93c5e991f3f5d7b3439c4c18657dbfae",
+    "licenses/pinyin-data-MIT.txt": "9c048697be2502a16e8bcb282d5d465a07295b2def0ffb05a269c5d39dbe1586",
+    "licenses/PolyForm-Noncommercial-1.0.0.txt": "c0ea4a896d2c8c394b29f9427589996db826cd501c512279ff0ed3ef48fabbe5",
+    "licenses/u60pro-devui-MIT.txt": "fccf401e30d878bdff5d8fec7fbc3663a5c4a40ffe1b5f7b52fe91fc3849e844"
+  }
+});
   function error(code, message) { var e = new Error(message); e.code = code; return e; }
   function failureMessage(code) {
     var messages = {
@@ -871,23 +941,25 @@
     return '[ -f "$TF_ROOT/.topflow-install" ] && [ ! -L "$TF_ROOT/.topflow-install" ] && [ "$(cat "$TF_ROOT/.topflow-install")" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(payload.archiveSha256) + ')" ] || { echo TOPFLOW_ERROR=UNVERIFIED_OWNERSHIP; exit 1; }\n' +
       '[ -f "$TF_ROOT/.topflow-files" ] && [ ! -L "$TF_ROOT/.topflow-files" ] && [ "$(cat "$TF_ROOT/.topflow-files")" = "$(printf \'%s\\n\' ' + installedMembers(payload).map(shellQuote).join(' ') + ')" ] || { echo TOPFLOW_ERROR=UNVERIFIED_MANIFEST; exit 1; }\n';
   }
-  function screenOwnershipGuard(payload, wallpaperSnapshot, restoreSha) {
-    var current = ownershipGuard(payload);
-    var branches = recoveryArchives.map(function (recoveryArchive) {
-    var legacy = ownershipClause(recoveryArchive);
-    var checks = Object.keys(recoveryArchive.files).map(function (name) {
-      return 'if [ ! -e "$TF_ROOT/' + name + '" ] && [ ! -L "$TF_ROOT/' + name + '" ] && [ "$TF_LEGACY_CLEANING" = true ]; then :; else\n' +
-        '[ -f "$TF_ROOT/' + name + '" ] && [ ! -L "$TF_ROOT/' + name + '" ] && [ "$(stat -c %h "$TF_ROOT/' + name + '\")" = 1 ] || { echo TOPFLOW_ERROR=UNVERIFIED_LEGACY_FILES; exit 1; }\n' +
-        'printf \'%s  %s\\n\' ' + shellQuote(recoveryArchive.files[name]) + ' "$TF_ROOT/' + name + '" | sha256sum -c - >/dev/null 2>&1 || { echo TOPFLOW_ERROR=UNVERIFIED_LEGACY_FILES; exit 1; }\nfi\n';
+  function screenOwnershipGuard(payload, wallpaperSnapshot, restoreSha, currentOnly) {
+    nativePayload(payload);
+    function verifyOwned(archive) { return 'tf_verify_owned ' + shellQuote(archive.archiveSha256) + ' ' + shellQuote(installedMembers(archive).join('\n')) + '\n'; }
+    var helpers = 'tf_verify_owned() {\n' +
+      '[ -f "$TF_ROOT/.topflow-install" ] && [ ! -L "$TF_ROOT/.topflow-install" ] && [ "$(cat "$TF_ROOT/.topflow-install")" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' "$1")" ] || { echo TOPFLOW_ERROR=UNVERIFIED_OWNERSHIP; exit 1; }\n' +
+      '[ -f "$TF_ROOT/.topflow-files" ] && [ ! -L "$TF_ROOT/.topflow-files" ] && [ "$(cat "$TF_ROOT/.topflow-files")" = "$2" ] || { echo TOPFLOW_ERROR=UNVERIFIED_MANIFEST; exit 1; }\n}\n' +
+      'tf_verify_legacy_cleaning() {\nTF_LEGACY_CLEANING=false\nif [ -e "$TF_ROOT/.uninstalling" ] || [ -L "$TF_ROOT/.uninstalling" ]; then\n' +
+      '[ -f "$TF_ROOT/.uninstalling" ] && [ ! -L "$TF_ROOT/.uninstalling" ] && [ "$(stat -c %h "$TF_ROOT/.uninstalling")" = 1 ] && [ "$(stat -c %u "$TF_ROOT/.uninstalling")" = 0 ] && [ "$(cat "$TF_ROOT/.uninstalling")" = uninstalling ] && [ ! -e "$TF_ROOT/.upload-active" ] && [ ! -L "$TF_ROOT/.upload-active" ] && [ ! -e "$TF_ROOT/.install-owner" ] || { echo TOPFLOW_ERROR=UNVERIFIED_LEGACY_FILES; exit 1; }\nTF_LEGACY_CLEANING=true\nfi\n}\n' +
+      'tf_verify_legacy_file() {\n' +
+      'if [ ! -e "$TF_ROOT/$1" ] && [ ! -L "$TF_ROOT/$1" ] && [ "$TF_LEGACY_CLEANING" = true ]; then return 0; fi\n' +
+      '[ -f "$TF_ROOT/$1" ] && [ ! -L "$TF_ROOT/$1" ] && [ "$(stat -c %h "$TF_ROOT/$1")" = 1 ] || { echo TOPFLOW_ERROR=UNVERIFIED_LEGACY_FILES; exit 1; }\n' +
+      'printf \'%s  %s\\n\' "$2" "$TF_ROOT/$1" | sha256sum -c - >/dev/null 2>&1 || { echo TOPFLOW_ERROR=UNVERIFIED_LEGACY_FILES; exit 1; }\n}\n';
+    var branches = (currentOnly ? [] : recoveryArchives).map(function (archive) {
+      var checks = Object.keys(archive.files).map(function (name) { return 'tf_verify_legacy_file ' + shellQuote(name) + ' ' + shellQuote(archive.files[name]) + '\n'; }).join('');
+      return 'elif [ "$TF_INSTALLED_MARKER" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(archive.archiveSha256) + ')" ]; then\n' + verifyOwned(archive) + 'tf_verify_legacy_cleaning\n' + checks + 'TF_VERSION_MISMATCH=true\n';
     }).join('');
-    return 'elif [ "$TF_INSTALLED_MARKER" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(recoveryArchive.archiveSha256) + ')" ]; then\n' + legacy +
-      'TF_LEGACY_CLEANING=false\nif [ -e "$TF_ROOT/.uninstalling" ] || [ -L "$TF_ROOT/.uninstalling" ]; then\n' +
-      '[ -f "$TF_ROOT/.uninstalling" ] && [ ! -L "$TF_ROOT/.uninstalling" ] && [ "$(stat -c %h "$TF_ROOT/.uninstalling")" = 1 ] && [ "$(stat -c %u "$TF_ROOT/.uninstalling")" = 0 ] && [ "$(cat "$TF_ROOT/.uninstalling")" = uninstalling ] && [ ! -e "$TF_ROOT/.upload-active" ] && [ ! -L "$TF_ROOT/.upload-active" ] && [ ! -e "$TF_ROOT/.install-owner" ] || { echo TOPFLOW_ERROR=UNVERIFIED_LEGACY_FILES; exit 1; }\nTF_LEGACY_CLEANING=true\nfi\n' + checks +
-      'TF_VERSION_MISMATCH=true\n';
-    }).join('');
-    return 'tf_verify_install() {\nTF_VERSION_MISMATCH=false\n' +
+    return helpers + 'tf_verify_install() {\nTF_VERSION_MISMATCH=false\n' +
       'TF_INSTALLED_MARKER=$(cat "$TF_ROOT/.topflow-install" 2>/dev/null || true)\n' +
-      'if [ "$TF_INSTALLED_MARKER" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(payload.archiveSha256) + ')" ]; then\n' + current + branches +
+      'if [ "$TF_INSTALLED_MARKER" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(payload.archiveSha256) + ')" ]; then\n' + verifyOwned(payload) + branches +
       'else echo TOPFLOW_ERROR=INSTALLED_VERSION_MISMATCH; exit 1; fi\n' + (wallpaperSnapshot ? wallpaperSnapshotChecks(wallpaperSnapshot) : '') + (restoreSha ? wallpaperRestoreChecks(restoreSha) : '') + '}\ntf_verify_install\n';
   }
   function memoryController(action, payload) {
@@ -1007,7 +1079,7 @@
     nativePayload(payload);
     var migrating = details && details.migration === true && action !== 'status';
     return 'set -eu\n' + rootGuard() +
-      '[ -d "$TF_ROOT" ] && [ ! -L "$TF_ROOT" ] && [ "$(readlink -f "$TF_ROOT")" = "$TF_ROOT" ] && [ "$(stat -c %u "$TF_ROOT")" = 0 ] || { echo TOPFLOW_ERROR=UNSAFE_TARGET; exit 1; }\n' + screenOwnershipGuard(payload, null, migrating && action !== 'abort' ? sha : null) +
+      '[ -d "$TF_ROOT" ] && [ ! -L "$TF_ROOT" ] && [ "$(readlink -f "$TF_ROOT")" = "$TF_ROOT" ] && [ "$(stat -c %u "$TF_ROOT")" = 0 ] || { echo TOPFLOW_ERROR=UNSAFE_TARGET; exit 1; }\n' + screenOwnershipGuard(payload, null, migrating && action !== 'abort' ? sha : null, true) +
       '[ "$TF_VERSION_MISMATCH" = false ] || { echo TOPFLOW_ERROR=INSTALLED_VERSION_MISMATCH; exit 1; }\n' +
       '[ ! -e "$TF_ROOT/.install-owner" ] && [ ! -L "$TF_ROOT/.install-owner" ] && [ -f "$TF_ROOT/screenctl.sh" ] && [ ! -L "$TF_ROOT/screenctl.sh" ] || { echo TOPFLOW_ERROR=INSTALL_INCOMPLETE; exit 1; }\n' +
       'printf \'%s  %s\\n\' ' + shellQuote(payload.screenctlSha256) + ' "$TF_ROOT/screenctl.sh" | sha256sum -c -\n' +
@@ -1031,6 +1103,23 @@
       if (typeof state.autostart.reason === 'string' && /^[A-Z][A-Z0-9_]{1,63}$/.test(state.autostart.reason)) parsed.autostart.reason = state.autostart.reason;
     }
     return parsed;
+  }
+  var MAX_SHELL_COMMAND_BYTES = 96 * 1024;
+  function shellCommandBytes(value) {
+    var text = String(value), bytes = 0;
+    for (var i = 0; i < text.length; i++) {
+      var code = text.charCodeAt(i);
+      if (code < 128) bytes++;
+      else if (code < 2048) bytes += 2;
+      else if (code >= 0xd800 && code <= 0xdbff && i + 1 < text.length && text.charCodeAt(i + 1) >= 0xdc00 && text.charCodeAt(i + 1) <= 0xdfff) { bytes += 4; i++; }
+      else bytes += 3;
+    }
+    return bytes;
+  }
+  function validateShellCommand(command) {
+    var text = String(command), bytes = shellCommandBytes(text);
+    if (bytes >= MAX_SHELL_COMMAND_BYTES) throw error('SHELL_COMMAND_TOO_LARGE', 'UFI Shell 命令超过安全长度（' + bytes + ' 字节），已在发送前停止；请更新插件，不会自动重试');
+    return text;
   }
   function directRequest(root, path, options) {
     var base = typeof KANO_baseURL !== 'undefined' && KANO_baseURL ? KANO_baseURL : '/api';
@@ -1092,7 +1181,7 @@
       sessionCookie: function () { return typeof KANO_COOKIE !== 'undefined' ? KANO_COOKIE : null; },
       request: function (path, options) { if (options && options.body !== undefined) denyWrite(); if (!root.DatadApp || typeof root.DatadApp.request !== 'function') throw error('NO_BRIDGE', 'UFI DatadApp 不可用'); return root.DatadApp.request(path, options); },
       runShellWithRoot: async function (command, timeout) {
-        var response = await directRequest(root, '/run_shell', { json: true, body: { cmd: String(command), timeout: Number(timeout) || 12000 } });
+        var response = await directRequest(root, '/run_shell', { json: true, body: { cmd: validateShellCommand(command), timeout: Number(timeout) || 12000 } });
         var result = await response.json().catch(function () { return {}; });
         if (!response.ok || result.success !== true || typeof result.content !== 'string') throw shellFailure(response, result);
         return result;
@@ -1475,5 +1564,5 @@
     function attachEntry() { openPanel(); }
     if (doc.body) attachEntry(); else doc.addEventListener('DOMContentLoaded', attachEntry, { once: true });
   }
-  return { register: register, buildInstallStart: buildInstallStart, buildUploadComplete: buildUploadComplete, buildInstallFinish: buildInstallFinish, buildScreenCommand: buildScreenCommand, buildWallpaperCommand: buildWallpaperCommand, buildWallpaperBackupCommand: buildWallpaperBackupCommand, parseScreenStatus: parseScreenStatus, nativePayload: nativePayload, directRequest: directRequest, uploadNative: uploadNative, findInstalledBlockName: findInstalledBlockName, removeInstalledRecord: removeInstalledRecord, shellFailure: shellFailure };
+  return { register: register, buildInstallStart: buildInstallStart, buildUploadComplete: buildUploadComplete, buildInstallFinish: buildInstallFinish, buildScreenCommand: buildScreenCommand, buildWallpaperCommand: buildWallpaperCommand, buildWallpaperBackupCommand: buildWallpaperBackupCommand, parseScreenStatus: parseScreenStatus, nativePayload: nativePayload, directRequest: directRequest, uploadNative: uploadNative, findInstalledBlockName: findInstalledBlockName, removeInstalledRecord: removeInstalledRecord, shellFailure: shellFailure, shellCommandBytes: shellCommandBytes, validateShellCommand: validateShellCommand };
 });

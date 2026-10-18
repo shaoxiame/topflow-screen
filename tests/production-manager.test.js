@@ -17,7 +17,7 @@ function harness(options = {}) {
   const functions={style:{overflow:'hidden',height:'86px'},parentNode:hostContainer,insertAdjacentElement(where,node){assert.equal(where,'afterend');hostContainer.append(node);}};
   for (const name of ['close','cancel','toggle','status','uninstall','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state','wallpaper-retry','wallpaper']) elements['[data-tf-'+name+']'] = {disabled:false,textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
   const root = {URL, Uint8Array, Blob, FormData, atob, TopFlowManagerWallpaper:require('../src/manager-wallpaper.js'), TopFlowWallpaperMigration:require('../src/manager-wallpaper-migration.js'),
-    TopFlowPackagePayload:{...payload,version:'0.1.8',reviewOnly:!!options.reviewOnly,directSwitch:!!options.directSwitch},
+    TopFlowPackagePayload:{...payload,version:'0.1.8',reviewOnly:!!options.reviewOnly,directSwitch:!!options.directSwitch,...options.payload},
     location:{href:'http://localhost/host',origin:'http://localhost'},
     crypto:{getRandomValues(bytes){bytes.fill(19);}}, setTimeout(resolve,ms){if(ms<15000)resolve();},clearTimeout(){},
     confirm(message){confirmations.push(message);return !options.deny;},
@@ -62,6 +62,14 @@ function harness(options = {}) {
 test('upgrade backup failure stops before uninstall and does not start or alter old components',async()=>{
  const h=harness({installed:true,initialState:{versionMismatch:true},backupFails:true});await h.open();await h.elements['[data-tf-update]'].onclick();
  assert.deepEqual(h.writes,[]);assert.match(h.elements['[data-tf-message]'].textContent,/未完成/);assert.equal(h.elements['[data-tf-wallpaper-retry]'].hidden,true);
+});
+
+test('oversized commands are rejected before authenticated fetch without any automatic retry',async()=>{
+ const h=harness({payload:{screenctlSource:'#!/bin/sh\n# '+ 'a'.repeat(98000)}});
+ await h.open();await flush();await flush();
+ assert.deepEqual(h.requests,[]);assert.deepEqual(h.writes,[]);
+ assert.match(h.elements['[data-tf-message]'].textContent,/命令超过安全长度.*发送前停止/);
+ assert.equal(h.elements['[data-tf-toggle]'].disabled,true);
 });
 test('failed migration restoration keeps the memory backup and explicit retry available without claiming upgrade success',async()=>{
  const bytes=new Uint8Array(307216);bytes[80]=5;const saved={bytes,sha256:'c'.repeat(64),bootId:'01234567-89ab-cdef-0123-456789abcdef'};let restores=0;

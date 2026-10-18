@@ -5,7 +5,7 @@ const crypto = require('node:crypto');
 const zlib = require('node:zlib');
 const vm = require('node:vm');
 const ROOT = path.resolve(__dirname, '..');
-const VERSION = '0.2.6';
+const VERSION = '0.2.7';
 const FACTORY_BINARY_SHA256 = '781e3c6ffa2a9db4d61a3cf1bb38461131dc3faed07499a2c9360bc582040dd2';
 const { managerOnly } = require('./production-manager.cjs');
 const SOURCES = ['manager-theme.js', 'manager-confirm.js', 'manager-wallpaper.js', 'manager-wallpaper-ui.js', 'manager-wallpaper-migration.js', 'ufi-plugin.js'];
@@ -187,8 +187,8 @@ function diagnosticReadme(summary,outputName){
 }
 function releaseReadme(summary,outputName){
   return [
-    'TopFlow 屏幕 '+summary.version+' — UFI 透明界面与快速开机修复版',
-    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false。0.2.6 调整 UFI 首页透明配色，并修复快速开机假关机期间屏幕误亮与触摸；保留状态同步和升级前的自定义壁纸，本轮未新增实机测试。',
+    'TopFlow 屏幕 '+summary.version+' — UFI 操作命令长度修复版',
+    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false。0.2.7 修复管理操作命令超过单参数长度限制导致状态读取失败；沿用 0.2.6 透明配色与快速开机修复，原生屏幕程序未变，保留状态同步和升级前的自定义壁纸，本轮未新增实机测试。',
     '历史 0.2.1 已由用户实机验收；0.2.3 电源键长按菜单已在电脑验证，本轮未新增实机测试。现固定三个主页面：首页、网络、功能；普通/聚合共用一个首页位置。',
     '长按实体电源键打开关机/重启菜单；锁定时需先解锁，再次确认并复查能力后只提交一次；取消返回原页面和滚动位置。',
     '首页随设备最新回读的聚合开关状态切换；未启用、未知或过期时显示普通页，已启用但离线仍显示聚合页。',
@@ -209,7 +209,7 @@ function releaseReadme(summary,outputName){
     '',
     summary.reviewOnly?'此页仅供本地审查，安装和启动已禁用；不要改名当作可上传TXT。':'安装：在已登录UFI的插件管理中选择 '+outputName+'，再点击“提交”保存，等待完成后刷新。',
     '“功能列表”下方的 TopFlow 屏幕内嵌卡片就是操控页；插件列表文件名打开源码，无需编辑。',
-    '更新0.1.0至0.2.5已核验版本：旧屏幕可保持运行，移除旧TopFlow插件记录、点击“提交”保存并刷新，',
+    '更新0.1.0至0.2.6已核验版本：旧屏幕可保持运行，移除旧TopFlow插件记录、点击“提交”保存并刷新，',
     '再导入本包并点击“提交”保存刷新。UFI跳过同名导入，不会覆盖旧记录；不要改名叠加，也不要删除其他插件。',
     '管理器仅识别已交付且列入核验清单的旧归档；固定归属、清单和执行文件哈希匹配后，',
     '顶部检查已导入TXT与设备组件；发现旧版显示“更新到 v'+summary.version+'”，一次确认自动恢复原厂、清理、安装并启动，无需手动来回切换。',

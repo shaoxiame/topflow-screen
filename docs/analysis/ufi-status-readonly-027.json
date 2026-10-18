@@ -1,0 +1,13 @@
+{
+  "deviceReadOnly": true,
+  "command": "generated status only",
+  "commandBytes": 88266,
+  "commandSha256": "bf0803b5ed5c41c2421a66ad858a78c0168fc0eded734b60f308c925497b8df3",
+  "http": 200,
+  "success": true,
+  "statusMarkerObserved": true,
+  "errorCode": null,
+  "state": {
+    "mode": "factory"
+  }
+}

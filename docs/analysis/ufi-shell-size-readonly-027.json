@@ -1,0 +1,26 @@
+{
+  "deviceReadOnly": true,
+  "commands": "printf plus a comment only",
+  "short": {
+    "commandBytes": 39,
+    "http": 200,
+    "success": true,
+    "markerObserved": true,
+    "responseKeys": [
+      "content",
+      "success"
+    ],
+    "diagnostic": ""
+  },
+  "oversize": {
+    "commandBytes": 141536,
+    "http": 200,
+    "success": false,
+    "markerObserved": false,
+    "responseKeys": [
+      "content",
+      "success"
+    ],
+    "diagnostic": ""
+  }
+}

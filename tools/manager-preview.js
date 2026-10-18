@@ -7,7 +7,7 @@ if(query.get('theme')==='light')document.documentElement.dataset.theme='light';
 if(query.has('wallpaper'))document.documentElement.dataset.previewWallpaper='';
 if(query.has('mobile'))document.documentElement.dataset.previewMobile='';
 if(query.has('clean'))document.documentElement.dataset.previewClean='';
-const previewPayload={version:'0.2.6',archiveBase64:'YQ==',archiveSha256:'a'.repeat(64),screenctlSha256:'b'.repeat(64),screenctlSource:'#!/bin/sh\nprintf true\n',hardwareTested:false,directSwitch:true,members:['./','./screenctl.sh','./topflow-screen','./topflow-screen.sha256']};
+const previewPayload={version:'0.2.7',archiveBase64:'YQ==',archiveSha256:'a'.repeat(64),screenctlSha256:'b'.repeat(64),screenctlSource:'#!/bin/sh\nprintf true\n',hardwareTested:false,directSwitch:true,members:['./','./screenctl.sh','./topflow-screen','./topflow-screen.sha256']};
 window.TopFlowPackagePayload=previewPayload;
 let state,removed=false,scenario=query.get('state')||'custom';
 const previewBoot='12345678-1234-1234-1234-123456789abc';

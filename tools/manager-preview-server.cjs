@@ -3,7 +3,7 @@
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path');
 const {managerOnly}=require('./production-manager.cjs');
 const root=path.resolve(__dirname,'..');
-const routes=new Map([['/','tools/manager-preview.html'],['/host.js','tools/manager-preview.js'],['/manager.css','src/manager.css'],['/manager-theme.js','src/manager-theme.js'],['/manager-confirm.js','src/manager-confirm.js'],['/manager-wallpaper.js','src/manager-wallpaper.js'],['/manager-wallpaper-ui.js','src/manager-wallpaper-ui.js']]);
+const routes=new Map([['/','tools/manager-preview.html'],['/host.js','tools/manager-preview.js'],['/manager.css','src/manager.css'],['/manager-theme.js','src/manager-theme.js'],['/manager-confirm.js','src/manager-confirm.js'],['/manager-wallpaper.js','src/manager-wallpaper.js'],['/manager-wallpaper-ui.js','src/manager-wallpaper-ui.js'],['/manager-wallpaper-migration.js','src/manager-wallpaper-migration.js']]);
 const port=Number(process.env.TF_MANAGER_PORT||8882);
 if(!Number.isInteger(port)||port<1024||port>65535)throw Error('Invalid port');
 http.createServer((req,res)=>{

@@ -2,14 +2,33 @@
 #ifndef TF_DISPLAY_PAGES_H
 #define TF_DISPLAY_PAGES_H
 static int display_settings_valid=0,display_draft_level=135;
+static int display_draft_dirty=0,display_settings_external=0,display_settings_seen_valid=0;
+static tf_display_config display_settings_seen;
 static const char*display_settings_error="DISPLAY_STATE_UNKNOWN";
-static int display_settings_read(void){int okay=display_read_settings_config(&display_config);display_settings_error=okay?NULL:display_config_failure;return okay;}
+/* Called after the main thread accepts a read-only settings snapshot. Keep a
+ * separate last-page snapshot because runtime acceptance also updates the
+ * global config. An edited fixed-brightness draft is never silently replaced. */
+static int display_settings_observe(const tf_display_config*observed){
+ if(!observed||!tf_display_policy_valid(observed))return 0;
+ int changed=!display_settings_seen_valid||!tf_display_same_policy(&display_settings_seen,observed)||display_settings_seen.sensor_enabled!=observed->sensor_enabled||display_settings_seen.sensor_lux!=observed->sensor_lux;
+ if(display_settings_seen_valid&&display_draft_dirty&&!tf_display_same_policy(&display_settings_seen,observed))display_settings_external=1;
+ display_config=display_settings_seen=*observed;display_settings_seen_valid=display_settings_valid=1;display_settings_error=NULL;
+ if(!display_draft_dirty){display_draft_level=observed->brightness;display_settings_external=0;}
+ return changed&&advanced_page==16;
+}
+static int display_settings_read(void){
+ tf_display_config observed;int okay=display_read_settings_config(&observed);
+ if(okay){int accepted=display_runtime_accept_observed(&observed);if(accepted<0||accepted==2){display_settings_error=accepted<0?"DISPLAY_SECURITY_POLICY_CHANGED":"DISPLAY_POLICY_PENDING";return 0;}}
+ display_settings_error=okay?NULL:display_config_failure;
+ if(okay)display_settings_observe(&observed);return okay;
+}
 static int display_percent(int level){return (level*100+127)/255;}
 static void display_settings_render(void){
  advanced_shell("显示与锁屏");char v[96];
  ah("<a class='button secondary' href='act:screen-lock' style='margin-bottom:10px'>立即锁屏</a>");
  if(!display_settings_valid){ah("<div class='hint'>原厂显示配置未读齐，亮度修改暂不可用。<p class='note'>%s</p></div>",display_settings_error?display_settings_error:"DISPLAY_STATE_UNKNOWN");}
  else{
+  if(display_settings_external)ah("<div class='hint'>设置已由 UFI 或原厂更新；已保留未应用的亮度，请确认后再应用。</div>");
   ah("<div class='card'><b>亮度模式</b><table style='width:100%%;border-spacing:5px;margin-top:8px'><tr><td style='width:50%%'><a class='button %s' href='act:display-mode:0'>固定亮度</a></td><td style='width:50%%'><a class='button %s' href='act:display-mode:1'>自适应</a></td></tr></table><p class='note'>%s</p>",display_config.automatic?"secondary":"",display_config.automatic?"":"secondary",display_config.automatic?"随光线平滑调节，过滤短暂波动":"保持所选亮度，不随光线变化");
   if(display_config.automatic&&display_config.sensor_lux>=0){snprintf(v,sizeof v,"%d lux",display_config.sensor_lux);modem_row("环境光",v);}
   else if(display_config.automatic)ah("<p class='note'>光感暂未读到，保持当前亮度；可切换为固定亮度。</p>");
@@ -25,13 +44,13 @@ static void display_settings_render(void){
  ah("<a class='button secondary' href='act:display-refresh'>刷新显示状态</a></div></body></html>");
 }
 static int display_settings_action(const char*a){
- if(!strcmp(a,"display")||!strcmp(a,"display-refresh")){if(!strcmp(a,"display"))settings_child_parent=advanced_page==12?12:0;advanced_page=16;scroll_y=0;show_busy("正在读取原厂显示设置");display_settings_valid=display_settings_read();if(display_settings_valid)display_draft_level=display_config.brightness;return 1;}
+ if(!strcmp(a,"display")||!strcmp(a,"display-refresh")){if(!strcmp(a,"display")){settings_child_parent=advanced_page==12?12:0;display_draft_dirty=display_settings_external=0;}advanced_page=16;scroll_y=0;show_busy("正在读取原厂显示设置");display_settings_valid=display_settings_read();return 1;}
  if(strncmp(a,"display-",8))return 0;if(advanced_page!=16||!display_settings_valid||!control_guard())return 1;
  int kind=-1,value=0;
  if(!strncmp(a,"display-step:",13)||!strncmp(a,"display-preset:",15)){
   if(display_config.automatic){show_notice("请先选择固定亮度");return 1;}int percent=display_percent(display_draft_level),step=!strncmp(a,"display-step:",13);if(!tf_display_integer(a+(step?13:15),-1,100,&value))return 1;
   if(step){if(value!=-1&&value!=1)return 1;percent+=value;}else{if(value!=5&&value!=10&&value!=25&&value!=50&&value!=75&&value!=100)return 1;percent=value;}
-  if(percent<4)percent=4;if(percent>100)percent=100;display_draft_level=(percent*255+50)/100;return 1;
+  if(percent<4)percent=4;if(percent>100)percent=100;display_draft_level=(percent*255+50)/100;display_draft_dirty=display_draft_level!=display_config.brightness;if(!display_draft_dirty)display_settings_external=0;return 1;
  }
  if(!strcmp(a,"display-apply")){if(display_config.automatic){show_notice("请先选择固定亮度");return 1;}if(display_draft_level==display_config.brightness){show_notice("亮度未改变");return 1;}kind=1;value=display_draft_level;}
  else if(!strncmp(a,"display-mode:",13)){kind=0;if(!tf_display_integer(a+13,0,1,&value))return 1;if(value==display_config.automatic){show_notice("已使用此亮度模式");return 1;}}
@@ -49,7 +68,7 @@ static int display_settings_confirm(void){
  if(kind<0||kind>2||(kind==0&&(value<0||value>1))||(kind==1&&(value<10||value>255))||(kind==2&&value!=-1&&value!=15&&value!=30&&value!=60&&value!=120))return 1;
  display_settings_valid=display_settings_read();if(!display_settings_valid){show_notice("显示配置未读齐，未修改；请查看页面错误码");return 1;}
  if(kind==1&&display_config.automatic){show_notice("设备已切到自适应模式，固定亮度未修改");return 1;}
- show_busy("正在更新显示设置");int ok=display_write_setting(kind,value);const char*failure=display_config_failure;display_settings_valid=display_settings_read();if(display_settings_valid)display_draft_level=display_config.brightness;
+ show_busy("正在更新显示设置");int ok=display_write_setting(kind,value);const char*failure=display_config_failure;if(ok)display_draft_dirty=display_settings_external=0;display_settings_valid=display_settings_read();
  ok=ok&&display_settings_valid&&(kind==0?display_config.automatic:kind==1?display_config.brightness:display_config.timeout_seconds)==value;
  if(ok)show_notice("显示设置已保存并回读确认");else{char message[192];snprintf(message,sizeof message,"显示设置未确认（%s）；未自动重试",failure?failure:"DISPLAY_STATE_UNKNOWN");show_notice(message);}scroll_y=0;return 1;
 }

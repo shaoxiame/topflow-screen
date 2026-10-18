@@ -48,9 +48,9 @@ test('wallpaper production I/O compiles unchanged for Linux',()=>compile('#inclu
 
 test('wallpaper reads occur only at lock entry and renderer isolates it from other pages',()=>{
  const main=fs.readFileSync(path.join(native,'topflow_main.c'),'utf8'),loader=fs.readFileSync(path.join(native,'lock_wallpaper.h'),'utf8'),renderer=fs.readFileSync(path.join(native,'upstream/src/html_view.cpp'),'utf8');
- assert.match(main,/screen_lock\(void\)\{power_menu_reset\(\);lock_wallpaper_invalidate\(\)/);
+ assert.match(main,/screen_lock\(void\)\{[^}]*?power_menu_reset\(\);lock_wallpaper_invalidate\(\)/);
  assert.match(main,/lock_dashboard_prepare\(void\)\{lock_wallpaper_prepare\(\);html_view_set_lock_wallpaper/);
- assert.match(main,/cleanup:html_view_set_lock_wallpaper\(NULL\);tf_wallpaper_clear/);
+ assert.match(main,/cleanup:[^}]*?html_view_set_lock_wallpaper\(NULL\);tf_wallpaper_clear/);
  assert.doesNotMatch(loader,/\b(?:write|pwrite|fwrite|rename|unlink|system|popen|pthread_create|printf|fprintf)\s*\(/);
  assert.match(renderer,/g_lock_wallpaper && g_w == 320 && g_h == 480 && g_doc && g_doc->root\(\) &&\s*g_doc->root\(\)->select_one\("body.tf-wallpaper"\)/);
  assert.doesNotMatch(renderer,/stbi_load|jpeg_read|png_read/);

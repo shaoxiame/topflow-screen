@@ -6,7 +6,7 @@ const query=new URLSearchParams(location.search);
 if(query.get('theme')==='light')document.documentElement.dataset.theme='light';
 if(query.has('mobile'))document.documentElement.dataset.previewMobile='';
 if(query.has('clean'))document.documentElement.dataset.previewClean='';
-const previewPayload={version:'0.2.4',archiveBase64:'YQ==',archiveSha256:'a'.repeat(64),screenctlSha256:'b'.repeat(64),screenctlSource:'#!/bin/sh\nprintf true\n',hardwareTested:false,directSwitch:true,members:['./','./screenctl.sh','./topflow-screen','./topflow-screen.sha256']};
+const previewPayload={version:'0.2.5',archiveBase64:'YQ==',archiveSha256:'a'.repeat(64),screenctlSha256:'b'.repeat(64),screenctlSource:'#!/bin/sh\nprintf true\n',hardwareTested:false,directSwitch:true,members:['./','./screenctl.sh','./topflow-screen','./topflow-screen.sha256']};
 window.TopFlowPackagePayload=previewPayload;
 let state,removed=false,scenario=query.get('state')||'custom';
 const previewBoot='12345678-1234-1234-1234-123456789abc';
@@ -36,7 +36,7 @@ window.fetch=async function(url,config){
  if(route!=='/api/run_shell')throw Error('Preview route rejected');
  const command=JSON.parse(config.body).cmd;
  let content;
- const wallpaperAction=command.match(/screenctl\.sh" wallpaper-([a-z-]+)(?: --confirmed '([a-f0-9]{64})' '([a-f0-9]{32})' '([a-f0-9-]{36})'(?: (\d+) '([A-Za-z0-9+/=]+)')?)?/);
+ const wallpaperAction=command.match(/(?:screenctl\.sh" |set -- )wallpaper-([a-z-]+)(?: --confirmed '([a-f0-9]{64})' '([a-f0-9]{32})' '([a-f0-9-]{36})'(?: (\d+) '([A-Za-z0-9+/=]+)')?)?/);
  if(wallpaperAction){
   const [,action,sha,nonce,boot,offset,encoded]=wallpaperAction;
   if(action!=='status'&&boot!==previewBoot)throw Error('Preview boot mismatch');
@@ -49,9 +49,11 @@ window.fetch=async function(url,config){
   else if(action==='commit'){if(!wallpaper.uploadValid||nonce!==wallpaper.pendingNonce)throw Error('Preview image invalid');wallpaper={...wallpaper,configured:true,sha256:sha,...emptyUpload};content='TOPFLOW_WALLPAPER=COMMITTED';}
   else if(action==='clear'||action==='abort'){wallpaper={...wallpaper,configured:action==='clear'?false:wallpaper.configured,...emptyUpload};content='TOPFLOW_WALLPAPER='+(action==='clear'?'CLEARED':'ABORTED');}
   else content='TOPFLOW_WALLPAPER='+JSON.stringify(wallpaper);
+ }else if(command.includes('TOPFLOW_WALLPAPER_BACKUP=')){content='TOPFLOW_WALLPAPER_BACKUP='+JSON.stringify({sha256:wallpaper.configured?wallpaper.sha256:null,bootId:previewBoot});
+ }else if(command.includes('TOPFLOW_WALLPAPER_CHUNK=')){const index=Number(command.match(/bs=24576 skip=(\d+)/)[1]);content='TOPFLOW_WALLPAPER_CHUNK='+btoa(String.fromCharCode(...wallpaperBytes.subarray(index*24576,Math.min((index+1)*24576,307216))));
  }else if(command.includes('autostart-enable --confirmed')||command.includes('autostart-disable --confirmed')){
   const enabled=command.includes('autostart-enable --confirmed');state.autostart={enabled,hook:enabled?'present':'absent',state:enabled?'enabled':'disabled',reason:'NONE'};content='TOPFLOW_AUTOSTART='+(enabled?'ENABLED':'DISABLED');
- }else if(command.includes('set -- uninstall --confirmed')){state={installed:false,mode:'factory'};content='TOPFLOW_UNINSTALL=COMPONENTS_REMOVED';}
+ }else if(command.includes('set -- uninstall --confirmed')){state={installed:false,mode:'factory'};wallpaper={configured:false,sha256:'',bootId:previewBoot,...emptyUpload};content='TOPFLOW_UNINSTALL=COMPONENTS_REMOVED';}
  else if(command.includes('screenctl.sh" start --confirmed')){state={...state,installed:true,partial:false,uploadActive:false,versionMismatch:false,mode:'custom',pid:234,ready:true,supervised:true,heartbeatAge:1};content='TOPFLOW_SWITCH=SUBMITTED';}
  else if(command.includes('set -- restore --confirmed')){state={...state,mode:'factory'};content='TOPFLOW_SWITCH=SUBMITTED';}
  else if(command.includes('TOPFLOW_INSTALL=UPLOAD_FINISHED')){state.uploadActive=false;content='TOPFLOW_INSTALL=UPLOAD_FINISHED';}

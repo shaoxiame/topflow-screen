@@ -47,7 +47,10 @@ int main(void){
  reset();tf_http_cancelled=1;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!policy_reads);
  reset();policy_fail=1;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!strcmp(failure,"WAKE_POLICY_READ"));
  reset();observed.pin_enabled=1;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!strcmp(failure,"WAKE_POLICY_CHANGED"));
- reset();observed.brightness=200;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!strcmp(failure,"WAKE_POLICY_CHANGED"));
+ reset();observed.brightness=200;observed.timeout_seconds=120;assert(display_runtime_wake_sensor()&&sensor_writes==1&&display_policy.config.brightness==200&&display_policy.config.timeout_seconds==120&&!failure);
+ reset();observed.wakeup_periodic=1;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!strcmp(failure,"WAKE_POLICY_CHANGED"));
+ reset();observed.automatic=0;observed.brightness=210;assert(display_runtime_wake_sensor()&&!sensor_writes&&!lux_reads&&!display_policy.config.automatic&&display_policy.config.brightness==210);
+ reset();display_policy.config.automatic=0;display_policy.locked=1;display_policy.last_activity=42;assert(display_runtime_wake_sensor()&&sensor_writes==1&&display_policy.config.automatic&&display_policy.locked==1&&display_policy.last_activity==42);
  reset();read_fail=1;assert(!display_runtime_wake_sensor()&&!sensor_writes&&now<=2100&&!strcmp(failure,"WAKE_SENSOR_PREPARE"));
  reset();write_fail=1;assert(!display_runtime_wake_sensor()&&sensor_writes==1);
  reset();identity_fail=1;assert(!display_runtime_wake_sensor()&&!sensor_writes);
@@ -73,7 +76,7 @@ int main(void){
  reset();event_during_guard=1;assert(!display_runtime_prepare_auto_sensor()&&release_calls==1&&!guard&&!sensor_writes&&!policy_reads);
  reset();release_fail=1;assert(!display_runtime_prepare_auto_sensor()&&release_calls==1);
  reset();begin_fail=1;assert(!display_runtime_prepare_auto_sensor()&&!release_calls&&!sensor_writes);
- puts("PASS: actual wake sensor helper requires complete frame/owned guard/no factory renderer; fresh policy unchanged, disabled sensor enabled once, enabled sensor no write; bounded failure/cancel/PIN change protection and fixed-mode no sensor I/O");return 0;}
+ puts("PASS: actual wake sensor helper requires complete frame/owned guard/no factory renderer; fresh mutable policy synchronized, PIN/periodic policy changes rejected, disabled sensor enabled once, enabled sensor no write; bounded failure/cancel/PIN change protection and fixed-mode no sensor I/O");return 0;}
 '@
 [IO.File]::WriteAllText("$root/build-preview/test-wake-sensor.c",$source.Replace('PRODUCTION_PREPARE',$prepare).Replace('PRODUCTION_WAKE',$wake).Replace('PRODUCTION_AUTO',$auto))
 & "$root/toolchain/zig-x86_64-windows-0.14.1/zig.exe" cc -target x86_64-windows-gnu "-I$root" "$root/build-preview/test-wake-sensor.c" -o "$root/bin/test-wake-sensor.exe"

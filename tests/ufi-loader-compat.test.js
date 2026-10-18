@@ -6,7 +6,7 @@ const path=require('node:path');
 const vm=require('node:vm');
 const ROOT=path.resolve(__dirname,'..');
 const panelSource=fs.readFileSync(path.join(ROOT,'analysis/evidence/ufi-main.js'),'utf8');
-const bundle=fs.readFileSync(path.join(ROOT,'dist/topflow-screen-0.2.4.txt'),'utf8');
+const bundle=fs.readFileSync(path.join(ROOT,'dist/topflow-screen-0.2.5.txt'),'utf8');
 
 // Execute the actual downloaded UFI file-import routine, with only its DOM,
 // storage-ledger and toast dependencies replaced. No network or device shell.
@@ -39,14 +39,14 @@ test('saved UFI manual importer accepts raw source and preserves the AoYou-style
   for(const key of ['name','version','build']){
     const pattern=new RegExp('^// @'+key+' (.+)$','m');assert(pattern.test(reference));assert(pattern.test(bundle));
   }
-  assert.equal(bundle.match(/^\/\/ @version (.+)$/m)[1],'0.2.4');
+  assert.equal(bundle.match(/^\/\/ @version (.+)$/m)[1],'0.2.5');
   assert.match(bundle,/^<script id="topflow-screen-plugin-source">/);
   assert.doesNotMatch(bundle,/\[KANO_META\]/,'current UFI rejects this internal tag in a raw upload');
   assert.doesNotMatch(bundle,/<!--\s*\[KANO_(?:PLUGIN_START|PLUGIN_END)\]/);
   const host=importer();await host.load();
   const blocks=host.blocks();assert.equal(blocks.length,1);assert.equal(blocks[0].meta.ver,'');
   assert.equal(blocks[0].meta.sid,'');assert.equal(blocks[0].meta.no,0);assert.equal(blocks[0].meta.pub,'');
-  assert.equal(blocks[0].content.match(/^\/\/ @version (.+)$/m)[1],'0.2.4','own source version remains available without claiming a store ledger version');
+  assert.equal(blocks[0].content.match(/^\/\/ @version (.+)$/m)[1],'0.2.5','own source version remains available without claiming a store ledger version');
   assert.equal((host.text.value.match(/<!-- \[KANO_PLUGIN_START\]/g)||[]).length,1);
   assert(host.text.value.includes(bundle));
   assert(host.toasts.includes('toast_add_success_save_to_submit'));
@@ -87,5 +87,5 @@ test('the generated UFI head script defers inline mounting until DOM readiness w
   assert.equal(context.TopFlowPackagePayload.hardwareTested,false);
   assert.equal(context.TopFlowPackagePayload.diagnosticCandidate,false);
   assert.equal(context.TopFlowPackagePayload.unresolvedStartupFailure,undefined);
-  assert.equal(context.TopFlowPackagePayload.version,'0.2.4');
+  assert.equal(context.TopFlowPackagePayload.version,'0.2.5');
 });

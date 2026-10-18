@@ -30,6 +30,11 @@ static const char*lookup(const char*k){if(!strcmp(k,"TIME"))return "14:36";if(!s
 static uint32_t notice_until=0,clock_now=1000;
 static const char*fixture=NULL;
 static uint32_t tick(void){return clock_now;}
+#include "wifi_state.h"
+static tf_wifi_state wifi_fixture;
+static const tf_wifi_state*wifi_observed(void){return &wifi_fixture;}
+static void wifi_status_invalidate(void){tf_wifi_state_reset(&wifi_fixture);}
+static int wifi_status_read_now(void){return 0;}
 static const char*data_raw_json(void){return fixture;}
 static uint32_t data_age=0;
 static uint32_t data_snapshot_age_ms(void){return data_age;}
@@ -63,6 +68,7 @@ static int vendor_set_enabled(const char*id,int enabled){if(!sim_source_fixture)
 static tf_display_config display_config={1,1,135,30,0,1,3,13,255};
 static const char*display_config_failure="ADOPT_POLICY_READ";
 static int display_read_settings_config(tf_display_config*c){*c=display_config;return 1;}
+static int display_runtime_accept_observed(const tf_display_config*c){(void)c;return 0;}
 static int display_write_setting(int kind,int value){(void)kind;(void)value;return 0;}
 static int extra_calls=0;
 static int extra_fixture(const char*in,char*out,size_t cap){extra_calls++;if(!strcmp(in,"SIM_READ\n")){snprintf(out,cap,"{\"ok\":true,\"sim_state\":\"sim ready\",\"modem_state\":\"modem_init_complete\",\"slot\":2,\"pin_remaining\":3,\"puk_remaining\":10}");return 1;}if(!strcmp(in,"WPS_READ\n")){snprintf(out,cap,"{\"ok\":true,\"bands\":[{\"section\":\"main_2g\",\"state\":\"idle\",\"remaining\":0},{\"section\":\"main_5g\",\"state\":\"idle\",\"remaining\":0}]}");return 1;}assert(!"Unexpected device write in integrated read-only fixture");return 0;}

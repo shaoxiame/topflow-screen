@@ -20,12 +20,13 @@ function harness(options={}) {
   const requests=[],writes=[],confirmations=[],mounts=[];
   let state={installed:options.installed===true,mode:options.mode||'factory',versionMismatch:!!options.versionMismatch,...options.initialState}, panel, entry, denied=options.deny===true, destroyed=0, recordRemoved=false;
   const elements={};
-  for(const name of ['close','cancel','toggle','status','uninstall','controls','advanced','screen','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state','wallpaper'])elements['[data-tf-'+name+']']={disabled:false,checked:false,open:false,textContent:'',replaceChildren(){},attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
+  for(const name of ['close','cancel','toggle','status','uninstall','controls','advanced','screen','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state','wallpaper','wallpaper-retry'])elements['[data-tf-'+name+']']={disabled:false,checked:false,open:false,textContent:'',replaceChildren(){},attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
   const doc={currentScript:{textContent:source},body:{append(node){node.parentNode=this;if(node.className==='tf-package-entry')entry=node;else panel=node;}},querySelector:()=>null,
     createElement(tag){return {tag,className:'',innerHTML:'',isConnected:true,attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];},querySelector(selector){return elements[selector];},remove(){this.isConnected=false;}};}};
   const root={document:doc,TopFlowPackagePayload:{...payload,reviewOnly:options.reviewOnly===true,version:options.version,directSwitch:options.directSwitch===true},URL,Uint8Array,Blob,FormData,atob,
     location:{href:'http://localhost/host',origin:'http://localhost'},crypto:{getRandomValues(bytes){bytes.fill(17);}},setTimeout(resolve,ms){if(ms<15000)resolve();},clearTimeout(){},
     confirm(message){confirmations.push(message);return !denied;},
+    TopFlowManagerWallpaper:require('../src/manager-wallpaper.js'),TopFlowWallpaperMigration:require('../src/manager-wallpaper-migration.js'),
     TopflowDeviceAPI:{createUfiTransport:(bridge,options)=>({bridge,allowWrites:options.allowWrites}),create:x=>x,normalize:x=>x},
     TopFlowAoyouUfiTransport:{createTransport:()=>()=>{}},TopFlowAoyou:{createAdapter:x=>x},
     TopFlowUI:{mount(screen,opts){mounts.push(opts);return {destroy(){destroyed++;}};}},
@@ -39,7 +40,8 @@ function harness(options={}) {
       }
       assert.equal(route,'/api/run_shell');const command=JSON.parse(config.body).cmd;
       let content;
-      if(command.includes('set -- uninstall --confirmed')){writes.push('uninstall');if(options.cleanupFails)content='cleanup rejected';else {state={installed:false,mode:'factory'};content='TOPFLOW_UNINSTALL=COMPONENTS_REMOVED';}}
+      if(command.includes('TOPFLOW_WALLPAPER_BACKUP=')){content=options.backupFails?'invalid backup':'TOPFLOW_WALLPAPER_BACKUP={"sha256":null,"bootId":"01234567-89ab-cdef-0123-456789abcdef"}';}
+      else if(command.includes('set -- uninstall --confirmed')){writes.push('uninstall');if(options.cleanupFails)content='cleanup rejected';else {state={installed:false,mode:'factory'};content='TOPFLOW_UNINSTALL=COMPONENTS_REMOVED';}}
       else if(command.includes('screenctl.sh" start --confirmed')){writes.push('start');state=options.startFailure?{installed:true,mode:'factory',failure:options.startFailure,...options.startDetails}:{installed:true,mode:'custom',pid:234,ready:true,supervised:true,heartbeatAge:1};content='TOPFLOW_SWITCH=SUBMITTED';}
       else if(command.includes('set -- restore --confirmed')){writes.push('restore');state={installed:true,mode:'factory'};content=options.restoreFails?'Factory PID and service methods not stable':'TOPFLOW_SWITCH=SUBMITTED';}
       else if(command.includes('TOPFLOW_INSTALL=UPLOAD_FINISHED')){writes.push('upload-finished');state.uploadActive=false;content='TOPFLOW_INSTALL=UPLOAD_FINISHED';}
@@ -52,7 +54,7 @@ function harness(options={}) {
   if(!options.noConfirm)root.TopFlowManagerConfirm={create(context){return {ask:async message=>context.confirm(message),dispose(){}};}};
   if(options.MutationObserver)root.MutationObserver=options.MutationObserver;
   if(options.theme)root.TopFlowManagerTheme=options.theme;
-  if(options.wallpaper){root.TopFlowManagerWallpaper={};root.TopFlowWallpaperPanel=options.wallpaper;}
+  if(options.wallpaper){root.TopFlowWallpaperPanel=options.wallpaper;}
   vm.createContext(root);vm.runInContext(source,root);
   return {root,elements,requests,writes,confirmations,mounts,get destroyed(){return destroyed;},setDenied(value){denied=value;},
     async open(){root.__topflow_screen_plugin.open();await flush();return panel;},entry:()=>entry};

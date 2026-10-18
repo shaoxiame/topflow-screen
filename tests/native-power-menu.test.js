@@ -77,7 +77,9 @@ const dir=path.join(native,'build-preview');fs.mkdirSync(dir,{recursive:true});f
 const build=cp.spawnSync(path.join(native,'toolchain/zig-x86_64-windows-0.14.1/zig.exe'),['cc','-target','x86_64-windows-gnu','-std=c11','-D_GNU_SOURCE','-O2','-UNDEBUG','-I'+native,'-I'+path.join(native,'upstream/include'),file,path.join(native,'upstream/src/json.c'),'-o',exe],{encoding:'utf8'});assert.equal(build.status,0,build.stderr);const run=cp.spawnSync(exe,[path.join(native,'preview')],{encoding:'utf8'});assert.equal(run.status,0,run.stdout+run.stderr);
 });
 test('power overlay remains modal across the actual main-loop lock, animation and gesture routes',()=>{
-assert.match(main,/screen_lock\(void\)\{power_menu_reset\(\)/);
+// The lock now cancels read-only workers first; the overlay must still reset
+// within this function before controls are revoked.
+assert.match(main,/screen_lock\(void\)\{[^}]*?power_menu_reset\(\);[^}]*?controls_enabled=0/);
 assert.match(main,/if\(power_menu_action\(a\)\)return;\s*if\(pin_policy.locked\)/);
 assert.match(main,/render\(drm_disp_t\*d\)\{busy_visible=0;if\(power_menu.active\)/);
 assert.match(main,/screen_soft_input[^]*?if\(power_menu.active\)\{if\(soft_lock.locked\)tf_soft_lock_cancel/);

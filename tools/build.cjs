@@ -5,10 +5,10 @@ const crypto = require('node:crypto');
 const zlib = require('node:zlib');
 const vm = require('node:vm');
 const ROOT = path.resolve(__dirname, '..');
-const VERSION = '0.2.4';
+const VERSION = '0.2.5';
 const FACTORY_BINARY_SHA256 = '781e3c6ffa2a9db4d61a3cf1bb38461131dc3faed07499a2c9360bc582040dd2';
 const { managerOnly } = require('./production-manager.cjs');
-const SOURCES = ['manager-theme.js', 'manager-confirm.js', 'manager-wallpaper.js', 'manager-wallpaper-ui.js', 'ufi-plugin.js'];
+const SOURCES = ['manager-theme.js', 'manager-confirm.js', 'manager-wallpaper.js', 'manager-wallpaper-ui.js', 'manager-wallpaper-migration.js', 'ufi-plugin.js'];
 const sha256 = value => crypto.createHash('sha256').update(value).digest('hex');
 
 function tarMembers(archive) {
@@ -42,7 +42,7 @@ function verifyNativeSources(manifest, members, readSource = name => fs.readFile
   const hashes = manifest.sourceSha256;
   if (!hashes || typeof hashes !== 'object' || Array.isArray(hashes)) throw Error('Missing native source hashes');
   for(const name of ['lock_wallpaper.h','key_press.h','power_menu.h','upstream/include/key_input.h','upstream/src/key_input.c'])if(!Object.hasOwn(hashes,name))throw Error('Missing power-key native source hash: '+name);
-  for(const name of ['radio_status.h','lockscreen_status.h','lockscreen_chart.h','test-lockscreen.c','test-lockscreen.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing native source hash: '+name);
+  for(const name of ['wifi_state.h','wifi_state_runtime.h','page_state_sync.h','band_state_sync.h','display_pages.h','test-display-external-sync.ps1','radio_status.h','lockscreen_status.h','lockscreen_chart.h','test-lockscreen.c','test-lockscreen.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing native source hash: '+name);
   for(const name of ['modem_logic.h','modem_pages.h','test-modem-ambr.c','test-modem-ambr.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing native source hash: '+name);
   if(!Object.hasOwn(hashes,'test-wake-sensor.ps1'))throw Error('Missing native source hash: test-wake-sensor.ps1');
   for(const name of ['sim_source_logic.h','sim_source_runtime.h','test-modem-source.c','test-modem-source.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing native source hash: '+name);
@@ -75,7 +75,7 @@ function verifyNativeBinaries(manifest,members){
 }
 
 function verifyNativeRootProofs(manifest, readSource = name => fs.readFileSync(path.join(ROOT, name))) {
-  const required = ['tests/native-power-key.test.js', 'tests/native-power-menu.test.js', 'tests/native-wallpaper-files.test.js', 'tests/native-wallpaper.test.js'];
+  const required = ['tests/manager-wallpaper-migration-audit.test.js', 'tests/manager-wallpaper-migration.test.js', 'tests/native-band-state-sync.test.js', 'tests/native-page-state-sync.test.js', 'tests/native-power-key.test.js', 'tests/native-power-menu.test.js', 'tests/native-ufi.test.js', 'tests/native-wallpaper-files.test.js', 'tests/native-wallpaper.test.js', 'tests/native-wifi-integration.test.js', 'tests/native-wifi-state.test.js'];
   const hashes = manifest.rootProofSha256;
   if (!hashes || typeof hashes !== 'object' || Array.isArray(hashes)) throw Error('Missing root native proof hashes');
   if (JSON.stringify(Object.keys(hashes).sort()) !== JSON.stringify(required)) throw Error('Invalid root native proof paths');
@@ -138,7 +138,7 @@ function verifyNativeReleaseContract(manifest, {reviewOnly=false,diagnosticCandi
     if(!sms||sms.endpoint!=='http://127.0.0.1:2333/api/goform/goform_set_cmd_process'||sms.action!=='SEND_SMS'||sms.authorization!=='existing-UFI-session-with-AD'||sms.confirmedResult!=='UFI-result-success'||sms.sender!=='host'||sms.encoding!=='UTF16BE-hex'||sms.submitCountPerConfirmation!==1||sms.automaticRetry!==false||sms.deviceSendVerified!==false)throw Error('Native UFI SMS contract is absent or stale');
     if(!network||network.aggregationStatus!=='source-aware-plus-owned-factory-tcp-observation'||network.quota!=='aggregation.traffic.remaining_bytes'||network.today!=='aggregation.traffic.today_used_bytes'||network.ethernet!=='kernel-carrier-and-negotiated-speed'||network.carriers!=='official-nrca-lteca-and-primary'||network.noActiveProbe!==true||network.deviceAggregationVerified!==false)throw Error('Native network observations contract is absent or stale');
     const sim=manifest.nativeSimSource;
-    if(!sim||JSON.stringify(sim.targets)!=='["5G","4G1","4G2"]'||JSON.stringify(sim.sources)!=='["removable","builtin"]'||sim.rawSource!=='0-removable-1-builtin'||sim.primary!=='sim_switch_slot'||sim.external!=='sub_modem_switch_slot'||sim.externalModemNumbers?.['4G1']!==1||sim.externalModemNumbers?.['4G2']!==0||sim.readback!=='raw-st_slot'||sim.refresh!=='on-demand'||sim.requiresKnownSource!==false||sim.selection!=="explicit-absolute-target"||sim.presenceRequired!==false||sim.unknownReadback!=="unconfirmed"||sim.externalMustBeEnabled!==true||sim.automaticRetry!==false||sim.deviceSwitchVerified!==false)throw Error('Native SIM source contract is absent or stale');
+    if(!sim||JSON.stringify(sim.targets)!=='["5G","4G1","4G2"]'||JSON.stringify(sim.sources)!=='["removable","builtin"]'||sim.rawSource!=='0-removable-1-builtin'||sim.primary!=='sim_switch_slot'||sim.external!=='sub_modem_switch_slot'||sim.externalModemNumbers?.['4G1']!==1||sim.externalModemNumbers?.['4G2']!==0||sim.readback!=='raw-st_slot'||sim.refresh!=='on-demand-and-active-page'||sim.requiresKnownSource!==false||sim.selection!=="explicit-absolute-target"||sim.presenceRequired!==false||sim.unknownReadback!=="unconfirmed"||sim.externalMustBeEnabled!==true||sim.automaticRetry!==false||sim.deviceSwitchVerified!==false)throw Error('Native SIM source contract is absent or stale');
   }
 }
 function validateProductionScript(script) {
@@ -184,8 +184,8 @@ function diagnosticReadme(summary,outputName){
 }
 function releaseReadme(summary,outputName){
   return [
-    'TopFlow 屏幕 '+summary.version+' — 电源键长按菜单版',
-    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false。0.2.4 更新 UFI 管理页适配与锁屏壁纸；本轮未新增实机测试。',
+    'TopFlow 屏幕 '+summary.version+' — UFI 状态同步版',
+    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false。0.2.5 修复 Wi-Fi 与 UFI 控制状态同步，并保留升级前的自定义壁纸；本轮未新增实机测试。',
     '历史 0.2.1 已由用户实机验收；0.2.3 电源键长按菜单已在电脑验证，本轮未新增实机测试。现固定三个主页面：首页、网络、功能；普通/聚合共用一个首页位置。',
     '长按实体电源键打开关机/重启菜单；锁定时需先解锁，再次确认并复查能力后只提交一次；取消返回原页面和滚动位置。',
     '首页随设备最新回读的聚合开关状态切换；未启用、未知或过期时显示普通页，已启用但离线仍显示聚合页。',
@@ -206,10 +206,11 @@ function releaseReadme(summary,outputName){
     '',
     summary.reviewOnly?'此页仅供本地审查，安装和启动已禁用；不要改名当作可上传TXT。':'安装：在已登录UFI的插件管理中选择 '+outputName+'，再点击“提交”保存，等待完成后刷新。',
     '“功能列表”下方的 TopFlow 屏幕内嵌卡片就是操控页；插件列表文件名打开源码，无需编辑。',
-    '更新0.1.0至0.2.3已核验版本：旧屏幕可保持运行，移除旧TopFlow插件记录、点击“提交”保存并刷新，',
+    '更新0.1.0至0.2.4已核验版本：旧屏幕可保持运行，移除旧TopFlow插件记录、点击“提交”保存并刷新，',
     '再导入本包并点击“提交”保存刷新。UFI跳过同名导入，不会覆盖旧记录；不要改名叠加，也不要删除其他插件。',
     '管理器仅识别已交付且列入核验清单的旧归档；固定归属、清单和执行文件哈希匹配后，',
     '顶部检查已导入TXT与设备组件；发现旧版显示“更新到 v'+summary.version+'”，一次确认自动恢复原厂、清理、安装并启动，无需手动来回切换。',
+    '更新前只读校验壁纸并暂存本页内存，卸载时在生命周期锁内复核；恢复失败保留内存并提供重试，请勿关闭或刷新页面。',
     '管理页只比较已导入TXT与本机已安装组件；不连接旧插件商店、下载远程SDK或发送遥测。未知或被改动版本拒绝迁移。',
     '',
     '打开管理页默认只读取状态。点击切换并确认后直接点亮插件屏幕；无密码时先本地长按解锁，已启用密码时保留原厂PIN锁屏保护。',
@@ -236,7 +237,7 @@ function build(outputDir, options = {}) {
   validateReleaseGate(releaseGate,reviewOnly,diagnosticCandidate);
   if(!reviewOnly&&!diagnosticCandidate) {
     if(releaseGate.version!==VERSION) throw Error('PACKAGE_RELEASE_BLOCKED: Re-run npm run prepare:release for this version');
-    for(const name of ['src/manager-theme.js','src/manager-confirm.js','src/manager-wallpaper.js','src/manager-wallpaper-ui.js','src/ufi-plugin.js','src/manager.css','tools/build.cjs','tools/production-manager.cjs']) {
+    for(const name of ['src/manager-theme.js','src/manager-confirm.js','src/manager-wallpaper.js','src/manager-wallpaper-ui.js','src/manager-wallpaper-migration.js','src/ufi-plugin.js','src/manager.css','tools/build.cjs','tools/production-manager.cjs']) {
       if(releaseGate.sourceSha256?.[name]!==sha256(fs.readFileSync(path.join(ROOT,name)))) throw Error('PACKAGE_RELEASE_BLOCKED: Source changed after public validation: '+name);
     }
   }

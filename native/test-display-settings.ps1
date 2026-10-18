@@ -23,6 +23,7 @@ static void show_notice(const char*s){snprintf(notice,sizeof notice,"%s",s);}
 static void show_busy(const char*s){assert(s&&*s);}
 static const char*display_config_failure="ADOPT_POLICY_READ";
 static int display_read_settings_config(tf_display_config*c){if(read_fail)return 0;*c=observed;return 1;}
+static int accepted_policy_reads,accept_result=1;static int display_runtime_accept_observed(const tf_display_config*c){assert(tf_display_policy_valid(c));accepted_policy_reads++;return accept_result;}
 static int display_write_setting(int kind,int value){writes++;last_kind=kind;last_value=value;if(write_fail)return 0;if(kind==0)observed.automatic=value;else if(kind==1)observed.brightness=value;else observed.timeout_seconds=value;return 1;}
 #include "display_pages.h"
 static void output(const char*dir,const char*name){for(theme_dark=0;theme_dark<=1;theme_dark++){display_settings_render();char path[1024];snprintf(path,sizeof path,"%s/%s%s.html",dir,name,theme_dark?"-dark":"");FILE*f=fopen(path,"wb");assert(f);fwrite(html,1,strlen(html),f);fclose(f);}}
@@ -43,6 +44,15 @@ int main(int argc,char**argv){assert(argc==2);
  observed.sensor_enabled=0;display_settings_action("display-refresh");display_settings_action("display-mode:1");assert(!strcmp(pending,"@display:0:1")&&writes==4);pending[0]=0;observed.sensor_enabled=1;display_settings_action("display-refresh");
  display_settings_action("display-mode:1");write_fail=1;assert(display_settings_confirm()&&writes==5&&!pending[0]&&strstr(notice,"未确认"));assert(!display_settings_confirm()&&writes==5);
  read_fail=1;assert(display_settings_action("display-refresh")&&!display_settings_valid);display_settings_render();assert(strstr(html,"act:screen-lock")&&!strstr(html,"act:display-apply"));read_fail=0;observed.sensor_enabled=observed.sensor_lux=-1;observed.automatic=1;assert(display_settings_action("display-refresh")&&display_settings_valid);display_settings_render();assert(strstr(html,"光感暂未读到")&&strstr(html,"act:display-mode:0"));
+ /* External changes refresh clean drafts, retain dirty drafts, and never
+  * become writes. Explicit refresh must also apply the observed runtime policy. */
+ write_fail=0;observed.automatic=0;observed.brightness=90;display_settings_action("display");int write_count=writes;int read_count=accepted_policy_reads;assert(display_draft_level==90&&!display_draft_dirty);
+ observed.brightness=180;observed.timeout_seconds=120;assert(display_settings_observe(&observed)&&display_draft_level==180&&!display_draft_dirty&&!display_settings_external&&writes==write_count);
+ display_settings_action("display-preset:25");assert(display_draft_level==64&&display_draft_dirty);observed.brightness=120;observed.timeout_seconds=30;assert(display_settings_observe(&observed)&&display_draft_level==64&&display_settings_external&&writes==write_count);display_settings_render();assert(strstr(html,"已由 UFI 或原厂更新")&&strstr(html,"已保留未应用的亮度"));
+ display_settings_action("display-refresh");assert(display_draft_level==64&&display_draft_dirty&&display_settings_external&&accepted_policy_reads>read_count&&writes==write_count);
+ observed.automatic=1;assert(display_settings_observe(&observed)&&display_draft_dirty&&display_draft_level==64);display_settings_render();assert(strstr(html,"已保留未应用的亮度")&&!strstr(html,"act:display-apply"));
+ display_settings_action("display");assert(!display_draft_dirty&&!display_settings_external&&display_draft_level==120);assert(!display_settings_observe(&observed)&&writes==write_count);
+ accept_result=2;observed.brightness=220;assert(!display_settings_read()&&display_config.brightness==120&&!strcmp(display_settings_error,"DISPLAY_POLICY_PENDING")&&writes==write_count);accept_result=-1;assert(!display_settings_read()&&display_config.brightness==120&&!strcmp(display_settings_error,"DISPLAY_SECURITY_POLICY_CHANGED")&&writes==write_count);accept_result=1;assert(display_settings_read()&&display_config.brightness==220&&display_draft_level==220);
  puts("PASS: actual display UI has explicit fixed/adaptive modes, local 1-percent draft and presets; confirm once/cancel/no-repeat, readonly denial, stale-mode refusal, bounded values, sensor failure and unknown results; lock remains accessible when settings fail; no device I/O");return 0;}
 '@
 [IO.File]::WriteAllText("$root/build-preview/test-display-settings.c",$source.Replace('ACTUAL_SHELL',$shell))

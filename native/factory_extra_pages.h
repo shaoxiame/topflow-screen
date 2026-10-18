@@ -50,7 +50,7 @@ static int fx_net_parse(const char*raw){
 }
 static int fx_load(void){char raw[16384];int okay=TF_EXTRA_CALL(fx.kind==1?"SIM_READ\n":fx.kind==2?"WPS_READ\n":"NET_READ\n",raw,sizeof raw);fx.valid=okay&&(fx.kind==1?fx_sim_parse(raw):fx.kind==2?fx_wps_parse(raw):fx_net_parse(raw));tf_extra_wipe(raw,sizeof raw);return fx.valid;}
 static int fx_net_slot(void){tf_json d;tf_modem m;if(strcmp(modem_selected,"5G")||!fresh_state(&d))return 0;int okay=tf_modem_snapshot(&d,"5G",&m)&&m.presence==1&&!m.locked&&!m.conflict&&m.enabled!=0&&m.availability!=0&&m.slot>=1&&m.slot<=2;int slot=okay?m.slot:0;tf_free(&d);return slot;}
-static int fx_wifi_enabled(int band){tf_json d;if(!fresh_state(&d))return 0;int a=tf_key(&d,tf_key(&d,0,"wlan"),"bands"),ok=0;if(a>=0&&d.t[a].type=='[')for(int i=a+1;i<d.t[a].next;i=d.t[i].next){char key[16];if(tf_gets(&d,i,"band",key,sizeof key)&&!strcmp(key,band?"5g":"2g"))ok=tf_bool(&d,tf_key(&d,i,"enabled"))==1;}tf_free(&d);return ok;}
+static int fx_wifi_enabled(int band){return tf_wifi_effective(wifi_observed(),band?"5g":"2g",tick())==1;}
 static int fx_unlock_op(void){if(!fx.valid||!fx_current_main(1)||tick()-fx_loaded_at>30000)return 0;tf_extra_command c={0};c.slot=fx.sim.slot;c.op=TF_X_PIN;if(tf_extra_sim_allows(&fx.sim,&c))return TF_X_PIN;c.op=TF_X_PUK;return tf_extra_sim_allows(&fx.sim,&c)?TF_X_PUK:0;}
 static const char*fx_wps_label(int i){const char*s=fx.wps_state[i];return!strcmp(s,"idle")?(fx.wps_remaining[i]>0?"等待配对":"空闲"):!strcmp(s,"running")?"正在配对":!strcmp(s,"success")?"配对成功":!strcmp(s,"overlap")?"检测到多个配对请求":s;}
 static void factory_extra_render(void){
@@ -83,11 +83,18 @@ static int factory_extra_confirm(void){
  if(!strcmp(marker,"@fx-net-scan")||!strcmp(marker,"@fx-net-select")){int scan=!strcmp(marker,"@fx-net-scan");if(fx.kind!=3||!fx.slot||fx_net_slot()!=fx.slot){show_notice("当前卡已变化或未就绪，未提交");return 1;}if(scan)snprintf(request,sizeof request,"NET_SCAN\n%d\n",fx.slot);else{if(fx.operator_index<0||fx.operator_index>=fx.operator_count)return 1;tf_extra_operator*r=&fx.operators[fx.operator_index];snprintf(request,sizeof request,"NET_SELECT\n%s\n%s\n%d\n",r->plmn,r->rat,fx.slot);}show_busy(scan?"正在请求运营商搜索":"正在请求手动注册");int okay=TF_EXTRA_CALL(request,response,sizeof response),sent=0;tf_json d;if(okay&&tf_parse(&d,response)){sent=tf_bool(&d,tf_key(&d,0,"submitted"))==1&&tf_bool(&d,tf_key(&d,0,"accepted"))==1;tf_free(&d);}tf_extra_wipe(request,sizeof request);tf_extra_wipe(response,sizeof response);fx_load();show_notice(sent?"请求已提交一次；请刷新查看原厂搜索或注册结果":"当前条目、卡状态已变化或请求未确认；未自动重试");scroll_y=0;return 1;}
  if(sim){tf_extra_command cmd={0};cmd.op=fx.op;cmd.slot=fx.slot;if(fx.kind!=1||!fx_current_main(1)||!fx_load()||!tf_extra_sim_allows(&fx.sim,&cmd)){fx_clear_codes();show_notice("当前卡槽、锁定状态或剩余次数已变化，未提交");return 1;}if(fx.op==TF_X_PUK)snprintf(request,sizeof request,"PUK\n%s\n%s\n%d\n",fx.values[0],fx.values[1],fx.slot);else snprintf(request,sizeof request,"PIN\n%s\n%d\n",fx.values[0],fx.slot);}
  else if(!strcmp(marker,"@fx-wps-cancel")&&fx.kind==2)strcpy(request,"WPS_CANCEL\n");
- else if((!strcmp(marker,"@fx-wps:0")||!strcmp(marker,"@fx-wps:1"))&&fx.kind==2&&fx_wifi_enabled(marker[8]-'0')&&fx_load()&&fx.wps_present[marker[8]-'0']&&tf_extra_wps_start_allowed(fx.wps_state[marker[8]-'0'],fx.wps_remaining[marker[8]-'0']))snprintf(request,sizeof request,"WPS_START\nmain_%s\n",marker[8]=='0'?"2g":"5g");else{fx_clear_codes();show_notice("设置状态已变化，未提交");return 1;}
+ else if((!strcmp(marker,"@fx-wps:0")||!strcmp(marker,"@fx-wps:1"))&&fx.kind==2&&wifi_status_read_now()&&!tf_http_cancelled&&control_guard()&&fx_wifi_enabled(marker[8]-'0')&&fx_load()&&fx.wps_present[marker[8]-'0']&&tf_extra_wps_start_allowed(fx.wps_state[marker[8]-'0'],fx.wps_remaining[marker[8]-'0']))snprintf(request,sizeof request,"WPS_START\nmain_%s\n",marker[8]=='0'?"2g":"5g");else{fx_clear_codes();show_notice("设置状态已变化，未提交");return 1;}
 #if defined(__linux__)
  if(sim&&mlock(request,sizeof request)){tf_extra_wipe(request,sizeof request);fx_clear_codes();show_notice("无法保护提交内存，未发送");return 1;}
 #endif
- show_busy(sim?"正在校验 SIM，请勿重复提交":"正在请求原厂 WPS 配对");int okay=TF_EXTRA_CALL(request,response,sizeof response);tf_extra_wipe(request,sizeof request);
+ show_busy(sim?"正在校验 SIM，请勿重复提交":"正在请求原厂 WPS 配对");
+ if(tf_http_cancelled||!control_guard()){
+#if defined(__linux__)
+  if(sim)munlock(request,sizeof request);
+#endif
+  tf_extra_wipe(request,sizeof request);tf_extra_wipe(response,sizeof response);fx_clear_codes();show_notice("操作已取消或屏幕已锁定，未提交");return 1;
+ }
+ int okay=TF_EXTRA_CALL(request,response,sizeof response);tf_extra_wipe(request,sizeof request);
 #if defined(__linux__)
  if(sim)munlock(request,sizeof request);
 #endif

@@ -15,8 +15,8 @@ function harness(options = {}) {
   let state = {installed:!!options.installed, mode:options.mode || 'factory', ...options.initialState}, entry, panel, removed = false, started = false, statusReads = 0;
   const hostContainer={children:[],append(node){this.children.push(node);node.parentNode=this;panel=node;}};
   const functions={style:{overflow:'hidden',height:'86px'},parentNode:hostContainer,insertAdjacentElement(where,node){assert.equal(where,'afterend');hostContainer.append(node);}};
-  for (const name of ['close','cancel','toggle','status','uninstall','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state']) elements['[data-tf-'+name+']'] = {disabled:false,textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
-  const root = {URL, Uint8Array, Blob, FormData, atob,
+  for (const name of ['close','cancel','toggle','status','uninstall','message','version','update','state-card','mode','state-label','state-hint','autostart','autostart-state','wallpaper-retry','wallpaper']) elements['[data-tf-'+name+']'] = {disabled:false,textContent:'',attributes:{},setAttribute(name,value){this.attributes[name]=String(value);},getAttribute(name){return this.attributes[name];}};
+  const root = {URL, Uint8Array, Blob, FormData, atob, TopFlowManagerWallpaper:require('../src/manager-wallpaper.js'), TopFlowWallpaperMigration:require('../src/manager-wallpaper-migration.js'),
     TopFlowPackagePayload:{...payload,version:'0.1.8',reviewOnly:!!options.reviewOnly,directSwitch:!!options.directSwitch},
     location:{href:'http://localhost/host',origin:'http://localhost'},
     crypto:{getRandomValues(bytes){bytes.fill(19);}}, setTimeout(resolve,ms){if(ms<15000)resolve();},clearTimeout(){},
@@ -39,6 +39,7 @@ function harness(options = {}) {
         state=options.autostartResultState || {...state,autostart:{enabled:enable,hook:enable?'present':'absent',state:enable?'enabled':'disabled',reason:'NONE'}};
         content=options.autostartContent === undefined ? 'TOPFLOW_AUTOSTART='+(enable?'ENABLED':'DISABLED') : options.autostartContent;
       }
+      else if (command.includes('TOPFLOW_WALLPAPER_BACKUP=')) { content=options.backupFails?'invalid backup':'TOPFLOW_WALLPAPER_BACKUP={"sha256":null,"bootId":"01234567-89ab-cdef-0123-456789abcdef"}'; }
       else if (command.includes('set -- uninstall --confirmed')) {writes.push('uninstall');if(options.beforeUninstall)await options.beforeUninstall();if(options.cleanupFails)content='TOPFLOW_ERROR=FACTORY_RESTORE_UNCONFIRMED';else {state=options.cleanupState || {installed:false,mode:'factory'};content='TOPFLOW_UNINSTALL=COMPONENTS_REMOVED';}}
       else if (command.includes('screenctl.sh" start --confirmed')) {writes.push('start');started=true;state=options.startState || {installed:true,mode:'custom',pid:234,ready:true,supervised:true,heartbeatAge:1};content=options.startContent || 'TOPFLOW_SWITCH=SUBMITTED';}
       else if (command.includes('set -- restore --confirmed')) {writes.push('restore');state={installed:true,mode:'factory'};content=options.restoreFails?'Factory stability not confirmed':'TOPFLOW_SWITCH=SUBMITTED';}
@@ -49,6 +50,7 @@ function harness(options = {}) {
       return {ok:true,json:async()=>({success:true,content})};
     }};
   root.TopFlowManagerConfirm = { create(context) { return { ask: async message => context.confirm(message), dispose() {} }; } };
+  if(options.migration){root.TopFlowWallpaperMigration=options.migration;root.TopFlowWallpaperPanel={parse:require('../src/manager-wallpaper-ui.js').parse,mount(){return{update(){},refresh:async()=>{},reset(){},dispose(){}};}};}
   if (options.center) { root.TopFlowPluginCenter = options.center; root.TopFlowScreenTelemetrySDK = { marker: 'private-sdk' }; }
   vm.createContext(root);
   // Production runs within the same lexical UFI authentication environment.
@@ -56,6 +58,18 @@ function harness(options = {}) {
   vm.runInContext(source,root);
   return {root,requests,writes,confirmations,elements,hostContainer,functions,entry:()=>entry,async open(){root.__topflow_screen_plugin.open();await flush();return panel;}};
 }
+
+test('upgrade backup failure stops before uninstall and does not start or alter old components',async()=>{
+ const h=harness({installed:true,initialState:{versionMismatch:true},backupFails:true});await h.open();await h.elements['[data-tf-update]'].onclick();
+ assert.deepEqual(h.writes,[]);assert.match(h.elements['[data-tf-message]'].textContent,/未完成/);assert.equal(h.elements['[data-tf-wallpaper-retry]'].hidden,true);
+});
+test('failed migration restoration keeps the memory backup and explicit retry available without claiming upgrade success',async()=>{
+ const bytes=new Uint8Array(307216);bytes[80]=5;const saved={bytes,sha256:'c'.repeat(64),bootId:'01234567-89ab-cdef-0123-456789abcdef'};let restores=0;
+ const h=harness({installed:true,initialState:{versionMismatch:true},migration:{backup:async()=>saved,restore:async backup=>{assert.equal(backup,saved);assert.equal(backup.bytes[80],5);if(++restores===1)throw Error('恢复响应未确认');return true;}}});
+ await h.open();await h.elements['[data-tf-update]'].onclick();assert.deepEqual(h.writes,['uninstall','install','upload','upload-finished','finish']);
+ assert.equal(h.elements['[data-tf-wallpaper-retry]'].hidden,false);assert.equal(h.elements['[data-tf-wallpaper-retry]'].disabled,false);assert.match(h.elements['[data-tf-message]'].textContent,/壁纸保留在本页内存，请勿关闭或刷新/);assert.equal(bytes[80],5);
+ await h.elements['[data-tf-wallpaper-retry]'].onclick();assert.equal(restores,2);assert.equal(h.elements['[data-tf-wallpaper-retry]'].hidden,true);assert.equal(bytes[80],0);assert.match(h.elements['[data-tf-message]'].textContent,/壁纸已恢复并回读确认/);
+});
 
 test('production manager retains lifecycle/auth helpers verbatim and contains no preview adapters or simulation API',()=>{
   assert.equal(source.slice(0,source.indexOf('  function readBridges(root)')),original.slice(0,original.indexOf('  function readBridges(root, control)')));

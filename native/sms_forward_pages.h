@@ -3,7 +3,7 @@
 #ifndef TF_SMS_FORWARD_PAGES_H
 #define TF_SMS_FORWARD_PAGES_H
 #include "ufi_auth.h"
-typedef struct {char values[5][8194],payload[16512];int kind,field,info,password_saved,loaded,uppercase,symbols,enabled,power;char method[24];} tf_forward_draft;
+typedef struct {char values[5][8194],payload[16512];int kind,field,info,password_saved,loaded,uppercase,symbols,enabled,power,baseline_valid;char method[24],pending_method[24];unsigned char baseline[32];} tf_forward_draft;
 _Static_assert(sizeof(tf_forward_draft)<=61440,"forward draft fits private pages");
 _Alignas(4096) static union {tf_forward_draft value;unsigned char pages[61440];} sf_storage;
 #define sf (sf_storage.value)
@@ -18,7 +18,7 @@ static int sf_secret(int kind,int i){return kind==5||(kind==0&&i==3)||kind==1||k
 static const char*sf_label(int kind,int i){const char*mail[]={"SMTP 主机","SMTP 端口","SMTP 用户名","SMTP 密码","收件邮箱"};if(kind==0)return mail[i];if(kind==1)return"CURL 模板（含 {{sms-body}}）";if(kind==2)return i?"钉钉签名密钥":"钉钉 HTTPS Webhook";if(kind==3)return"目标号码（每行一个）";if(kind==4)return i?"关键词（每行一个）":"拦截号码（每行一个）";return"UFI 面板口令";}
 static size_t sf_limit(int kind,int i){if(kind==5)return 1024;if(kind==0){const size_t l[]={253,5,320,1024,320};return l[i];}return kind==1?8192:kind==2?2048:4096;}
 static int sf_multiline(int kind,int i){(void)i;return kind==1||kind==3||kind==4;}
-static void sf_draft_clear(void){tf_ufi_wipe(sf.values,sizeof sf.values);tf_ufi_wipe(sf.payload,sizeof sf.payload);sf.loaded=sf.password_saved=sf.info=sf.field=sf.uppercase=sf.symbols=0;}
+static void sf_draft_clear(void){tf_ufi_wipe(sf.values,sizeof sf.values);tf_ufi_wipe(sf.payload,sizeof sf.payload);tf_ufi_wipe(sf.baseline,sizeof sf.baseline);sf.pending_method[0]=0;sf.baseline_valid=sf.loaded=sf.password_saved=sf.info=sf.field=sf.uppercase=sf.symbols=0;}
 static void sms_forward_cleanup(void){tf_ufi_revoke();tf_ufi_wipe(&sf_storage,sizeof sf_storage);
 #if defined(__linux__)
  if(sf_memory_ready)munlock(&sf_storage,sizeof sf_storage);
@@ -53,6 +53,21 @@ static int sf_overview_load(void){
  if(sf_get("/api/power_status_forward_enabled",raw,sizeof raw)&&tf_parse(&d,raw)){sf.power=tf_bool(&d,tf_key(&d,0,"enabled"));tf_free(&d);}else okay=0;
  tf_ufi_wipe(raw,sizeof raw);return okay;
 }
+/* Compare only the existing channel's editable fields, not JSON ordering or
+ * status text. The baseline is a digest in the already protected draft pages;
+ * no extra copy of credentials is retained. SMTP password is deliberately
+ * excluded because its read endpoint exposes only password_saved. */
+static int sf_config_digest(const char*raw,int kind,unsigned char out[32]){
+ if(kind<0||kind>4)return 0;tf_json d;if(!tf_parse(&d,raw))return 0;
+ unsigned char parts[224]={0};char value[8194];int okay=1;
+ for(int i=0;i<sf_count(kind);i++){
+  if(kind==0&&i==3)continue;value[0]=0;int key=tf_key(&d,0,sf_keys[kind][i]);
+  if(key>=0&&!tf_string(&d,key,value,sizeof value)){long long n;if(kind==0&&i==1&&tf_int(&d,key,&n))snprintf(value,sizeof value,"%lld",n);else{okay=0;break;}}
+  tf_digest(value,strlen(value),parts+(size_t)i*32,0);tf_ufi_wipe(value,sizeof value);
+ }
+ parts[192]=(unsigned char)kind;parts[193]=(unsigned char)(tf_bool(&d,tf_key(&d,0,"password_saved"))==1);parts[194]=(unsigned char)(tf_bool(&d,tf_key(&d,0,"forward_dev_info"))==1);
+ if(okay)tf_digest(parts,sizeof parts,out,0);tf_ufi_wipe(value,sizeof value);tf_ufi_wipe(parts,sizeof parts);tf_free(&d);return okay;
+}
 static int sf_load(int kind){
  sf_draft_clear();sf.kind=kind;if(kind<0||kind>4||!sf_ready())return 0;char raw[32768];tf_json d;int okay=0;
  if(sf_get(sf_paths[kind],raw,sizeof raw)&&tf_parse(&d,raw)){okay=1;for(int i=0;i<sf_count(kind);i++){
@@ -60,6 +75,7 @@ static int sf_load(int kind){
    if(!tf_string(&d,key,sf.values[i],sizeof sf.values[i])){long long value;if(kind==0&&i==1&&tf_int(&d,key,&value))snprintf(sf.values[i],sizeof sf.values[i],"%lld",value);else{okay=0;break;}}
    if(strlen(sf.values[i])>sf_limit(kind,i)){okay=0;break;}
   }sf.password_saved=kind==0&&tf_bool(&d,tf_key(&d,0,"password_saved"))==1;sf.info=tf_bool(&d,tf_key(&d,0,"forward_dev_info"))==1;tf_free(&d);}
+ if(okay)okay=sf_config_digest(raw,kind,sf.baseline);sf.baseline_valid=okay;
  tf_ufi_wipe(raw,sizeof raw);if(!okay)sf_draft_clear();sf.loaded=okay;return okay;
 }
 static int sf_verify(const char*raw){
@@ -103,13 +119,17 @@ static int sms_forward_action(const char*a){
  if(!strcmp(a,"sf-refresh")){show_busy("正在读取转发状态");if(!sf_overview_load())show_notice("部分状态未读到，请稍后刷新");return 1;}
  if(!strcmp(a,"sf-info")){if(advanced_page==14)sf.info=!sf.info;return 1;}
  if(!strcmp(a,"sf-save")){if(advanced_page!=14||!control_guard())return 1;if(!sf_build_payload()){show_notice("字段无效或配置不完整；未提交");return 1;}snprintf(pending,sizeof pending,"@sf-save");snprintf(pending_label,sizeof pending_label,"%s%s。%s敏感内容不会出现在确认页。",sf.kind==4?"保存":"保存并切换为",sf_names[sf.kind],sf.kind==4?"":"将立即发送一条测试通知，测试不受总开关影响；短信渠道可能收费。仅提交一次，未确认不会自动重发。");scroll_y=0;return 1;}
- if(!strcmp(a,"sf-enable")||!strcmp(a,"sf-power")){if(!control_guard())return 1;int power=!strcmp(a,"sf-power"),current=power?sf.power:sf.enabled;if(current<0){show_notice("当前开关状态未知，未提交");return 1;}snprintf(pending,sizeof pending,"@sf-%s:%d",power?"power":"enable",!current);snprintf(pending_label,sizeof pending_label,"%s%s。%s",current?"关闭":"开启",power?"开关机转发通知":"短信转发",current?"保留已保存渠道配置。":"今后的事件可能发送到当前配置渠道，短信渠道可能收费。请确认接收方与渠道设置。");scroll_y=0;return 1;}
+ if(!strcmp(a,"sf-enable")||!strcmp(a,"sf-power")){if(!control_guard())return 1;int power=!strcmp(a,"sf-power"),current=power?sf.power:sf.enabled;if(current<0){show_notice("当前开关状态未知，未提交");return 1;}snprintf(sf.pending_method,sizeof sf.pending_method,"%s",sf.method);snprintf(pending,sizeof pending,"@sf-%s:%d",power?"power":"enable",!current);snprintf(pending_label,sizeof pending_label,"%s%s。%s",current?"关闭":"开启",power?"开关机转发通知":"短信转发",current?"保留已保存渠道配置。":"今后的事件可能发送到当前配置渠道，短信渠道可能收费。请确认接收方与渠道设置。");scroll_y=0;return 1;}
  return 0;
 }
 static int sms_forward_confirm(void){
  if(strncmp(pending,"@sf-",4))return 0;char operation[32];snprintf(operation,sizeof operation,"%s",pending);pending[0]=0;if(!control_guard()||!sf_ready()){show_notice("控制未启用或临时授权已过期，未发送");return 1;}
  char raw[32768],url[96];int save=!strcmp(operation,"@sf-save"),wanted=-1,power=!strncmp(operation,"@sf-power:",10);if(save){if(sf.kind<0||sf.kind>4||!sf_build_payload()){show_notice("草稿无效，未发送");return 1;}snprintf(url,sizeof url,"%s",sf_paths[sf.kind]);}
  else{const char*v=operation+(power?10:11);if(strcmp(v,"0")&&strcmp(v,"1"))return 1;wanted=*v-'0';snprintf(url,sizeof url,"/api/%s?enable=%d",power?"power_status_forward_enabled":"sms_forward_enabled",wanted);}
+ show_busy("正在核对 UFI 当前设置");int unchanged=0;
+ if(save){unsigned char current[32]={0};unchanged=sf.baseline_valid&&sf_get(sf_paths[sf.kind],raw,sizeof raw)&&sf_config_digest(raw,sf.kind,current)&&!memcmp(current,sf.baseline,sizeof current);tf_ufi_wipe(current,sizeof current);}
+ else{char prior_method[24];snprintf(prior_method,sizeof prior_method,"%s",sf.pending_method);unchanged=sf_overview_load()&&(power?sf.power:sf.enabled)==!wanted&&!strcmp(prior_method,sf.method);}
+ tf_ufi_wipe(raw,sizeof raw);if(!unchanged||!tf_ufi_live()||!control_guard()){if(save)sf.baseline_valid=0;tf_ufi_wipe(sf.payload,sizeof sf.payload);show_notice("UFI 设置已变化或读取失败；未覆盖当前配置，请重新读取后操作");return 1;}
  show_busy(save&&sf.kind<4?"保存并发送测试通知，请勿重复提交":"正在保存转发设置");int code=tf_ufi_request("POST",url,save?sf.payload:"{}",raw,sizeof raw,save&&sf.kind<4?55000:8000,1);tf_json d;int accepted=0,saved=0;if(code>=200&&code<=599&&tf_parse(&d,raw)){char result[24];accepted=code==200&&tf_gets(&d,0,"result",result,sizeof result)&&!strcmp(result,"success");saved=code!=401&&code!=403&&tf_bool(&d,tf_key(&d,0,"saved"))==1;tf_free(&d);}tf_ufi_wipe(raw,sizeof raw);
  int verified=0;if(tf_ufi_live()){if(save){if(sf_get(sf_paths[sf.kind],raw,sizeof raw))verified=sf_verify(raw);if(sf.kind<4){if(sf_get("/api/sms_forward_method",raw,sizeof raw)&&tf_parse(&d,raw)){char method[24];verified=verified&&tf_gets(&d,0,"sms_forward_method",method,sizeof method)&&!strcmp(method,sf_methods[sf.kind]);tf_free(&d);}else verified=0;}}
  else{if(sf_get(power?"/api/power_status_forward_enabled":"/api/sms_forward_enabled",raw,sizeof raw)&&tf_parse(&d,raw)){verified=tf_bool(&d,tf_key(&d,0,"enabled"))==wanted;tf_free(&d);}}}

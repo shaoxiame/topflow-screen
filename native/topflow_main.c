@@ -39,6 +39,7 @@
 #include "modem_logic.h"
 #include "radio_status.h"
 #include "local_http.h"
+#include "wifi_state_runtime.h"
 #include "aoyou_native.h"
 #include "network_status.h"
 #include "network_runtime.h"
@@ -91,10 +92,21 @@ static uint32_t notice_until;
 static devui_data_t state;
 static int aggregate_home=0;
 static tf_network_runtime network_runtime;
+static tf_wifi_runtime wifi_runtime;
+static const tf_wifi_state *wifi_observed(void){return &wifi_runtime.state;}
+static void wifi_status_invalidate(void){tf_wifi_runtime_invalidate(&wifi_runtime);}
+static int wifi_status_read_now(void);
 static void stop_signal(int sig){(void)sig;running=0;tf_http_cancelled=1;}
 static long long monotonic_seconds(void){struct timespec value;if(clock_gettime(CLOCK_MONOTONIC,&value))return -1;return (long long)value.tv_sec;}
 static void heartbeat(void){if(!frame_ready)return;long long now=monotonic_seconds();if(now<0)return;FILE*f=fopen("/tmp/topflow-screen/heartbeat","w");if(f){fprintf(f,"%lld\n",now);fclose(f);}}
 static uint32_t tick(void){struct timespec t;clock_gettime(CLOCK_MONOTONIC,&t);return(uint32_t)(t.tv_sec*1000+t.tv_nsec/1000000);}
+/* Only called for an explicit confirmation. Routine refresh stays asynchronous. */
+static int wifi_status_read_now(void){
+ wifi_status_invalidate();char*body=malloc(TF_WIFI_RESPONSE_LIMIT+1);if(!body)return 0;
+ const char*request="{\"action\":\"wifi.state\",\"params\":{}}";
+ int okay=tf_http_timeout(9460,"POST","/control",NULL,request,body,TF_WIFI_RESPONSE_LIMIT+1,2500)==200&&tf_wifi_state_parse(body,tick(),wifi_runtime.sequence+1,&wifi_runtime.state);
+ free(body);if(okay){wifi_runtime.sequence++;wifi_runtime.scheduled=1;wifi_runtime.next_at=tick()+3000;}return okay;
+}
 #include "vendor_modem.h"
 #include "native_failure.h"
 #include "display_native.h"
@@ -187,7 +199,8 @@ static void refresh_tokens(void){
  if(network.eth_rx<0)strcpy(val,"—");else snprintf(val,sizeof val,"%.2f Mbps",network.eth_rx*8.0/1e6);token("ETH_RX",val);
  if(network.eth_tx<0)strcpy(val,"—");else snprintf(val,sizeof val,"%.2f Mbps",network.eth_tx*8.0/1e6);token("ETH_TX",val);
  if(network_current&&network_runtime.carrier==1&&network_runtime.speed_mbps>0)snprintf(val,sizeof val,"%d Mbps",network_runtime.speed_mbps);else strcpy(val,"—");token("ETH_SPEED",val);
- if(raw&&json_get(raw,"wlan",x,sizeof x)&&json_get(x,"bands",arr,sizeof arr)){const char*p=arr;while(next_obj(&p,obj,sizeof obj)){field(obj,"band",val,sizeof val);const char *suffix=!strcmp(val,"2g")?"24":!strcmp(val,"5g")?"5":NULL;if(!suffix)continue;snprintf(name,sizeof name,"WIFI%sSTATE",suffix);long enabled=json_get_int(obj,"enabled",-1);token(name,enabled==1?"已开启":enabled==0?"已关闭":"未知");snprintf(name,sizeof name,"WIFI%sCLASS",suffix);token(name,enabled==1?"on":"off");snprintf(name,sizeof name,"SSID%s",suffix);field(obj,"ssid",val,sizeof val);token(name,val);}}
+ for(int k=0;k<2;k++){const char*band=k?"5g":"2g",*suffix=k?"5":"24";enum tf_wifi_display_status ws=tf_wifi_status(wifi_observed(),band,tick());snprintf(name,sizeof name,"WIFI%sSTATE",suffix);token(name,tf_wifi_status_label(ws));snprintf(name,sizeof name,"WIFI%sCLASS",suffix);token(name,ws==TF_WIFI_ON?"on":"off");}
+ if(raw&&json_get(raw,"wlan",x,sizeof x)&&json_get(x,"bands",arr,sizeof arr)){const char*p=arr;while(next_obj(&p,obj,sizeof obj)){field(obj,"band",val,sizeof val);const char *suffix=!strcmp(val,"2g")?"24":!strcmp(val,"5g")?"5":NULL;if(!suffix)continue;snprintf(name,sizeof name,"SSID%s",suffix);field(obj,"ssid",val,sizeof val);token(name,val);}}
  token("HOME_MODE",aggregate_home?"聚合模式":"普通模式");token("CONTROLSTATE",controls_enabled?"可操作":"已锁定");
  rate_parts("SUM_RX",sum_ok?sum_rx:-1);rate_parts("SUM_TX",sum_ok?sum_tx:-1);
  token("TOAST",notice_until>tick()?notice:"");
@@ -205,6 +218,7 @@ static void busy_tick(void){if(factory_bus_active){if(!tf_fb_tick(&factory_bus))
 static void show_busy(const char*message){if(!active_display)return;char label[1024],html[4096];esc(label,sizeof label,message);snprintf(html,sizeof html,"<html><head><link rel='stylesheet' href='style.css'></head><body class='%s'><div style='padding:140px 20px 0;min-height:480px'><div class='card' style='height:160px;padding:25px 18px;text-align:center'><h3 style='font-size:17px'>%s</h3><p class='note' style='margin-top:14px'>正在等待现有接口响应</p></div></div></body></html>",theme_dark?"dark":"light",label);html_view_set_scroll(0);if(!paint_frame(active_display,html)){running=0;tf_http_cancelled=1;return;}busy_visible=1;busy_phase=0;busy_last=0;busy_tick();}
 static int control(const char*payload){char body[8192];if(tf_http(9460,"POST","/control",NULL,payload,body,sizeof body)!=200)return-1;return tf_control_success(body,payload)?0:-1;}
 #include "advanced_controls.h"
+#include "page_state_sync.h"
 #include "power_menu.h"
 #define TF_PIN_BAT_PERCENT (state.valid?state.bat_percent:-1)
 #define TF_PIN_BAT_STATUS (state.valid?state.charging:-1)
@@ -236,7 +250,7 @@ static int lock_rate_animation_tick(drm_disp_t*d,uint32_t now){
  }
  return logical_damage(d,36,260,248,36);
 }
-static void screen_lock(void){power_menu_reset();lock_wallpaper_invalidate();controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();if(!display_runtime_unlock_policy())return;tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;form_reset();sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
+static void screen_lock(void){tf_page_state_cancel();tf_wifi_runtime_close(&wifi_runtime);power_menu_reset();lock_wallpaper_invalidate();controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();if(!display_runtime_unlock_policy())return;tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;form_reset();sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
 /* A successful PIN entry alone is not enough: recheck the factory policy and
  * login acknowledgement before enabling confirmed business writes. */
 static int screen_unlock_complete(void){controls_enabled=0;if(pin_policy.locked||soft_lock.locked||!display_runtime_unlock_policy()||!display_runtime_login(1))return 0;controls_enabled=1;return 1;}
@@ -259,6 +273,7 @@ static int screen_soft_input(drm_disp_t*d,uint32_t now,int pressed,int x,int y,i
  return consumed;
 }
 static void action(const char*a){
+ tf_page_state_cancel();
  if(!a||strncmp(a,"act:",4))return;a+=4;
  if(!display_runtime_ready||factory_lifecycle.phase!=TF_FL_READY||factory_lifecycle.brightness<=0)return;
  if(power_menu_action(a))return;
@@ -278,8 +293,9 @@ static void action(const char*a){
  if(advanced_action(a)){if(advanced_page<17||advanced_page>19)factory_extra_cleanup();return;}
  if(!strcmp(a,"wifi24")||!strcmp(a,"wifi5")){
   if(!control_guard())return;
-  const char *band=!strcmp(a,"wifi24")?"2g":"5g",*key=!strcmp(a,"wifi24")?"WIFI24STATE":"WIFI5STATE";int on=!strcmp(lookup(key),"已开启");
-  if(strcmp(lookup(key),"已开启")&&strcmp(lookup(key),"已关闭")){show_notice("WiFi 状态未知，未提交");return;}
+  const char *band=!strcmp(a,"wifi24")?"2g":"5g";const tf_wifi_state*ws=wifi_observed();int on=tf_wifi_configured(ws,band,tick());
+  if(on<0||ws->busy!=0){show_notice(ws->busy==1?"Wi-Fi 正在应用设置，请等待状态更新":"Wi-Fi 状态未知，未提交");return;}
+  if(ws->module_user_enabled==0){show_notice("Wi-Fi 总开关已关闭，请先在 UFI 开启总开关");return;}
   snprintf(pending,sizeof pending,"{\"action\":\"wifi.radio.set\",\"params\":{\"band\":\"%s\",\"enabled\":%s}}",band,on?"false":"true");snprintf(pending_label,sizeof pending_label,"%s %s WiFi",on?"关闭":"开启",band);return;
  }
  show_notice("请在 UFI 配置此功能");
@@ -337,6 +353,7 @@ int main(int argc,char**argv){
  if(argc==2&&!strcmp(argv[1],"--monotonic-seconds")){long long value=monotonic_seconds();if(value<0)return 7;printf("%lld\n",value);return 0;}
  signal(SIGINT,stop_signal);signal(SIGTERM,stop_signal);signal(SIGPIPE,SIG_IGN);
  tf_network_runtime_init(&network_runtime);
+ tf_wifi_runtime_init(&wifi_runtime);
  int preflight_only=argc==2&&!strcmp(argv[1],"--display-preflight");
  if(!preflight_only&&(argc!=3||strcmp(argv[1],"--display-adopt"))){fprintf(stderr,"Verified supervisor handover required\n");return 2;}
  /* This path is read-only and runs before DRM, evdev, brightness or datad.
@@ -405,6 +422,12 @@ int main(int argc,char**argv){
   if(settle.active){int offset;if(tf_settle_frame(&settle,tick(),&offset)){int ok=settle.active?swipe_draw(&d,offset):swipe_finish(&d,settle.to==d.width);if(!ok){result=6;break;}}}
   now=tick();int periodic=(uint32_t)(now-last)>=1000,interacting=pressed||drag.mode||swipe_old||settle.active||(uint32_t)(now-last_interaction)<160;
   if(!interacting)data_backend_poll(now);
+  int sync_idle=!interacting&&!busy_visible&&!pending[0]&&!verifying[0]&&!power_menu.active&&display_runtime_ready&&backlight_is_on()&&!factory_bus.power_event&&!factory_bus.resync;
+  if(tf_page_state_poll(now,sync_idle&&controls_enabled&&!pin_policy.locked&&!soft_lock.locked,sync_idle))refresh_pending=1;
+  if(!running){result=7;break;}
+  int wifi_visible=backlight_is_on()&&!pin_policy.locked&&!soft_lock.locked&&((!advanced_page&&!strcmp(page,"apps.html"))||advanced_page==22||advanced_page==20||(advanced_page==17&&fx.kind==2)||((advanced_page==6||advanced_page==7)&&form_kind==2)||strstr(verifying,"\"wifi.radio.set\"")!=NULL);
+  if(!wifi_visible){if(tf_wifi_runtime_refresh(&wifi_runtime,now,0))refresh_pending=1;}
+  else if(!interacting&&!busy_visible){if(tf_wifi_runtime_refresh(&wifi_runtime,now,1))refresh_pending=1;if(tf_wifi_runtime_poll(&wifi_runtime,now))refresh_pending=1;}
   if(periodic){last=now;if(!interacting){if(data_backend_commit_latest())refresh_pending=1;if(backlight_is_on()&&!busy_visible){uint32_t sampled_before=network_runtime.sampled_at;tf_network_runtime_refresh(&network_runtime,data_snapshot_age_ms()<=5000?data_raw_json():NULL,tick());if(network_runtime.sampled_at!=sampled_before)refresh_pending=1;}int en0=tf_external_enabled[0],en1=tf_external_enabled[1],was_verifying=verifying[0]!=0;uint32_t notice_before=notice_until;vendor_refresh(0);verify_update();if(en0!=tf_external_enabled[0]||en1!=tf_external_enabled[1]||was_verifying!=(verifying[0]!=0)||notice_before!=notice_until)refresh_pending=1;}
    time_t next_minute=time(NULL)/60;if(next_minute!=minute){minute=next_minute;refresh_pending=1;}
    if(notice_until&&tick()>=notice_until){notice_until=0;refresh_pending=1;}
@@ -425,5 +448,5 @@ int main(int argc,char**argv){
   if(!dirty&&!interacting&&running&&frame_ready&&backlight_is_on()&&!power_menu.active&&!pin_policy.locked&&!soft_lock.locked&&!busy_visible&&!pending[0]&&!advanced_page&&!chart_animation_tick(&d,tick())){frame_ready=0;result=6;break;}
   usleep(backlight_is_on()?8000:30000);
  }
- cleanup:html_view_set_lock_wallpaper(NULL);tf_wallpaper_clear(&lock_wallpaper);motion_discard();if(display_runtime_fault)result=7;if(result==6)native_failure_note("FRAME_RENDER");else if(result==7)native_failure_note("DISPLAY_RUNTIME");display_level_hook=NULL;display_auto_sensor_hook=NULL;tf_http_wait_hook=NULL;display_runtime_cleanup();sms_forward_cleanup();factory_extra_cleanup();pin_native_cleanup();data_backend_close();touch_input_close(&touch);key_input_close(&key);drm_disp_close(&d);return result;
+ cleanup:tf_page_state_close();tf_wifi_runtime_close(&wifi_runtime);html_view_set_lock_wallpaper(NULL);tf_wallpaper_clear(&lock_wallpaper);motion_discard();if(display_runtime_fault)result=7;if(result==6)native_failure_note("FRAME_RENDER");else if(result==7)native_failure_note("DISPLAY_RUNTIME");display_level_hook=NULL;display_auto_sensor_hook=NULL;tf_http_wait_hook=NULL;display_runtime_cleanup();sms_forward_cleanup();factory_extra_cleanup();pin_native_cleanup();data_backend_close();touch_input_close(&touch);key_input_close(&key);drm_disp_close(&d);return result;
 }

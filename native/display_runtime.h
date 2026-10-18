@@ -245,6 +245,22 @@ static void display_runtime_cleanup(void){
   * panel on during exit. Our separate ten-second transition and 180-second
   * idle leases expire if killed. Stable-factory recovery clears exact own names. */
 }
+/* Main-thread commit of the bounded read-only worker snapshot. The caller
+ * defers this during touch, transitions and confirmations. No UCI read/write,
+ * sensor preparation, login event, or activity timer reset is performed here.
+ * Return -1 for a failed security/lifecycle guard, 2 for a deferred
+ * observation, 0 if unchanged, and 1 when settings/sensor status changed. */
+static int display_runtime_accept_observed(const tf_display_config*observed){
+ if(!observed||!tf_display_policy_valid(observed))return 0;
+ if(!display_policy.initialized||!display_runtime_ready||tf_http_cancelled||factory_bus.power_event||factory_bus.resync||factory_lifecycle.phase!=TF_FL_READY)return 2;
+ if(!tf_display_external_policy_compatible(&display_policy.config,observed)){native_failure_note("DISPLAY_SECURITY_POLICY_CHANGED");display_runtime_fail();return -1;}
+ int changed=!tf_display_same_policy(&display_policy.config,observed)||display_policy.config.sensor_enabled!=observed->sensor_enabled||display_policy.config.sensor_lux!=observed->sensor_lux;
+ int result=tf_display_accept_external(&display_policy,observed,tick());
+ if(result==TF_DISPLAY_INVALID){native_failure_note("DISPLAY_EXTERNAL_POLICY_INVALID");display_runtime_fail();return -1;}
+ display_config=*observed;
+ if(result==TF_DISPLAY_LEVEL&&!display_runtime_request(display_policy.brightness))return -1;
+ return changed?1:0;
+}
 /* A factory sleep may disable the light sensor. Startup preparation alone is
  * insufficient: wake must restore the same observed sensor under our owned
  * frame guard, after a complete DRM frame and before choosing wake brightness.
@@ -252,11 +268,16 @@ static void display_runtime_cleanup(void){
 static int display_runtime_wake_sensor(void){
  if(!frame_ready||!display_sensor_guard_alive()){native_failure_note("WAKE_SENSOR_GUARD");return 0;}
  tf_display_config observed;if(!display_read_policy_observed(&observed)){native_failure_note("WAKE_POLICY_READ");return 0;}
- if(!tf_display_same_policy(&display_policy.config,&observed)){native_failure_note("WAKE_POLICY_CHANGED");return 0;}
+ if(!tf_display_external_policy_compatible(&display_policy.config,&observed)){native_failure_note("WAKE_POLICY_CHANGED");return 0;}
  if(!display_sensor_prepare(&observed,display_sensor_write_enabled,display_sensor_guard_alive)){native_failure_note("WAKE_SENSOR_PREPARE");return 0;}
  if(!display_sensor_guard_alive()){native_failure_note("WAKE_SENSOR_GUARD");return 0;}
- display_config.sensor_enabled=display_policy.config.sensor_enabled=observed.automatic?observed.sensor_enabled:-1;
- display_config.sensor_lux=display_policy.config.sensor_lux=observed.automatic?observed.sensor_lux:-1;
+ /* Wake already owns the complete-frame guard. Adopt fresh mutable policy
+  * only after sensor readiness and a final guard check; do not alter PIN,
+  * activity, locked state, or wake/sleep ownership here. */
+ observed.live_brightness=display_policy.config.live_brightness;
+ observed.max_brightness=display_policy.config.max_brightness;
+ if(!observed.automatic)observed.sensor_enabled=observed.sensor_lux=-1;
+ display_config=display_policy.config=observed;
  return 1;
 }
 /* Invoked only by the confirmed auto-brightness setter. This prepares a live

@@ -647,6 +647,52 @@
     "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e"
   }
 });
+  // Exact public 0.2.4 bytes; reject changed ownership, manifests or executables.
+  recoveryArchives.push({
+  "archiveSha256": "e8b51b443aa0207d8384ae9c7fe6408bc77d78dac3e1eade5de989369bcebea0",
+  "members": [
+    "./",
+    "./boot-hook.sh",
+    "./boot-integrity.sha256",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    "./topflow-factory-bus-aarch64",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+    "./ui/subpages/sms.html",
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/FreeType-gzip-zlib.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    "./licenses/LLVM-libcxxabi.txt",
+    "./licenses/musl-COPYRIGHT.txt",
+    "./licenses/openwrt-NOTICE.txt",
+    "./licenses/pinyin-data-MIT.txt",
+    "./licenses/PolyForm-Noncommercial-1.0.0.txt",
+    "./licenses/u60pro-devui-MIT.txt"
+  ],
+  "files": {
+    "topflow-screen": "0741d37b76791cc355bc035468c5aa8bc8e9189dd3d798cb3c0409f9112a2447",
+    "topflow-factory-bus-aarch64": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28",
+    "screenctl.sh": "f3d9ffba5ebc80fb55483a404014eccb4bb243973a01414c0e09169d688e9856",
+    "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+    "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e"
+  }
+});
   function error(code, message) { var e = new Error(message); e.code = code; return e; }
   function failureMessage(code) {
     var messages = {
@@ -685,7 +731,11 @@
       RENDERER_STILL_ACTIVE: '自定义屏幕或服务进程仍在退出，恢复尚未确认；请执行恢复原厂后重查',
       FACTORY_RESTORE_UNCONFIRMED: '原厂恢复的进程及服务未能稳定确认，请执行恢复原厂后重查',
       PREFLIGHT_ABORTED: '屏幕预检未完成，尚未启动自定义屏幕',
-      INSTALLED_VERSION_MISMATCH: '已安装组件属于其他版本，不能用新界面直接启动旧程序'
+      INSTALLED_VERSION_MISMATCH: '已安装组件属于其他版本，不能用新界面直接启动旧程序',
+      WALLPAPER_BACKUP_CHANGED: '备份后壁纸或设备启动状态已变化，未移除旧组件',
+      WALLPAPER_RESTORE_CONFLICT: '设备已有另一张壁纸，未覆盖；升级前壁纸仍保留在本页内存',
+      WALLPAPER_UPLOAD_PENDING: '已有未完成上传或组件清理，请先核对其状态；未移除旧组件',
+      WALLPAPER_INVALID_FILE: '现有壁纸文件格式或归属未确认，未移除旧组件'
     };
     return (messages[code] || '屏幕保护检查未通过') + '（' + code + '）';
   }
@@ -751,7 +801,7 @@
     return '[ -f "$TF_ROOT/.topflow-install" ] && [ ! -L "$TF_ROOT/.topflow-install" ] && [ "$(cat "$TF_ROOT/.topflow-install")" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(payload.archiveSha256) + ')" ] || { echo TOPFLOW_ERROR=UNVERIFIED_OWNERSHIP; exit 1; }\n' +
       '[ -f "$TF_ROOT/.topflow-files" ] && [ ! -L "$TF_ROOT/.topflow-files" ] && [ "$(cat "$TF_ROOT/.topflow-files")" = "$(printf \'%s\\n\' ' + installedMembers(payload).map(shellQuote).join(' ') + ')" ] || { echo TOPFLOW_ERROR=UNVERIFIED_MANIFEST; exit 1; }\n';
   }
-  function screenOwnershipGuard(payload) {
+  function screenOwnershipGuard(payload, wallpaperSnapshot, restoreSha) {
     var current = ownershipGuard(payload);
     var branches = recoveryArchives.map(function (recoveryArchive) {
     var legacy = ownershipClause(recoveryArchive);
@@ -768,7 +818,7 @@
     return 'tf_verify_install() {\nTF_VERSION_MISMATCH=false\n' +
       'TF_INSTALLED_MARKER=$(cat "$TF_ROOT/.topflow-install" 2>/dev/null || true)\n' +
       'if [ "$TF_INSTALLED_MARKER" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(payload.archiveSha256) + ')" ]; then\n' + current + branches +
-      'else echo TOPFLOW_ERROR=INSTALLED_VERSION_MISMATCH; exit 1; fi\n}\ntf_verify_install\n';
+      'else echo TOPFLOW_ERROR=INSTALLED_VERSION_MISMATCH; exit 1; fi\n' + (wallpaperSnapshot ? wallpaperSnapshotChecks(wallpaperSnapshot) : '') + (restoreSha ? wallpaperRestoreChecks(restoreSha) : '') + '}\ntf_verify_install\n';
   }
   function memoryController(action, payload) {
     return '(\nset -- ' + action + (action === 'status' ? '' : ' --confirmed') + '\n' + payload.screenctlSource.replace(/\n?$/, '\n') + ')\n';
@@ -817,14 +867,15 @@
       'chmod 700 "$TF_ROOT"\nchmod 755 "$TF_ROOT/topflow-screen" "$TF_ROOT/topflow-factory-bus-aarch64" "$TF_ROOT/screenctl.sh" "$TF_ROOT/supervisor.sh"\n' +
       'rm -f "$TF_ROOT/.payload.tar.gz" "$TF_ROOT/.install-owner"\nprintf \'TOPFLOW_INSTALL=INSTALLED_NOT_STARTED\\n\'\n';
   }
-  function buildScreenCommand(action, payload, confirmed) {
+  function buildScreenCommand(action, payload, confirmed, wallpaperSnapshot) {
     if (!['status', 'start', 'restore', 'uninstall', 'autostart-enable', 'autostart-disable'].includes(action)) throw error('INVALID_ACTION', '屏幕动作无效');
     if (action !== 'status' && confirmed !== true) throw error('CONFIRM_REQUIRED', '须明确确认本次屏幕切换');
     if (action === 'start' || action === 'autostart-enable') releaseAllowed(payload);
     nativePayload(payload);
+    if (wallpaperSnapshot && action !== 'uninstall') throw error('INVALID_ACTION', '壁纸迁移校验仅用于更新清理');
     var command = 'set -eu\n' + rootGuard();
     if (action === 'status') command += 'if [ ! -e "$TF_ROOT" ] && [ ! -L "$TF_ROOT" ]; then if pidof zte_topsw_devui >/dev/null 2>&1; then printf \'TOPFLOW_SCREEN={"installed":false,"mode":"factory"}\\n\'; else printf \'TOPFLOW_SCREEN={"installed":false,"mode":"unknown"}\\n\'; fi; exit 0; fi\n';
-    command += '[ -d "$TF_ROOT" ] && [ ! -L "$TF_ROOT" ] && [ "$(readlink -f "$TF_ROOT")" = "$TF_ROOT" ] && [ "$(stat -c %u "$TF_ROOT")" = 0 ] || { echo TOPFLOW_ERROR=UNSAFE_TARGET; exit 1; }\n' + screenOwnershipGuard(payload);
+    command += '[ -d "$TF_ROOT" ] && [ ! -L "$TF_ROOT" ] && [ "$(readlink -f "$TF_ROOT")" = "$TF_ROOT" ] && [ "$(stat -c %u "$TF_ROOT")" = 0 ] || { echo TOPFLOW_ERROR=UNSAFE_TARGET; exit 1; }\n' + screenOwnershipGuard(payload, wallpaperSnapshot);
     if (action === 'start' || action === 'autostart-enable' || action === 'autostart-disable') {
       command += '[ "$TF_VERSION_MISMATCH" = false ] || { echo TOPFLOW_ERROR=INSTALLED_VERSION_MISMATCH; exit 1; }\n' +
         '[ ! -e "$TF_ROOT/.install-owner" ] && [ ! -L "$TF_ROOT/.install-owner" ] && [ -f "$TF_ROOT/screenctl.sh" ] && [ ! -L "$TF_ROOT/screenctl.sh" ] || { echo TOPFLOW_ERROR=INSTALL_INCOMPLETE; exit 1; }\n' +
@@ -838,6 +889,37 @@
       if (action === 'restore') command += 'printf \'TOPFLOW_SWITCH=SUBMITTED\\n\'\n';
     }
     return command;
+  }
+  function wallpaperSnapshotChecks(snapshot) {
+    if (!snapshot || !/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/.test(snapshot.bootId || '') || !(snapshot.sha256 === null || /^[a-f0-9]{64}$/.test(snapshot.sha256 || ''))) throw error('INVALID_WALLPAPER_BACKUP', '壁纸备份信息无效');
+    var file = '"$TF_ROOT/lock-wallpaper.rgb565"';
+    return '[ "$(cat /proc/sys/kernel/random/boot_id)" = ' + shellQuote(snapshot.bootId) + ' ] || { echo TOPFLOW_ERROR=WALLPAPER_BACKUP_CHANGED; exit 1; }\n' +
+      'for TF_TEMP in .lock-wallpaper.pending .lock-wallpaper.upload .lock-wallpaper.chunk; do [ ! -e "$TF_ROOT/$TF_TEMP" ] && [ ! -L "$TF_ROOT/$TF_TEMP" ] || { echo TOPFLOW_ERROR=WALLPAPER_UPLOAD_PENDING; exit 1; }; done\n' +
+      (snapshot.sha256 === null ? '[ ! -e ' + file + ' ] && [ ! -L ' + file + ' ] || { echo TOPFLOW_ERROR=WALLPAPER_BACKUP_CHANGED; exit 1; }\n' :
+        '[ -f ' + file + ' ] && [ ! -L ' + file + ' ] && [ "$(stat -c %u ' + file + ')" = 0 ] && [ "$(stat -c %h ' + file + ')" = 1 ] && [ "$(wc -c < ' + file + ')" = 307216 ] && [ "$(od -An -v -tx1 -N16 ' + file + ' | tr -d \' \\n\')" = 54465750353635314001e00100b00400 ] || { echo TOPFLOW_ERROR=WALLPAPER_BACKUP_CHANGED; exit 1; }\n' +
+        'printf \'%s  %s\\n\' ' + shellQuote(snapshot.sha256) + ' ' + file + ' | sha256sum -c - >/dev/null 2>&1 || { echo TOPFLOW_ERROR=WALLPAPER_BACKUP_CHANGED; exit 1; }\n');
+  }
+  function buildWallpaperBackupCommand(payload, snapshot, offset) {
+    nativePayload(payload);
+    if (offset !== undefined && (!snapshot || snapshot.sha256 === null || !Number.isSafeInteger(offset) || offset < 0 || offset >= 307216 || offset % 24576 !== 0)) throw error('INVALID_CHUNK', '壁纸备份分块无效');
+    var command = 'set -eu\n' + rootGuard() +
+      '[ -d "$TF_ROOT" ] && [ ! -L "$TF_ROOT" ] && [ "$(readlink -f "$TF_ROOT")" = "$TF_ROOT" ] && [ "$(stat -c %u "$TF_ROOT")" = 0 ] || { echo TOPFLOW_ERROR=UNSAFE_TARGET; exit 1; }\n' + screenOwnershipGuard(payload) +
+      'TF_ROOT_ID=$(stat -c %d:%i "$TF_ROOT")\n[ -f "$TF_ROOT/.lifecycle.lock" ] && [ ! -L "$TF_ROOT/.lifecycle.lock" ] && [ "$(stat -c %h "$TF_ROOT/.lifecycle.lock")" = 1 ] && [ "$(stat -c %u "$TF_ROOT/.lifecycle.lock")" = 0 ] || { echo TOPFLOW_ERROR=UNSAFE_LOCK; exit 1; }\n' +
+      'exec 7<"$TF_ROOT/.lifecycle.lock"\nTF_LOCK_ID=$(stat -L -c %d:%i /proc/self/fd/7)\nflock -n 7 || { echo TOPFLOW_ERROR=CONTROL_BUSY; exit 1; }\n' +
+      '[ "$(stat -c %d:%i "$TF_ROOT")" = "$TF_ROOT_ID" ] && [ "$(stat -c %d:%i "$TF_ROOT/.lifecycle.lock")" = "$TF_LOCK_ID" ] || { echo TOPFLOW_ERROR=INSTALL_CHANGED; exit 1; }\ntf_verify_install\n' +
+      'for TF_TEMP in .install-owner .upload-active .uninstalling .lock-wallpaper.pending .lock-wallpaper.upload .lock-wallpaper.chunk; do [ ! -e "$TF_ROOT/$TF_TEMP" ] && [ ! -L "$TF_ROOT/$TF_TEMP" ] || { echo TOPFLOW_ERROR=WALLPAPER_UPLOAD_PENDING; exit 1; }; done\n' +
+      'TF_BOOT=$(cat /proc/sys/kernel/random/boot_id)\nprintf \'%s\\n\' "$TF_BOOT" | grep -Eq \'^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$\' || { echo TOPFLOW_ERROR=WALLPAPER_BOOT_ID_UNAVAILABLE; exit 1; }\n';
+    if (snapshot) command += wallpaperSnapshotChecks(snapshot);
+    if (offset !== undefined) return command + 'printf \'TOPFLOW_WALLPAPER_CHUNK=\'\ndd if="$TF_ROOT/lock-wallpaper.rgb565" bs=24576 skip=' + offset / 24576 + ' count=1 2>/dev/null | base64 | tr -d \'\\r\\n\'\nprintf \'\\n\'\n' + wallpaperSnapshotChecks(snapshot);
+    return command + 'if [ ! -e "$TF_ROOT/lock-wallpaper.rgb565" ] && [ ! -L "$TF_ROOT/lock-wallpaper.rgb565" ]; then TF_HASH=null; else\n' +
+      '[ -f "$TF_ROOT/lock-wallpaper.rgb565" ] && [ ! -L "$TF_ROOT/lock-wallpaper.rgb565" ] && [ "$(stat -c %u "$TF_ROOT/lock-wallpaper.rgb565")" = 0 ] && [ "$(stat -c %h "$TF_ROOT/lock-wallpaper.rgb565")" = 1 ] && [ "$(wc -c < "$TF_ROOT/lock-wallpaper.rgb565")" = 307216 ] && [ "$(od -An -v -tx1 -N16 "$TF_ROOT/lock-wallpaper.rgb565" | tr -d \' \\n\')" = 54465750353635314001e00100b00400 ] || { echo TOPFLOW_ERROR=WALLPAPER_INVALID_FILE; exit 1; }\n' +
+      'TF_HASH=$(sha256sum "$TF_ROOT/lock-wallpaper.rgb565"); TF_HASH=${TF_HASH%% *}\nprintf \'%s\\n\' "$TF_HASH" | grep -Eq \'^[a-f0-9]{64}$\' || exit 1\nTF_HASH=\\\"$TF_HASH\\\"\nfi\nprintf \'TOPFLOW_WALLPAPER_BACKUP={"sha256":%s,"bootId":"%s"}\\n\' "$TF_HASH" "$TF_BOOT"\n';
+  }
+  function wallpaperRestoreChecks(sha) {
+    if (!/^[a-f0-9]{64}$/.test(sha || '')) throw error('INVALID_HASH', '壁纸校验信息无效');
+    return 'if [ -e "$TF_ROOT/lock-wallpaper.rgb565" ] || [ -L "$TF_ROOT/lock-wallpaper.rgb565" ]; then\n' +
+      '[ -f "$TF_ROOT/lock-wallpaper.rgb565" ] && [ ! -L "$TF_ROOT/lock-wallpaper.rgb565" ] && [ "$(stat -c %u "$TF_ROOT/lock-wallpaper.rgb565")" = 0 ] && [ "$(stat -c %h "$TF_ROOT/lock-wallpaper.rgb565")" = 1 ] || { echo TOPFLOW_ERROR=WALLPAPER_RESTORE_CONFLICT; exit 1; }\n' +
+      'printf \'%s  %s\\n\' ' + shellQuote(sha) + ' "$TF_ROOT/lock-wallpaper.rgb565" | sha256sum -c - >/dev/null 2>&1 || { echo TOPFLOW_ERROR=WALLPAPER_RESTORE_CONFLICT; exit 1; }\nfi\n';
   }
   function buildWallpaperCommand(action, payload, sha, details) {
     if (!['status', 'prepare', 'chunk', 'commit', 'abort', 'clear'].includes(action)) throw error('INVALID_ACTION', '壁纸动作无效');
@@ -853,12 +935,13 @@
       }
     }
     nativePayload(payload);
+    var migrating = details && details.migration === true && action !== 'status';
     return 'set -eu\n' + rootGuard() +
-      '[ -d "$TF_ROOT" ] && [ ! -L "$TF_ROOT" ] && [ "$(readlink -f "$TF_ROOT")" = "$TF_ROOT" ] && [ "$(stat -c %u "$TF_ROOT")" = 0 ] || { echo TOPFLOW_ERROR=UNSAFE_TARGET; exit 1; }\n' + screenOwnershipGuard(payload) +
+      '[ -d "$TF_ROOT" ] && [ ! -L "$TF_ROOT" ] && [ "$(readlink -f "$TF_ROOT")" = "$TF_ROOT" ] && [ "$(stat -c %u "$TF_ROOT")" = 0 ] || { echo TOPFLOW_ERROR=UNSAFE_TARGET; exit 1; }\n' + screenOwnershipGuard(payload, null, migrating && action !== 'abort' ? sha : null) +
       '[ "$TF_VERSION_MISMATCH" = false ] || { echo TOPFLOW_ERROR=INSTALLED_VERSION_MISMATCH; exit 1; }\n' +
       '[ ! -e "$TF_ROOT/.install-owner" ] && [ ! -L "$TF_ROOT/.install-owner" ] && [ -f "$TF_ROOT/screenctl.sh" ] && [ ! -L "$TF_ROOT/screenctl.sh" ] || { echo TOPFLOW_ERROR=INSTALL_INCOMPLETE; exit 1; }\n' +
       'printf \'%s  %s\\n\' ' + shellQuote(payload.screenctlSha256) + ' "$TF_ROOT/screenctl.sh" | sha256sum -c -\n' +
-      'sh "$TF_ROOT/screenctl.sh" wallpaper-' + action + args + '\n';
+      (migrating ? '(\nset -- wallpaper-' + action + args + '\n' + payload.screenctlSource.replace(/\n?$/, '\n') + ')\n' : 'sh "$TF_ROOT/screenctl.sh" wallpaper-' + action + args + '\n');
   }
   function parseScreenStatus(output) {
     var lines = String(output || '').split(/\r?\n/).filter(function (line) { return line.indexOf('TOPFLOW_SCREEN=') === 0; });
@@ -958,7 +1041,7 @@
     var panel = null, screen = null, mounted = null, message = null, observer = null, controls = false, busy = false, currentState = null;
     var bridges = readBridges(root, function () { return controls; });
     var cancelTask = null, cancelRequested = false, cancelSignal = null, cancelWake = null, activeAction = '', stateEpoch = 0;
-    var focusReturn = null, collapsed = false, themeDispose = null, wallpaperUI = null, confirmer = null;
+    var focusReturn = null, collapsed = false, themeDispose = null, wallpaperUI = null, confirmer = null, upgradeWallpaper = null;
     async function confirmAction(text) {
       if (!confirmer) throw error('CONFIRM_UNAVAILABLE', '确认界面未加载，请刷新 UFI 页面');
       return confirmer.ask(text);
@@ -1011,6 +1094,8 @@
       cancel.disabled = cancel.hidden || cancelRequested || busy && activeAction !== 'switch';
       if (currentState && currentState.waiting) { toggle.disabled = true; toggle.textContent = '等待原厂安全交接…'; }
       if (wallpaperUI) wallpaperUI.update();
+      var wallpaperRetry = panel.querySelector('[data-tf-wallpaper-retry]');
+      if (wallpaperRetry) { wallpaperRetry.hidden = !upgradeWallpaper; wallpaperRetry.disabled = busy || !currentState || !currentState.installed || currentState.partial || currentState.uploadActive || currentState.versionMismatch || payload.reviewOnly; }
     }
     function stopWebScreen() {
       controls = false;
@@ -1099,6 +1184,29 @@
         await shell(buildInstallFinish(owner, payload), 'TOPFLOW_INSTALL=INSTALLED_NOT_STARTED', 20000);
       } catch (e) { throw error(e.code || 'INSTALL_FAILED', '安装阶段「' + stage + '」：' + e.message); }
     }
+    async function restoreUpgradeWallpaper() {
+      if (!upgradeWallpaper) return;
+      if (!root.TopFlowWallpaperMigration || !root.TopFlowManagerWallpaper || !root.TopFlowWallpaperPanel) throw error('WALLPAPER_HELPER_UNAVAILABLE', '壁纸恢复组件未加载');
+      await root.TopFlowWallpaperMigration.restore(upgradeWallpaper, {
+        hash: root.TopFlowManagerWallpaper.sha256, parse: root.TopFlowWallpaperPanel.parse,
+        nonce: function () { var bytes = new Uint8Array(16); root.crypto.getRandomValues(bytes); return Array.from(bytes, function (value) { return ('0' + value.toString(16)).slice(-2); }).join(''); },
+        command: function (action, sha, marker, details) { return shell(buildWallpaperCommand(action, payload, sha, details ? Object.assign({}, details, { migration: true }) : details), marker ? 'TOPFLOW_WALLPAPER=' + marker : null, 20000); }
+      });
+      upgradeWallpaper.bytes.fill(0); upgradeWallpaper = null;
+    }
+    async function retryUpgradeWallpaper() {
+      if (busy || !upgradeWallpaper) return;
+      busy = true; activeAction = 'wallpaper'; stateEpoch++; updateButtons();
+      try {
+        currentState = await readStatus();
+        if (!currentState.installed || currentState.partial || currentState.uploadActive || currentState.versionMismatch) throw error('WALLPAPER_INSTALL_INCOMPLETE', '请先完成本版组件安装，再重试恢复壁纸');
+        if (!await confirmAction('恢复保留在本页内存中的升级前壁纸？仅处理本次恢复事务，不覆盖其他已生效的壁纸。')) return;
+        await restoreUpgradeWallpaper();
+        if (wallpaperUI) await wallpaperUI.refresh();
+        say('升级前壁纸已恢复并回读确认，下次锁屏或唤醒生效。');
+      } catch (e) { say(e.message + '。壁纸仍保留在本页内存，请勿关闭或刷新页面；可点击“重试恢复升级前壁纸”。'); }
+      finally { busy = false; activeAction = ''; updateButtons(); }
+    }
     async function cancellableStatus(pending) {
       try {
         var value = await Promise.race([pending, cancelSignal]);
@@ -1178,16 +1286,22 @@
         var action = requestUpdate === true ? 'start' : state.mode === 'custom' || state.mode === 'unknown' && state.installed || state.failure === 'TRANSITION_GUARD_RELEASE_UNCONFIRMED' || state.failure === 'FACTORY_RESTORE_UNCONFIRMED' || state.failure === 'RENDERER_STILL_ACTIVE' ? 'restore' : 'start';
         updating = action === 'start' && state.versionMismatch === true;
         if (action === 'start') releaseAllowed(payload);
-        var prompt = action === 'restore' ? '停止插件屏幕并恢复原厂屏幕。' + (state.autostart && state.autostart.enabled ? '开机自启动仍已开启；下次重启会再次加载插件屏幕，可另行关闭自启动开关。' : '') + '确认切换？' : (state.versionMismatch ? '更新到本 TXT 的 v' + versionLabel + '：将自动恢复并确认原厂稳定，清理已核验的旧组件，安装新版后启动插件屏幕；期间屏幕会短暂切换，无需手动恢复或再次启用。UFI 插件记录保持不变。' : !state.installed ? '将安装组件到 /data/plugins/topflow-screen 并切换到插件屏幕。' : '将切换到插件屏幕。') + (payload.directSwitch ? '将直接点亮插件屏幕，原厂启用PIN时保持锁屏；无需等待自然熄屏。新版尚未在设备验证。' : payload.diagnosticCandidate ? '这是诊断自测版，既有启动失败根因尚未确定，新版尚未在设备验证。' : '实体屏尚未实机验证。') + '原厂文件保留，开机自启动由独立开关控制。' + (updating && state.autostart && state.autostart.enabled ? '本次组件更新会清除旧自启动设置，更新后请重新开启。' : '') + '确认继续？';
+        var prompt = action === 'restore' ? '停止插件屏幕并恢复原厂屏幕。' + (state.autostart && state.autostart.enabled ? '开机自启动仍已开启；下次重启会再次加载插件屏幕，可另行关闭自启动开关。' : '') + '确认切换？' : (state.versionMismatch ? '更新到本 TXT 的 v' + versionLabel + '：将自动恢复并确认原厂稳定，清理已核验的旧组件，安装新版后启动插件屏幕；期间屏幕会短暂切换，无需手动恢复或再次启用。壁纸会校验后暂存本页内存并恢复，更新完成前请勿关闭或刷新页面。UFI 插件记录保持不变。' : !state.installed ? '将安装组件到 /data/plugins/topflow-screen 并切换到插件屏幕。' : '将切换到插件屏幕。') + (payload.directSwitch ? '将直接点亮插件屏幕，原厂启用PIN时保持锁屏；无需等待自然熄屏。新版尚未在设备验证。' : payload.diagnosticCandidate ? '这是诊断自测版，既有启动失败根因尚未确定，新版尚未在设备验证。' : '实体屏尚未实机验证。') + '原厂文件保留，开机自启动由独立开关控制。' + (updating && state.autostart && state.autostart.enabled ? '本次组件更新会清除旧自启动设置，更新后请重新开启。' : '') + '确认继续？';
         if (!await confirmAction(prompt)) { say('已取消，未执行屏幕切换。'); return; }
         stopWebScreen();
         if (action === 'start' && state.versionMismatch) {
+          if (!root.TopFlowWallpaperMigration || !root.TopFlowManagerWallpaper) throw error('WALLPAPER_HELPER_UNAVAILABLE', '壁纸备份组件未加载，旧组件保留');
+          say('正在只读校验并备份旧版壁纸至本页内存…');
+          var wallpaperSnapshot = await root.TopFlowWallpaperMigration.backup({ hash: root.TopFlowManagerWallpaper.sha256, read: function (snapshot, offset) { return shell(buildWallpaperBackupCommand(payload, snapshot, offset), null, 20000); } });
+          if (upgradeWallpaper && upgradeWallpaper.sha256 !== wallpaperSnapshot.sha256) throw error('WALLPAPER_BACKUP_CHANGED', '旧版壁纸与本页保留的备份不一致，未移除旧组件');
+          if (wallpaperSnapshot.bytes) upgradeWallpaper = wallpaperSnapshot;
           say('正在确认原厂稳定并移除已核验的旧组件…');
-          await shell(buildScreenCommand('uninstall', payload, true), 'TOPFLOW_UNINSTALL=COMPONENTS_REMOVED', 60000);
+          await shell(buildScreenCommand('uninstall', payload, true, wallpaperSnapshot), 'TOPFLOW_UNINSTALL=COMPONENTS_REMOVED', 60000);
           state = await readStatus();
           if (state.installed || state.mode !== 'factory') throw error('UPDATE_UNCONFIRMED', '旧组件清理后的原厂状态未确认，未安装或启动新版');
         }
         if (action === 'start' && !state.installed) await installNative();
+        if (action === 'start' && upgradeWallpaper) { say('正在恢复升级前的锁屏壁纸…'); await restoreUpgradeWallpaper(); }
         say(action === 'start' ? payload.directSwitch ? '正在直接交接并点亮插件屏幕…' : '正在切换到插件屏幕…' : '正在恢复原厂屏幕…');
         switchContext = { action: action, submitted: false, previousFailure: JSON.stringify([state.failure, state.rendererFailure, state.rendererExitStatus]) };
         await switchScreen(action, switchContext);
@@ -1206,7 +1320,7 @@
           if (switchContext.submitted && (e.code === 'STATUS_READ_FAILED' || e.code === 'STATUS_TIMEOUT')) detail += '。' + e.message;
         }
         if (refreshFailed) detail += '。随后刷新状态也失败，当前恢复状态未确认';
-        say(detail + (currentState && currentState.partial ? '。确有未完成安装，可使用清理按钮；不会自动覆盖或重试。' : updating ? '。更新未完成，请刷新查看当前组件与屏幕状态；不会自动重试。' : '。组件不会因此被删除，可查看状态后重试。'));
+        say(detail + (upgradeWallpaper ? '。升级尚未完成；壁纸保留在本页内存，请勿关闭或刷新页面。组件安装完成后可点击“重试恢复升级前壁纸”，不会自动重试。' : currentState && currentState.partial ? '。确有未完成安装，可使用清理按钮；不会自动覆盖或重试。' : updating ? '。更新未完成，请刷新查看当前组件与屏幕状态；不会自动重试。' : '。组件不会因此被删除，可查看状态后重试。'));
       }
       finally {
         if (cancelTask) { try { await cancelTask; } catch (_) {} }
@@ -1223,6 +1337,7 @@
         currentState = await readStatus();
         if (currentState.installed || currentState.mode !== 'factory') throw error('UNINSTALL_UNCONFIRMED', '组件清理后的原厂状态未确认');
         if (wallpaperUI) wallpaperUI.reset();
+        if (upgradeWallpaper) { upgradeWallpaper.bytes.fill(0); upgradeWallpaper = null; }
         try {
           await removeInstalledRecord(root, executingScript);
           say('卸载已回读确认：实体组件、运行文件及本插件 UFI 记录已清除，原厂屏幕运行中。关闭后刷新 UFI 页面以移除已加载入口。');
@@ -1240,7 +1355,7 @@
         '<section class="tf-package-state-card" data-tf-state-card data-mode="unknown" data-tone="pending" aria-busy="true" aria-label="当前屏幕"><div class="tf-package-state-top"><span class="tf-package-caption">当前显示</span><span class="tf-package-state-pill"><i aria-hidden="true"></i><span data-tf-state-label>读取中</span></span></div><div class="tf-package-state-main"><div><h3 data-tf-mode>正在读取状态</h3><p data-tf-state-hint>正在通过 UFI 读取当前屏幕与组件状态。</p></div><span class="tf-package-screen-icon" aria-hidden="true"><i></i></span></div><button class="tf-package-primary" data-tf-toggle type="button" disabled>正在读取屏幕状态…</button><button class="tf-package-cancel" data-tf-cancel type="button" hidden>取消等待，保留原厂</button></section>' +
         '<div class="tf-package-side"><section class="tf-package-version" aria-label="组件版本"><div class="tf-package-section-head"><div><span class="tf-package-caption">组件版本</span><b>本 TXT · ' + versionCaption + '</b></div><button class="tf-package-subtle" data-tf-status type="button">刷新状态</button></div><p data-tf-version>设备组件版本尚未确认</p><button class="tf-package-update" data-tf-update type="button" hidden disabled>更新到 v' + versionLabel + '</button><p class="tf-package-footnote">检测已导入 TXT 与设备组件；新版需先导入 UFI。</p></section>' +
         '<section class="tf-package-autostart" aria-label="开机启动"><div><b>开机自动启用</b><p data-tf-autostart-state>状态未确认</p></div><button class="tf-package-switch" data-tf-autostart type="button" role="switch" aria-label="开机自动启用插件屏幕" aria-checked="false" disabled>开启自启动</button></section>' +
-        '</div></div><div data-tf-wallpaper></div><details class="tf-package-feedback" aria-label="操作结果"><summary>操作详情与运行说明</summary><p data-tf-message role="status" aria-live="polite" aria-atomic="true">正在读取屏幕状态…</p></details>' +
+        '</div></div><div data-tf-wallpaper></div><button class="tf-package-update" data-tf-wallpaper-retry type="button" hidden>重试恢复升级前壁纸</button><details class="tf-package-feedback" aria-label="操作结果"><summary>操作详情与运行说明</summary><p data-tf-message role="status" aria-live="polite" aria-atomic="true">正在读取屏幕状态…</p></details>' +
         '<details data-tf-advanced><summary>设备控制</summary><p>展开即可编辑；短信、Wi-Fi、基站和遨游等操作均在提交前确认。收起或关闭即停止刷新并撤销控制。</p><div data-tf-screen></div></details>' +
         '</div>' +
         '<footer class="tf-package-footer"><div class="tf-package-footer-links"><span class="tf-package-credit">By：善恶</span><a class="tf-package-docs" href="https://tapan.top/UFITOOLS-U60Pro/1.0.0%E6%96%B0%E7%89%88%E6%9C%AC%E6%96%87%E6%A1%A3" target="_blank" rel="noopener noreferrer">UFI 官方文档 ↗</a></div><button class="tf-package-danger" data-tf-uninstall type="button" disabled>卸载插件</button></footer>' +
@@ -1282,11 +1397,13 @@
       panel.querySelector('[data-tf-autostart]').onclick = toggleAutostart;
       panel.querySelector('[data-tf-cancel]').onclick = cancelWaiting;
       panel.querySelector('[data-tf-uninstall]').onclick = uninstallPlugin;
+      var wallpaperRetry = panel.querySelector('[data-tf-wallpaper-retry]');
+      if (wallpaperRetry) wallpaperRetry.onclick = retryUpgradeWallpaper;
       panel.querySelector('[data-tf-advanced]').ontoggle = function (event) { if (event.target.open) mountScreen(); else stopWebScreen(); };
       refreshStatus();
     }
     function attachEntry() { openPanel(); }
     if (doc.body) attachEntry(); else doc.addEventListener('DOMContentLoaded', attachEntry, { once: true });
   }
-  return { register: register, buildInstallStart: buildInstallStart, buildUploadComplete: buildUploadComplete, buildInstallFinish: buildInstallFinish, buildScreenCommand: buildScreenCommand, buildWallpaperCommand: buildWallpaperCommand, parseScreenStatus: parseScreenStatus, nativePayload: nativePayload, directRequest: directRequest, uploadNative: uploadNative, findInstalledBlockName: findInstalledBlockName, removeInstalledRecord: removeInstalledRecord, shellFailure: shellFailure };
+  return { register: register, buildInstallStart: buildInstallStart, buildUploadComplete: buildUploadComplete, buildInstallFinish: buildInstallFinish, buildScreenCommand: buildScreenCommand, buildWallpaperCommand: buildWallpaperCommand, buildWallpaperBackupCommand: buildWallpaperBackupCommand, parseScreenStatus: parseScreenStatus, nativePayload: nativePayload, directRequest: directRequest, uploadNative: uploadNative, findInstalledBlockName: findInstalledBlockName, removeInstalledRecord: removeInstalledRecord, shellFailure: shellFailure };
 });

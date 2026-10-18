@@ -1,0 +1,409 @@
+✔ native test proofs must match exact root paths and source bytes regardless of key order (2.2411ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 1
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.3127
+Public source tests: synthetic/mocked transport only; no device access.
+Excluded: private historical evidence, release archive checks, native compiler/font tests, shell and migration suites requiring historical packages. See docs/BUILD.md.
+✔ inventory parser inspects source without executing scripts and last duplicate wins (0.9387ms)
+✔ snapshot output retains only visible state, never secrets or subscriptions (0.3435ms)
+✔ default mode permits only three GET reads and rejects all mutations (1.4197ms)
+✔ demo interaction changes local state and cannot call a device transport (0.1707ms)
+✔ control requires an explicit user action and validates a known selector member (0.2384ms)
+✔ control URI-encodes group names and confirms node selection from a fresh GET (0.1725ms)
+✔ a mutation is not reported successful when the engine has not confirmed it (0.1517ms)
+✔ mode control uses PATCH, verifies state and declares that it is not persisted (0.1815ms)
+✔ transport failure is unknown state, never a false stopped status or leaked error (0.2465ms)
+✔ read-only command finds the active config and uses only existing tools (0.7195ms)
+✔ runtime whitelist allows exactly the two verified filename shapes and 24 hexadecimal generation (66.9551ms)
+✔ default bridge rejects writes, arbitrary routes, body-bearing reads and malformed paths (0.3524ms)
+✔ writes require a narrow body and all dynamic names are Base64, not shell source (0.2827ms)
+✔ snapshot command contains only the three audited read operations (0.1385ms)
+✔ snapshot parsing produces the sanitized adapter input and rejects incomplete snapshots (0.7821ms)
+✔ parser rejects mismatched/ambiguous output and suppresses raw diagnostics (0.1557ms)
+✔ transport uses only the provided runner, preserves default read-only boundary and parses result (0.2381ms)
+✔ battery charge_status is distinct from charger presence and percentage (3.2175ms)
+✔ normalizes byte rates, QoS, zero values and unknown secondary SIMs without identifiers (0.4212ms)
+✔ missing data stays unknown; valid zero is not conflated with unavailable (0.5468ms)
+✔ reported radio types map to native display labels without replacing their raw values (1.361ms)
+✔ each card hides cached radio and band for unusable or unconfirmed state but preserves ready disconnected reports (1.4062ms)
+✔ carrier aggregation and multi-modem aggregation never imply 5G-A (0.6677ms)
+✔ primary carrier family accepts only normalized NR reports and rejects partial token matches (0.6438ms)
+✔ external live rates require a confirmed enabled modem without affecting primary rates (0.2417ms)
+✔ per-card contract rates preserve Mbps and card identity, including ready disconnected cards (0.2293ms)
+✔ contract rates reject malformed or unavailable values independently for each direction (0.9736ms)
+✔ unusable or unconfirmed cards never expose cached contract rates or QCI (0.4082ms)
+✔ separates SIM presence, locking, data session and USB availability without assuming disabled (0.329ms)
+✔ primary cellular controls cannot silently target an external modem or overwrite unrelated fields (0.9259ms)
+✔ APN targets are vendor namespaces and preserve omitted credentials (1.469ms)
+﹣ downloaded exact-version snapshot can be normalized without network calls (0.0354ms) # Private historical device snapshot intentionally not distributed
+✔ APN protocol enums follow the vendor contract and unreadable targets never become writable (0.2469ms)
+✔ factory supplement distinguishes disabled cards from absence and expires through a single cached read (0.3549ms)
+✔ factory bridge permits only exact vendor reads and confirmed targeted writes with readback (0.3993ms)
+✔ factory work and boot settings use fixed original interfaces and refuse unknown readback (0.266ms)
+✔ guest, client, traffic and power actions keep vendor types and sparse target semantics (0.6375ms)
+✔ cooling normalization preserves always-on independently from legacy enabled and instantaneous activity (0.1267ms)
+✔ cooling actions are exact boolean policies; readonly and unconfirmed control issue zero requests (0.4296ms)
+✔ cooling mock changes only local policies and returns to the documented thermal strategies (0.1443ms)
+✔ cooling live writes once and waits for matching independent policy readback (0.6645ms)
+✔ cooling stale cache, hardware policy failure and stopped liquid waveform never report verified success (0.6893ms)
+✔ builds exact UFI aggregation and cell payloads, rejects unsupported modem selection (0.1942ms)
+✔ Wi-Fi edits encode passwords and omit unedited fields (0.2982ms)
+✔ SMS UTF-16 encoding preserves Chinese and surrogate pairs and restricts sender (0.2666ms)
+✔ read-only gate prevents all write transports, including a caller-supplied transport (0.1771ms)
+✔ reading SMS / Wi-Fi / forward configuration issues only observed GET requests (0.2292ms)
+✔ explicit live mode still requires confirmation and separately confirms external effects (0.1524ms)
+✔ mock actions are local, change readable state, and cannot mutate supplied input (1.0922ms)
+✔ forward saves follow documented ports and conditional saved-password semantics (0.374ms)
+✔ documented forwarding accepts newline targets and requires the SMS body CURL placeholder (0.1667ms)
+✔ saved-but-test-failed forwarding responses preserve saved state without automatic retries (0.273ms)
+✔ device errors and ambiguous success remain failures with no retry (0.1327ms)
+✔ SMS submission requires the vendor result and never retries transport-only acknowledgements (0.4057ms)
+✔ physical SIM source uses exact raw fields and never provision slots or normalized defaults (0.1655ms)
+✔ SIM source reads are demand-only and the UFI bridge has no source write operation (0.4904ms)
+✔ repeated SIM source entry coalesces reads and failed refresh never preserves old source (0.1908ms)
+✔ UFI bridge preserves authenticated postData and does not log in (0.1345ms)
+✔ serving cell data drops sentinels and disconnected placeholders while retaining valid zero PCI/SINR (0.2846ms)
+✔ frequency capabilities are read independently, extended LTE list outranks bitmask (0.2435ms)
+✔ automatic frequency restore uses the complete nonempty reported list, never empty string (0.2761ms)
+✔ band/mode reading never invokes cell collection; mock changes remain observable (0.2708ms)
+✔ current 4G_AND_5G is preserved for display without guessing a writable mapping (0.085ms)
+✔ status rejection during cancellation keeps all control blocked until restore really finishes (20.2648ms)
+✔ a never-returning status is cancellable and a later custom response cannot overwrite confirmed cancellation (4.1476ms)
+✔ failed restoration cannot be reported as successfully cancelled even when factory PID is visible (3.5693ms)
+✔ confirmed cancellation finishes without a redundant read trapping the manager in busy state (3.8076ms)
+✔ uninstalling a waiting installation disables cancellation and the handler cannot send a parallel restore (2.7641ms)
+✔ an initial status that never returns times out locally and its late response cannot change the panel (1.6905ms)
+✔ a timed-out pre-switch status releases busy without submitting an action or retaining its deadline (1.972ms)
+✔ the first post-start status is bounded before waiting UI is known and late custom state cannot report success (2.8653ms)
+✔ confirmation mounts outside the UFI component, escapes messages and resolves only its selected action (0.9019ms)
+✔ Tab is constrained in either direction, outside focus returns to cancel, and Escape cancels (0.5932ms)
+✔ open confirmation follows only the source panel theme and releases its observer after cancel (0.5663ms)
+✔ dispose cancels pending action, cleans listeners, ignores later asks and tolerates a removed focus target (0.1819ms)
+✔ a new confirmation after cancellation works and unavailable DOM fails closed without a native dialog (0.6926ms)
+Largest complete UFI command: released026/uninstall-with-wallpaper = 97088 UTF-8 bytes
+✔ UTF-8 byte guard counts actual bytes and rejects before the sh -c argument limit (1.6068ms)
+✔ released full controller and current source generate every action below 96 KiB, including 24 KiB wallpaper migration chunks (845.6582ms)
+✔ wallpaper operations retain current installation guards without embedding forbidden legacy execution paths (11.4371ms)
+✔ UFI computed surface defines appearance regardless of unrelated markers or OS changes (0.8457ms)
+✔ translucent backgrounds composite against an opaque root, otherwise resolved foreground decides (0.1605ms)
+✔ root UFI tokens also enable host detection when body only exposes resolved inherited colors (0.0932ms)
+✔ without UFI tokens explicit host markers take precedence and OS changes have no effect (0.6167ms)
+✔ without tokens or markers resolved host surface and text still determine readable appearance (0.1846ms)
+✔ watch immediately delivers, follows bounded host style changes, and completely disposes (0.5948ms)
+✔ watch never reads or subscribes to OS theme, and only host changes trigger appearance updates (0.3326ms)
+✔ browser UMD helper is independent and safe without optional browser capabilities (0.7878ms)
+✔ migration exports exact bounded bytes, verifies hash/header and rechecks final snapshot before callers can uninstall (58.4469ms)
+✔ memory restore uses only nonce/boot-bound existing chunk protocol and confirms final hash (21.3839ms)
+✔ unknown chunk/commit outcomes retain memory, do not auto-retry and can recover on explicit next invocation (66.3401ms)
+✔ restore refuses changed local backup, unrelated uploads or another already-applied wallpaper (15.8542ms)
+✔ initial refresh is read-only and unavailable installations cannot apply wallpaper (32.1017ms)
+✔ one confirmed apply sends thirteen guarded chunks then commits and verifies the exact SHA (13.8531ms)
+✔ same-image transactions use fresh nonces and missing secure randomness blocks prepare (30.9443ms)
+✔ async custom confirmation holds the busy guard and cancelling never writes or releases the preview (7.6241ms)
+✔ unknown chunk results never retransmit or commit; explicit cleanup uses the original nonce (16.5885ms)
+✔ a lost final chunk acknowledgement requires a separate confirmation before commit and never resends bytes (10.8174ms)
+✔ validated same-boot pending transactions can commit without fresh chunks or a new nonce (0.2422ms)
+✔ previous-boot uploads never commit and explicit cleanup uses the current boot ID with the old pending nonce (0.3105ms)
+✔ a fresh boot change blocks a previously offered commit and cleanup still requires confirmation (0.2753ms)
+✔ clear uses a new nonce and current boot, verifies default state and releases preview only after success (8.119ms)
+✔ unknown prepare does not advance, and commit with inconsistent readback does not report success or auto-clean (18.736ms)
+✔ an in-flight chunk holds the shared busy guard and ignores duplicate apply or cleanup clicks (10.0493ms)
+✔ removing a manager during confirmation or transmission never schedules further mutations (16.3684ms)
+✔ dispose and uninstall reset release selected and late previews while reset keeps the manager reusable (29.4351ms)
+✔ only the newest concurrent image preparation owns a preview and replacement releases the old object URL (22.6969ms)
+✔ status parsing rejects malformed transaction identities and impossible completed byte counts (0.5404ms)
+✔ native command construction rejects unsafe transactions, chunks and release-blocked mutations (0.6879ms)
+✔ browser helper exports a UI controller without an independent HTTP upload surface (0.7063ms)
+✔ RGB565 package has exact binary header, little-endian rows, and deterministic black alpha compositing (3.2309ms)
+✔ local HTTP SHA-256 matches standard empty, abc, padding-boundary and complete wallpaper package hashes (25.8131ms)
+✔ prepare uses centered cover crop at 320x480, returns only the fixed-size result, and releases resources (1.5658ms)
+✔ portrait crop and browser-applied JPEG orientation use actual decoded dimensions (1.0366ms)
+✔ file limit, actual signatures, MIME mismatch, malformed input and huge headers reject before decoding (0.7891ms)
+✔ static lossy, lossless and extended WebP headers are supported, animated WebP and PNG are rejected (3.605ms)
+✔ Image fallback releases input URL after success and decode failure, preview URL remains caller-owned (1.393ms)
+✔ decoded dimensions, canvas errors and preview failures release native bitmap and canvas resources (1.7776ms)
+✔ browser UMD attaches a dependency-free local helper (0.9522ms)
+✔ synthetic factory-shaped quota and port counters do not invent a cable or CA (2.1428ms)
+✔ legacy false is unobserved while fresh custom telemetry is actionable (1.2434ms)
+✔ official CA descriptors expose bounded numeric data and tolerate absent or invalid reports (0.3777ms)
+✔ radio CA and aggregation networking remain independent in both directions (0.6464ms)
+✔ production manager has no removed store, SDK, telemetry scheduler, or remote script loader (3.2743ms)
+✔ production bundle validator refuses removed integrations even if they are unused (0.2778ms)
+✔ native runtime and deployment scripts contain no removed store domain or telemetry SDK (3.4809ms)
+✔ manager CSS is a local scoped stylesheet without network assets (0.2226ms)
+✔ documented UFI failed-shell envelopes preserve bounded protection codes and HTTP diagnostics without echoing credentials (0.8778ms)
+✔ homepage manager performs one initial read; repeated open keeps advanced polling unmounted (17.1706ms)
+✔ missing custom confirmation UI never falls back to a browser dialog or submits a write (2.9199ms)
+✔ review manager blocks installation and activation while preserving explicit recovery and cleanup (10.5243ms)
+✔ factory PID after a failed restore cannot masquerade as a successful service recovery (2.9279ms)
+✔ first switch requires one confirmation then installs, uploads, verifies and starts (5.9214ms)
+✔ cancelled switch and failed upload never start the screen (4.8942ms)
+✔ explicit UFI control entry is editable by default without an extra gate, and folding revokes old bridge authority (1.5699ms)
+✔ uninstall clears native components and the double-read unique record via documented single-record API (2.583ms)
+✔ unknown upload outcome keeps cleanup disabled and never signals a record or component deletion (2.5103ms)
+✔ unknown single-record response falls back explicitly without whole-table writes or false success (3.4301ms)
+✔ record identification rejects ambiguous or combined plugin blocks without executing source (0.2953ms)
+✔ record deletion refuses list changes and verifies other records are preserved (0.4802ms)
+✔ an exact supported old install updates under one confirmation without deleting the current UFI record (7.6943ms)
+✔ specific preflight failure returns immediately without generic polling or falsely calling a complete install partial (3.0824ms)
+✔ manager exposes only whitelisted native phases and bounded numerical exit status (3.1828ms)
+✔ wait countdown explicitly describes the maximum budget rather than a completion estimate (1.4487ms)
+✔ direct-switch management uses the payload version and explains immediate lighting with the original PIN policy (3.5996ms)
+✔ version display cannot inject HTML and a legacy waiting state remains cancellable in a direct-switch manager (2.1811ms)
+✔ homepage collapse retains its DOM and theme/wallpaper resources; actual removal disposes all subscriptions (1.4251ms)
+✔ wallpaper selection resets only after native uninstall is confirmed, while the embedded UI remains usable (3.6253ms)
+✔ successful first install or old-version update refreshes wallpaper availability after switching; failed starts do not (10.3033ms)
+✔ direct-switch fixed failure codes stay bounded and expose the policy, sensor or ownership check that failed (39.6456ms)
+✔ upgrade backup failure stops before uninstall and does not start or alter old components (19.968ms)
+✔ oversized commands are rejected before authenticated fetch without any automatic retry (1.4718ms)
+✔ failed migration restoration keeps the memory backup and explicit retry available without claiming upgrade success (5.439ms)
+✔ production manager retains lifecycle/auth helpers verbatim and contains no preview adapters or simulation API (2.0296ms)
+✔ production homepage manager needs no browser API modules and performs exactly one initial read (1.46ms)
+✔ manager ignores legacy store globals and performs no remote startup or telemetry work (3.7975ms)
+✔ state card reports observed screen state and does not present stale failures as success (5.5106ms)
+✔ manager Escape collapses the inline region only when there is no active operation (6.4006ms)
+✔ manager uses scoped host themes, sharp readable controls and normal homepage layout without an overlay (2.0402ms)
+✔ production install and restore keep explicit confirmation and verified real control sequence (8.9938ms)
+✔ version panel compares only the imported TXT with components and never checks an invented remote release (6.9092ms)
+✔ update from a running old screen restores and replaces components in one confirmation and preserves the UFI record (4.7206ms)
+✔ update preserves review, upload, wait, changed-version and failed-read barriers (12.0411ms)
+✔ update cannot install after failed factory recovery or unconfirmed cleanup and cannot claim a failed new start succeeded (15.7748ms)
+✔ update readiness cannot accept a healthy process belonging to a replaced old or incomplete component set (31.1464ms)
+✔ update holds one busy lock across cleanup, upload and start and suppresses duplicate clicks and refresh (5.4458ms)
+✔ manual version refresh serializes reads and invalidates a stale update offer when detection fails (1.7974ms)
+✔ production failures preserve upload lock, failed recovery and review-only barriers (7.4075ms)
+✔ failure arriving on the final refresh preserves the native phase instead of the generic switch timeout (8.2259ms)
+✔ direct switching permits bounded slow handover and still requires three fresh healthy observations (8.0499ms)
+✔ direct-switch polling exits early with a late native failure after the old ten-read budget (8.4874ms)
+✔ direct-switch confirmation remains bounded when no target or failure is observed (13.1932ms)
+✔ a rejected start cannot attribute its error to the unchanged previous failure record (2.7226ms)
+✔ a new failure on a rejected start is read back with its current native phase (2.5162ms)
+✔ consecutive status read failures stop polling and report only bounded transport diagnostics (3.5364ms)
+✔ final recovery read exposes the latest native error without erasing repeated status-read failures (3.6176ms)
+✔ a transient status read failure still permits three fresh healthy observations (4.8792ms)
+✔ a refreshed newer failure supersedes the earlier poll phase and updates the recovery action (2.8122ms)
+✔ production uninstall removes only native components and the uniquely verified UFI record (2.2983ms)
+✔ whole homepage manager remains outside the clipped function list and registration stays idempotent (1.5779ms)
+✔ manager caches only its validated private snapshot; later public payload mutation cannot change lifecycle commands (1.3926ms)
+✔ autostart opens with one read, remains off by default and never installs or switches merely from opening (1.2855ms)
+✔ autostart enable requires a fresh complete current installation, safe hook state and confirmation (25.3749ms)
+✔ autostart enable changes only the official boot preference and requires accurate readback (2.7648ms)
+✔ autostart fresh state selects disable instead of repeating a stale enable request (2.5145ms)
+✔ autostart disable can cancel pending startup without restoring or stopping the current screen (17.1738ms)
+✔ review-only boot enable is blocked while disabling an existing preference remains available (6.1836ms)
+✔ autostart unknown response or mismatched readback never retries or claims success (24.7076ms)
+✔ autostart disable cannot claim pending work was cancelled if readback is still waiting or starting (9.4587ms)
+✔ autostart failure and integrity status stay visible without claiming a successful boot or configuration (7.1206ms)
+✔ autostart shares the lifecycle busy lock through preference write and readback (2.5197ms)
+✔ persistent header and power/settings show actual charging states without font icons (19.5001ms)
+✔ home card identity stays separate from reported radio and every radio label is rendered consistently (15.8406ms)
+✔ unusable card states suppress cached radio in home and details while ready disconnected remains distinct (24.8059ms)
+✔ aggregation and carrier details do not advertise 5G-A without an explicit radio report (1.044ms)
+✔ unknown raw types never enter UI and normalized display strings are HTML escaped (1.8836ms)
+✔ clicking each card opens live rates, QCI and contract rates first in the requested order (1.589ms)
+✔ card detail contract rates show unavailable markers instead of stale or fabricated zero values (3.3079ms)
+✔ card source labels use raw factory sources and never expose provision-slot controls (1.6085ms)
+✔ late source data for a previous card cannot overwrite the current card (0.861ms)
+✔ mounting, navigating every page and refreshing never perform hidden writes (2.5459ms)
+✔ three main screens expose each common function once and return through the actual entry hierarchy (4.1655ms)
+✔ native settings expose four distinct groups and WPS is discoverable in Wi-Fi only (0.4887ms)
+✔ global day/night button replaces page numbers, preserves parent navigation and changes no device state (3.5995ms)
+✔ editable SMS flow validates the real API contract and sends only after the final recipient/content confirmation (2.3472ms)
+✔ acknowledged SMS does not become a send failure when status or inbox refresh is unavailable (1.0092ms)
+✔ untrusted node and group names remain text in rendered UI (0.771ms)
+✔ unreadable engine status is not presented as a stopped engine or doubled version prefix (0.7541ms)
+✔ destroy removes action handlers so remounting read-only cannot retain old control authority (0.6436ms)
+✔ changing Wi-Fi section retains its values and submits only edited fields, including unknown existing encryption (3.086ms)
+✔ LTE and NR serving cell selection keeps PCI, channel and band in their own radio family (1.4167ms)
+✔ horizontal swipes cycle only main pages and reject vertical, edited, cancelled or mismatched gestures (3.1317ms)
+✔ home hides back navigation, detail headers return one level and no screen page exposes factory controls (3.284ms)
+✔ device aggregation replaces the single home and three-page navigation never changes network mode (1.2409ms)
+✔ disabled or unknown aggregation returns home to normal independently of tunnel online state (2.0649ms)
+✔ aggregation home expires after five seconds and read failure immediately returns to normal (1.0547ms)
+✔ a mode change during a swipe cancels that gesture while a normal refresh preserves it (1.2029ms)
+✔ device mode updates do not navigate away from detail forms and back uses the latest home mode (1.2111ms)
+✔ a late read cannot recreate mode-expiry timers after the screen is destroyed (0.7085ms)
+✔ cancelling a proxy node or mode choice restores current value without calling the proxy API (0.8443ms)
+✔ SMTP saved-password flags normalize exact true forms and never cross forwarding channels (6.7004ms)
+✔ read-only form submissions and toggles never build, execute or send an API action (1.0072ms)
+✔ per-card APN pages retain the target, parent navigation and exact protocol numbers (4.2622ms)
+✔ APN readonly capability and readonly session both stop before a write descriptor (1.909ms)
+✔ a late APN response cannot replace the currently selected card configuration (1.5297ms)
+✔ guest Wi-Fi switch targets only its own guest band and waits for confirmation (1.0744ms)
+✔ new settings pages preserve unknown states and all readonly actions stay local (1.6098ms)
+✔ cooling page treats always-on independently and readonly or unknown toggles never create writes (1.6116ms)
+✔ cooling switches keep their target and do not execute before confirmation or after cancellation (1.2484ms)
+✔ aggregation quota, physical port and second-page carrier details use normalized API values without writes (1.0915ms)
+ℹ tests 229
+ℹ suites 0
+ℹ pass 228
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 2672.8746
+✔ restore prepare rechecks a newly applied wallpaper after acquiring its lifecycle lock (634.1645ms)
+✔ restore commit rechecks a new wallpaper under lock and keeps its own upload retryable (624.9656ms)
+✔ migration abort can clear only its transaction without deleting another applied wallpaper (950.034ms)
+✔ an unchanged restore commits atomically with no wallpaper files outside the plugin (1406.2007ms)
+✔ a backup-to-uninstall change at lifecycle lock stops removal and factory handover (2319.4197ms)
+✔ backup command returns exact local bytes and does not create staging files (1325.2782ms)
+✔ external band selection follows UFI while dirty drafts and confirmations stay protected (120.4567ms)
+✔ fixed factory protocol rejects malformed operations and depleted/unknown/switched SIM state (136.1575ms)
+✔ device reboot and shutdown require current capabilities and confirmation, submit once and never claim completion (136.9059ms)
+✔ native SIM and WPS pages are read-only until confirmed, mask codes, recheck slot and read back once (135.2284ms)
+✔ native page sync drains partial results, merges external changes and bounds read frequency (129.9555ms)
+✔ native page sync cancels gestures, abandons timed-out reads and rejects late page/card/group results (117.3815ms)
+✔ large strategy snapshots span bounded UI reads and incomplete replies never become current (118.6865ms)
+✔ cancelled child is reaped while the screen remains asleep without starting another read (115.3342ms)
+✔ native read-only collectors omit secrets, preserve strategy selection, do not replace drafts and honor display deferral (128.5566ms)
+✔ production worker has bounded lifetime, read-only getters, protected credentials and no retained renderer descriptors (0.632ms)
+✔ APN confirmation re-reads by stable profile ID, tolerates order changes and refuses stale editors (116.6506ms)
+✔ forwarding detects external changes before any save or switch and preserves local draft (137.5754ms)
+✔ power key reducer preserves threshold, queued timestamps, repeats, resync and initial-held safety (192.1738ms)
+✔ production evdev reader drains queued edges and fails closed after overrun, partial reads or removal (213.5858ms)
+✔ unchanged production key reader compiles for the Linux target (36.963ms)
+✔ physical power menu preserves locks, isolates pending actions and submits confirmed capabilities once (118.0289ms)
+✔ power overlay remains modal across the actual main-loop lock, animation and gesture routes (0.475ms)
+✔ actual power HTTP loop preserves transmission evidence, bounded waits and immediate cancellation without resubmitting (123.4682ms)
+✔ explicit SMS session restoration follows UFI LD/LOGIN once, without sending or persisting credentials (134.5573ms)
+✔ in-screen session recovery masks and wipes credentials, preserves the draft and requires a new SMS confirmation (156.9718ms)
+✔ session UI is wired into all exits and never persists or renders its password (1.0749ms)
+✔ native SMS uses authenticated UFI form and exact panel AD, at most one send with no login/fallback (161.3683ms)
+✔ actual HTTP poll loop pumps the UI on continuously ready fragmented responses and honours cancellation (119.1195ms)
+✔ native UFI signing matches independent Node crypto and temporary authorization stays memory-only/read-gated (123.8658ms)
+✔ native forwarding UI uses existing channels, masks secrets and never retries saved test failures (128.5517ms)
+✔ bounded chunks preserve old wallpaper until exact atomic commit and clear (16051.4229ms)
+✔ unknown chunk outcome permits explicit abort and late chunks cannot resurrect it (3845.0004ms)
+✔ same image in a new transaction rejects old nonce, duplicates and wrong offsets (7877.7884ms)
+✔ strict base64 and maximum chunk/total size reject invalid input without replacing wallpaper (7069.6134ms)
+✔ invalid headers, dimensions and hashes never replace the prior wallpaper (8054.2674ms)
+✔ missing confirmation, cross hash, hard link and unknown files are preserved (2426.0247ms)
+✔ invalid old wallpaper is preserved and controller does not use HTTP upload or create directories (845.9822ms)
+✔ owned uninstall removes every bounded asset and rejects late chunks without recreating root (2196.3264ms)
+✔ new boot rejects stale prepare/chunk/commit and allows explicit current-boot abort (4881.2095ms)
+✔ malformed current/recorded boot IDs never authorize mutation or deletion (908.4676ms)
+✔ fixed wallpaper loader rejects unsafe metadata and partial changes, caches once and never writes (215.826ms)
+✔ wallpaper production I/O compiles unchanged for Linux (90.5344ms)
+✔ wallpaper reads occur only at lock entry and renderer isolates it from other pages (0.7021ms)
+✔ native Wi-Fi UI, one-submit confirmation and editable config synchronize against external UFI changes (121.62ms)
+✔ native Wi-Fi reads radio, module and on-air state independently; stale and malformed states never become on (133.6577ms)
+✔ nonblocking fixed wifi.state reader handles fragmentation, timeout, disconnect, bad HTTP and bounded memory without writes (135.3856ms)
+ℹ tests 47
+ℹ suites 0
+ℹ pass 47
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 65626.1312
+PASS: OEM power parser/effective UCI, event OFF beats stale ON, batched OFF+ON cancels input, delayed raw OFF cannot undo ON event, LCD re-darkening, cleanup/busy guards
+PASS: actual loop prioritizes OEM OFF, preserves heartbeat, skips background polling, clears input edges, and guards preflight/busy rendering
+PASS: actual runtime consumes OFF before raw ON, explicit ON/batched cancellation, effective-UCI initial rejection, provider loss guard; zero polling subprocesses
+PASS: actual MC callback/client, normal/reboot and quick receipts once per OFF cycle, Q-before-N, cross-phase work preserved, ON and lookup replacement cancel old work, no replay after failure
+PASS: actual helper/client completion UNKNOWN and stale are nonfatal without replay; exact Q/N late tombstones, full capacity suppression, reentry guard; real EOF/FATAL/malformed/unsolicited and LCD ACK0 remain fatal
+PASS: actual lookup 500ms kill/reap, fast-child queued ON pump, independent child connection with inherited low/high FDs closed, parent-death guard; busy direct calls bounded, touch getter live and deferred re-registration preserved
+factory-bus: protocol rejection, exact service contracts and event routing passed
+PASS: actual main sleep/wake rechecks normalized original PIN policy; no-PIN factory authentication remains unlocked while local hold gates access; configured PIN relocks before rendering; sleep clears authorization/pending input, no-PIN wake keeps local hold lock until explicit completion; enabled PIN requires correct unlock plus policy/login; changed/invalid/unreadable policy and failed login/render prevent display request
+PASS: actual main no-PIN render/action/input gates; 1000ms inside-only hold; progress damage only; initial held finger/outside/move-out/release/interruption reset; completing release consumed; enabled PIN priority; policy/login failure cannot authorize; timer wrap and exact hit bounds
+PASS: production gesture dispatcher blocks soft-lock touches and consumes release
+PASS: production sensor callback follows observed OFF -> fixed init=1 -> guard recheck -> fixed enable=1; ON/unreadable state never resets; all open/write/close and ownership failures stop before subsequent writes
+PASS: read-only preflight captures policy/locks; post-stop adoption never accesses unpowered sensor; DRM-ready gate precedes live sensor checks; bounded I/O retries and one enable require real lux, preserve guard/helper checks; persistent I/O, invalid value, missing identity, expired guard and stale lux fail closed; never writes UCI or vendor locks
+SKIP: private device evidence is not included in the public repository
+PASS: production C/headers do not use the incorrect /sbin/ubus path
+PASS: production main orders guard -> DRM black frame -> sensor -> policy -> verify existing lease -> protected UI frame -> LCD ON -> heartbeat
+PASS: external display settings sync applies fixed brightness through existing lifecycle; preserves PIN, lock, sleep and activity; auto sensor failures freeze output; power races defer and protected policy changes fail closed
+PASS: actual display UI has explicit fixed/adaptive modes, local 1-percent draft and presets; confirm once/cancel/no-repeat, readonly denial, stale-mode refusal, bounded values, sensor failure and unknown results; lock remains accessible when settings fail; no device I/O
+PASS: actual wake sensor helper requires complete frame/owned guard/no factory renderer; fresh mutable policy synchronized, PIN/periodic policy changes rejected, disabled sensor enabled once, enabled sensor no write; bounded failure/cancel/PIN change protection and fixed-mode no sensor I/O
+PASS: B22 PIN enum 0=enabled/1=disabled; unknown enum rejected; no-PIN startup/sleep/wake stay unlocked; configured PIN stays locked; factory lux curve; 30s timeout; monotonic wrap; sensor failure holds last brightness; manual/never mode
+PASS: read-only display preflight precedes DRM and never reads PIN value
+PASS: auto brightness rejects low-light jitter and isolated spikes; sustained changes ramp monotonically <=3 levels/100ms; steady-state zero writes; invalid/stale readings freeze; sleep/wake/manual/clock wrap preserved; unavailable sensor does not disable fixed brightness or timeout
+PASS: production ramp is deferred during swipe and uses the existing lifecycle
+PASS: actual display runtime receipt/map, guarded adopt and errors; OEM OFF blocks direct adoption, brightness, touch and resync wakes, normal ON restores control; finite idle lease is never renewed during repeated OFF; original locks remain untouched
+PASS: main ownership/frame order, no brightness bypass, IPC hook cancellation
+✔ installed 0.2.4 is readable and recoverable without starting any old executable (7464.5025ms)
+✔ 0.2.4 wallpaper exports bounded verified bytes without files or lifecycle writes and refuses changed data before cleanup (2835.7121ms)
+✔ 0.2.4 export rejects malformed or pending wallpaper before allowing upgrade cleanup (1804.5734ms)
+✔ 0.2.4 migration rejects modified executable bytes, member list or ownership before writes (1840.5108ms)
+✔ 0.2.4 enabled migration validates all packaged files and leaves a damaged installation and shared hook intact (13706.4236ms)
+✔ 0.2.4 enabled migration removes only its own boot line and complete bounded state (8574.2327ms)
+✔ an exactly owned interrupted 0.2.4 uninstall can finish after the old helper and renderer are gone (2706.265ms)
+✔ 0.2.4 migration removes its own created boot file only with the matching file-identity receipt (6543.6921ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 45535.6811
+✔ installed 0.2.5 is readable and recoverable without starting any old executable (16946.2403ms)
+✔ 0.2.5 wallpaper exports bounded verified bytes without files or lifecycle writes and refuses changed data before cleanup (8952.427ms)
+✔ 0.2.5 export rejects malformed or pending wallpaper before allowing upgrade cleanup (6844.8715ms)
+✔ 0.2.5 migration rejects modified executable bytes, member list or ownership before writes (2738.2134ms)
+✔ 0.2.5 enabled migration validates all packaged files and leaves a damaged installation and shared hook intact (5647.9278ms)
+✔ 0.2.5 enabled migration removes only its own boot line and complete bounded state (14218.6866ms)
+✔ an exactly owned interrupted 0.2.5 uninstall can finish after the old helper and renderer are gone (5270.7145ms)
+✔ 0.2.5 migration removes its own created boot file only with the matching file-identity receipt (9113.5923ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 69794.0682
+✔ installed 0.2.6 is readable and recoverable without starting any old executable (17161.6826ms)
+✔ 0.2.6 wallpaper exports bounded verified bytes without files or lifecycle writes and refuses changed data before cleanup (8908.4881ms)
+✔ 0.2.6 export rejects malformed or pending wallpaper before allowing upgrade cleanup (6735.685ms)
+✔ 0.2.6 migration rejects modified executable bytes, member list or ownership before writes (2899.4546ms)
+✔ 0.2.6 enabled migration validates all packaged files and leaves a damaged installation and shared hook intact (5920.8981ms)
+✔ 0.2.6 enabled migration removes only its own boot line and complete bounded state (14618.6608ms)
+✔ an exactly owned interrupted 0.2.6 uninstall can finish after the old helper and renderer are gone (5073.3736ms)
+✔ 0.2.6 migration removes its own created boot file only with the matching file-identity receipt (9700.1713ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71082.7591
+✔ installed 0.2.7 is readable and recoverable without starting any old executable (17583.2782ms)
+✔ 0.2.7 wallpaper exports bounded verified bytes without files or lifecycle writes and refuses changed data before cleanup (9111.3633ms)
+✔ 0.2.7 export rejects malformed or pending wallpaper before allowing upgrade cleanup (7050.5952ms)
+✔ 0.2.7 migration rejects modified executable bytes, member list or ownership before writes (3032.1593ms)
+✔ 0.2.7 enabled migration validates all packaged files and leaves a damaged installation and shared hook intact (6050.2203ms)
+✔ 0.2.7 enabled migration removes only its own boot line and complete bounded state (15415.8657ms)
+✔ an exactly owned interrupted 0.2.7 uninstall can finish after the old helper and renderer are gone (5355.966ms)
+✔ 0.2.7 migration removes its own created boot file only with the matching file-identity receipt (9971.9006ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 73633.671
+✔ installed 0.2.8 is readable and recoverable without starting any old executable (17843.1447ms)
+✔ 0.2.8 wallpaper exports bounded verified bytes without files or lifecycle writes and refuses changed data before cleanup (9144.8268ms)
+✔ 0.2.8 export rejects malformed or pending wallpaper before allowing upgrade cleanup (7293.7274ms)
+✔ 0.2.8 migration rejects modified executable bytes, member list or ownership before writes (2987.3623ms)
+✔ 0.2.8 enabled migration validates all packaged files and leaves a damaged installation and shared hook intact (6041.5952ms)
+✔ 0.2.8 enabled migration removes only its own boot line and complete bounded state (15449.2058ms)
+✔ an exactly owned interrupted 0.2.8 uninstall can finish after the old helper and renderer are gone (5455.8646ms)
+✔ 0.2.8 migration removes its own created boot file only with the matching file-identity receipt (9322.1397ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 73601.3214
+Local release gate prepared. hardwareVerified=false; package still requires device acceptance.

@@ -253,7 +253,9 @@ static int display_runtime_resync(void){
  int target=(!display_power_on_hook||display_power_on_hook())?live:0;
  if(target!=live)tf_fl_start_transition(&factory_lifecycle,target,tick(),1);
  if(!tf_idle_before_off(&display_idle_guard,previous>live?previous:live,target))return display_runtime_fail();
- factory_bus.resync=0;if(target>0){int sensor_ready=display_runtime_wake_sensor();
+ /* The caller consumes its old notification before starting the transaction.
+  * A notification received inside begin_frame/drive belongs to the next one. */
+ if(target>0){int sensor_ready=display_runtime_wake_sensor();
   if(sensor_ready==2||(display_power_on_hook&&!display_power_on_hook())){target=0;tf_fl_start_transition(&factory_lifecycle,0,tick(),1);if(!tf_idle_before_off(&display_idle_guard,previous>live?previous:live,0))return display_runtime_fail();}
   else if(!sensor_ready)return display_runtime_fail();
  }
@@ -271,11 +273,17 @@ static int display_runtime_touch(int pressed,uint32_t now){
  if(!factory_bus_active||!tf_fb_command(&factory_bus,TF_BUS_TOUCH,1,2500))return display_runtime_fail();
  held=1;sent=now;return 1;
 }
+static int display_runtime_interrupted(void){
+ if(!running||display_runtime_fault||!tf_http_cancelled)return 0;
+ int pending_event=factory_bus.power_event||factory_bus.resync||(display_power_on_hook&&!display_power_on_hook());
+ return running&&!display_runtime_fault&&pending_event;
+}
 static int display_runtime_unlock_policy(void){
  if(display_power_on_hook&&!display_power_on_hook())return 0;
  char response[32];char*const args[]={"uci","-q","get","zwrt_deviceui.Screen.Lock_Screen_PIN_Enable_State",NULL};int raw_pin,enabled;
  int result=vendor_exec("/sbin/uci",args,NULL,response,sizeof response);
  if(display_power_on_hook&&!display_power_on_hook())return 0;
+ if(display_runtime_interrupted())return 0;
  if(result||!tf_display_integer(response,0,1,&raw_pin)||!tf_display_factory_pin_enabled(raw_pin,&enabled)||enabled!=display_policy.config.pin_enabled)return display_runtime_fail();return 1;
 }
 static void display_runtime_cleanup(void){
@@ -304,17 +312,17 @@ static int display_runtime_accept_observed(const tf_display_config*observed){
  * insufficient: wake must restore the same observed sensor under our owned
  * frame guard, after a complete DRM frame and before choosing wake brightness.
  * This does not reinitialize DRM, change UCI, or start the factory renderer. */
-/* 1=ready, 2=cancelled by OEM power state, 0=real failure. A later ON
+/* 1=ready, 2=cancelled by a new OEM notification, 0=real failure. A later ON
  * snapshot cannot retroactively make an interrupted preparation complete. */
 static int display_runtime_wake_sensor(void){
- if(display_power_on_hook&&!display_power_on_hook())return 2;
- if(!frame_ready||!display_sensor_guard_alive()){if(display_power_on_hook&&!display_power_on_hook())return 2;native_failure_note("WAKE_SENSOR_GUARD");return 0;}
- tf_display_config observed;if(!display_read_policy_observed(&observed)){if(display_power_on_hook&&!display_power_on_hook())return 2;native_failure_note("WAKE_POLICY_READ");return 0;}
- if(display_power_on_hook&&!display_power_on_hook())return 2;
+ if((display_power_on_hook&&!display_power_on_hook())||display_runtime_interrupted())return 2;
+ if(!frame_ready||!display_sensor_guard_alive()){if((display_power_on_hook&&!display_power_on_hook())||display_runtime_interrupted())return 2;native_failure_note("WAKE_SENSOR_GUARD");return 0;}
+ tf_display_config observed;if(!display_read_policy_observed(&observed)){if((display_power_on_hook&&!display_power_on_hook())||display_runtime_interrupted())return 2;native_failure_note("WAKE_POLICY_READ");return 0;}
+ if((display_power_on_hook&&!display_power_on_hook())||display_runtime_interrupted())return 2;
  if(!tf_display_external_policy_compatible(&display_policy.config,&observed)){native_failure_note("WAKE_POLICY_CHANGED");return 0;}
- if(!display_sensor_prepare(&observed,display_sensor_write_enabled,display_sensor_guard_alive)){if(display_power_on_hook&&!display_power_on_hook())return 2;native_failure_note("WAKE_SENSOR_PREPARE");return 0;}
- if(display_power_on_hook&&!display_power_on_hook())return 2;
- if(!display_sensor_guard_alive()){if(display_power_on_hook&&!display_power_on_hook())return 2;native_failure_note("WAKE_SENSOR_GUARD");return 0;}
+ if(!display_sensor_prepare(&observed,display_sensor_write_enabled,display_sensor_guard_alive)){if((display_power_on_hook&&!display_power_on_hook())||display_runtime_interrupted())return 2;native_failure_note("WAKE_SENSOR_PREPARE");return 0;}
+ if((display_power_on_hook&&!display_power_on_hook())||display_runtime_interrupted())return 2;
+ if(!display_sensor_guard_alive()){if((display_power_on_hook&&!display_power_on_hook())||display_runtime_interrupted())return 2;native_failure_note("WAKE_SENSOR_GUARD");return 0;}
  /* Wake already owns the complete-frame guard. Adopt fresh mutable policy
   * only after sensor readiness and a final guard check; do not alter PIN,
   * activity, locked state, or wake/sleep ownership here. */

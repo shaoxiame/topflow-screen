@@ -50,10 +50,31 @@ static void cleared(void){for(size_t i=0;i<sizeof sms_session_storage;i++)assert
 static void type_password(void){assert(sms_session_action("sms-session-open")&&sms_session_ui.stage==1);assert(sms_session_action("sms-session-edit")&&sms_session_ui.stage==2);for(const char*p="PRIVATE-Secret_42";*p;p++){char action[40];snprintf(action,sizeof action,"sms-session-key:%u",(unsigned char)*p);assert(sms_session_action(action));}}
 static void prepare(void){assert(sms_session_action("sms-session-done")&&sms_session_ui.stage==1);assert(sms_session_action("sms-session-prepare")&&!strcmp(pending,"@sms-session"));assert(!strstr(pending_label,"PRIVATE")&&!form_payload[0]);}
 static void output(const char*dir,const char*name){char path[4096];snprintf(path,sizeof path,"%s/%s-%s.html",dir,name,theme_dark?"dark":"light");FILE*f=fopen(path,"wb");assert(f);fwrite(advanced_html,1,strlen(advanced_html),f);fclose(f);}
+static void assert_mask(size_t expected){
+ assert(strlen(sms_session_ui.password)==expected);sms_session_render();
+ const char*start=strstr(advanced_html,"<div class='card tf-input-preview'>");assert(start);start=strchr(start,'>')+1;const char*end=strstr(start,"</div>");assert(end);
+ size_t dots=0;for(const char*p=start;(p=strstr(p,"●"))&&p<end;p+=strlen("●"))dots++;
+ assert(dots==(expected>12?12:expected));assert((strstr(start,"… ")&&strstr(start,"… ")<end)==(expected>12));
+ if(!expected)assert(strstr(start,"尚未输入")==start);
+ char counter[80];snprintf(counter,sizeof counter,"%zu / 1024 字符",expected);assert(strstr(advanced_html,counter));
+ assert(strlen(sms_session_ui.password)==expected);
+}
 int main(int argc,char**argv){assert(argc==2);strcpy(form_values[0],"10086");strcpy(form_values[1],"草稿保留");
  controls_enabled=0;assert(sms_session_action("sms-session-open")&&!sms_session_ui.stage&&!restores);controls_enabled=1;
  strcpy(pending,"@form");strcpy(pending_label,"existing SMS confirmation");strcpy(form_payload,"existing SMS payload");assert(sms_session_action("sms-session-open")&&!sms_session_ui.stage&&!strcmp(pending,"@form")&&!strcmp(form_payload,"existing SMS payload")&&!strcmp(pending_label,"existing SMS confirmation"));pending[0]=pending_label[0]=form_payload[0]=0;
  strcpy(verifying,"existing verification");assert(sms_session_action("sms-session-open")&&!sms_session_ui.stage&&!strcmp(verifying,"existing verification"));verifying[0]=0;
+ /* One key appends one ASCII character; rendering cannot append or expose it. */
+ sms_session_action("sms-session-open");sms_session_action("sms-session-edit");assert_mask(0);
+ sms_session_action("sms-session-key:49");assert(!strcmp(sms_session_ui.password,"1"));
+ for(theme_dark=0;theme_dark<2;theme_dark++){for(int i=0;i<6;i++)assert_mask(1);output(argv[1],"sms-session-single-key");}
+ sms_session_action("sms-session-key:50");assert(!strcmp(sms_session_ui.password,"12"));assert_mask(2);
+ sms_session_action("sms-session-delete");assert_mask(1);sms_session_action("sms-session-delete");assert_mask(0);sms_session_action("sms-session-delete");assert_mask(0);
+ sms_session_action("sms-session-key:65");sms_session_action("sms-session-key:38");sms_session_action("sms-session-key:32");assert(!strcmp(sms_session_ui.password,"A& "));assert_mask(3);
+ sms_session_action("sms-session-case");sms_session_action("sms-session-symbols");assert_mask(3);sms_session_action("sms-session-symbols");assert_mask(3);
+ sms_session_action("sms-session-clear");assert_mask(0);
+ for(size_t i=1;i<=1024;i++){sms_session_action("sms-session-key:57");assert(strlen(sms_session_ui.password)==i);if(i<=7||i==12||i==13)assert_mask(i);}
+ assert_mask(1024);assert(strlen(advanced_html)<10000);sms_session_action("sms-session-key:57");assert_mask(1024);sms_session_action("sms-session-delete");assert_mask(1023);
+ sms_session_action("sms-session-clear");assert_mask(0);sms_session_action("sms-session-back");cleared();assert(!restores&&!sms_posts);
  type_password();assert(sms_session_action("sms-session-open")&&sms_session_ui.stage==2&&!strcmp(sms_session_ui.password,"PRIVATE-Secret_42"));for(theme_dark=0;theme_dark<2;theme_dark++){sms_session_render();assert(!strstr(advanced_html,"PRIVATE-Secret_42")&&strstr(advanced_html,"● ● ●"));output(argv[1],"sms-session-keyboard");}
  assert(sms_session_action("form-apply")&&!pending[0]&&!sms_posts);sms_session_action("sms-session-delete");assert(!strcmp(sms_session_ui.password,"PRIVATE-Secret_4"));for(size_t i=strlen(sms_session_ui.password);i<sizeof sms_session_ui.password;i++)assert(!sms_session_ui.password[i]);sms_session_action("sms-session-key:50");
  sms_session_action("sms-session-done");for(theme_dark=0;theme_dark<2;theme_dark++){sms_session_render();assert(!strstr(advanced_html,"PRIVATE-Secret_42"));output(argv[1],"sms-session");}

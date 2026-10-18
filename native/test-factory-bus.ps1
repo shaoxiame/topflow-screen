@@ -17,10 +17,12 @@ int main(void){
  }
  assert(!tf_bus_command_valid(NULL));assert(!tf_bus_response_valid(NULL));
  tf_bus_packet ack={TF_BUS_MAGIC,TF_BUS_ACK,50,1};assert(tf_bus_response_valid(&ack));
+ tf_bus_packet complete={TF_BUS_MAGIC,TF_BUS_COMPLETE_RESULT,50,TF_COMPLETE_UNKNOWN};assert(tf_bus_response_valid(&complete));complete.value=TF_COMPLETE_CONFIRMED;assert(tf_bus_response_valid(&complete));complete.value=TF_COMPLETE_STALE;assert(tf_bus_response_valid(&complete));complete.value=3;assert(!tf_bus_response_valid(&complete));complete.value=0;complete.sequence=0;assert(!tf_bus_response_valid(&complete));
  ack.value=2;assert(!tf_bus_response_valid(&ack));ack.value=0;assert(tf_bus_response_valid(&ack));ack.sequence=0;assert(!tf_bus_response_valid(&ack));
  for(unsigned type=TF_BUS_READY;type<=TF_BUS_FATAL;type++)if(type!=TF_BUS_ACK){tf_bus_packet p={TF_BUS_MAGIC,type,0,0};assert(tf_bus_response_valid(&p));p.sequence=1;assert(!tf_bus_response_valid(&p));p.sequence=0;p.value=1;assert(!tf_bus_response_valid(&p));}
  for(unsigned v=0;v<12;v++){tf_bus_packet p={TF_BUS_MAGIC,TF_BUS_START_STAGE,0,v};assert(tf_bus_response_valid(&p)==(v>=1&&v<=9));p.sequence=1;assert(!tf_bus_response_valid(&p));}
  for(unsigned v=0;v<32;v++){tf_bus_packet p={TF_BUS_MAGIC,TF_BUS_DEVICE_POWER,1,v};assert(tf_bus_response_valid(&p)==(v==1||v==2||v==6||v==10||v==14));p.sequence=0;assert(!tf_bus_response_valid(&p));}
+ tf_bus_packet provider={TF_BUS_MAGIC,TF_BUS_SLEEP_PROVIDER,0,0};assert(tf_bus_response_valid(&provider));provider.value=1;assert(tf_bus_response_valid(&provider));provider.value=2;assert(!tf_bus_response_valid(&provider));provider.value=0;provider.sequence=1;assert(!tf_bus_response_valid(&provider));
  assert(!strcmp(tf_bus_login_value(1),"ok"));assert(!strcmp(tf_bus_login_value(0),""));assert(!strcmp(tf_bus_login_value(-1),""));
  assert(tf_bus_direct_value("1\r\n",3)==1);assert(tf_bus_direct_value("0\n",2)==0);assert(tf_bus_direct_value("0",1)==0);
  assert(tf_bus_direct_value(NULL,1)==-1);assert(tf_bus_direct_value("",0)==-1);assert(tf_bus_direct_value("true",4)==-1);

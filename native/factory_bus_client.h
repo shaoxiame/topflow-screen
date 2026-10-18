@@ -16,8 +16,9 @@
 typedef struct {
  int fd,ready,failed,power_event,resync,waiting,start_stage;pid_t pid;
  uint32_t sequence,ack_sequence,ack_value;uint64_t ping_ms;
+ uint32_t waiting_type,completion_result,abandoned_completion[4];
  uint32_t device_power_sequence,device_power_off_seen,device_quicken_pending,device_poweroff_pending;
- int device_power_state;
+ int device_power_state,sleep_unavailable;
 } tf_factory_bus;
 static uint64_t tf_fb_now(void){struct timespec t;if(clock_gettime(CLOCK_MONOTONIC,&t))return 0;return (uint64_t)t.tv_sec*1000+t.tv_nsec/1000000;}
 static void tf_fb_init(tf_factory_bus*s){memset(s,0,sizeof *s);s->fd=-1;s->pid=-1;}
@@ -31,11 +32,18 @@ static int tf_fb_poll(tf_factory_bus*s){
   case TF_BUS_START_STAGE:if(s->ready||p.value<=(uint32_t)s->start_stage){s->failed=1;return 0;}s->start_stage=(int)p.value;break;
   case TF_BUS_READY:if(s->ready){s->failed=1;return 0;}s->ready=1;break;
   case TF_BUS_ACK:
-   if(!s->waiting||p.sequence!=s->sequence){s->failed=1;return 0;}
+   if(!s->waiting||p.sequence!=s->sequence||s->waiting_type==TF_BUS_QUICKEN_COMPLETE||s->waiting_type==TF_BUS_POWEROFF_COMPLETE){s->failed=1;return 0;}
    s->ack_sequence=p.sequence;s->ack_value=p.value;break;
+  case TF_BUS_COMPLETE_RESULT:{
+   int abandoned=0;for(unsigned j=0;j<4;j++)if(s->abandoned_completion[j]==p.sequence){s->abandoned_completion[j]=0;abandoned=1;break;}
+   if(abandoned)break;
+   if(!s->waiting||p.sequence!=s->sequence||(s->waiting_type!=TF_BUS_QUICKEN_COMPLETE&&s->waiting_type!=TF_BUS_POWEROFF_COMPLETE)){s->failed=1;return 0;}
+   s->ack_sequence=p.sequence;s->completion_result=p.value;break;
+  }
   case TF_BUS_SLEEP:s->power_event=1;break;
   case TF_BUS_WAKE:s->power_event=2;break;
   case TF_BUS_RESYNC:s->resync=1;break;
+   case TF_BUS_SLEEP_PROVIDER:s->sleep_unavailable=!p.value;break;
   case TF_BUS_DEVICE_POWER:
    if(s->device_power_sequence==UINT32_MAX||p.sequence!=s->device_power_sequence+1){s->failed=1;return 0;}
    s->device_power_sequence=p.sequence;s->device_power_state=p.value==TF_DEVICE_ON?1:2;
@@ -49,26 +57,34 @@ static int tf_fb_poll(tf_factory_bus*s){
 }
 static int tf_fb_command(tf_factory_bus*s,uint32_t type,uint32_t value,int timeout_ms){
  if(s->fd<0||!s->ready||s->failed||s->waiting||s->sequence==UINT32_MAX)return 0;
+ int completion=type==TF_BUS_QUICKEN_COMPLETE||type==TF_BUS_POWEROFF_COMPLETE,empty=-1;
+ if(completion){s->completion_result=TF_COMPLETE_UNKNOWN;for(unsigned j=0;j<4;j++)if(!s->abandoned_completion[j]){empty=(int)j;break;}
+  /* Never discard an exact late-result tombstone to make room. A full bounded
+   * list suppresses this optional receipt, not ordinary display commands. */
+  if(empty<0)return 1;
+ }
  tf_bus_packet p={TF_BUS_MAGIC,type,++s->sequence,value};
  if(!tf_bus_command_valid(&p)){s->failed=1;return 0;}
- s->waiting=1;s->ack_sequence=0;s->ack_value=0;
+ s->waiting=1;s->waiting_type=type;s->ack_sequence=0;s->ack_value=0;
  if(send(s->fd,&p,sizeof p,MSG_NOSIGNAL|MSG_DONTWAIT)!=sizeof p){s->failed=1;s->waiting=0;return 0;}
  uint64_t until=tf_fb_now()+(uint64_t)timeout_ms;
  while(tf_fb_now()<until){
   if(!tf_fb_poll(s))break;
-  if(s->ack_sequence==p.sequence){s->waiting=0;s->ping_ms=tf_fb_now();if(!s->ack_value)s->failed=1;return s->ack_value==1;}
+  if(s->ack_sequence==p.sequence){s->waiting=0;s->ping_ms=tf_fb_now();if(completion)return 1;if(!s->ack_value)s->failed=1;return s->ack_value==1;}
   struct pollfd f={s->fd,POLLIN,0};poll(&f,1,10);
  }
- s->waiting=0;s->failed=1;return 0;
+ s->waiting=0;if(completion&&!s->failed){s->abandoned_completion[empty]=p.sequence;s->completion_result=TF_COMPLETE_UNKNOWN;return 1;}s->failed=1;return 0;
 }
 static int tf_fb_tick(tf_factory_bus*s){
  if(!tf_fb_poll(s))return 0;
  if(!s->waiting&&tf_fb_now()-s->ping_ms>=2000)return tf_fb_command(s,TF_BUS_PING,0,2500);
  return 1;
 }
-/* One event-bound receipt per fresh, confirmed LCD-off observation. Quick
+/* One event-bound receipt attempt per fresh, confirmed LCD-off observation. Quick
  * completion has priority; the normal UI completion follows a fresh readback.
- * Pending flags come from the helper's OFF-cycle state, never a local button. */
+ * Pending flags come from the helper's OFF-cycle state, never a local button.
+ * Return means the channel is usable; only completion_result==CONFIRMED means
+ * the OEM RPC acknowledged. UNKNOWN/STALE never trigger a retry or rollback. */
 static int tf_fb_power_complete(tf_factory_bus*s){
  int quick=s->device_quicken_pending!=0;
  uint32_t pending=quick?s->device_quicken_pending:s->device_poweroff_pending;if(!pending)return 1;

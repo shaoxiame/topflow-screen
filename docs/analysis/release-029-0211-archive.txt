@@ -1,0 +1,59 @@
+v0.2.9 至 v0.2.11 本地发布检查日志归档
+整理日期：2026-10-19
+
+范围
+
+从本地缓存中整理 release-029-*、release-0210-*、release-0211-* 的 17 份文本日志，
+以及发布前的 publish-0211-package-checks.log，共 18 份日志。
+这些文件记录电脑上的编译、打包、静态检查和隔离测试；不是原始设备运行日志。
+归档前已检查同名文件，未覆盖既有分析或历史文件。
+
+新增日志
+
+release-029-build-tests.log
+release-029-gate.log
+release-029-helper-build.log
+release-029-native-build.log
+release-029-package-native.log
+release-029-txt-build.log
+
+release-0210-build-tests.log
+release-0210-gate.log
+release-0210-helper-build.log
+release-0210-native-build.log
+release-0210-native-package.log
+release-0210-txt-build.log
+
+release-0211-build-tests.log
+release-0211-gate.log
+release-0211-native-build.log
+release-0211-native-package.log
+release-0211-txt-build.log
+
+publish-0211-package-checks.log
+
+配套分析
+
+wake-resume-0211.txt 记录真实等待循环中的旧通知自取消复现、修复边界、
+PIN 重锁和敏感输入清除，以及用户于 2026-10-19 确认 v0.2.11 实机全部测试通过。
+已有 power-completion-029.md 保留其当时的分析与验证边界，没有覆盖或重写。
+
+历史语义
+
+旧版本本地检查通过不代表旧版本已经通过后续实机验收。
+构建日志里的 hardwareVerified=false / hardwareTested=false、旧测试名称以及
+当时的验证提示均保留，不回写为通过。v0.2.11 的用户验收结果在配套分析中单独记录。
+日志中的包校验摘要和源码摘要是公开构建证据，不是访问凭据。
+
+脱敏处理与扫描
+
+本机源码目录替换为 <WORKSPACE>，父工作目录和用户目录分别使用
+<WORKSPACE_PARENT>、<USER_HOME> 占位符；所有归档统一为 UTF-8、LF 换行。
+检查范围为这 18 份源日志及新增的 2 份说明，包含本机绝对路径、用户名、
+授权令牌、Bearer/JWT、私钥标记、密码/会话/凭据赋值、MAC、IMEI/IMSI/ICCID、
+设备序列号、启动标识、长数字设备标识及非回环 IP 地址等类别。
+授权相关命中仅为公开软件合同字段，不含实际凭据值。
+日志中的 127.0.0.1 是软件固定回环接口，保留它以说明接口和测试合同。
+
+没有复制原始设备文件、私有脚本、视频、截图、CLI 授权图片或浏览器会话材料。
+本说明仅覆盖本次新增归档；整仓库隐私审查由最终发布步骤另行执行。

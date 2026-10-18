@@ -6,6 +6,9 @@ $prepare=$native.Substring($native.IndexOf('static int display_sensor_prepare(')
 $runtime=[IO.File]::ReadAllText("$root/display_runtime.h")
 $start=$runtime.IndexOf('static int display_runtime_wake_sensor(void){')
 $wake=$runtime.Substring($start,$runtime.IndexOf("/* Invoked only",$start)-$start)
+$interruptStart=$runtime.IndexOf('static int display_runtime_interrupted(void)')
+if($interruptStart -lt 0){throw 'Display cancellation helper missing'}
+$interrupt=$runtime.Substring($interruptStart,$runtime.IndexOf('static int display_runtime_unlock_policy(void)',$interruptStart)-$interruptStart)
 $autoStart=$runtime.IndexOf("static int display_auto_sensor_guard_alive(void)")
 $auto=$runtime.Substring($autoStart,$runtime.IndexOf("`n#endif",$autoStart)-$autoStart)
 $source=@'
@@ -13,10 +16,10 @@ $source=@'
 #include <stdio.h>
 #include "display_policy.h"
 static tf_display_policy display_policy;
-static int test_power_on=1;static int test_power_gate(void){return test_power_on;}static int(*display_power_on_hook)(void)=test_power_gate;
+static int running,display_runtime_fault,gate_failure,test_power_on=1;static int test_power_gate(void){if(gate_failure){running=0;display_runtime_fault=1;return 0;}return test_power_on;}static int(*display_power_on_hook)(void)=test_power_gate;
 static tf_display_config display_config,observed;
 static int frame_ready,guard,owner,tf_http_cancelled,enabled,enable_reads,lux_reads,sensor_writes,policy_reads;
-static int read_fail,policy_fail,identity_fail,lux_fail,write_fail,expire_after_write;
+static int read_fail,policy_fail,identity_fail,lux_fail,write_fail,expire_after_write,policy_interrupt,cancel_after_write;
 static uint32_t now;
 #define TF_FL_READY 2
 static int display_runtime_ready,begin_calls,release_calls,begin_fail,release_fail,event_after_write,event_after_release,event_during_guard;
@@ -29,16 +32,17 @@ static const char*display_config_failure,*failure;
 static uint32_t tick(void){return now;}
 static int poll(void*p,int n,int ms){assert(!p&&!n&&ms==100);now+=(uint32_t)ms;return 0;}
 static int display_sensor_guard_alive(void){if(event_during_guard)factory_bus.power_event=1;return guard&&!owner&&!tf_http_cancelled;}
-static int display_read_policy_observed(tf_display_config*c){policy_reads++;*c=observed;c->sensor_enabled=c->sensor_lux=-1;return !policy_fail;}
+static int display_read_policy_observed(tf_display_config*c){policy_reads++;*c=observed;c->sensor_enabled=c->sensor_lux=-1;if(policy_interrupt){tf_http_cancelled=1;if(policy_interrupt==1)factory_bus.resync=1;else factory_bus.power_event=2;return 0;}return !policy_fail;}
 static int display_sensor_identity(void){return !identity_fail;}
 static int display_sensor_read_enable(int*out){enable_reads++;display_config_failure="ADOPT_SENSOR_READ";*out=enabled;return !read_fail;}
-static int display_sensor_write_enabled(void){assert(frame_ready&&guard&&!owner&&enabled==0);sensor_writes++;if(write_fail)return 0;enabled=1;if(event_after_write)factory_bus.power_event=1;if(expire_after_write)guard=0;return 1;}
+static int display_sensor_write_enabled(void){assert(frame_ready&&guard&&!owner&&enabled==0);sensor_writes++;if(write_fail)return 0;enabled=1;if(event_after_write)factory_bus.power_event=1;if(cancel_after_write){tf_http_cancelled=1;factory_bus.resync=1;}if(expire_after_write)guard=0;return 1;}
 static int display_read_lux(int*out){lux_reads++;if(lux_fail)return 0;*out=41;return 1;}
 static void native_failure_note(const char*code){failure=code;}
 PRODUCTION_PREPARE
+PRODUCTION_INTERRUPT
 PRODUCTION_WAKE
 PRODUCTION_AUTO
-static void reset(void){test_power_on=1;observed=(tf_display_config){0,1,135,30,0,-1,-1,0,255};display_policy.config=display_config=observed;frame_ready=guard=1;owner=tf_http_cancelled=enabled=enable_reads=lux_reads=sensor_writes=policy_reads=read_fail=policy_fail=identity_fail=lux_fail=write_fail=expire_after_write=0;display_runtime_ready=1;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=135;factory_bus.power_event=factory_bus.resync=0;begin_calls=release_calls=begin_fail=release_fail=event_after_write=event_after_release=event_during_guard=0;now=100;failure=NULL;display_config_failure="none";}
+static void reset(void){running=1;display_runtime_fault=gate_failure=policy_interrupt=cancel_after_write=0;test_power_on=1;observed=(tf_display_config){0,1,135,30,0,-1,-1,0,255};display_policy.config=display_config=observed;frame_ready=guard=1;owner=tf_http_cancelled=enabled=enable_reads=lux_reads=sensor_writes=policy_reads=read_fail=policy_fail=identity_fail=lux_fail=write_fail=expire_after_write=0;display_runtime_ready=1;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=135;factory_bus.power_event=factory_bus.resync=0;begin_calls=release_calls=begin_fail=release_fail=event_after_write=event_after_release=event_during_guard=0;now=100;failure=NULL;display_config_failure="none";}
 int main(void){
  reset();test_power_on=0;assert(display_runtime_wake_sensor()==2&&!sensor_writes&&!policy_reads&&!failure);test_power_on=1;assert(display_runtime_wake_sensor()==1&&sensor_writes==1&&!failure);
  reset();assert(display_runtime_wake_sensor()&&sensor_writes==1&&enabled==1&&display_policy.config.sensor_enabled==1&&display_policy.config.sensor_lux==41&&display_config.sensor_lux==41);assert(display_runtime_wake_sensor()&&sensor_writes==1);
@@ -48,6 +52,16 @@ int main(void){
  reset();guard=0;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!policy_reads);
  reset();tf_http_cancelled=1;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!policy_reads);
  reset();policy_fail=1;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!strcmp(failure,"WAKE_POLICY_READ"));
+ for(int event=1;event<=2;event++){
+  reset();policy_interrupt=event;
+  assert(display_runtime_wake_sensor()==2&&running&&!display_runtime_fault&&tf_http_cancelled&&!failure&&policy_reads==1&&!sensor_writes);
+  assert(event==1?factory_bus.resync==1:factory_bus.power_event==2);
+  assert(display_policy.config.sensor_lux==-1&&display_policy.config.sensor_enabled==-1);
+  factory_bus.resync=factory_bus.power_event=0;policy_interrupt=tf_http_cancelled=0;
+  assert(display_runtime_wake_sensor()==1&&sensor_writes==1&&!failure&&display_policy.config.sensor_lux==41);
+ }
+ reset();cancel_after_write=1;assert(display_runtime_wake_sensor()==2&&running&&!display_runtime_fault&&factory_bus.resync&&tf_http_cancelled&&sensor_writes==1&&!failure&&display_policy.config.sensor_lux==-1);
+ reset();tf_http_cancelled=1;gate_failure=1;assert(!display_runtime_interrupted()&&!running&&display_runtime_fault);
  reset();observed.pin_enabled=1;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!strcmp(failure,"WAKE_POLICY_CHANGED"));
  reset();observed.brightness=200;observed.timeout_seconds=120;assert(display_runtime_wake_sensor()&&sensor_writes==1&&display_policy.config.brightness==200&&display_policy.config.timeout_seconds==120&&!failure);
  reset();observed.wakeup_periodic=1;assert(!display_runtime_wake_sensor()&&!sensor_writes&&!strcmp(failure,"WAKE_POLICY_CHANGED"));
@@ -80,7 +94,7 @@ int main(void){
  reset();begin_fail=1;assert(!display_runtime_prepare_auto_sensor()&&!release_calls&&!sensor_writes);
  puts("PASS: actual wake sensor helper requires complete frame/owned guard/no factory renderer; fresh mutable policy synchronized, PIN/periodic policy changes rejected, disabled sensor enabled once, enabled sensor no write; bounded failure/cancel/PIN change protection and fixed-mode no sensor I/O");return 0;}
 '@
-[IO.File]::WriteAllText("$root/build-preview/test-wake-sensor.c",$source.Replace('PRODUCTION_PREPARE',$prepare).Replace('PRODUCTION_WAKE',$wake).Replace('PRODUCTION_AUTO',$auto))
+[IO.File]::WriteAllText("$root/build-preview/test-wake-sensor.c",$source.Replace('PRODUCTION_PREPARE',$prepare).Replace('PRODUCTION_INTERRUPT',$interrupt).Replace('PRODUCTION_WAKE',$wake).Replace('PRODUCTION_AUTO',$auto))
 & "$root/toolchain/zig-x86_64-windows-0.14.1/zig.exe" cc -target x86_64-windows-gnu "-I$root" "$root/build-preview/test-wake-sensor.c" -o "$root/bin/test-wake-sensor.exe"
 if($LASTEXITCODE -ne 0){throw 'Wake sensor test build failed'}
 & "$root/bin/test-wake-sensor.exe"

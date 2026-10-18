@@ -10,7 +10,7 @@ function Extract-FunctionRange([string]$text,[string]$start,[string]$end){
 }
 $lock=Extract-FunctionRange $main 'static void screen_lock(void)' '/* Local no-PIN hold'
 $wake=Extract-FunctionRange $main 'static int runtime_wake(' '/* A held power key'
-$read=Extract-FunctionRange $runtime 'static int display_runtime_unlock_policy(void)' 'static void display_runtime_cleanup('
+$read=Extract-FunctionRange $runtime 'static int display_runtime_interrupted(void)' 'static void display_runtime_cleanup('
 $source=@'
 #include <assert.h>
 #include <stdio.h>
@@ -27,11 +27,13 @@ static tf_pin_policy pin_policy;
 static tf_display_policy display_policy;
 static int(*display_power_on_hook)(void)=NULL;
 static int running,factory_bus_active,controls_enabled,scroll_y,read_failure,raw_pin;
+static int display_runtime_fault,tf_http_cancelled,read_interrupt;
+static struct{int power_event,resync;}factory_bus;
 static int reads,login_calls,login_value,login_failure,form_calls,sms_calls,extra_calls,begin_calls,render_calls,render_failure,render_locked,request_calls,request_level;
 static int advanced_page,sms_id;
 static char pending[32],pin_feedback[32],page[96];
-static int display_runtime_fail(void){running=0;return 0;}
-static int vendor_exec(const char*path,char*const*args,const char*input,char*out,size_t cap){assert(!strcmp(path,"/sbin/uci")&&!strcmp(args[0],"uci")&&!strcmp(args[1],"-q")&&!strcmp(args[2],"get")&&!strcmp(args[3],"zwrt_deviceui.Screen.Lock_Screen_PIN_Enable_State")&&!args[4]&&!input);reads++;snprintf(out,cap,"%d\n",raw_pin);return read_failure;}
+static int display_runtime_fail(void){running=0;display_runtime_fault=1;tf_http_cancelled=1;return 0;}
+static int vendor_exec(const char*path,char*const*args,const char*input,char*out,size_t cap){assert(!strcmp(path,"/sbin/uci")&&!strcmp(args[0],"uci")&&!strcmp(args[1],"-q")&&!strcmp(args[2],"get")&&!strcmp(args[3],"zwrt_deviceui.Screen.Lock_Screen_PIN_Enable_State")&&!args[4]&&!input);reads++;snprintf(out,cap,"%d\n",raw_pin);if(read_interrupt){tf_http_cancelled=1;if(read_interrupt==1)factory_bus.resync=1;else if(read_interrupt==2)factory_bus.power_event=2;return -1;}return read_failure;}
 READ_FUNCTION
 static void motion_cancel(void){}
 static int wifi_runtime;static void tf_page_state_cancel(void){}static void tf_wifi_runtime_close(void*p){(void)p;}
@@ -51,7 +53,7 @@ static int test_oem_on=1;static int runtime_factory_power_read(int force){(void)
 static int display_runtime_request(int level){assert(running);request_calls++;request_level=level;return 1;}
 LOCK_FUNCTION
 WAKE_FUNCTIONS
-static void reset(int enabled){tf_display_config c={enabled,1,135,30,0,1,3,135,255};assert(tf_display_init_supported(&display_policy,&c,0,1));tf_pin_start(&pin_policy,enabled,0,0,0);tf_soft_lock_reset(&soft_lock,enabled);soft_lock.locked=0;running=factory_bus_active=controls_enabled=1;scroll_y=200;read_failure=login_failure=render_failure=wake_sensor_calls=wake_sensor_failure=wake_sensor_cancel=0;raw_pin=enabled?0:1;reads=login_calls=form_calls=sms_calls=extra_calls=begin_calls=render_calls=request_calls=0;login_value=render_locked=request_level=-1;strcpy(pending,"pending action");strcpy(pin_feedback,"old");strcpy(page,"index.html");advanced_page=0;sms_id=-1;}
+static void reset(int enabled){display_runtime_fault=tf_http_cancelled=read_interrupt=0;memset(&factory_bus,0,sizeof factory_bus);tf_display_config c={enabled,1,135,30,0,1,3,135,255};assert(tf_display_init_supported(&display_policy,&c,0,1));tf_pin_start(&pin_policy,enabled,0,0,0);tf_soft_lock_reset(&soft_lock,enabled);soft_lock.locked=0;running=factory_bus_active=controls_enabled=1;scroll_y=200;read_failure=login_failure=render_failure=wake_sensor_calls=wake_sensor_failure=wake_sensor_cancel=0;raw_pin=enabled?0:1;reads=login_calls=form_calls=sms_calls=extra_calls=begin_calls=render_calls=request_calls=0;login_value=render_locked=request_level=-1;strcpy(pending,"pending action");strcpy(pin_feedback,"old");strcpy(page,"index.html");advanced_page=0;sms_id=-1;}
 int main(void){drm_disp_t d={0};
  reset(0);lock_chart.current=lock_motion.initialized=lock_motion.active=chart_animation.active=1;lock_chart.mode=0;chart_animation.n=17;screen_lock();assert(!lock_chart.current&&lock_chart.mode==-1&&!lock_motion.initialized&&!lock_motion.active&&!chart_animation.n&&!chart_animation.active);
  reset(0);assert(!pin_policy.locked&&!display_policy.locked);assert(runtime_sleep()&&!display_policy.on&&!pin_policy.locked&&!display_policy.locked&&request_calls==1&&request_level==0&&login_calls==1&&login_value==1&&reads==1);assert(!controls_enabled&&!pending[0]&&!pin_feedback[0]&&!scroll_y&&form_calls==1&&sms_calls==1&&extra_calls==1);assert(runtime_wake(&d)&&display_policy.on&&!pin_policy.locked&&!display_policy.locked&&reads==2&&render_calls==1&&render_locked==0&&request_level==135&&login_value==1&&!controls_enabled&&soft_lock.locked);
@@ -60,6 +62,23 @@ int main(void){drm_disp_t d={0};
  reset(1);raw_pin=1;assert(!runtime_sleep()&&!running&&!login_calls&&!request_calls);
  reset(0);raw_pin=2;assert(!runtime_wake(&d)&&!running&&!login_calls&&!render_calls&&!request_calls);
  reset(0);read_failure=1;assert(!runtime_sleep()&&!running&&!login_calls&&!request_calls);
+ /* A new notification may cancel the bounded policy read. It must relock
+  * first and preserve the new event for the main loop, never render or
+  * silently authorize the wake using an incomplete policy snapshot. */
+ for(int event=1;event<=2;event++){
+  reset(1);pin_policy.locked=display_policy.locked=0;strcpy(pin_policy.input,"123");pin_policy.input_len=3;
+  tf_display_sleep(&display_policy);read_interrupt=event;
+  assert(runtime_wake(&d)&&running&&!display_runtime_fault&&tf_http_cancelled&&!display_policy.on);
+  assert(pin_policy.locked&&display_policy.locked&&!pin_policy.input_len&&!pin_policy.input[0]&&!controls_enabled&&!pending[0]&&!pin_feedback[0]&&!scroll_y);
+  assert(reads==1&&!login_calls&&!begin_calls&&!render_calls&&!request_calls&&form_calls==1&&sms_calls==1&&extra_calls==1);
+  assert(event==1?factory_bus.resync==1:factory_bus.power_event==2);
+  /* Simulate the next main-loop dispatch consuming that exact notification. */
+  factory_bus.power_event=factory_bus.resync=0;tf_http_cancelled=read_interrupt=0;
+  assert(runtime_wake(&d)&&running&&pin_policy.locked&&display_policy.on&&render_locked==1&&login_value==0);
+ }
+ reset(0);tf_display_sleep(&display_policy);read_interrupt=1;assert(runtime_wake(&d)&&running&&!display_runtime_fault&&soft_lock.locked&&!controls_enabled&&!display_policy.on&&!render_calls);
+ reset(1);pin_policy.locked=0;read_interrupt=1;assert(!screen_unlock_complete()&&running&&!display_runtime_fault&&!controls_enabled&&!login_calls&&factory_bus.resync==1&&pin_policy.locked&&display_policy.locked);
+ reset(0);tf_http_cancelled=1;read_failure=1;assert(!display_runtime_unlock_policy()&&!running&&display_runtime_fault); /* Cancellation alone is not proof of an OEM event. */
  reset(0);login_failure=1;assert(!runtime_wake(&d)&&!running&&login_calls==1&&!begin_calls&&!render_calls&&!request_calls);
  reset(1);render_failure=1;assert(!runtime_wake(&d)&&!running&&render_calls==1&&render_locked==1&&!request_calls);
  reset(0);wake_sensor_failure=1;assert(!runtime_wake(&d)&&!running&&wake_sensor_calls==1&&render_calls==1&&!request_calls&&!controls_enabled);

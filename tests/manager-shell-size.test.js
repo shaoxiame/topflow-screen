@@ -9,6 +9,8 @@ vm.runInContext(original.match(/<script[^>]*>([\s\S]*?)<\/script>/i)[1],context)
 const historical=context.TopFlowPackagePayload;
 const released027={};vm.createContext(released027);
 vm.runInContext(fs.readFileSync(path.join(root,'releases/topflow-screen-0.2.7.txt'),'utf8').match(/<script[^>]*>([\s\S]*?)<\/script>/i)[1],released027);
+const released0210={};vm.createContext(released0210);
+vm.runInContext(fs.readFileSync(path.join(root,'releases/topflow-screen-0.2.10.txt'),'utf8').match(/<script[^>]*>([\s\S]*?)<\/script>/i)[1],released0210);
 const controller=fs.readFileSync(path.join(root,'native/screenctl.sh'),'utf8');
 const current={...historical,version:require('../package.json').version,screenctlSource:controller,screenctlSha256:crypto.createHash('sha256').update(controller).digest('hex')};
 const sha='c'.repeat(64),bootId='01234567-89ab-cdef-0123-456789abcdef';
@@ -36,12 +38,26 @@ test('released full controller and current source generate every action below 96
  const oldBytes=Buffer.byteLength(context.TopFlowUfiPlugin.buildScreenCommand('status',historical));
  assert(oldBytes>=131072,'Preserve the exact released regression that crossed Linux sh -c limits');
  let maximum={name:'',bytes:0};
- for(const [label,payload] of [['released026',historical],['released027',released027.TopFlowPackagePayload],['current',current]])for(const [name,command]of Object.entries(commands(payload))){
+ for(const [label,payload] of [['released026',historical],['released027',released027.TopFlowPackagePayload],['released0210',released0210.TopFlowPackagePayload],['current',current]])for(const [name,command]of Object.entries(commands(payload))){
   const bytes=Buffer.byteLength(command);assert(bytes<limit,`${label}/${name}: ${bytes} bytes`);
   assert.equal(plugin.validateShellCommand(command),command);
   if(bytes>maximum.bytes)maximum={name:label+'/'+name,bytes};
  }
  console.log('Largest complete UFI command: '+maximum.name+' = '+maximum.bytes+' UTF-8 bytes');
+});
+
+test('ownership member constants reuse only identical bytes and every release still selects its exact digest and list',()=>{
+ const payload=released0210.TopFlowPackagePayload,command=plugin.buildScreenCommand('status',payload);
+ const declarations=[...command.matchAll(/^TF_MEMBERS_(\d+)='([^']*)'$/gm)];
+ const lists=new Map(declarations.map(m=>[m[1],m[2]]));
+ assert.equal(new Set(lists.values()).size,lists.size,'Only exactly identical complete lists can share storage');
+ const uses=[...command.matchAll(/tf_verify_owned '([a-f0-9]{64})' "\$TF_MEMBERS_(\d+)"/g)];
+ assert(uses.length>lists.size,'Shared historical lists should be encoded once');
+ for(const use of uses){assert(lists.has(use[2]));assert(command.includes("TOPFLOW_SCREEN_INSTALL_V1\\n%s' '"+use[1]+"'"),'Every lookup retains its exact archive marker');}
+ const selected=uses.filter(m=>m[1]===payload.archiveSha256);
+ assert(selected.length>=1);
+ for(const use of selected)assert.equal(lists.get(use[2]),payload.members.map(n=>n.replace(/^\.\//,'').replace(/\/$/,'')).filter(Boolean).join('\n'));
+ assert.match(command,/tf_verify_legacy_cleaning/);assert.match(command,/stat -c %h/);assert.match(command,/sha256sum -c/);
 });
 test('wallpaper operations retain current installation guards without embedding forbidden legacy execution paths',()=>{
  const command=plugin.buildWallpaperCommand('chunk',current,sha,{nonce:'d'.repeat(32),bootId,migration:true,offset:0,base64:'YQ=='});

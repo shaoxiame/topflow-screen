@@ -903,6 +903,216 @@
     "licenses/u60pro-devui-MIT.txt": "fccf401e30d878bdff5d8fec7fbc3663a5c4a40ffe1b5f7b52fe91fc3849e844"
   }
 });
+  // Exact public 0.2.8 archive, including every packaged file.
+  recoveryArchives.push({
+  "archiveSha256": "8c1da5c4140f3806d193bbed7d7fdcf73605fce6417f3f30eecba944d75eb8eb",
+  "members": [
+    "./",
+    "./boot-hook.sh",
+    "./boot-integrity.sha256",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    "./topflow-factory-bus-aarch64",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+    "./ui/subpages/sms.html",
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/FreeType-gzip-zlib.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    "./licenses/LLVM-libcxxabi.txt",
+    "./licenses/musl-COPYRIGHT.txt",
+    "./licenses/openwrt-NOTICE.txt",
+    "./licenses/pinyin-data-MIT.txt",
+    "./licenses/PolyForm-Noncommercial-1.0.0.txt",
+    "./licenses/u60pro-devui-MIT.txt"
+  ],
+  "files": {
+    "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e",
+    "boot-integrity.sha256": "87988287ba4061529478245af8730eb0771723205500448e9839416f3849b410",
+    "build-manifest.json": "f306abe31daa80db5e2d0d1f499451c00100c0975d612b41a13d73326b15be6c",
+    "NOTICE.txt": "f05b46f010573e07874c1fd5292a9f9a96763b007d05b61fdf27d060fb27f1fd",
+    "REBUILD.txt": "a0d0d7acf10c22a97e8ee3ab5f85b047b217239721e4c38c78dc7a313c12294e",
+    "screenctl.sh": "f3d9ffba5ebc80fb55483a404014eccb4bb243973a01414c0e09169d688e9856",
+    "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+    "topflow-factory-bus-aarch64": "4e7c8edb4ddf6f73b16778d03b9b507de4d0f70590e663324830d5067fa9bacc",
+    "topflow-screen": "afe0c7830f52e7f4779f64538c3d11ac67fc4e8789232d0e82e7a13a094688e4",
+    "topflow-screen.sha256": "cd299f5c4af83da751c189b1b6af044064877ddc57d889bb394604200c640c15",
+    "ui/aggregate.html": "31929d40ca085b727c94670e7f8c204f8b696044f37a52fdddb46a052c436502",
+    "ui/apps.html": "b9c1f80c11cd3edc3cfdfc8d4dccde5ca7aaad7cefcb8762138eeb82bef6bd0b",
+    "ui/index.html": "3e226952ac7f77300e865154f48d05c1d30fad2b7be05f5f7405bd3d85528ddf",
+    "ui/network.html": "366e854491a3f937c1ae527d312495070b00809c9e9efc7e5ab4db89f24d7bb3",
+    "ui/settings.html": "432e2b209f67b6ac44c2b7cb6449176852082e2d94ab5e615eff1cce983c0c20",
+    "ui/style.css": "94e1e5bc230a19efa19193d21c5b6b68fa86670d5a49499c35429f7bebfbff80",
+    "ui/subpages/sms.html": "dd628099fe4d3ec24f3de5ece4df2bf28c40139d604cb8cc391c48b74c831227",
+    "licenses/FreeType-FTL.txt": "308dca54b5aaa4a6ba0880621fe3bcf287956821aa948430263062a8333625c0",
+    "licenses/FreeType-gzip-zlib.txt": "c9e67393c37f15f3f9c02b708d4c6b739881db9c1bbcd504d3c7b65880c5509a",
+    "licenses/gumbo-Apache.txt": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+    "licenses/LGPL-2.1.txt": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+    "licenses/litehtml-BSD.txt": "7cf682bdf6081258672857ab473389e40d31620fbff847449db52c23ec422bf9",
+    "licenses/LLVM-libcxx.txt": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b",
+    "licenses/LLVM-libcxxabi.txt": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c",
+    "licenses/musl-COPYRIGHT.txt": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af",
+    "licenses/openwrt-NOTICE.txt": "81200142b6ecf5d1476cbb6ec707d4bd93c5e991f3f5d7b3439c4c18657dbfae",
+    "licenses/pinyin-data-MIT.txt": "9c048697be2502a16e8bcb282d5d465a07295b2def0ffb05a269c5d39dbe1586",
+    "licenses/PolyForm-Noncommercial-1.0.0.txt": "c0ea4a896d2c8c394b29f9427589996db826cd501c512279ff0ed3ef48fabbe5",
+    "licenses/u60pro-devui-MIT.txt": "fccf401e30d878bdff5d8fec7fbc3663a5c4a40ffe1b5f7b52fe91fc3849e844"
+  }
+});
+  // Exact delivered 0.2.9 archive, including every packaged file.
+  recoveryArchives.push({
+  "archiveSha256": "29caeea8aca38968097d4f8b11bb7577dbfb21e66985fb74afe2691f9d1ea2b1",
+  "members": [
+    "./",
+    "./boot-hook.sh",
+    "./boot-integrity.sha256",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    "./topflow-factory-bus-aarch64",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+    "./ui/subpages/sms.html",
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/FreeType-gzip-zlib.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    "./licenses/LLVM-libcxxabi.txt",
+    "./licenses/musl-COPYRIGHT.txt",
+    "./licenses/openwrt-NOTICE.txt",
+    "./licenses/pinyin-data-MIT.txt",
+    "./licenses/PolyForm-Noncommercial-1.0.0.txt",
+    "./licenses/u60pro-devui-MIT.txt"
+  ],
+  "files": {
+    "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e",
+    "boot-integrity.sha256": "3fa59f60356d25fe97c7865e445ae1a687251a73a9c0dd394efc9ae25a39e832",
+    "build-manifest.json": "6a780076cee08319cbaee8e12d41414e0eb1810b7b60477e956e2e2cce38cf3d",
+    "NOTICE.txt": "f05b46f010573e07874c1fd5292a9f9a96763b007d05b61fdf27d060fb27f1fd",
+    "REBUILD.txt": "a0d0d7acf10c22a97e8ee3ab5f85b047b217239721e4c38c78dc7a313c12294e",
+    "screenctl.sh": "f3d9ffba5ebc80fb55483a404014eccb4bb243973a01414c0e09169d688e9856",
+    "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+    "topflow-factory-bus-aarch64": "b2406eca7b2830718e6cb51ce74a23bedea11d860b0e393b89b2d35a14bd5120",
+    "topflow-screen": "8e7707b2f5ffa949fb5cfe78ac8c5a460d4d32503eea49e91bb8aff73490b2cd",
+    "topflow-screen.sha256": "c7adfd8ea03a0cd179f4b7fcd42efac6ccbf116e6dfe8b59a90509096f0f633f",
+    "ui/aggregate.html": "31929d40ca085b727c94670e7f8c204f8b696044f37a52fdddb46a052c436502",
+    "ui/apps.html": "b9c1f80c11cd3edc3cfdfc8d4dccde5ca7aaad7cefcb8762138eeb82bef6bd0b",
+    "ui/index.html": "3e226952ac7f77300e865154f48d05c1d30fad2b7be05f5f7405bd3d85528ddf",
+    "ui/network.html": "366e854491a3f937c1ae527d312495070b00809c9e9efc7e5ab4db89f24d7bb3",
+    "ui/settings.html": "432e2b209f67b6ac44c2b7cb6449176852082e2d94ab5e615eff1cce983c0c20",
+    "ui/style.css": "94e1e5bc230a19efa19193d21c5b6b68fa86670d5a49499c35429f7bebfbff80",
+    "ui/subpages/sms.html": "dd628099fe4d3ec24f3de5ece4df2bf28c40139d604cb8cc391c48b74c831227",
+    "licenses/FreeType-FTL.txt": "308dca54b5aaa4a6ba0880621fe3bcf287956821aa948430263062a8333625c0",
+    "licenses/FreeType-gzip-zlib.txt": "c9e67393c37f15f3f9c02b708d4c6b739881db9c1bbcd504d3c7b65880c5509a",
+    "licenses/gumbo-Apache.txt": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+    "licenses/LGPL-2.1.txt": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+    "licenses/litehtml-BSD.txt": "7cf682bdf6081258672857ab473389e40d31620fbff847449db52c23ec422bf9",
+    "licenses/LLVM-libcxx.txt": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b",
+    "licenses/LLVM-libcxxabi.txt": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c",
+    "licenses/musl-COPYRIGHT.txt": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af",
+    "licenses/openwrt-NOTICE.txt": "81200142b6ecf5d1476cbb6ec707d4bd93c5e991f3f5d7b3439c4c18657dbfae",
+    "licenses/pinyin-data-MIT.txt": "9c048697be2502a16e8bcb282d5d465a07295b2def0ffb05a269c5d39dbe1586",
+    "licenses/PolyForm-Noncommercial-1.0.0.txt": "c0ea4a896d2c8c394b29f9427589996db826cd501c512279ff0ed3ef48fabbe5",
+    "licenses/u60pro-devui-MIT.txt": "fccf401e30d878bdff5d8fec7fbc3663a5c4a40ffe1b5f7b52fe91fc3849e844"
+  }
+});
+  // Exact delivered 0.2.10 archive, including every packaged file.
+  recoveryArchives.push({
+  "archiveSha256": "3de98ece0191e4f7da5ff1967bbf171d733673183e398a4b91f403ef6afa5574",
+  "members": [
+    "./",
+    "./boot-hook.sh",
+    "./boot-integrity.sha256",
+    "./build-manifest.json",
+    "./licenses/",
+    "./NOTICE.txt",
+    "./REBUILD.txt",
+    "./screenctl.sh",
+    "./supervisor.sh",
+    "./topflow-factory-bus-aarch64",
+    "./topflow-screen",
+    "./topflow-screen.sha256",
+    "./ui/",
+    "./ui/aggregate.html",
+    "./ui/apps.html",
+    "./ui/index.html",
+    "./ui/network.html",
+    "./ui/settings.html",
+    "./ui/style.css",
+    "./ui/subpages/",
+    "./ui/subpages/sms.html",
+    "./licenses/FreeType-FTL.txt",
+    "./licenses/FreeType-gzip-zlib.txt",
+    "./licenses/gumbo-Apache.txt",
+    "./licenses/LGPL-2.1.txt",
+    "./licenses/litehtml-BSD.txt",
+    "./licenses/LLVM-libcxx.txt",
+    "./licenses/LLVM-libcxxabi.txt",
+    "./licenses/musl-COPYRIGHT.txt",
+    "./licenses/openwrt-NOTICE.txt",
+    "./licenses/pinyin-data-MIT.txt",
+    "./licenses/PolyForm-Noncommercial-1.0.0.txt",
+    "./licenses/u60pro-devui-MIT.txt"
+  ],
+  "files": {
+    "boot-hook.sh": "005aa42b73a0f83fbd752310733c960591f2cc7e8919f9c0394f6b27b1ba165e",
+    "boot-integrity.sha256": "cd06343bc88749ce74bdcb2b8f2c91b6658ce0e42d5c37ef5af2d0eac008efd5",
+    "build-manifest.json": "fc1954b81f024b6c8513ce855901bc29ebc899a04292f1c1800f091c067dfaf5",
+    "NOTICE.txt": "f05b46f010573e07874c1fd5292a9f9a96763b007d05b61fdf27d060fb27f1fd",
+    "REBUILD.txt": "a0d0d7acf10c22a97e8ee3ab5f85b047b217239721e4c38c78dc7a313c12294e",
+    "screenctl.sh": "f3d9ffba5ebc80fb55483a404014eccb4bb243973a01414c0e09169d688e9856",
+    "supervisor.sh": "e6246273b557950d1ed3241d186676a598136a85895e036bfbab8b0896f35488",
+    "topflow-factory-bus-aarch64": "ff3ec3eed6b8e6b4e0b0134a2046e226dc004368d8e3a1a013190f909cffda67",
+    "topflow-screen": "b8babb3a69838d1fe2153a75065833edca737df28976b7c00c11af3fb6ead2f5",
+    "topflow-screen.sha256": "c804f91f2c6d40bc653a73240e7790c2b6b9ec402c6d2259939a882e279f05ea",
+    "ui/aggregate.html": "31929d40ca085b727c94670e7f8c204f8b696044f37a52fdddb46a052c436502",
+    "ui/apps.html": "b9c1f80c11cd3edc3cfdfc8d4dccde5ca7aaad7cefcb8762138eeb82bef6bd0b",
+    "ui/index.html": "3e226952ac7f77300e865154f48d05c1d30fad2b7be05f5f7405bd3d85528ddf",
+    "ui/network.html": "366e854491a3f937c1ae527d312495070b00809c9e9efc7e5ab4db89f24d7bb3",
+    "ui/settings.html": "432e2b209f67b6ac44c2b7cb6449176852082e2d94ab5e615eff1cce983c0c20",
+    "ui/style.css": "94e1e5bc230a19efa19193d21c5b6b68fa86670d5a49499c35429f7bebfbff80",
+    "ui/subpages/sms.html": "dd628099fe4d3ec24f3de5ece4df2bf28c40139d604cb8cc391c48b74c831227",
+    "licenses/FreeType-FTL.txt": "308dca54b5aaa4a6ba0880621fe3bcf287956821aa948430263062a8333625c0",
+    "licenses/FreeType-gzip-zlib.txt": "c9e67393c37f15f3f9c02b708d4c6b739881db9c1bbcd504d3c7b65880c5509a",
+    "licenses/gumbo-Apache.txt": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+    "licenses/LGPL-2.1.txt": "20e50fe7aae3e56378ebf0417d9de904f55a0e61e4df315333e632a4d3555d95",
+    "licenses/litehtml-BSD.txt": "7cf682bdf6081258672857ab473389e40d31620fbff847449db52c23ec422bf9",
+    "licenses/LLVM-libcxx.txt": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b",
+    "licenses/LLVM-libcxxabi.txt": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c",
+    "licenses/musl-COPYRIGHT.txt": "f9bc4423732350eb0b3f7ed7e91d530298476f8fec0c6c427a1c04ade22655af",
+    "licenses/openwrt-NOTICE.txt": "81200142b6ecf5d1476cbb6ec707d4bd93c5e991f3f5d7b3439c4c18657dbfae",
+    "licenses/pinyin-data-MIT.txt": "9c048697be2502a16e8bcb282d5d465a07295b2def0ffb05a269c5d39dbe1586",
+    "licenses/PolyForm-Noncommercial-1.0.0.txt": "c0ea4a896d2c8c394b29f9427589996db826cd501c512279ff0ed3ef48fabbe5",
+    "licenses/u60pro-devui-MIT.txt": "fccf401e30d878bdff5d8fec7fbc3663a5c4a40ffe1b5f7b52fe91fc3849e844"
+  }
+});
   function error(code, message) { var e = new Error(message); e.code = code; return e; }
   function failureMessage(code) {
     var messages = {
@@ -1013,23 +1223,34 @@
   }
   function screenOwnershipGuard(payload, wallpaperSnapshot, restoreSha, currentOnly) {
     nativePayload(payload);
-    function verifyOwned(archive) { return 'tf_verify_owned ' + shellQuote(archive.archiveSha256) + ' ' + shellQuote(installedMembers(archive).join('\n')) + '\n'; }
+    // Several exact releases share the same member list. Reuse only identical
+    // bytes; every archive digest and every per-file check remains independent.
+    var memberLists = [];
+    function verifyOwned(archive) {
+      var members = installedMembers(archive).join('\n'), index = memberLists.indexOf(members);
+      if (index < 0) { index = memberLists.length; memberLists.push(members); }
+      return 'tf_verify_owned ' + shellQuote(archive.archiveSha256) + ' "$TF_MEMBERS_' + index + '"\n';
+    }
+    var currentOwnership = verifyOwned(payload);
     var helpers = 'tf_verify_owned() {\n' +
       '[ -f "$TF_ROOT/.topflow-install" ] && [ ! -L "$TF_ROOT/.topflow-install" ] && [ "$(cat "$TF_ROOT/.topflow-install")" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' "$1")" ] || { echo TOPFLOW_ERROR=UNVERIFIED_OWNERSHIP; exit 1; }\n' +
       '[ -f "$TF_ROOT/.topflow-files" ] && [ ! -L "$TF_ROOT/.topflow-files" ] && [ "$(cat "$TF_ROOT/.topflow-files")" = "$2" ] || { echo TOPFLOW_ERROR=UNVERIFIED_MANIFEST; exit 1; }\n}\n' +
       'tf_verify_legacy_cleaning() {\nTF_LEGACY_CLEANING=false\nif [ -e "$TF_ROOT/.uninstalling" ] || [ -L "$TF_ROOT/.uninstalling" ]; then\n' +
       '[ -f "$TF_ROOT/.uninstalling" ] && [ ! -L "$TF_ROOT/.uninstalling" ] && [ "$(stat -c %h "$TF_ROOT/.uninstalling")" = 1 ] && [ "$(stat -c %u "$TF_ROOT/.uninstalling")" = 0 ] && [ "$(cat "$TF_ROOT/.uninstalling")" = uninstalling ] && [ ! -e "$TF_ROOT/.upload-active" ] && [ ! -L "$TF_ROOT/.upload-active" ] && [ ! -e "$TF_ROOT/.install-owner" ] || { echo TOPFLOW_ERROR=UNVERIFIED_LEGACY_FILES; exit 1; }\nTF_LEGACY_CLEANING=true\nfi\n}\n' +
-      'tf_verify_legacy_file() {\n' +
+      // This internal name is repeated for every trusted archive member.
+      // Keep it short without removing any ownership or checksum checks.
+      'tf_lf() {\n' +
       'if [ ! -e "$TF_ROOT/$1" ] && [ ! -L "$TF_ROOT/$1" ] && [ "$TF_LEGACY_CLEANING" = true ]; then return 0; fi\n' +
       '[ -f "$TF_ROOT/$1" ] && [ ! -L "$TF_ROOT/$1" ] && [ "$(stat -c %h "$TF_ROOT/$1")" = 1 ] || { echo TOPFLOW_ERROR=UNVERIFIED_LEGACY_FILES; exit 1; }\n' +
       'printf \'%s  %s\\n\' "$2" "$TF_ROOT/$1" | sha256sum -c - >/dev/null 2>&1 || { echo TOPFLOW_ERROR=UNVERIFIED_LEGACY_FILES; exit 1; }\n}\n';
     var branches = (currentOnly ? [] : recoveryArchives).map(function (archive) {
-      var checks = Object.keys(archive.files).map(function (name) { return 'tf_verify_legacy_file ' + shellQuote(name) + ' ' + shellQuote(archive.files[name]) + '\n'; }).join('');
+      var checks = Object.keys(archive.files).map(function (name) { return 'tf_lf ' + shellQuote(name) + ' ' + shellQuote(archive.files[name]) + '\n'; }).join('');
       return 'elif [ "$TF_INSTALLED_MARKER" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(archive.archiveSha256) + ')" ]; then\n' + verifyOwned(archive) + 'tf_verify_legacy_cleaning\n' + checks + 'TF_VERSION_MISMATCH=true\n';
     }).join('');
-    return helpers + 'tf_verify_install() {\nTF_VERSION_MISMATCH=false\n' +
+    var memberConstants = memberLists.map(function (members, index) { return 'TF_MEMBERS_' + index + '=' + shellQuote(members) + '\n'; }).join('');
+    return memberConstants + helpers + 'tf_verify_install() {\nTF_VERSION_MISMATCH=false\n' +
       'TF_INSTALLED_MARKER=$(cat "$TF_ROOT/.topflow-install" 2>/dev/null || true)\n' +
-      'if [ "$TF_INSTALLED_MARKER" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(payload.archiveSha256) + ')" ]; then\n' + verifyOwned(payload) + branches +
+      'if [ "$TF_INSTALLED_MARKER" = "$(printf \'TOPFLOW_SCREEN_INSTALL_V1\\n%s\' ' + shellQuote(payload.archiveSha256) + ')" ]; then\n' + currentOwnership + branches +
       'else echo TOPFLOW_ERROR=INSTALLED_VERSION_MISMATCH; exit 1; fi\n' + (wallpaperSnapshot ? wallpaperSnapshotChecks(wallpaperSnapshot) : '') + (restoreSha ? wallpaperRestoreChecks(restoreSha) : '') + '}\ntf_verify_install\n';
   }
   function memoryController(action, payload) {
@@ -1396,6 +1617,31 @@
       } catch (e) { currentState = null; say(e.message + '。请刷新查看实际状态，不会自动重试。'); }
       finally { busy = false; activeAction = ''; updateButtons(); }
     }
+    function confirmedAutostartEnabled(state) {
+      var boot = state && state.autostart;
+      return !!(state && state.installed && !state.partial && !state.uploadActive && !state.waiting && boot && boot.enabled === true && boot.hook === 'present' && boot.state !== 'disabled' && !['CONFIG_INVALID', 'INTEGRITY_FAILED', 'HOOK_CONFLICT'].includes(boot.reason));
+    }
+    function upgradeScreenReady(state) {
+      return state && state.installed && !state.versionMismatch && !state.partial && !state.uploadActive && !state.waiting && !state.failure && state.mode === 'custom' && state.ready && state.supervised && state.pid !== null && state.heartbeatAge !== null && state.heartbeatAge <= 12;
+    }
+    async function restoreUpgradeAutostart() {
+      // The caller holds the update busy lock and only enters after three
+      // healthy new-screen observations. Never toggle or persist an intent.
+      if (cancelRequested) throw error('SWITCH_CANCELLED', '更新操作已取消，未恢复自启动');
+      currentState = await readStatus();
+      if (cancelRequested) throw error('SWITCH_CANCELLED', '更新操作已取消，未恢复自启动');
+      var boot = currentState.autostart;
+      if (!upgradeScreenReady(currentState) || !boot) throw error('AUTOSTART_UNCONFIRMED', '新版组件或自启动状态未确认');
+      if (!confirmedAutostartEnabled(currentState)) {
+        if (boot.enabled !== false || boot.hook !== 'absent' || boot.state !== 'disabled') throw error('AUTOSTART_UNCONFIRMED', '新版自启动配置异常，未重新开启');
+        say('正在恢复更新前已开启的自启动设置…');
+        await shell(buildScreenCommand('autostart-enable', payload, true), 'TOPFLOW_AUTOSTART=ENABLED', 45000);
+        currentState = await readStatus();
+        if (!upgradeScreenReady(currentState) || !confirmedAutostartEnabled(currentState)) throw error('AUTOSTART_UNCONFIRMED', '自启动设置回读不一致');
+      }
+      updateButtons();
+      say('屏幕组件已更新并确认运行；更新前已开启的开机自启动已恢复并回读确认。请目视检查画面和触摸。');
+    }
     async function installNative() {
       var stage = '创建安装目录';
       try {
@@ -1506,7 +1752,7 @@
       if (currentState && currentState.partial && !currentState.versionMismatch) return uninstallPlugin();
       busy = true; activeAction = 'switch'; stateEpoch++; cancelRequested = false; cancelTask = null;
       cancelSignal = new Promise(function (resolve) { cancelWake = resolve; }); updateButtons();
-      var switchContext = null, updating = requestUpdate === true;
+      var switchContext = null, updating = requestUpdate === true, preserveAutostart = false;
       try {
         var state = await screenStatus();
         if (state.uploadActive || state.waiting) { say(state.waiting ? waitingMessage(state) : '组件上传尚未结束，暂不能切换或更新。'); return; }
@@ -1514,8 +1760,9 @@
         if (state.partial && !state.versionMismatch) { busy = false; return await uninstallPlugin(); }
         var action = requestUpdate === true ? 'start' : state.mode === 'custom' || state.mode === 'unknown' && state.installed || state.failure === 'TRANSITION_GUARD_RELEASE_UNCONFIRMED' || state.failure === 'FACTORY_RESTORE_UNCONFIRMED' || state.failure === 'RENDERER_STILL_ACTIVE' ? 'restore' : 'start';
         updating = action === 'start' && state.versionMismatch === true;
+        preserveAutostart = updating && confirmedAutostartEnabled(state);
         if (action === 'start') releaseAllowed(payload);
-        var prompt = action === 'restore' ? '停止插件屏幕并恢复原厂屏幕。' + (state.autostart && state.autostart.enabled ? '开机自启动仍已开启；下次重启会再次加载插件屏幕，可另行关闭自启动开关。' : '') + '确认切换？' : (state.versionMismatch ? '更新到本 TXT 的 v' + versionLabel + '：将自动恢复并确认原厂稳定，清理已核验的旧组件，安装新版后启动插件屏幕；期间屏幕会短暂切换，无需手动恢复或再次启用。壁纸会校验后暂存本页内存并恢复，更新完成前请勿关闭或刷新页面。UFI 插件记录保持不变。' : !state.installed ? '将安装组件到 /data/plugins/topflow-screen 并切换到插件屏幕。' : '将切换到插件屏幕。') + (payload.directSwitch ? '将直接点亮插件屏幕，原厂启用PIN时保持锁屏；无需等待自然熄屏。新版尚未在设备验证。' : payload.diagnosticCandidate ? '这是诊断自测版，既有启动失败根因尚未确定，新版尚未在设备验证。' : '实体屏尚未实机验证。') + '原厂文件保留，开机自启动由独立开关控制。' + (updating && state.autostart && state.autostart.enabled ? '本次组件更新会清除旧自启动设置，更新后请重新开启。' : '') + '确认继续？';
+        var prompt = action === 'restore' ? '停止插件屏幕并恢复原厂屏幕。' + (state.autostart && state.autostart.enabled ? '开机自启动仍已开启；下次重启会再次加载插件屏幕，可另行关闭自启动开关。' : '') + '确认切换？' : (state.versionMismatch ? '更新到本 TXT 的 v' + versionLabel + '：将自动恢复并确认原厂稳定，清理已核验的旧组件，安装新版后启动插件屏幕；期间屏幕会短暂切换，无需手动恢复或再次启用。壁纸会校验后暂存本页内存并恢复，更新完成前请勿关闭或刷新页面。UFI 插件记录保持不变。' : !state.installed ? '将安装组件到 /data/plugins/topflow-screen 并切换到插件屏幕。' : '将切换到插件屏幕。') + (payload.directSwitch ? '将直接点亮插件屏幕，原厂启用PIN时保持锁屏；无需等待自然熄屏。新版尚未在设备验证。' : payload.diagnosticCandidate ? '这是诊断自测版，既有启动失败根因尚未确定，新版尚未在设备验证。' : '实体屏尚未实机验证。') + '原厂文件保留，开机自启动由独立开关控制。' + (preserveAutostart ? '更新成功后将恢复并核验当前已开启的自启动设置，无需重新开启。' : updating ? '未确认已有有效的自启动开启设置，本次更新不会自动开启。' : '') + '确认继续？';
         if (!await confirmAction(prompt)) { say('已取消，未执行屏幕切换。'); return; }
         stopWebScreen();
         if (action === 'start' && state.versionMismatch) {
@@ -1524,6 +1771,10 @@
           var wallpaperSnapshot = await root.TopFlowWallpaperMigration.backup({ hash: root.TopFlowManagerWallpaper.sha256, read: function (snapshot, offset) { return shell(buildWallpaperBackupCommand(payload, snapshot, offset), null, 20000); } });
           if (upgradeWallpaper && upgradeWallpaper.sha256 !== wallpaperSnapshot.sha256) throw error('WALLPAPER_BACKUP_CHANGED', '旧版壁纸与本页保留的备份不一致，未移除旧组件');
           if (wallpaperSnapshot.bytes) upgradeWallpaper = wallpaperSnapshot;
+          if (preserveAutostart) {
+            state = await readStatus();
+            if (!state.versionMismatch || !confirmedAutostartEnabled(state)) throw error('AUTOSTART_CHANGED', '旧组件或自启动设置已变化，未清理旧组件；请刷新后重新确认更新');
+          }
           say('正在确认原厂稳定并移除已核验的旧组件…');
           await shell(buildScreenCommand('uninstall', payload, true, wallpaperSnapshot), 'TOPFLOW_UNINSTALL=COMPONENTS_REMOVED', 60000);
           state = await readStatus();
@@ -1534,6 +1785,10 @@
         say(action === 'start' ? payload.directSwitch ? '正在直接交接并点亮插件屏幕…' : '正在切换到插件屏幕…' : '正在恢复原厂屏幕…');
         switchContext = { action: action, submitted: false, previousFailure: JSON.stringify([state.failure, state.rendererFailure, state.rendererExitStatus]) };
         await switchScreen(action, switchContext);
+        if (preserveAutostart) {
+          try { await restoreUpgradeAutostart(); }
+          catch (restoreError) { throw error('AUTOSTART_RESTORE_UNCONFIRMED', '屏幕组件已更新，但开机自启动恢复未确认：' + restoreError.message); }
+        }
         if (wallpaperUI) await wallpaperUI.refresh();
       } catch (e) {
         var refreshedState = null, refreshFailed = false;
@@ -1541,7 +1796,7 @@
         var detail = e.message;
         // Only a fresh read belongs here. A cached failure predating an install
         // or rejected command must not replace that operation's actual error.
-        var freshFailure = refreshedState && refreshedState.failure && switchContext && switchContext.action === 'start' &&
+        var freshFailure = e.code !== 'AUTOSTART_RESTORE_UNCONFIRMED' && refreshedState && refreshedState.failure && switchContext && switchContext.action === 'start' &&
           (switchContext.submitted || JSON.stringify([refreshedState.failure, refreshedState.rendererFailure, refreshedState.rendererExitStatus]) !== switchContext.previousFailure);
         if (freshFailure) {
           var failureDetail = failureStatusMessage(refreshedState) + (refreshedState.mode === 'factory' ? '。原厂屏幕进程已回读确认' : '。请确认原厂恢复状态');
@@ -1549,7 +1804,7 @@
           if (switchContext.submitted && (e.code === 'STATUS_READ_FAILED' || e.code === 'STATUS_TIMEOUT')) detail += '。' + e.message;
         }
         if (refreshFailed) detail += '。随后刷新状态也失败，当前恢复状态未确认';
-        say(detail + (upgradeWallpaper ? '。升级尚未完成；壁纸保留在本页内存，请勿关闭或刷新页面。组件安装完成后可点击“重试恢复升级前壁纸”，不会自动重试。' : currentState && currentState.partial ? '。确有未完成安装，可使用清理按钮；不会自动覆盖或重试。' : updating ? '。更新未完成，请刷新查看当前组件与屏幕状态；不会自动重试。' : '。组件不会因此被删除，可查看状态后重试。'));
+        say(detail + (e.code === 'AUTOSTART_RESTORE_UNCONFIRMED' ? '。请刷新检查自启动开关；不会自动重试，也不会再次更新组件。' : upgradeWallpaper ? '。升级尚未完成；壁纸保留在本页内存，请勿关闭或刷新页面。组件安装完成后可点击“重试恢复升级前壁纸”，不会自动重试。' : currentState && currentState.partial ? '。确有未完成安装，可使用清理按钮；不会自动覆盖或重试。' : updating ? '。更新未完成，请刷新查看当前组件与屏幕状态；不会自动重试。' : '。组件不会因此被删除，可查看状态后重试。'));
       }
       finally {
         if (cancelTask) { try { await cancelTask; } catch (_) {} }

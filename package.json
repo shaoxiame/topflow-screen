@@ -1,8 +1,8 @@
 {
   "name": "topflow-screen-studio",
-  "version": "0.2.8",
+  "version": "0.2.11",
   "private": true,
-  "description": "TopFlow screen plugin 0.2.8 final source release; noncommercial modification permitted",
+  "description": "TopFlow screen plugin 0.2.11 final source release; noncommercial modification permitted",
   "engines": {"node": ">=22"},
   "scripts": {"test": "node tools/test-public.cjs", "preview": "node tools/preview-server.cjs", "prepare:release": "node tools/prepare-public-release.cjs", "build": "node tools/build.cjs"}
 }

@@ -2,6 +2,11 @@ $ErrorActionPreference='Stop'
 $root=$PSScriptRoot
 New-Item -ItemType Directory -Force "$root/build-preview","$root/bin","$root/preview" | Out-Null
 $main=[IO.File]::ReadAllText("$root/topflow_main.c")
+$runtime=[IO.File]::ReadAllText("$root/display_runtime.h")
+$interruptStart=$runtime.IndexOf('static int display_runtime_interrupted(void)')
+$interruptEnd=$runtime.IndexOf('static int display_runtime_unlock_policy(void)',$interruptStart)
+if($interruptStart -lt 0 -or $interruptEnd -le $interruptStart){throw 'Display interruption helper boundaries missing'}
+$interrupt=$runtime.Substring($interruptStart,$interruptEnd-$interruptStart)
 function Slice([string]$start,[string]$end){$a=$main.IndexOf($start);$b=$main.IndexOf($end,$a);if($a -lt 0 -or $b -lt 0){throw "Missing main boundary $start"};return $main.Substring($a,$b-$a)}
 $unlock=Slice 'static int screen_unlock_complete(void)' '/* Local no-PIN hold'
 $input=Slice 'static int screen_soft_input(' 'static void action('
@@ -14,6 +19,8 @@ $source=@'
 #include <stdio.h>
 #include <string.h>
 #include "soft_lock.h"
+#include "pin_policy.h"
+#include "display_policy.h"
 #define TF_FL_READY 6
 static tf_soft_lock soft_lock;
 static struct{int current;}lock_wallpaper;
@@ -22,18 +29,24 @@ static int power_menu_action(const char*a){return 0;}
 static char advanced_html[16];
 static void refresh_tokens(void){}
 static void power_menu_render(void){}
-static struct{int enabled,locked;}pin_policy;
+static tf_pin_policy pin_policy;
+static tf_display_policy display_policy;
 static struct{int phase,brightness;}factory_lifecycle;
 static int display_runtime_ready=1,on=1,frame_ready=1,theme_dark,controls_enabled,busy_visible;
-static int reads,logins,login_value,policy_ok=1,login_ok=1,cancelled,damage,content_actions,pin_calls;
+static int reads,logins,login_value,policy_ok=1,login_ok=1,cancelled,damage,content_actions,pin_calls,policy_interrupt;
 static char painted[64];
 static uint32_t test_clock,gesture_block_until;static int queued,clear_calls,take_calls;static struct{int mode;}drag;static struct{int active;}settle;
 static uint32_t tick(void){return test_clock;}
-static int tf_http_cancelled,test_oem_on=1;static int runtime_factory_power_read(int force){(void)force;return test_oem_on;}static void tf_page_state_cancel(void){}
+static int running,display_runtime_fault,tf_http_cancelled,test_oem_on=1;static int runtime_factory_power_read(int force){(void)force;return test_oem_on;}static void tf_page_state_cancel(void){}
+static struct{int power_event,resync;}factory_bus;
+static int test_power_gate(void){return runtime_factory_power_read(1);}static int(*display_power_on_hook)(void)=test_power_gate;
+PRODUCTION_INTERRUPT
 static void touch_input_clear_taps(int*t){queued=0;clear_calls++;}
 static int touch_input_take_latest_gesture(int*t,int*x0,int*y0,int*x1,int*y1,int*tap){take_calls++;int was=queued;queued=0;return was;}
 typedef struct{int unused;}drm_disp_t;
-static int display_runtime_unlock_policy(void){reads++;return policy_ok;}
+/* Only the external policy read/transport is simulated. Real interruption,
+ * PIN/soft-lock reducers and all main unlock/input/render paths are used. */
+static int display_runtime_unlock_policy(void){reads++;if(policy_interrupt){tf_http_cancelled=1;if(policy_interrupt==1)factory_bus.resync=1;else factory_bus.power_event=2;return 0;}return policy_ok;}
 static int display_runtime_login(int value){logins++;login_value=value;return login_ok;}
 static int backlight_is_on(void){return on;}
 static void motion_cancel(void){cancelled++;}
@@ -57,7 +70,7 @@ static void loop_frame(drm_disp_t*display,uint32_t clock,int pressed,int x,int y
 DISPATCH
 GESTURE
 }while(0);assert(!result);}
-static void reset(int pin){test_oem_on=1;pin_policy.enabled=pin;pin_policy.locked=pin;tf_soft_lock_reset(&soft_lock,pin);controls_enabled=0;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=100;display_runtime_ready=on=policy_ok=login_ok=1;reads=logins=cancelled=damage=content_actions=pin_calls=0;gesture_block_until=queued=clear_calls=take_calls=0;}
+static void reset(int pin){running=1;display_runtime_fault=tf_http_cancelled=policy_interrupt=0;memset(&factory_bus,0,sizeof factory_bus);test_oem_on=1;tf_pin_start(&pin_policy,pin,0,0,0);memset(&display_policy,0,sizeof display_policy);display_policy.locked=pin;tf_soft_lock_reset(&soft_lock,pin);controls_enabled=0;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=100;display_runtime_ready=on=policy_ok=login_ok=1;reads=logins=cancelled=damage=content_actions=pin_calls=0;gesture_block_until=queued=clear_calls=take_calls=0;}
 int main(void){drm_disp_t d={0};int dirty=0;
  reset(0);assert(render(&d)&&!strcmp(painted,"HOLD ONLY"));action("act:confirm");assert(!content_actions&&!controls_enabled&&!reads&&!logins);
  /* A finger already down at entry cannot satisfy the hold. */
@@ -75,13 +88,27 @@ int main(void){drm_disp_t d={0};int dirty=0;
  /* Completion rechecks unchanged original policy and login acknowledgement. */
  reset(0);screen_soft_input(&d,0,0,0,0,0,&dirty);screen_soft_input(&d,1,1,100,390,0,&dirty);policy_ok=0;assert(screen_soft_input(&d,1001,1,100,390,0,&dirty)==-1&&!controls_enabled&&reads==1&&!logins);
  reset(0);screen_soft_input(&d,0,0,0,0,0,&dirty);screen_soft_input(&d,1,1,100,390,0,&dirty);policy_ok=0;test_oem_on=0;assert(screen_soft_input(&d,1001,1,100,390,0,&dirty)==1&&soft_lock.locked&&!controls_enabled);test_oem_on=1;
+ for(int event=1;event<=2;event++){
+  reset(0);dirty=0;screen_soft_input(&d,0,0,0,0,0,&dirty);screen_soft_input(&d,1,1,100,390,0,&dirty);policy_interrupt=event;
+  assert(screen_soft_input(&d,1001,1,100,390,0,&dirty)==1&&running&&!display_runtime_fault&&soft_lock.locked&&!controls_enabled&&!dirty&&reads==1&&!logins);
+  assert(event==1?factory_bus.resync==1:factory_bus.power_event==2);
+  assert(render(&d)&&!strcmp(painted,"HOLD ONLY"));action("act:confirm");assert(!content_actions&&!controls_enabled);
+  /* Dispatch may clear the event, but neither the held finger nor its old
+   * release can complete the cancelled hold or expose the protected page. */
+  policy_interrupt=tf_http_cancelled=0;factory_bus.resync=factory_bus.power_event=0;
+  assert(screen_soft_input(&d,3001,1,100,390,0,&dirty)==1&&soft_lock.locked&&reads==1&&!logins);
+  assert(screen_soft_input(&d,3002,0,100,390,0,&dirty)==1&&soft_lock.locked&&!controls_enabled);
+  assert(render(&d)&&!strcmp(painted,"HOLD ONLY"));
+  screen_soft_input(&d,3100,1,100,390,0,&dirty);
+  assert(screen_soft_input(&d,4100,1,100,390,0,&dirty)==1&&!soft_lock.locked&&soft_lock.block_release&&controls_enabled&&reads==2&&logins==1);
+ }
  reset(0);screen_soft_input(&d,0,0,0,0,0,&dirty);screen_soft_input(&d,1,1,100,390,0,&dirty);login_ok=0;assert(screen_soft_input(&d,1001,1,100,390,0,&dirty)==-1&&!controls_enabled&&logins==1);
  /* Wrap-around and exact rectangle bounds, including right/bottom exclusion. */
  tf_soft_lock q;tf_soft_lock_reset(&q,0);tf_soft_lock_touch(&q,UINT32_MAX-600,0,20,366,1);tf_soft_lock_touch(&q,UINT32_MAX-500,1,20,366,1);assert(tf_soft_lock_touch(&q,499,1,299,425,1)==TF_SOFT_UNLOCK);assert(!tf_soft_lock_inside(300,390)&&!tf_soft_lock_inside(100,426)&&!tf_soft_lock_inside(19,366)&&!tf_soft_lock_inside(20,365));
  puts("PASS: actual main no-PIN render/action/input gates; 1000ms inside-only hold; progress damage only; initial held finger/outside/move-out/release/interruption reset; completing release consumed; enabled PIN priority; policy/login failure cannot authorize; timer wrap and exact hit bounds");return 0;
 }
 '@
-$source=$source.Replace("`nUNLOCK`n","`n$unlock`n").Replace('INPUT',$input).Replace('ACTION',$action).Replace('RENDER',$render).Replace('DISPATCH',$dispatch).Replace('GESTURE',$gesture)
+$source=$source.Replace('PRODUCTION_INTERRUPT',$interrupt).Replace("`nUNLOCK`n","`n$unlock`n").Replace('INPUT',$input).Replace('ACTION',$action).Replace('RENDER',$render).Replace('DISPATCH',$dispatch).Replace('GESTURE',$gesture)
 [IO.File]::WriteAllText("$root/build-preview/test-soft-lock.c",$source)
 & "$root/toolchain/zig-x86_64-windows-0.14.1/zig.exe" cc -target x86_64-windows-gnu "-I$root" "$root/build-preview/test-soft-lock.c" -o "$root/bin/test-soft-lock.exe"
 if($LASTEXITCODE -ne 0){throw 'Soft lock integration test build failed'}

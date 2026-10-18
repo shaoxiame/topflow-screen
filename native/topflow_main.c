@@ -120,6 +120,7 @@ static int wifi_status_read_now(void){
 #include "lock_wallpaper.h"
 static tf_soft_lock soft_lock;
 #include "display_runtime.h"
+static int runtime_pin_ready(void){return runtime_factory_power_ready()&&!factory_bus.power_event&&!factory_bus.resync;}
 
 /* Bus event delivery is consumed before every positive display/action gate,
  * including bounded vendor waits. Never fork UCI for routine sampling. */
@@ -129,7 +130,7 @@ static int runtime_factory_power_read(int force){
   tf_factory_power_event(&factory_power,factory_bus.device_power_state,factory_bus.device_power_sequence,factory_bus.device_power_off_seen);
  }
  uint32_t now=tick();if(force||tf_factory_power_due(&factory_power,now))tf_factory_power_observe(&factory_power,tf_factory_power_read_path("/etc/config/zwrt_zte_mc_tmp"),now);
- return tf_factory_power_can_use(&factory_power);
+ return !factory_bus.sleep_unavailable&&tf_factory_power_can_use(&factory_power);
 }
 /* Original libSleep uses libuci's effective value, including saved deltas.
  * Match it once per preflight/adoption before we touch DRM or the backlight. */
@@ -273,10 +274,10 @@ static int lock_rate_animation_tick(drm_disp_t*d,uint32_t now){
  }
  return logical_damage(d,36,260,248,36);
 }
-static void screen_lock(void){form_reset();tf_page_state_cancel();tf_wifi_runtime_close(&wifi_runtime);power_menu_reset();lock_wallpaper_invalidate();controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();if(!display_runtime_unlock_policy())return;tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
+static void screen_lock(void){form_reset();tf_page_state_cancel();tf_wifi_runtime_close(&wifi_runtime);power_menu_reset();lock_wallpaper_invalidate();controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(!display_runtime_unlock_policy())return;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
 /* A successful PIN entry alone is not enough: recheck the factory policy and
  * login acknowledgement before enabling confirmed business writes. */
-static int screen_unlock_complete(void){controls_enabled=0;if(pin_policy.locked||soft_lock.locked||!display_runtime_unlock_policy()||!display_runtime_login(1))return 0;controls_enabled=1;return 1;}
+static int screen_unlock_complete(void){controls_enabled=0;if(pin_policy.locked||soft_lock.locked)return 0;if(!display_runtime_unlock_policy()||!display_runtime_login(1)){tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;tf_soft_lock_reset(&soft_lock,pin_policy.enabled);return 0;}controls_enabled=1;return 1;}
 /* Local no-PIN hold is isolated from native PIN authentication and business
  * actions. Return consumption even on the completing/releasing frame. */
 static int screen_soft_input(drm_disp_t*d,uint32_t now,int pressed,int x,int y,int blocked,int*dirty){
@@ -284,7 +285,7 @@ static int screen_soft_input(drm_disp_t*d,uint32_t now,int pressed,int x,int y,i
  if(pin_policy.enabled){tf_soft_lock_reset(&soft_lock,1);return 0;}
  int consumed=soft_lock.locked||soft_lock.block_release;
  int result=tf_soft_lock_touch(&soft_lock,now,pressed,x,y,!blocked&&display_runtime_ready&&factory_lifecycle.phase==TF_FL_READY&&backlight_is_on());
- if(result==TF_SOFT_UNLOCK){motion_cancel();if(!screen_unlock_complete()){if(!runtime_factory_power_read(1)){tf_soft_lock_reset(&soft_lock,pin_policy.enabled);return 1;}return -1;}*dirty=1;}
+ if(result==TF_SOFT_UNLOCK){motion_cancel();if(!screen_unlock_complete()){if(!runtime_factory_power_read(1)||display_runtime_interrupted()){tf_soft_lock_reset(&soft_lock,pin_policy.enabled);return 1;}return -1;}*dirty=1;}
  else if(result==TF_SOFT_PROGRESS&&backlight_is_on()&&frame_ready){
   int dark=theme_dark||lock_wallpaper.current;
   /* Only the integrated progress line changes while holding. The label and
@@ -359,10 +360,13 @@ static int repaint_scroll(drm_disp_t*d){
 static int runtime_wake(drm_disp_t*d){
  if(!runtime_factory_power_read(1))return 1;
  screen_lock();if(!running)return display_runtime_fail();if(!runtime_factory_power_read(1))return 1;
+ /* A new notification cancels this attempt, not the renderer. Preserve a
+  * wake request for the next main-loop turn; a newer sleep has priority. */
+ if(display_runtime_interrupted()){if(!factory_bus.power_event)factory_bus.power_event=2;return 1;}
  if(!display_runtime_begin_frame()||!render(d))return display_runtime_fail();
  if(!runtime_factory_power_read(1)){tf_display_sleep(&display_policy);return display_runtime_request(0);}
  int sensor_ready=display_runtime_wake_sensor();
- if(sensor_ready==2){tf_display_sleep(&display_policy);return display_runtime_request(0);}
+ if(sensor_ready==2){if(runtime_factory_power_read(1)&&display_runtime_interrupted()&&!factory_bus.power_event)factory_bus.power_event=2;tf_display_sleep(&display_policy);return display_runtime_request(0);}
  if(!runtime_factory_power_read(1)){tf_display_sleep(&display_policy);return display_runtime_request(0);}
  if(!sensor_ready)return display_runtime_fail();
  if(tf_display_wake(&display_policy,tick())!=TF_DISPLAY_LEVEL)return display_runtime_fail();if(!display_runtime_request(display_policy.brightness))return 0;controls_enabled=runtime_factory_power_read(0)&&display_policy.on&&!pin_policy.locked&&!soft_lock.locked;return 1;
@@ -396,6 +400,10 @@ static void runtime_factory_discard(void){
 static int runtime_factory_power_off(void){
  if(factory_power_quiet)return 1;runtime_factory_discard();
  tf_display_sleep(&display_policy);
+ /* OFF and provider removal can arrive in the same poll. Keep the OFF
+  * latch, but do not claim a confirmed dark display or send a completion
+  * until the original sleep consumer can acknowledge the transaction. */
+ if(factory_bus.sleep_unavailable)return 1;
  /* Existing LCD transaction retains the finite own 180 s idle lease. It
   * does not delete a vendor lock or restart either original service. */
  if(!display_runtime_login(0)||!display_runtime_request(0))return 0;
@@ -405,6 +413,9 @@ static int runtime_factory_power_off(void){
  * Check actual output, not our cached level, and reuse the guarded LCD-off
  * transaction. Its existing off_cycle prevents extending the idle lease. */
 static int runtime_factory_keep_dark(uint32_t now){
+ /* A removed OEM sleep consumer cannot acknowledge LCD/lock transactions.
+  * The helper retains MC events; resume only after its subscription is back. */
+ if(factory_bus.sleep_unavailable)return 1;
  static uint32_t checked;static int sampled;int live;
  int complete=factory_power_quiet&&(factory_bus.device_quicken_pending||factory_bus.device_poweroff_pending);
  if(!complete&&sampled&&(uint32_t)(now-checked)<1000u)return 1;sampled=1;checked=now;
@@ -424,7 +435,7 @@ static int runtime_factory_keep_dark(uint32_t now){
 int main(int argc,char**argv){
  if(argc==2&&!strcmp(argv[1],"--monotonic-seconds")){long long value=monotonic_seconds();if(value<0)return 7;printf("%lld\n",value);return 0;}
  signal(SIGINT,stop_signal);signal(SIGTERM,stop_signal);signal(SIGPIPE,SIG_IGN);
- display_power_on_hook=runtime_factory_power_ready;pin_power_on_hook=runtime_factory_power_ready;
+ display_power_on_hook=runtime_factory_power_ready;pin_power_on_hook=runtime_pin_ready;
  tf_network_runtime_init(&network_runtime);
  tf_wifi_runtime_init(&wifi_runtime);
  int preflight_only=argc==2&&!strcmp(argv[1],"--display-preflight");
@@ -459,14 +470,16 @@ int main(int argc,char**argv){
   /* OEM quick-boot keeps Linux alive after power-off. Ignore ordinary wake
    * notifications and local inputs until the OEM explicitly reports ON. */
   if(factory_power.off_latched||factory_power_quiet){
-   if(factory_power.observed==TF_FACTORY_POWER_ON&&factory_power_quiet){
+   /* Consume only the notifications present on entry. Synchronize the sleep
+    * consumer while the OFF latch still forces darkness, then wake once. */
+   factory_bus.power_event=0;
+   if(factory_bus.resync&&!factory_bus.sleep_unavailable){factory_bus.resync=0;if(!display_runtime_begin_frame()||!display_runtime_resync()){result=7;break;}}
+   if(factory_power.observed==TF_FACTORY_POWER_ON&&factory_power_quiet&&!factory_bus.sleep_unavailable){
     factory_power.off_latched=0;tf_http_cancelled=0;
     if(!runtime_wake(&d)){result=7;break;}
     if(display_policy.on&&tf_factory_power_can_use(&factory_power)){factory_power_quiet=0;data_backend_init();data_backend_commit_latest();refresh_pending=1;power_release_block=1;gesture_block_until=tick()+300;dirty=1;}
     else factory_power.off_latched=1;
    }else if(!runtime_factory_power_off()){result=7;break;}
-   factory_bus.power_event=0;
-   if(factory_bus.resync){if(!display_runtime_begin_frame()||!display_runtime_resync()){result=7;break;}}
    touch_input_read(&touch,&x,&y,&pressed);touch_input_clear_taps(&touch);key_input_poll(&key,now);tf_key_press_baseline(&key.press,key.press.pressed||key.press.ignore_until_release||key.press.sync_lost);
    if(factory_power_quiet||factory_power.off_latched){if(!runtime_factory_keep_dark(now)){result=7;break;}tf_http_cancelled=1;if((uint32_t)(now-last)>=1000){last=now;heartbeat();}usleep(30000);continue;}
   }
@@ -479,8 +492,19 @@ int main(int argc,char**argv){
    if((uint32_t)(now-last)>=1000){last=now;heartbeat();}usleep(30000);continue;
   }
   if(factory_power_unknown_quiet){factory_power_unknown_quiet=0;tf_http_cancelled=0;data_backend_init();data_backend_commit_latest();controls_enabled=!pin_policy.locked&&!soft_lock.locked;refresh_pending=dirty=1;}
+  if(factory_bus.resync){
+   int event=factory_bus.power_event,was_on=display_policy.on;factory_bus.power_event=0;factory_bus.resync=0;tf_http_cancelled=0;
+   screen_lock();if(!running){result=7;break;}if(!runtime_factory_power_read(1))tf_http_cancelled=1;
+   if(!display_runtime_interrupted()&&(!display_runtime_begin_frame()||!render(&d)||!display_runtime_resync())){result=7;break;}
+   if(display_runtime_interrupted()){
+    if(!factory_bus.power_event)factory_bus.power_event=event?event:was_on?2:0;
+    factory_bus.resync=1;controls_enabled=0;touch_input_clear_taps(&touch);heartbeat();usleep(30000);continue;
+   }
+   if(!factory_bus.power_event)factory_bus.power_event=event;
+   controls_enabled=display_policy.on&&!pin_policy.locked&&!soft_lock.locked;dirty=1;
+  }
   if(factory_bus.power_event){int event=factory_bus.power_event;factory_bus.power_event=0;tf_http_cancelled=0;if(!runtime_power_event(&d,event)){result=7;break;}touch_input_clear_taps(&touch);gesture_block_until=tick()+300;dirty=1;}
-  if(factory_bus.resync){tf_http_cancelled=0;screen_lock();if(!running||!display_runtime_begin_frame()||!render(&d)||!display_runtime_resync()){result=7;break;}controls_enabled=!pin_policy.locked&&!soft_lock.locked;dirty=1;}
+  if(display_runtime_interrupted()){controls_enabled=0;touch_input_clear_taps(&touch);heartbeat();usleep(30000);continue;}
   if(!running){result=7;break;}tf_http_cancelled=0;
   /* Read input before background reconnection or configuration polling. */
   touch_input_read(&touch,&x,&y,&pressed);

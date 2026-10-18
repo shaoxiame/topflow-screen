@@ -32,7 +32,11 @@ static void sms_session_entry(void){
 static void sms_session_render(void){
  if(sms_session_ui.stage==2){
   advanced_shell_frame("输入原厂管理密码","act:sms-session-back",0);
-  ah("<div class='card tf-input-preview'>%s</div><p class='note' style='margin:4px 0'>%zu / 1024 字节 · 密码不显示原文</p>",*sms_session_ui.password?"● ● ● ● ● ●":"尚未输入",strlen(sms_session_ui.password));
+  size_t count=strlen(sms_session_ui.password),visible=count>12?12:count;
+  ah("<div class='card tf-input-preview'>");
+  if(!count)ah("尚未输入");
+  else{if(count>visible)ah("… ");for(size_t i=0;i<visible;i++)ah("%s●",i?" ":"");}
+  ah("</div><p class='note' style='margin:4px 0'>%zu / 1024 字符 · 密码不显示原文</p>",count);
   const char*letters="qwertyuiopasdfghjklzxcvbnm",*symbols="1234567890!@#$%^&*()_-+=.,:;?/@[]{}\\|<>~`'\"";
   const char*chars=sms_session_ui.symbols?symbols+(sms_session_ui.symbols==2?30:0):letters;int length=(int)strlen(chars);if(length>30)length=30;
   ah("<table style='width:100%%;border-spacing:2px;table-layout:fixed'>");

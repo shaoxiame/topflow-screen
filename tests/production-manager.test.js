@@ -419,6 +419,71 @@ test('manager caches only its validated private snapshot; later public payload m
 const bootOff={enabled:false,hook:'absent',state:'disabled',reason:'NONE'};
 const bootOn={enabled:true,hook:'present',state:'enabled',reason:'NONE'};
 const bootState=(autostart=bootOff,extra={})=>({installed:true,mode:'factory',autostart,...extra});
+const updatedScreen=(autostart=bootOff,extra={})=>({installed:true,mode:'custom',pid:234,ready:true,supervised:true,heartbeatAge:1,autostart,...extra});
+
+test('successful component update restores a twice-read enabled preference once after healthy screen readback',async()=>{
+ const h=harness({initialState:bootState(bootOn,{mode:'custom',versionMismatch:true}),startState:updatedScreen()});await h.open();
+ await h.elements['[data-tf-update]'].onclick();
+ assert.equal(h.confirmations.length,1);assert.match(h.confirmations[0],/更新成功后将恢复并核验当前已开启的自启动/);
+ assert.deepEqual(h.writes,['uninstall','install','upload','upload-finished','finish','start','autostart-enable']);
+ const commands=h.requests.filter(r=>r.route==='/api/run_shell').map(r=>JSON.parse(r.config.body).cmd);
+ const start=commands.findIndex(c=>c.includes('screenctl.sh" start --confirmed')),enable=commands.findIndex(c=>c.includes('screenctl.sh" autostart-enable --confirmed'));
+ assert.equal(commands.slice(start+1,enable).filter(c=>c.includes('TOPFLOW_SCREEN=')).length,4,'three healthy observations plus fresh pre-enable read');
+ assert.match(h.elements['[data-tf-message]'].textContent,/已恢复并回读确认/);assert.match(h.elements['[data-tf-message]'].textContent,/目视检查/);
+ assert.equal(h.elements['[data-tf-autostart]'].getAttribute('aria-checked'),'true');
+ await h.elements['[data-tf-status]'].onclick();assert.equal(h.writes.filter(x=>x==='autostart-enable').length,1);
+});
+
+test('update never invents enabled preference from off, missing, inconsistent or partial old state; fresh install stays off',async()=>{
+ for(const autostart of [bootOff,undefined,{...bootOn,hook:'unknown'},{...bootOn,hook:'absent'},{...bootOn,hook:'conflict'},{...bootOn,state:'disabled'},{...bootOn,state:'failed',reason:'INTEGRITY_FAILED'}]){
+  const h=harness({initialState:bootState(autostart,{versionMismatch:true}),startState:updatedScreen()});await h.open();await h.elements['[data-tf-update]'].onclick();
+  assert(!h.writes.includes('autostart-enable'),JSON.stringify(autostart));assert(!h.writes.includes('autostart-disable'));assert.equal(h.elements['[data-tf-autostart]'].getAttribute('aria-checked'),'false');
+  assert.doesNotMatch(h.elements['[data-tf-message]'].textContent,/已恢复并回读确认/);
+ }
+ const partial=harness({initialState:bootState(bootOn,{versionMismatch:true,partial:true}),startState:updatedScreen()});await partial.open();await partial.elements['[data-tf-update]'].onclick();assert(!partial.writes.includes('autostart-enable'));
+ const fresh=harness({startState:updatedScreen()});await fresh.open();await fresh.elements['[data-tf-toggle]'].onclick();assert(!fresh.writes.includes('autostart-enable'));assert.equal(fresh.elements['[data-tf-autostart]'].getAttribute('aria-checked'),'false');
+});
+
+test('enabled update intent is reread after confirmation and changed or unknown old preferences stop before cleanup',async()=>{
+ const old=bootState(bootOn,{versionMismatch:true});
+ for(const changed of [bootState(bootOff,{versionMismatch:true}),bootState({...bootOn,hook:'unknown'},{versionMismatch:true}),{installed:true,mode:'factory',versionMismatch:true},bootState(bootOn,{versionMismatch:false}),bootState(bootOn,{versionMismatch:true,partial:true}),bootState(bootOn,{versionMismatch:true,uploadActive:true}),Error('read unavailable')]){
+  const h=harness({initialState:old,readStatus({read,state}){return read===3?changed:state;}});await h.open();await h.elements['[data-tf-update]'].onclick();assert.deepEqual(h.writes,[]);assert.equal(h.confirmations.length,1);assert.match(h.elements['[data-tf-message]'].textContent,/未确认|已变化|unavailable/);
+ }
+});
+
+test('cancelled or incomplete update never restores autostart before successful startup and wallpaper restoration',async()=>{
+ const old=bootState(bootOn,{versionMismatch:true});
+ for(const options of [{deny:true},{backupFails:true},{cleanupFails:true},{uploadUnknown:true},{startContent:'unconfirmed'},{startState:updatedScreen(bootOff,{failure:'RENDERER_EXITED'})},{startState:updatedScreen(bootOff,{ready:false})}]){
+  const h=harness({initialState:old,startState:updatedScreen(),...options});await h.open();await h.elements['[data-tf-update]'].onclick();assert(!h.writes.includes('autostart-enable'));assert(!h.writes.includes('autostart-disable'));assert.doesNotMatch(h.elements['[data-tf-message]'].textContent,/已恢复并回读确认/);
+ }
+ const saved={bytes:new Uint8Array(307216),sha256:'c'.repeat(64),bootId:'01234567-89ab-cdef-0123-456789abcdef'};
+ const wallpaper=harness({initialState:old,startState:updatedScreen(),migration:{backup:async()=>saved,restore:async()=>{throw Error('restore failed');}}});await wallpaper.open();await wallpaper.elements['[data-tf-update]'].onclick();assert(!wallpaper.writes.includes('start'));assert(!wallpaper.writes.includes('autostart-enable'));
+});
+
+test('autostart restore failure keeps the component result separate and never retries the enable or update',async()=>{
+ const old=bootState(bootOn,{versionMismatch:true});
+ for(const options of [{autostartThrows:true},{autostartContent:'unconfirmed'},{autostartContent:'TOPFLOW_ERROR=AUTOSTART_HOOK_CONFLICT'},{autostartResultState:updatedScreen()},{autostartResultState:updatedScreen({...bootOn,hook:'unknown'})},{autostartResultState:updatedScreen(bootOn,{versionMismatch:true})},{autostartResultState:updatedScreen(bootOn,{ready:false})},{readStatus({state}){return state.autostart&&state.autostart.enabled&&!state.versionMismatch?Error('readback unavailable'):state;}}]){
+  const h=harness({initialState:old,startState:updatedScreen(),...options});await h.open();await h.elements['[data-tf-update]'].onclick();
+  assert.equal(h.writes.filter(x=>x==='autostart-enable').length,1);assert.equal(h.writes.filter(x=>x==='start').length,1);assert.equal(h.writes.filter(x=>x==='uninstall').length,1);
+  assert.match(h.elements['[data-tf-message]'].textContent,/屏幕组件已更新，但开机自启动恢复未确认/);assert.match(h.elements['[data-tf-message]'].textContent,/不会自动重试/);assert.doesNotMatch(h.elements['[data-tf-message]'].textContent,/已恢复并回读确认/);
+ }
+ for(const newBoot of [undefined,{...bootOff,hook:'unknown'},{...bootOff,state:'starting'},{...bootOn,hook:'absent'}]){
+  const state=updatedScreen();state.autostart=newBoot;const h=harness({initialState:old,startState:state});await h.open();await h.elements['[data-tf-update]'].onclick();assert(!h.writes.includes('autostart-enable'));assert.match(h.elements['[data-tf-message]'].textContent,/自启动恢复未确认/);
+ }
+});
+
+test('already restored enabled preference is read-confirmed without a redundant enable, and standalone uninstall clears without restoring',async()=>{
+ const h=harness({initialState:bootState(bootOn,{versionMismatch:true}),startState:updatedScreen(bootOn)});await h.open();await h.elements['[data-tf-update]'].onclick();assert(!h.writes.includes('autostart-enable'));assert.match(h.elements['[data-tf-message]'].textContent,/已恢复并回读确认/);
+ const removed=harness({initialState:bootState(bootOn)});await removed.open();await removed.elements['[data-tf-uninstall]'].onclick();assert.deepEqual(removed.writes,['uninstall','record']);
+});
+
+test('update keeps its busy lock through autostart restoration and suppresses duplicate actions',async()=>{
+ let release;const held=new Promise(resolve=>{release=resolve;});
+ const h=harness({initialState:bootState(bootOn,{versionMismatch:true}),startState:updatedScreen(),beforeAutostart:()=>held});await h.open();const operation=h.elements['[data-tf-update]'].onclick();await flush();await flush();
+ assert.equal(h.writes.at(-1),'autostart-enable');const count=h.requests.length;
+ for(const name of ['update','toggle','status','uninstall','autostart']){assert.equal(h.elements['[data-tf-'+name+']'].disabled,true);await h.elements['[data-tf-'+name+']'].onclick();}
+ assert.equal(h.requests.length,count);release();await operation;assert.equal(h.writes.filter(x=>x==='autostart-enable').length,1);assert.match(h.elements['[data-tf-message]'].textContent,/已恢复并回读确认/);
+});
 
 test('autostart opens with one read, remains off by default and never installs or switches merely from opening',async()=>{
   const h=harness({initialState:bootState()});const panel=await h.open();

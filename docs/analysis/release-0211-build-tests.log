@@ -1,0 +1,30 @@
+✔ browser registration mounts one inline card and performs only its initial status read (6.6394ms)
+✔ install start refuses an existing target and does not start any renderer (0.3425ms)
+✔ binary upload uses documented FormData endpoint and validates exact returned path (10.6197ms)
+✔ finish validates hash before extraction and never changes factory/startup files (0.1798ms)
+✔ screen controls are explicit, narrowly scoped and status is parsed without false success (1.4386ms)
+✔ current final candidate uses the documented script format and exact live direct-switch native archive (84.4029ms)
+✔ release gate rejects incomplete local verification and review payload blocks installation and activation (0.8486ms)
+✔ diagnostic candidate has a separate honest gate and cannot weaken the failed release gate (0.2269ms)
+✔ native archive inspection rejects symlinks before packaging (54.0912ms)
+✔ review packaging refuses stale native source, lifecycle scripts or UI even with valid archive checksums (8.2125ms)
+✔ native test proofs must match exact root paths and source bytes regardless of key order (1.5933ms)
+✔ both native executables require exact checksums and the ARM64 architecture (0.32ms)
+✔ production validation rejects preview APIs and demo factories regardless of whether they are called (3.198ms)
+✔ native package must explicitly declare real data and CLOCK_MONOTONIC heartbeat (0.5178ms)
+✔ native readiness distinguishes previous user-reported handover from current unverified adaptation (2.1756ms)
+✔ current install instructions describe direct switching and exact old-version migration without claiming hardware success (0.2542ms)
+✔ payload source uses bounded lines without changing archive bytes or recovery script (7.1923ms)
+✔ boot package covers every byte with checksums and declares disabled-by-default bounded startup (13.2238ms)
+✔ saved UFI manual importer accepts raw source and preserves the AoYou-style public header without internal store metadata (9.0537ms)
+✔ actual UFI importer documents that manual same-filename imports are skipped, not upgraded (1.6167ms)
+✔ raw TopFlow import preserves other installed plugin blocks and their host-owned metadata (5.1283ms)
+✔ the generated UFI head script defers inline mounting until DOM readiness with no premature request (23.6522ms)
+ℹ tests 22
+ℹ suites 0
+ℹ pass 22
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 335.5789

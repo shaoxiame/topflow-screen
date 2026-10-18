@@ -103,10 +103,7 @@ static void heartbeat(void){if(!frame_ready)return;long long now=monotonic_secon
 static uint32_t tick(void){struct timespec t;clock_gettime(CLOCK_MONOTONIC,&t);return(uint32_t)(t.tv_sec*1000+t.tv_nsec/1000000);}
 static tf_factory_power_watch factory_power;
 static int factory_power_quiet=0,factory_power_unknown_quiet=0;
-static int runtime_factory_power_read(int force){
- uint32_t now=tick();if(force||tf_factory_power_due(&factory_power,now))tf_factory_power_observe(&factory_power,tf_factory_power_read_path("/etc/config/zwrt_zte_mc_tmp"),now);
- return tf_factory_power_can_use(&factory_power);
-}
+static int runtime_factory_power_read(int force);
 static int runtime_factory_power_ready(void){return runtime_factory_power_read(1);}
 /* Only called for an explicit confirmation. Routine refresh stays asynchronous. */
 static int wifi_status_read_now(void){
@@ -123,6 +120,24 @@ static int wifi_status_read_now(void){
 #include "lock_wallpaper.h"
 static tf_soft_lock soft_lock;
 #include "display_runtime.h"
+
+/* Bus event delivery is consumed before every positive display/action gate,
+ * including bounded vendor waits. Never fork UCI for routine sampling. */
+static int runtime_factory_power_read(int force){
+ if(factory_bus_active){
+  if(!tf_fb_poll(&factory_bus)){display_runtime_fail();return 0;}
+  tf_factory_power_event(&factory_power,factory_bus.device_power_state,factory_bus.device_power_sequence,factory_bus.device_power_off_seen);
+ }
+ uint32_t now=tick();if(force||tf_factory_power_due(&factory_power,now))tf_factory_power_observe(&factory_power,tf_factory_power_read_path("/etc/config/zwrt_zte_mc_tmp"),now);
+ return tf_factory_power_can_use(&factory_power);
+}
+/* Original libSleep uses libuci's effective value, including saved deltas.
+ * Match it once per preflight/adoption before we touch DRM or the backlight. */
+static int runtime_factory_power_initial(void){
+ char value[128];char*const args[]={"uci","-q","get","zwrt_zte_mc_tmp.mode.mode_main_state",NULL};
+ int state=vendor_exec("/sbin/uci",args,NULL,value,sizeof value)?TF_FACTORY_POWER_UNKNOWN:tf_factory_power_uci_value(value);
+ tf_factory_power_observe(&factory_power,state,tick());return tf_factory_power_can_use(&factory_power);
+}
 
 static void esc(char *dst,size_t cap,const char *src){size_t n=0;for(;src&&*src&&n+7<cap;src++){const char *e=NULL;switch(*src){case '&':e="&amp;";break;case '<':e="&lt;";break;case '>':e="&gt;";break;case '\"':e="&quot;";break;case '\'':e="&#39;";break;}if(e){size_t l=strlen(e);memcpy(dst+n,e,l);n+=l;}else dst[n++]=*src;}dst[n]=0;}
 static const char *field(const char *j,const char *key,char *out,size_t cap){out[0]=0;if(!j||!json_get(j,key,out,cap)||!out[0]||!strcmp(out,"null"))snprintf(out,cap,"未知");return out;}
@@ -222,7 +237,7 @@ static int valid_page(const char*p){size_t n=strlen(p);if(n<6||n>80||strstr(p,".
 static void change_page(const char*p,int sub){if(!valid_page(p))return;if(!sub)p=tf_resolve_home_page(p,aggregate_home);char path[256];snprintf(path,sizeof path,"%s/%s%s",UI,sub?"subpages/":"",p);if(access(path,R_OK))return;snprintf(previous,sizeof previous,"%s",page);snprintf(page,sizeof page,"%s%s",sub?"subpages/":"",p);scroll_y=0;sms_id=-1;pending[0]=0;}
 static void sync_home_page(void){if(advanced_page||pending[0]||sms_id>=0)return;const char*target=tf_resolve_home_page(page,aggregate_home);if(strcmp(page,target)){snprintf(page,sizeof page,"%s",target);scroll_y=0;}}
 static void show_notice(const char*s){snprintf(notice,sizeof notice,"%s",s);notice_until=tick()+5000;}
-static void busy_tick(void){if(!runtime_factory_power_read(0)){tf_http_cancelled=1;return;}if(factory_bus_active){if(!tf_fb_tick(&factory_bus)){display_runtime_fail();return;}if(factory_bus.power_event||factory_bus.resync){tf_http_cancelled=1;return;}}if(!busy_visible||!active_display||!frame_ready||tick()-busy_last<120)return;busy_last=tick();int r=theme_dark?39:222,g=theme_dark?55:233,b=theme_dark?78:252;html_view_fill_round_rect(70,260,180,6,3,r,g,b,255);int step=busy_phase++%22;if(step>11)step=22-step;html_view_fill_round_rect(70+step*14,260,26,6,3,83,137,255,255);if(!logical_damage(active_display,70,260,180,6)){frame_ready=0;running=0;tf_http_cancelled=1;}else if(tick()-busy_heartbeat>=1000){busy_heartbeat=tick();heartbeat();}}
+static void busy_tick(void){if(!runtime_factory_power_read(0)){tf_http_cancelled=1;return;}if(factory_bus_active){if(!tf_fb_tick(&factory_bus)){display_runtime_fail();return;}if(!runtime_factory_power_read(0)){tf_http_cancelled=1;return;}if(factory_bus.power_event||factory_bus.resync){tf_http_cancelled=1;return;}}if(!busy_visible||!active_display||!frame_ready||tick()-busy_last<120)return;busy_last=tick();int r=theme_dark?39:222,g=theme_dark?55:233,b=theme_dark?78:252;html_view_fill_round_rect(70,260,180,6,3,r,g,b,255);int step=busy_phase++%22;if(step>11)step=22-step;html_view_fill_round_rect(70+step*14,260,26,6,3,83,137,255,255);if(!logical_damage(active_display,70,260,180,6)){frame_ready=0;running=0;tf_http_cancelled=1;}else if(tick()-busy_heartbeat>=1000){busy_heartbeat=tick();heartbeat();}}
 static void show_busy(const char*message){if(!runtime_factory_power_read(0)){tf_http_cancelled=1;return;}if(!active_display)return;char label[1024],html[4096];esc(label,sizeof label,message);snprintf(html,sizeof html,"<html><head><link rel='stylesheet' href='style.css'></head><body class='%s'><div style='padding:140px 20px 0;min-height:480px'><div class='card' style='height:160px;padding:25px 18px;text-align:center'><h3 style='font-size:17px'>%s</h3><p class='note' style='margin-top:14px'>正在等待现有接口响应</p></div></div></body></html>",theme_dark?"dark":"light",label);html_view_set_scroll(0);if(!paint_frame(active_display,html)){running=0;tf_http_cancelled=1;return;}busy_visible=1;busy_phase=0;busy_last=0;busy_tick();}
 static int control(const char*payload){char body[8192];if(tf_http(9460,"POST","/control",NULL,payload,body,sizeof body)!=200)return-1;return tf_control_success(body,payload)?0:-1;}
 #include "advanced_controls.h"
@@ -258,7 +273,7 @@ static int lock_rate_animation_tick(drm_disp_t*d,uint32_t now){
  }
  return logical_damage(d,36,260,248,36);
 }
-static void screen_lock(void){tf_page_state_cancel();tf_wifi_runtime_close(&wifi_runtime);power_menu_reset();lock_wallpaper_invalidate();controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();if(!display_runtime_unlock_policy())return;tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;form_reset();sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
+static void screen_lock(void){form_reset();tf_page_state_cancel();tf_wifi_runtime_close(&wifi_runtime);power_menu_reset();lock_wallpaper_invalidate();controls_enabled=0;lock_chart.current=0;lock_chart.mode=-1;lock_motion.initialized=lock_motion.active=0;memset(&chart_animation,0,sizeof chart_animation);tf_soft_lock_reset(&soft_lock,pin_policy.enabled);motion_cancel();if(!display_runtime_unlock_policy())return;tf_pin_lock(&pin_policy);display_policy.locked=pin_policy.locked;pending[0]=0;sms_forward_cleanup();factory_extra_cleanup();pin_feedback[0]=0;scroll_y=0;if(factory_bus_active)display_runtime_login(!pin_policy.locked);}
 /* A successful PIN entry alone is not enough: recheck the factory policy and
  * login acknowledgement before enabling confirmed business writes. */
 static int screen_unlock_complete(void){controls_enabled=0;if(pin_policy.locked||soft_lock.locked||!display_runtime_unlock_policy()||!display_runtime_login(1))return 0;controls_enabled=1;return 1;}
@@ -291,13 +306,14 @@ static void action(const char*a){
  if(!tf_fl_input_allowed(&factory_lifecycle,1))return;
  if(!strcmp(a,"screen-lock")){screen_lock();return;}
  if(!strcmp(a,"theme")){theme_dark=!theme_dark;return;}
- if(!strncmp(a,"page:",5)){sms_forward_cleanup();factory_extra_cleanup();advanced_page=0;change_page(a+5,0);return;}
- if(!strncmp(a,"sub:",4)){sms_forward_cleanup();factory_extra_cleanup();advanced_page=0;change_page(a+4,1);return;}
+ if(sms_session_ui.stage&&strcmp(a,"confirm")&&strncmp(a,"page:",5)&&strncmp(a,"sub:",4)){sms_session_action(a);return;}
+ if(!strncmp(a,"page:",5)){form_reset();sms_forward_cleanup();factory_extra_cleanup();advanced_page=0;change_page(a+5,0);return;}
+ if(!strncmp(a,"sub:",4)){form_reset();sms_forward_cleanup();factory_extra_cleanup();advanced_page=0;change_page(a+4,1);return;}
  if(!strcmp(a,"smsclose")){sms_id=-1;scroll_y=0;return;}
  if(!strncmp(a,"smsfilter:",10)){if(strlen(a+10)==1&&a[10]>='0'&&a[10]<='3'){sms_filter=a[10]-'0';sms_id=-1;scroll_y=0;}return;}
  if(!strcmp(a,"backfunc")){sms_id=-1;snprintf(page,sizeof page,"%s",previous);scroll_y=0;pending[0]=0;return;}
  if(!strncmp(a,"sms:",4)){char*end;long id=strtol(a+4,&end,10);if(!*end&&id>=0){sms_id=id;scroll_y=0;}return;}
- if(!strcmp(a,"cancel")){pending[0]=0;scroll_y=0;return;}
+ if(!strcmp(a,"cancel")){if(sms_session_action(a))return;pending[0]=0;scroll_y=0;return;}
  if(!strcmp(a,"confirm")){if(!pending[0]||advanced_confirm())return;if(pending[0]=='{'){char payload[4096];snprintf(payload,sizeof payload,"%s",pending);pending[0]=0;show_busy("正在提交设备设置");if(control(payload)==0)verify_begin(payload);else show_notice("操作失败，请在 UFI 检查");scroll_y=0;}return;}
  if(advanced_action(a)){if(advanced_page<17||advanced_page>19)factory_extra_cleanup();return;}
  if(!strcmp(a,"wifi24")||!strcmp(a,"wifi5")){
@@ -363,7 +379,7 @@ static int runtime_key_event(drm_disp_t*d,int key_event){
  if(key_event!=KEY_EV_LONG)return 1;
  if(!backlight_is_on()&&!runtime_wake(d))return 0;
  if(!running||!display_runtime_ready||factory_lifecycle.phase!=TF_FL_READY)return 0;
- motion_cancel();tf_display_activity(&display_policy,tick());power_menu_open();return running;
+ sms_session_cleanup();tf_ufi_wipe(form_payload,sizeof form_payload);motion_cancel();tf_display_activity(&display_policy,tick());power_menu_open();return running;
 }
 /* Quick-boot power-off is neither a normal screen timeout nor process exit.
  * Keep the renderer/provider alive and the supervisor heartbeat valid, but
@@ -385,6 +401,26 @@ static int runtime_factory_power_off(void){
  if(!display_runtime_login(0)||!display_runtime_request(0))return 0;
  factory_power_quiet=1;return 1;
 }
+/* Charging/key services may change the physical backlight independently.
+ * Check actual output, not our cached level, and reuse the guarded LCD-off
+ * transaction. Its existing off_cycle prevents extending the idle lease. */
+static int runtime_factory_keep_dark(uint32_t now){
+ static uint32_t checked;static int sampled;int live;
+ int complete=factory_power_quiet&&(factory_bus.device_quicken_pending||factory_bus.device_poweroff_pending);
+ if(!complete&&sampled&&(uint32_t)(now-checked)<1000u)return 1;sampled=1;checked=now;
+ if(!display_read_number("/sys/class/leds/led:lcd/brightness",0,255,&live))return 1;
+ if(live&&(!display_runtime_begin_frame()||!display_runtime_resync()))return 0;
+ /* Both original completion methods follow a confirmed dark display.
+  * An ON/newer event invalidates the receipt in the helper. Never acknowledge
+  * an observed lit LCD or an incomplete original LCD-lock transaction. */
+ if(complete){
+  if(!display_runtime_ready||factory_lifecycle.phase!=TF_FL_READY||factory_lifecycle.brightness!=0)return 1;
+  if(!display_read_number("/sys/class/leds/led:lcd/brightness",0,255,&live)||live||tf_guard_observe(&factory_guard,"zteSleepBacklight")!=0)return 1;
+  if(!tf_fb_power_complete(&factory_bus))return 0;
+ }
+ return 1;
+}
+
 int main(int argc,char**argv){
  if(argc==2&&!strcmp(argv[1],"--monotonic-seconds")){long long value=monotonic_seconds();if(value<0)return 7;printf("%lld\n",value);return 0;}
  signal(SIGINT,stop_signal);signal(SIGTERM,stop_signal);signal(SIGPIPE,SIG_IGN);
@@ -395,9 +431,9 @@ int main(int argc,char**argv){
  if(!preflight_only&&(argc!=3||strcmp(argv[1],"--display-adopt"))){fprintf(stderr,"Verified supervisor handover required\n");return 2;}
  /* This path is read-only and runs before DRM, evdev, brightness or datad.
   * The supervisor also runs it before stopping the original screen. */
- if(preflight_only){char receipt[384];if(!runtime_factory_power_read(1)){fprintf(stderr,"FACTORY_POWER_NOT_ON\n");return 7;}if(!display_preflight_receipt(receipt,sizeof receipt)){fprintf(stderr,"%s\n",display_refusal?display_refusal:"DISPLAY_LIFECYCLE_PREFLIGHT_FAILED");return 7;}puts(receipt);return 0;}
+ if(preflight_only){char receipt[384];if(!runtime_factory_power_initial()){fprintf(stderr,"FACTORY_POWER_NOT_ON\n");return 7;}if(!display_preflight_receipt(receipt,sizeof receipt)){fprintf(stderr,"%s\n",display_refusal?display_refusal:"DISPLAY_LIFECYCLE_PREFLIGHT_FAILED");return 7;}puts(receipt);return 0;}
  atexit(native_failure_publish);
- if(!runtime_factory_power_read(1)||!display_prepare_adopt(argv[2])){fprintf(stderr,"DISPLAY_HANDOVER_UNAVAILABLE\n");return 7;}
+ if(!runtime_factory_power_initial()||!display_prepare_adopt(argv[2])){fprintf(stderr,"DISPLAY_HANDOVER_UNAVAILABLE\n");return 7;}
  if(!pin_native_init(display_config.pin_enabled)){display_runtime_cleanup();pin_native_cleanup();fprintf(stderr,"PIN_STATE_UNAVAILABLE\n");return 7;}
  tf_soft_lock_reset(&soft_lock,pin_policy.enabled);
  const char*font=getenv("DEVUI_FONT");if(!font||!*font)font="/usr/ui/fonts/ZTEZhengYuan.ttf";
@@ -419,6 +455,7 @@ int main(int argc,char**argv){
   if(factory_power.interrupted&&!factory_power.off_latched&&!factory_power_quiet&&!factory_power_unknown_quiet){runtime_factory_discard();factory_power_unknown_quiet=1;power_release_block=1;}
   factory_power.interrupted=0;runtime_factory_power_read(0);
   if(!tf_fb_tick(&factory_bus)){native_failure_note("BUS_RUNTIME");result=7;break;}
+  runtime_factory_power_read(0);
   /* OEM quick-boot keeps Linux alive after power-off. Ignore ordinary wake
    * notifications and local inputs until the OEM explicitly reports ON. */
   if(factory_power.off_latched||factory_power_quiet){
@@ -431,7 +468,7 @@ int main(int argc,char**argv){
    factory_bus.power_event=0;
    if(factory_bus.resync){if(!display_runtime_begin_frame()||!display_runtime_resync()){result=7;break;}}
    touch_input_read(&touch,&x,&y,&pressed);touch_input_clear_taps(&touch);key_input_poll(&key,now);tf_key_press_baseline(&key.press,key.press.pressed||key.press.ignore_until_release||key.press.sync_lost);
-   if(factory_power_quiet||factory_power.off_latched){tf_http_cancelled=1;if((uint32_t)(now-last)>=1000){last=now;heartbeat();}usleep(30000);continue;}
+   if(factory_power_quiet||factory_power.off_latched){if(!runtime_factory_keep_dark(now)){result=7;break;}tf_http_cancelled=1;if((uint32_t)(now-last)>=1000){last=now;heartbeat();}usleep(30000);continue;}
   }
   if(!tf_factory_power_can_use(&factory_power)){
    /* An incomplete/unknown snapshot cannot authorize a wake or API action.
@@ -515,5 +552,5 @@ int main(int argc,char**argv){
   if(!dirty&&!interacting&&running&&frame_ready&&backlight_is_on()&&!power_menu.active&&!pin_policy.locked&&!soft_lock.locked&&!busy_visible&&!pending[0]&&!advanced_page&&!chart_animation_tick(&d,tick())){frame_ready=0;result=6;break;}
   usleep(backlight_is_on()?8000:30000);
  }
- cleanup:tf_page_state_close();tf_wifi_runtime_close(&wifi_runtime);html_view_set_lock_wallpaper(NULL);tf_wallpaper_clear(&lock_wallpaper);motion_discard();if(display_runtime_fault)result=7;if(result==6)native_failure_note("FRAME_RENDER");else if(result==7)native_failure_note("DISPLAY_RUNTIME");display_level_hook=NULL;display_auto_sensor_hook=NULL;tf_http_wait_hook=NULL;display_runtime_cleanup();sms_forward_cleanup();factory_extra_cleanup();pin_native_cleanup();data_backend_close();touch_input_close(&touch);key_input_close(&key);drm_disp_close(&d);return result;
+ cleanup:form_reset();tf_page_state_close();tf_wifi_runtime_close(&wifi_runtime);html_view_set_lock_wallpaper(NULL);tf_wallpaper_clear(&lock_wallpaper);motion_discard();if(display_runtime_fault)result=7;if(result==6)native_failure_note("FRAME_RENDER");else if(result==7)native_failure_note("DISPLAY_RUNTIME");display_level_hook=NULL;display_auto_sensor_hook=NULL;tf_http_wait_hook=NULL;display_runtime_cleanup();sms_forward_cleanup();factory_extra_cleanup();pin_native_cleanup();data_backend_close();touch_input_close(&touch);key_input_close(&key);drm_disp_close(&d);return result;
 }

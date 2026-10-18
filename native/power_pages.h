@@ -33,9 +33,18 @@ static int power_device_submit(int reboot){
  snprintf(payload,sizeof payload,"{\"action\":\"device.%s\",\"params\":{}}",reboot?"reboot":"poweroff");
  show_busy(reboot?"正在请求设备重启":"正在请求设备关机");
  if(!power_device_ready())return -2;
- int accepted=tf_http_timeout(9460,"POST","/control",NULL,payload,raw,sizeof raw,5000)==200&&tf_control_success(raw,payload);
- show_notice(accepted?"电源操作请求已接受；设备断线后无法在此确认完成":"电源操作结果未知；未自动重试，请观察设备状态");
- scroll_y=0;return accepted?1:0;
+ /* datad permits an eight-second MC call. Keep a bounded ten-second client
+  * budget, while OFF still cancels promptly so the main loop can blank/ACK. */
+ tf_http_transfer transfer={0};
+ int status=tf_http_power_timeout(9460,"POST","/control",NULL,payload,raw,sizeof raw,10000,&transfer);
+ int result=0;
+ if(status==200&&tf_control_success(raw,payload)){show_notice("电源操作请求已接受；设备断线后无法在此确认完成");result=1;}
+ else if(status>0&&status!=200){char message[256];snprintf(message,sizeof message,"电源接口返回 HTTP %d；操作未确认，未自动重试",status);show_notice(message);}
+ else if(status==200)show_notice("电源接口响应不匹配，结果未知；未自动重试");
+ else if(!transfer.sent_bytes){show_notice("电源请求未发出；连接中断或屏幕状态变化，请恢复后重试");result=-2;}
+ else if(transfer.request_bytes&&transfer.sent_bytes==transfer.request_bytes){show_notice("电源请求已完整发出，尚未收到原厂确认；未自动重试，请观察设备状态");result=2;}
+ else show_notice("电源请求传输中断，结果未知；未自动重试，请观察设备状态");
+ scroll_y=0;return result;
 }
 static int power_confirm(void){
  if(!strncmp(pending,"@power-device:",14)){int reboot=!strcmp(pending,"@power-device:reboot"),off=!strcmp(pending,"@power-device:off");pending[0]=0;if(reboot||off)power_device_submit(reboot);return 1;}

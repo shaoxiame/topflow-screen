@@ -56,6 +56,10 @@ static void esc(char*out,size_t n,const char*s){snprintf(out,n,"%s",s);}
 static int tf_http_timeout(int port,const char*method,const char*path,const char*secret,const char*body,char*out,size_t cap,int timeout){assert(port==9460&&!strcmp(method,"POST")&&!strcmp(path,"/control")&&!secret&&timeout<=10000);char a[64];assert(json_get(body,"action",a,sizeof a));if(!strcmp(a,"wifi.status")){reads++;if(read_fail)return-1;snprintf(out,cap,"{\"ok\":true,\"action\":\"wifi.status\",\"result\":{\"main_2g\":{\"ssid\":\"%s\",\"encryption\":\"%s\"}}}",actual_ssid,actual_enc);return 200;}assert(!strcmp(a,"wifi.radio.set")||!strcmp(a,"wifi.configure"));writes++;snprintf(last_payload,sizeof last_payload,"%s",body);snprintf(out,cap,"{\"ok\":true,\"action\":\"%s\",\"result\":{\"verified\":%s}}",a,response_verified?"true":"false");return 200;}
 static int cell_form_confirm(void){return 0;}static void apn_submit(void){assert(!"Unexpected APN write");}
 enum tf_sms_result{TF_SMS_SENT};static enum tf_sms_result tf_sms_ufi_submit(const char*a,int b){(void)a;(void)b;assert(!"Unexpected SMS write");return TF_SMS_SENT;}static const char*tf_sms_result_message(enum tf_sms_result r){(void)r;return "unused";}
+/* Wi-Fi confirmations must pass through the unrelated SMS-session gate,
+ * which cannot consume the action or receive a send result in these cases. */
+static int sms_session_confirm(void){assert(form_kind==2&&strcmp(pending,"@sms-session"));return 0;}
+static void sms_session_observe(enum tf_sms_result result){(void)result;assert(!"Unexpected SMS session result on Wi-Fi path");}
 static char guest_json[2048];static int guest_reads;
 static int guest_load(void){guest_reads++;if(read_fail)return 0;snprintf(guest_json,sizeof guest_json,"{\"guests\":[{\"section\":\"guest_2g\",\"ssid\":\"%s\",\"encryption\":\"%s\"}]}",actual_ssid,actual_enc);return 1;}
 `+fn(service,'guest_find')+'\n'+fn(service,'guest_form_verify')+'\n'+extra.slice(extra.indexOf('typedef struct {int kind,parent'),extra.indexOf('static int fx_locked;'))+'\n'+fn(extra,'fx_clear_codes')+'\n'+fn(extra,'fx_wps_parse')+'\n'+fn(extra,'fx_sim_parse')+String.raw`

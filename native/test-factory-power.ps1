@@ -39,6 +39,15 @@ static void power_menu_reset(void){menus++;}static void lock_wallpaper_invalidat
 static void form_reset(void){forms++;}static void sms_forward_cleanup(void){sms++;}static void factory_extra_cleanup(void){extras++;}
 static int display_runtime_login(int value){logins++;last_login=value;return 1;}
 static int display_runtime_request(int value){requests++;last_level=value;return !fail_request;}
+static struct{int power_event,resync;uint32_t device_quicken_pending,device_poweroff_pending;}factory_bus;
+static int display_runtime_ready=1,factory_guard;static struct{int phase,brightness;}factory_lifecycle;
+#define TF_FL_READY 7
+static int actual_light,light_reads,dark_frames,dark_resync,quicken_acks,normal_acks,lcd_lock;
+static int tf_guard_observe(void*p,const char*name){assert(p==&factory_guard&&!strcmp(name,"zteSleepBacklight"));return lcd_lock;}
+static int tf_fb_power_complete(void*p){assert(p==&factory_bus&&!actual_light&&!lcd_lock);if(factory_bus.device_quicken_pending){quicken_acks++;factory_bus.device_quicken_pending=0;}else{assert(factory_bus.device_poweroff_pending);normal_acks++;factory_bus.device_poweroff_pending=0;}return 1;}
+static int display_read_number(const char*p,int low,int high,int*out){assert(!strcmp(p,"/sys/class/leds/led:lcd/brightness")&&low==0&&high==255);light_reads++;*out=actual_light;return 1;}
+static int display_runtime_begin_frame(void){dark_frames++;return 1;}
+static int display_runtime_resync(void){dark_resync++;actual_light=0;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=0;lcd_lock=0;return 1;}
 ACTUAL_OFF
 static int pin_fault,pin_gate=1,pin_cancel_during_read,pin_reads,pin_stores,pin_wipes;
 static tf_factory_power_watch pin_watch;
@@ -50,12 +59,11 @@ static int vendor_exec(const char*path,char*const*args,const char*input,char*out
 ACTUAL_PIN
 static int running=1,tf_http_cancelled,factory_bus_active=1,frame_ready=1,theme_dark,busy_phase;
 static int active_display_storage,*active_display=&active_display_storage;
-static struct{int power_event,resync;}factory_bus;
 static uint32_t clock_ms=500,busy_last,busy_heartbeat;
-static int gate_on=1,bus_ticks,paints,damages,heartbeats;
+static int gate_on=1,bus_ticks,bus_cut,paints,damages,heartbeats;
 static uint32_t tick(void){return clock_ms;}
 static int runtime_factory_power_read(int force){assert(!force);return gate_on;}
-static int tf_fb_tick(void*p){assert(p==&factory_bus);bus_ticks++;return 1;}
+static int tf_fb_tick(void*p){assert(p==&factory_bus);bus_ticks++;if(bus_cut)gate_on=0;return 1;}
 static int display_runtime_fail(void){running=0;return 0;}
 static void html_view_fill_round_rect(int x,int y,int w,int h,int radius,int r,int g,int b,int a){(void)x;(void)y;(void)w;(void)h;(void)radius;(void)r;(void)g;(void)b;(void)a;paints++;}
 static int logical_damage(void*d,int x,int y,int w,int h){(void)d;(void)x;(void)y;(void)w;(void)h;damages++;return 1;}
@@ -64,6 +72,9 @@ ACTUAL_WAKE_SENSOR
 ACTUAL_BUSY
 static int parse(const char*s){return tf_factory_power_parse(s,strlen(s));}
 int main(int argc,char**argv){assert(argc==2);
+ assert(tf_factory_power_uci_value("mode_power_off_quickening\n")==TF_FACTORY_POWER_OFF);
+ assert(tf_factory_power_uci_value("mode_power_on_charger\r\n")==TF_FACTORY_POWER_ON);
+ assert(tf_factory_power_uci_value("mode_power_on\nnoise")==TF_FACTORY_POWER_UNKNOWN);
  const char*on="config zudata_mode_fun 'mode'\n option mode_main_state 'mode_power_on'\n option quicken_power_on '1'\n";
  assert(parse(on)==TF_FACTORY_POWER_ON);
  const char*states[]={"mode_power_off","mode_power_off_quicken","mode_power_off_charger_quicken","mode_power_off_quickening","mode_power_off_unreal"};
@@ -88,13 +99,29 @@ int main(int argc,char**argv){assert(argc==2);
  tf_factory_power_observe(&w,TF_FACTORY_POWER_OFF,260);assert(w.off_latched&&!tf_factory_power_can_use(&w)&&!tf_factory_power_due(&w,1259)&&tf_factory_power_due(&w,1260));
  tf_factory_power_observe(&w,TF_FACTORY_POWER_UNKNOWN,1260);assert(w.off_latched&&!tf_factory_power_can_use(&w));tf_factory_power_observe(&w,TF_FACTORY_POWER_ON,2260);assert(w.off_latched&&!tf_factory_power_can_use(&w));w.off_latched=0;assert(!tf_factory_power_can_use(&w));w.interrupted=0;assert(tf_factory_power_can_use(&w));
  tf_factory_power_observe(&w,TF_FACTORY_POWER_UNKNOWN,UINT32_MAX-100);assert(!tf_factory_power_can_use(&w)&&tf_factory_power_due(&w,150));
+ tf_factory_power_watch e={0};tf_factory_power_observe(&e,TF_FACTORY_POWER_ON,10);
+ tf_factory_power_event(&e,TF_FACTORY_POWER_OFF,1,1);assert(e.off_latched&&e.interrupted&&e.observed==TF_FACTORY_POWER_OFF);
+ e.interrupted=0;tf_factory_power_observe(&e,TF_FACTORY_POWER_ON,1000);assert(e.observed==TF_FACTORY_POWER_OFF&&!tf_factory_power_can_use(&e));
+ tf_factory_power_observe(&e,TF_FACTORY_POWER_UNKNOWN,2000);assert(e.observed==TF_FACTORY_POWER_OFF);
+ tf_factory_power_event(&e,TF_FACTORY_POWER_ON,2,1);assert(e.observed==TF_FACTORY_POWER_ON&&e.off_latched&&e.event_wait_raw_on);
+ e.off_latched=0;e.interrupted=0;tf_factory_power_observe(&e,TF_FACTORY_POWER_OFF,2500);assert(tf_factory_power_can_use(&e));
+ tf_factory_power_observe(&e,TF_FACTORY_POWER_ON,3000);assert(!e.event_wait_raw_on&&tf_factory_power_can_use(&e));
+ tf_factory_power_observe(&e,TF_FACTORY_POWER_OFF,4000);assert(e.off_latched&&!tf_factory_power_can_use(&e));
+ tf_factory_power_event(&e,TF_FACTORY_POWER_ON,4,2);assert(e.off_latched&&e.interrupted&&e.observed==TF_FACTORY_POWER_ON); /* OFF/ON drained together */
+ e.off_latched=0;e.interrupted=0;tf_factory_power_event(&e,TF_FACTORY_POWER_ON,4,2);assert(!e.interrupted&&!e.off_latched); /* duplicate delivery */
+ tf_factory_power_event(&e,TF_FACTORY_POWER_OFF,5,3);e.interrupted=0;tf_factory_power_observe(&e,TF_FACTORY_POWER_ON,5000);assert(e.observed==TF_FACTORY_POWER_OFF&&e.off_latched);
  tf_display_config c={1,1,135,30,0,1,40,135,255};assert(tf_display_init_supported(&display_policy,&c,0,1));tf_pin_start(&pin_policy,1,0,0,0);pin_policy.locked=0;memcpy(pin_policy.input,"1234",5);pin_policy.input_len=4;
  tf_soft_lock_reset(&soft_lock,0);soft_lock.progress=700;controls_enabled=busy_visible=1;scroll_y=90;strcpy(pending,"old SMS");strcpy(pending_label,"confirm");strcpy(verifying,"old wifi");strcpy(notice,"stale");strcpy(pin_feedback,"digits");notice_until=4000;chart_animation.active=chart_animation.n=lock_motion.active=lock_motion.initialized=lock_chart.current=1;
  assert(runtime_factory_power_off()&&factory_power_quiet&&!display_policy.on&&!display_policy.brightness&&pin_policy.locked&&!pin_policy.input_len&&!pin_policy.input[0]);
  assert(!controls_enabled&&!busy_visible&&!pending[0]&&!pending_label[0]&&!verifying[0]&&!notice[0]&&!pin_feedback[0]&&!notice_until&&!scroll_y&&!chart_animation.n&&!lock_motion.active);
  assert(close_pages==1&&close_wifi==1&&close_data==1&&menus==1&&wallpapers==1&&motions==1&&forms==1&&sms==1&&extras==1&&logins==1&&!last_login&&requests==1&&!last_level);
  assert(runtime_factory_power_off()&&requests==1&&logins==1&&close_data==1);
+ assert(runtime_factory_keep_dark(100)&&light_reads==1&&!dark_resync);actual_light=150;assert(runtime_factory_keep_dark(999)&&light_reads==1&&actual_light==150);assert(runtime_factory_keep_dark(1100)&&light_reads==2&&!actual_light&&dark_frames==1&&dark_resync==1);assert(runtime_factory_keep_dark(2100)&&light_reads==3&&dark_resync==1&&logins==1);
+ factory_bus.device_quicken_pending=4;actual_light=80;factory_lifecycle.phase=TF_FL_READY;factory_lifecycle.brightness=0;assert(runtime_factory_keep_dark(2150)&&!actual_light&&quicken_acks==1&&!factory_bus.device_quicken_pending&&dark_resync==2);
+ factory_bus.device_poweroff_pending=4;int observed_reads=light_reads;assert(runtime_factory_keep_dark(2150)&&normal_acks==1&&!factory_bus.device_poweroff_pending&&light_reads==observed_reads+2);
+ factory_bus.device_quicken_pending=5;lcd_lock=1;assert(runtime_factory_keep_dark(2151)&&quicken_acks==1);lcd_lock=0;assert(runtime_factory_keep_dark(2152)&&quicken_acks==2);
  busy_visible=1;gate_on=0;busy_tick();assert(tf_http_cancelled&&running&&!bus_ticks&&!paints&&!damages);gate_on=1;tf_http_cancelled=0;busy_tick();assert(running&&!tf_http_cancelled&&bus_ticks==1&&paints==2&&damages==1);
+ bus_cut=1;tf_http_cancelled=0;busy_tick();assert(tf_http_cancelled&&paints==2&&running);bus_cut=0;gate_on=1;
  factory_bus.power_event=2;busy_tick();assert(tf_http_cancelled&&paints==2&&running);
  tf_key_press_t key;tf_key_press_baseline(&key,0);tf_key_press_event(&key,1,116,1,100,1,1,100);tf_key_press_baseline(&key,key.pressed||key.ignore_until_release||key.sync_lost);assert(key.ignore_until_release);assert(tf_key_press_event(&key,1,116,0,200,1,1,200)==KEY_EV_NONE);tf_key_press_baseline(&key,key.pressed||key.ignore_until_release||key.sync_lost);assert(!key.ignore_until_release);tf_key_press_event(&key,1,116,1,300,1,1,300);assert(tf_key_press_event(&key,1,116,0,400,1,1,400)==KEY_EV_SHORT);
  pin_policy.failures=2;pin_policy.deadline=0;pin_policy.locked=1;memcpy(pin_policy.input,"1234",5);pin_policy.input_len=4;pin_cancel_during_read=1;assert(pin_native_attempt()==TF_PIN_WAIT&&pin_policy.locked&&pin_policy.failures==2&&!pin_policy.input_len&&!pin_fault&&!pin_stores&&pin_wipes==1&&pin_reads==1);
@@ -104,7 +131,7 @@ int main(int argc,char**argv){assert(argc==2);
  startup_failures=0;startup_power=1;startup_watch.interrupted=0;startup_sensor_bad=0;startup_sensor_cut=1;display_policy.config=display_config;int interrupted=display_runtime_wake_sensor();startup_power=1;assert(interrupted==2&&!startup_failures&&!startup_gate());startup_watch.interrupted=0;startup_sensor_cut=0;startup_read_cut=1;assert(display_runtime_wake_sensor()==2&&!startup_failures);startup_read_cut=0;startup_power=1;startup_watch.interrupted=0;startup_sensor_bad=1;assert(!display_runtime_wake_sensor()&&startup_failures==1);
  tf_display_config dormant=c;dormant.sensor_enabled=0;dormant.sensor_lux=-1;assert(!tf_display_init_supported(&display_policy,&dormant,0,1));assert(tf_display_init_dormant(&display_policy,&dormant,0)&&!display_policy.on&&!display_policy.brightness&&display_policy.config.sensor_enabled==0&&display_policy.config.sensor_lux==-1);
  assert(tf_display_init_supported(&display_policy,&c,0,1));assert(tf_display_tick(&display_policy,30000,-1,0,0)==TF_DISPLAY_SLEEP&&!display_policy.on);
- puts("PASS: OEM power parser, bounded file snapshots, quick-boot distinction, OFF latch/unknown/ON, wrap-safe sampling, actual OFF cleanup and busy cancellation without restart or paint");return 0;
+ puts("PASS: OEM power parser/effective UCI, event OFF beats stale ON, batched OFF+ON cancels input, delayed raw OFF cannot undo ON event, LCD re-darkening, cleanup/busy guards");return 0;
 }
 '@
 $source=$source.Replace('ACTUAL_OFF',$off).Replace('ACTUAL_BUSY',$busy).Replace('ACTUAL_PIN',$pin).Replace('ACTUAL_AFTER_DRM',$afterDrm).Replace('ACTUAL_WAKE_SENSOR',$wakeSensor)
@@ -119,6 +146,48 @@ if($loop.IndexOf('factory_power.off_latched||factory_power_quiet') -gt $loop.Ind
 $offBranch=$loop.Substring($loop.IndexOf('if(factory_power.off_latched||factory_power_quiet)'),$loop.IndexOf('if(!tf_factory_power_can_use')-$loop.IndexOf('if(factory_power.off_latched||factory_power_quiet)'))
 if($offBranch -notmatch 'heartbeat\(\)' -or $offBranch -notmatch 'continue;' -or $offBranch -match 'data_backend_poll\('){throw 'OFF must keep heartbeat while skipping normal data work'}
 if($loop -notmatch 'if\(power_release_block\)' -or $loop -notmatch 'tf_key_press_baseline\(&key.press,key.press.pressed\|\|key.press.ignore_until_release\|\|key.press.sync_lost\)'){throw 'Old touch/key release must be discarded'}
-if($main -notmatch 'preflight_only\)\{char receipt\[384\];if\(!runtime_factory_power_read\(1\)\)'){throw 'Preflight must reject non-ON before takeover'}
+if($main -notmatch 'preflight_only\)\{char receipt\[384\];if\(!runtime_factory_power_initial\(\)\)'){throw 'Preflight must reject non-ON before takeover'}
 if($main -notmatch 'show_busy\(const char\*message\)\{if\(!runtime_factory_power_read\(0\)\)'){throw 'Busy entry must not paint while OEM power is off'}
 Write-Output 'PASS: actual loop prioritizes OEM OFF, preserves heartbeat, skips background polling, clears input edges, and guards preflight/busy rendering'
+
+# Exercise the actual runtime event/read fusion and its one-time libuci getter.
+$power=Extract 'static int runtime_factory_power_read(int force){' 'static void esc('
+$audit=@'
+#include <assert.h>
+#include <stdio.h>
+#include <stdint.h>
+#include "factory_power_state.h"
+static tf_factory_power_watch factory_power;
+static struct{int device_power_state;uint32_t device_power_sequence,device_power_off_seen;}factory_bus;
+static int factory_bus_active=1,raw_state=TF_FACTORY_POWER_ON,raw_reads,poll_failed,failures,uci_calls,uci_failure;
+static const char*uci_value="mode_power_on\n";
+static uint32_t now=100;
+static uint32_t tick(void){return now;}
+static int tf_fb_poll(void*p){assert(p==&factory_bus);return !poll_failed;}
+static int display_runtime_fail(void){failures++;return 0;}
+static int simulated_raw(const char*p){assert(!strcmp(p,"/etc/config/zwrt_zte_mc_tmp"));raw_reads++;return raw_state;}
+static int vendor_exec(const char*p,char*const*a,const char*input,char*out,size_t cap){assert(!strcmp(p,"/sbin/uci")&&!strcmp(a[0],"uci")&&!strcmp(a[1],"-q")&&!strcmp(a[2],"get")&&!strcmp(a[3],"zwrt_zte_mc_tmp.mode.mode_main_state")&&!a[4]&&!input);uci_calls++;snprintf(out,cap,"%s",uci_value);return uci_failure;}
+#define tf_factory_power_read_path simulated_raw
+ACTUAL_POWER
+int main(void){
+ assert(runtime_factory_power_initial()&&uci_calls==1);
+ factory_bus.device_power_state=TF_FACTORY_POWER_OFF;factory_bus.device_power_sequence=1;factory_bus.device_power_off_seen=1;
+ assert(!runtime_factory_power_read(0)&&factory_power.observed==TF_FACTORY_POWER_OFF&&factory_power.off_latched);
+ now=1200;assert(!runtime_factory_power_read(1)&&raw_reads==1&&raw_state==TF_FACTORY_POWER_ON&&uci_calls==1);
+ factory_bus.device_power_state=TF_FACTORY_POWER_ON;factory_bus.device_power_sequence=2;
+ assert(!runtime_factory_power_read(1)&&factory_power.observed==TF_FACTORY_POWER_ON);factory_power.off_latched=factory_power.interrupted=0;
+ assert(runtime_factory_power_read(1));
+ factory_bus.device_power_sequence=4;factory_bus.device_power_off_seen=2;
+ assert(!runtime_factory_power_read(1)&&factory_power.off_latched&&factory_power.interrupted&&factory_power.observed==TF_FACTORY_POWER_ON);
+ memset(&factory_power,0,sizeof factory_power);factory_bus_active=0;uci_value="mode_power_off_quickening\n";
+ assert(!runtime_factory_power_initial()&&factory_power.off_latched&&uci_calls==2);
+ memset(&factory_power,0,sizeof factory_power);uci_value="mode_power_on\n";uci_failure=1;assert(!runtime_factory_power_initial()&&factory_power.observed==TF_FACTORY_POWER_UNKNOWN);
+ factory_bus_active=1;poll_failed=1;assert(!runtime_factory_power_read(1)&&failures==1);
+ puts("PASS: actual runtime consumes OFF before raw ON, explicit ON/batched cancellation, effective-UCI initial rejection, provider loss guard; zero polling subprocesses");
+}
+'@
+[IO.File]::WriteAllText("$root/build-preview/test-factory-power-integration.c",$audit.Replace('ACTUAL_POWER',$power))
+& "$root/toolchain/zig-x86_64-windows-0.14.1/zig.exe" cc -target x86_64-windows-gnu -std=c11 -D_GNU_SOURCE "-I$root" "$root/build-preview/test-factory-power-integration.c" -o "$root/bin/test-factory-power-integration.exe"
+if($LASTEXITCODE -ne 0){throw 'Factory power integration build failed'}
+& "$root/bin/test-factory-power-integration.exe"
+if($LASTEXITCODE -ne 0){throw 'Factory power integration failed'}

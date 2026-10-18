@@ -20,6 +20,18 @@ static int tf_power_token(const char**cursor,const char*end,char*out,size_t cap)
  if(!closed||(!n&&!quote)||(p<end&&!isspace((unsigned char)*p)&&*p!='#'))return -1;
  out[n]=0;*cursor=p;return 1;
 }
+static int tf_factory_power_value(const char*value){
+ if(!value)return TF_FACTORY_POWER_UNKNOWN;
+ if(!strcmp(value,"mode_power_on")||!strcmp(value,"mode_power_on_charger"))return TF_FACTORY_POWER_ON;
+ if(!strcmp(value,"mode_power_off")||!strncmp(value,"mode_power_off_",15))return TF_FACTORY_POWER_OFF;
+ return TF_FACTORY_POWER_UNKNOWN;
+}
+/* Fixed uci get output, including a possible final newline; no guessed state. */
+static int tf_factory_power_uci_value(const char*raw){
+ if(!raw)return TF_FACTORY_POWER_UNKNOWN;size_t n=strcspn(raw,"\r\n");
+ if(!n||n>=128)return TF_FACTORY_POWER_UNKNOWN;const char*tail=raw+n;while(*tail=='\r'||*tail=='\n')tail++;if(*tail)return TF_FACTORY_POWER_UNKNOWN;
+ char value[128];memcpy(value,raw,n);value[n]=0;return tf_factory_power_value(value);
+}
 static int tf_factory_power_parse(const char*raw,size_t size){
  if(!raw||!size||size>32768||memchr(raw,0,size)||raw[size-1]!='\n')return TF_FACTORY_POWER_UNKNOWN;
  int in_mode=0,sections=0,found=0,state=TF_FACTORY_POWER_UNKNOWN;const char*p=raw,*end=raw+size;
@@ -32,8 +44,7 @@ static int tf_factory_power_parse(const char*raw,size_t size){
   if(tf_power_token(&q,e,value,sizeof value)!=1||tf_power_token(&q,e,extra,sizeof extra)!=0)return TF_FACTORY_POWER_UNKNOWN;
   if(!strcmp(kind,"config")){in_mode=!strcmp(value,"mode");if(in_mode&&++sections>1)return TF_FACTORY_POWER_UNKNOWN;continue;}
   if(!in_mode||strcmp(key,"mode_main_state"))continue;if(found++)return TF_FACTORY_POWER_UNKNOWN;
-  if(!strcmp(value,"mode_power_on")||!strcmp(value,"mode_power_on_charger"))state=TF_FACTORY_POWER_ON;
-  else if(!strcmp(value,"mode_power_off")||!strncmp(value,"mode_power_off_",15))state=TF_FACTORY_POWER_OFF;
+  state=tf_factory_power_value(value);
  }
  return found==1?state:TF_FACTORY_POWER_UNKNOWN;
 }
@@ -54,8 +65,25 @@ static int tf_factory_power_read_path(const char*path){
 }
 /* A non-ON sample cancels the current transaction even if a later read is ON.
  * Only the main loop clears interrupted, after discarding stale input. */
-typedef struct{int observed,off_latched,sampled,interrupted;uint32_t sampled_at;}tf_factory_power_watch;
+typedef struct{
+ int observed,raw_observed,off_latched,sampled,interrupted,event_state,event_wait_raw_on;
+ uint32_t sampled_at,event_sequence,event_off_seen;
+}tf_factory_power_watch;
 static int tf_factory_power_due(const tf_factory_power_watch*p,uint32_t now){return !p->sampled||(uint32_t)(now-p->sampled_at)>=(p->off_latched?1000u:250u);}
-static void tf_factory_power_observe(tf_factory_power_watch*p,int state,uint32_t now){p->sampled=1;p->sampled_at=now;p->observed=state;if(state!=TF_FACTORY_POWER_ON)p->interrupted=1;if(state==TF_FACTORY_POWER_OFF)p->off_latched=1;}
+static void tf_factory_power_observe(tf_factory_power_watch*p,int state,uint32_t now){
+ p->sampled=1;p->sampled_at=now;p->raw_observed=state;
+ /* MC events precede saved UCI changes. An old on value cannot undo an OFF
+  * event; an old off value cannot undo the explicit subsequent ON event. */
+ if(p->event_state==TF_FACTORY_POWER_OFF)state=TF_FACTORY_POWER_OFF;
+ else if(p->event_wait_raw_on){if(state==TF_FACTORY_POWER_ON)p->event_wait_raw_on=0;else state=TF_FACTORY_POWER_ON;}
+ p->observed=state;if(state!=TF_FACTORY_POWER_ON)p->interrupted=1;if(state==TF_FACTORY_POWER_OFF)p->off_latched=1;
+}
+static void tf_factory_power_event(tf_factory_power_watch*p,int state,uint32_t sequence,uint32_t off_seen){
+ if(!sequence||sequence==p->event_sequence||(state!=TF_FACTORY_POWER_ON&&state!=TF_FACTORY_POWER_OFF))return;
+ if(off_seen!=p->event_off_seen){p->interrupted=1;p->off_latched=1;}
+ p->event_sequence=sequence;p->event_off_seen=off_seen;p->event_state=state;p->sampled=1;
+ p->event_wait_raw_on=state==TF_FACTORY_POWER_ON&&p->raw_observed!=TF_FACTORY_POWER_ON;
+ p->observed=state;if(state==TF_FACTORY_POWER_OFF){p->interrupted=1;p->off_latched=1;}
+}
 static int tf_factory_power_can_use(const tf_factory_power_watch*p){return p->sampled&&p->observed==TF_FACTORY_POWER_ON&&!p->off_latched&&!p->interrupted;}
 #endif

@@ -5,7 +5,7 @@ const crypto = require('node:crypto');
 const zlib = require('node:zlib');
 const vm = require('node:vm');
 const ROOT = path.resolve(__dirname, '..');
-const VERSION = '0.2.7';
+const VERSION = '0.2.8';
 const FACTORY_BINARY_SHA256 = '781e3c6ffa2a9db4d61a3cf1bb38461131dc3faed07499a2c9360bc582040dd2';
 const { managerOnly } = require('./production-manager.cjs');
 const SOURCES = ['manager-theme.js', 'manager-confirm.js', 'manager-wallpaper.js', 'manager-wallpaper-ui.js', 'manager-wallpaper-migration.js', 'ufi-plugin.js'];
@@ -42,7 +42,8 @@ function verifyNativeSources(manifest, members, readSource = name => fs.readFile
   const hashes = manifest.sourceSha256;
   if (!hashes || typeof hashes !== 'object' || Array.isArray(hashes)) throw Error('Missing native source hashes');
   for(const name of ['lock_wallpaper.h','key_press.h','power_menu.h','upstream/include/key_input.h','upstream/src/key_input.c'])if(!Object.hasOwn(hashes,name))throw Error('Missing power-key native source hash: '+name);
-  for(const name of ['factory_power_state.h','test-factory-power.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing factory-power native source hash: '+name);
+  for(const name of ['factory_power_state.h','test-factory-power.ps1','test-device-power-events.ps1','test-factory-bus.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing factory-power native source hash: '+name);
+  for(const name of ['sms_session_restore.h','sms_session_pages.h'])if(!Object.hasOwn(hashes,name))throw Error('Missing SMS session native source hash: '+name);
   for(const name of ['wifi_state.h','wifi_state_runtime.h','page_state_sync.h','band_state_sync.h','display_pages.h','test-display-external-sync.ps1','radio_status.h','lockscreen_status.h','lockscreen_chart.h','test-lockscreen.c','test-lockscreen.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing native source hash: '+name);
   for(const name of ['modem_logic.h','modem_pages.h','test-modem-ambr.c','test-modem-ambr.ps1'])if(!Object.hasOwn(hashes,name))throw Error('Missing native source hash: '+name);
   if(!Object.hasOwn(hashes,'test-wake-sensor.ps1'))throw Error('Missing native source hash: test-wake-sensor.ps1');
@@ -76,7 +77,7 @@ function verifyNativeBinaries(manifest,members){
 }
 
 function verifyNativeRootProofs(manifest, readSource = name => fs.readFileSync(path.join(ROOT, name))) {
-  const required = ['tests/manager-wallpaper-migration-audit.test.js', 'tests/manager-wallpaper-migration.test.js', 'tests/native-band-state-sync.test.js', 'tests/native-page-state-sync.test.js', 'tests/native-power-key.test.js', 'tests/native-power-menu.test.js', 'tests/native-ufi.test.js', 'tests/native-wallpaper-files.test.js', 'tests/native-wallpaper.test.js', 'tests/native-wifi-integration.test.js', 'tests/native-wifi-state.test.js'];
+  const required = ['native/test-device-power-events.ps1', 'native/test-factory-bus.ps1', 'tests/manager-wallpaper-migration-audit.test.js', 'tests/manager-wallpaper-migration.test.js', 'tests/native-band-state-sync.test.js', 'tests/native-page-state-sync.test.js', 'tests/native-power-key.test.js', 'tests/native-power-menu.test.js', 'tests/native-power-transport.test.js', 'tests/native-extra.test.js', 'tests/native-sms-ufi.test.js', 'tests/native-sms-session-restore.test.js', 'tests/native-sms-session-ui.test.js', 'tests/native-ufi.test.js', 'tests/native-wallpaper-files.test.js', 'tests/native-wallpaper.test.js', 'tests/native-wifi-integration.test.js', 'tests/native-wifi-state.test.js'].sort();
   const hashes = manifest.rootProofSha256;
   if (!hashes || typeof hashes !== 'object' || Array.isArray(hashes)) throw Error('Missing root native proof hashes');
   if (JSON.stringify(Object.keys(hashes).sort()) !== JSON.stringify(required)) throw Error('Invalid root native proof paths');
@@ -130,15 +131,15 @@ function verifyNativeReleaseContract(manifest, {reviewOnly=false,diagnosticCandi
   if(!diagnosticCandidate && manifest.version!==VERSION)throw Error('Native package version does not match the current release');
   if(!diagnosticCandidate){
     const power=manifest.nativeFactoryPower;
-    if(!power||power.source!=='/etc/config/zwrt_zte_mc_tmp'||power.section!=='mode'||power.field!=='mode_main_state'||power.off!=='mode_power_off*'||JSON.stringify(power.on)!=='["mode_power_on","mode_power_on_charger"]'||power.settingIsPowerState!==false||power.unknownAfterOff!=='remain-dark'||power.inputDuringOff!=='discard'||power.writesFactoryMode!==false||power.additionalProcesses!==0||power.hardwareTested!==false)throw Error('Native factory-power contract is absent or stale');
+    if(!power||power.eventSource!=="zwrt_device_power_state_event"||power.sourcePriority!=="event-before-raw"||power.preflight!=="effective-uci-read"||power.offEventLatch!=="until-mc-on"||power.darkReadbackMilliseconds!==1000||power.darkCorrection!=="only-if-observed-bright"||power.quickenAck!=="quickening-event-only-dark-confirmed"||power.quickenAckMethod!=="poweroff_quicken_compelte"||power.quickenAckResetFlag!==0||power.quickenAckPerEvent!==1||power.quickenAckPerCycle!==1||power.normalAck!=="oem-off-reboot-dark-confirmed"||power.normalAckMethod!=="poweroff_compelte"||power.normalAckPerCycle!==1||power.rebootEvent!=="zwrt_mode_lcd_reboot"||power.resetAck!==false||power.subscribesShutdownParticipant!==false||power.source!=='/etc/config/zwrt_zte_mc_tmp'||power.section!=='mode'||power.field!=='mode_main_state'||power.off!=='mode_power_off*'||JSON.stringify(power.on)!=='["mode_power_on","mode_power_on_charger"]'||power.settingIsPowerState!==false||power.unknownAfterOff!=='remain-dark'||power.inputDuringOff!=='discard'||power.writesFactoryMode!==false||power.additionalProcesses!==0||power.hardwareTested!==false)throw Error('Native factory-power contract is absent or stale');
     const wallpaper=manifest.nativeLockWallpaper;
     if(!wallpaper||wallpaper.format!=='TFWP5651'||wallpaper.width!==320||wallpaper.height!==480||wallpaper.fileBytes!==307216||wallpaper.pixelFormat!=='RGB565_LE'||wallpaper.path!=='/data/plugins/topflow-screen/lock-wallpaper.rgb565'||wallpaper.refresh!=='lock-entry'||wallpaper.bufferBytes!==307200||wallpaper.noBackgroundPolling!==true||wallpaper.fallback!=='default'||wallpaper.factoryFilesUntouched!==true||wallpaper.uninstallRemovesCustomWallpaper!==true||wallpaper.staging!=='.lock-wallpaper.upload'||wallpaper.receipt!=='.lock-wallpaper.pending'||wallpaper.chunk!=='.lock-wallpaper.chunk'||wallpaper.transport!=='run-shell-locked-chunks'||wallpaper.chunkBytesMaximum!==24576||wallpaper.transaction!=='sha256-nonce32-current-boot-id-offset'||wallpaper.commit!=='same-directory-atomic-rename'||JSON.stringify(wallpaper.checks)!=='["root-owner","regular-file","no-symlink","single-hardlink","size","header","sha256"]'||wallpaper.unknownUpload!=='retain-old-image-explicit-abort-no-retry'||wallpaper.uninstallPending!=='remove-owned-pending-under-lifecycle-lock'||wallpaper.recovery!=='nonce-and-current-boot-guarded-explicit-abort'||wallpaper.stalePixels!=='never-commit-after-boot-change'||wallpaper.hardwareTested!==false)throw Error('Native lock wallpaper contract is absent or stale');
     const key=manifest.nativePowerKey;
-    if(!key||key.thresholdMilliseconds!==1200||key.longPress!=='power-menu-overlay'||key.alreadyAwake!=='preserve-unlocked-state'||key.asleep!=='existing-wake-before-menu'||key.locked!=='menu-visible-actions-disabled'||key.authorization!=='control_guard'||JSON.stringify(key.actions)!=='["device.poweroff","device.reboot"]'||key.capabilityEndpoint!=='http://127.0.0.1:9460/capabilities'||key.controlEndpoint!=='http://127.0.0.1:9460/control'||key.confirmation!=='second-confirmation-and-capability-recheck'||key.submissionsPerConfirmation!==1||key.automaticRetry!==false||key.cancel!=='restore-page-and-scroll'||key.invalidateOldPending!==true||JSON.stringify(key.clearOn)!=='["sleep","resync"]'||key.hardwareTested!==false)throw Error('Native power-key menu contract is absent or stale');
+    if(!key||key.thresholdMilliseconds!==1200||key.longPress!=='power-menu-overlay'||key.alreadyAwake!=='preserve-unlocked-state'||key.asleep!=='existing-wake-before-menu'||key.locked!=='menu-visible-actions-disabled'||key.authorization!=='control_guard'||JSON.stringify(key.actions)!=='["device.poweroff","device.reboot"]'||key.capabilityEndpoint!=='http://127.0.0.1:9460/capabilities'||key.controlEndpoint!=='http://127.0.0.1:9460/control'||key.confirmation!=='second-confirmation-and-capability-recheck'||key.submissionsPerConfirmation!==1||key.timeoutMilliseconds!==10000||key.outcome!=="transport-progress-without-retry"||key.completeResponse!=="framed-response-before-eof"||key.automaticRetry!==false||key.cancel!=='restore-page-and-scroll'||key.invalidateOldPending!==true||JSON.stringify(key.clearOn)!=='["sleep","resync"]'||key.hardwareTested!==false)throw Error('Native power-key menu contract is absent or stale');
     const ambr=manifest.nativeAmbr;
     if(!ambr||JSON.stringify(ambr.targets)!=='["5G","4G1","4G2"]'||ambr.source!=='per-modem-qos'||ambr.uplink!=='ambr_ul'||ambr.downlink!=='ambr_dl'||ambr.unit!=='Mbps'||JSON.stringify(ambr.displayOrder)!=='["tx_speed","rx_speed","qci","ambr_ul","ambr_dl"]'||ambr.crossModemFallback!==false||ambr.additionalDeviceRequests!==0||ambr.meaning!=='network-last-reported-limit'||ambr.hardwareTested!==false)throw Error('Native AMBR display contract is absent or stale');
     const sms=manifest.nativeSms,network=manifest.nativeNetwork;
-    if(!sms||sms.endpoint!=='http://127.0.0.1:2333/api/goform/goform_set_cmd_process'||sms.action!=='SEND_SMS'||sms.authorization!=='existing-UFI-session-with-AD'||sms.confirmedResult!=='UFI-result-success'||sms.sender!=='host'||sms.encoding!=='UTF16BE-hex'||sms.submitCountPerConfirmation!==1||sms.automaticRetry!==false||sms.deviceSendVerified!==false)throw Error('Native UFI SMS contract is absent or stale');
+    if(!sms||sms.endpoint!=='http://127.0.0.1:2333/api/goform/goform_set_cmd_process'||sms.action!=='SEND_SMS'||sms.authorization!=='existing-UFI-session-with-AD'||sms.sessionRestore!=='explicit-UFI-LD-LOGIN'||sms.sessionRestorePassword!=='memory-only-wiped'||sms.sessionRestoreMaxPerMinute!==3||sms.sessionRestoreResend!==false||sms.sessionRestoreCookiePersist!==false||sms.confirmedResult!=='UFI-result-success'||sms.sender!=='host'||sms.encoding!=='UTF16BE-hex'||sms.submitCountPerConfirmation!==1||sms.automaticRetry!==false||sms.deviceSendVerified!==false)throw Error('Native UFI SMS contract is absent or stale');
     if(!network||network.aggregationStatus!=='source-aware-plus-owned-factory-tcp-observation'||network.quota!=='aggregation.traffic.remaining_bytes'||network.today!=='aggregation.traffic.today_used_bytes'||network.ethernet!=='kernel-carrier-and-negotiated-speed'||network.carriers!=='official-nrca-lteca-and-primary'||network.noActiveProbe!==true||network.deviceAggregationVerified!==false)throw Error('Native network observations contract is absent or stale');
     const sim=manifest.nativeSimSource;
     if(!sim||JSON.stringify(sim.targets)!=='["5G","4G1","4G2"]'||JSON.stringify(sim.sources)!=='["removable","builtin"]'||sim.rawSource!=='0-removable-1-builtin'||sim.primary!=='sim_switch_slot'||sim.external!=='sub_modem_switch_slot'||sim.externalModemNumbers?.['4G1']!==1||sim.externalModemNumbers?.['4G2']!==0||sim.readback!=='raw-st_slot'||sim.refresh!=='on-demand-and-active-page'||sim.requiresKnownSource!==false||sim.selection!=="explicit-absolute-target"||sim.presenceRequired!==false||sim.unknownReadback!=="unconfirmed"||sim.externalMustBeEnabled!==true||sim.automaticRetry!==false||sim.deviceSwitchVerified!==false)throw Error('Native SIM source contract is absent or stale');
@@ -187,8 +188,8 @@ function diagnosticReadme(summary,outputName){
 }
 function releaseReadme(summary,outputName){
   return [
-    'TopFlow 屏幕 '+summary.version+' — UFI 操作命令长度修复版',
-    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false。0.2.7 修复管理操作命令超过单参数长度限制导致状态读取失败；沿用 0.2.6 透明配色与快速开机修复，原生屏幕程序未变，保留状态同步和升级前的自定义壁纸，本轮未新增实机测试。',
+    'TopFlow 屏幕 '+summary.version+' — 快速开关机联动修复版',
+    '状态：DEVICE_ACCEPTANCE_PENDING；hardwareTested=false。0.2.8 继续修复快速开机关机后的屏幕与触摸联动，保留 0.2.7 管理命令长度修复、透明配色、状态同步和升级前的自定义壁纸；本轮电脑检查通过后仍需实机验收。',
     '历史 0.2.1 已由用户实机验收；0.2.3 电源键长按菜单已在电脑验证，本轮未新增实机测试。现固定三个主页面：首页、网络、功能；普通/聚合共用一个首页位置。',
     '长按实体电源键打开关机/重启菜单；锁定时需先解锁，再次确认并复查能力后只提交一次；取消返回原页面和滚动位置。',
     '首页随设备最新回读的聚合开关状态切换；未启用、未知或过期时显示普通页，已启用但离线仍显示聚合页。',
@@ -205,11 +206,11 @@ function releaseReadme(summary,outputName){
     '各卡详情依次显示实时上行、实时下行、QCI、签约上行、签约下行；签约值读取本卡AMBR（Mbps），非测速，未知显示—。',
     '保留各卡插拔卡/内置卡切换，按该模组原厂接口提交并回读；卡源未知仍可明确选择；未启用需先启用。',
     '短信改走现有UFI SEND_SMS及AD会话校验，一次确认只提交一次；会话失效需在UFI恢复，超时不重发。',
-    '保留原厂切换、休眠和PIN保护；显示配置与光感瞬态失败分开，立即锁屏独立；本轮未访问设备。',
+    '保留原厂切换、休眠和PIN保护；显示配置与光感瞬态失败分开，立即锁屏独立；本轮未安装或修改设备。',
     '',
     summary.reviewOnly?'此页仅供本地审查，安装和启动已禁用；不要改名当作可上传TXT。':'安装：在已登录UFI的插件管理中选择 '+outputName+'，再点击“提交”保存，等待完成后刷新。',
     '“功能列表”下方的 TopFlow 屏幕内嵌卡片就是操控页；插件列表文件名打开源码，无需编辑。',
-    '更新0.1.0至0.2.6已核验版本：旧屏幕可保持运行，移除旧TopFlow插件记录、点击“提交”保存并刷新，',
+    '更新0.1.0至0.2.7已核验版本：旧屏幕可保持运行，移除旧TopFlow插件记录、点击“提交”保存并刷新，',
     '再导入本包并点击“提交”保存刷新。UFI跳过同名导入，不会覆盖旧记录；不要改名叠加，也不要删除其他插件。',
     '管理器仅识别已交付且列入核验清单的旧归档；固定归属、清单和执行文件哈希匹配后，',
     '顶部检查已导入TXT与设备组件；发现旧版显示“更新到 v'+summary.version+'”，一次确认自动恢复原厂、清理、安装并启动，无需手动来回切换。',

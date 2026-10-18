@@ -21,7 +21,7 @@ static tf_factory_guard factory_guard;
 static tf_display_idle_guard display_idle_guard;
 static tf_display_policy display_policy;
 static int display_direct_wake,display_startup_guard_pending,display_startup_dormant;
-static int test_oem_on;static int test_oem_gate(void){return test_oem_on;}static int(*display_power_on_hook)(void)=test_oem_gate;
+static int test_oem_on,bus_ticks,cut_on_tick,cut_after_write,lcd_on_events;static int test_oem_gate(void){return test_oem_on;}static int(*display_power_on_hook)(void)=test_oem_gate;
 static const char*failure_code;
 static int helper_stops;
 static int reported_pin,login_value,login_count;
@@ -36,18 +36,18 @@ static int idle_read(void*ctx,char*out,size_t cap){(void)ctx;if(idle_fail_read)r
 static int idle_write(void*ctx,enum tf_guard_resource resource,const char*text,size_t n){(void)ctx;(void)n;if(idle_fail_write)return 0;if(resource==TF_GUARD_ACQUIRE){assert(!strcmp(text,"topflow_screen_123_456_idle 180000000000\n"));assert(live>0||lcd==1);idle_writes++;idle_held=1;idle_expires=clock_ms+180000;}else{assert(resource==TF_GUARD_RELEASE);assert(!strcmp(text,"topflow_screen_123_456_idle\n"));assert(live>0&&lcd==1);idle_releases++;idle_held=0;}return 1;}
 static uint32_t tick(void){return clock_ms;}
 static int poll(void*x,int n,int wait){(void)x;(void)n;clock_ms+=(uint32_t)wait;return 0;}
-static int tf_fb_tick(void*x){(void)x;if(expire_on_tick)own=0;return !bad_bus;}
+static int tf_fb_tick(void*x){(void)x;bus_ticks++;if(cut_on_tick==bus_ticks)test_oem_on=0;if(expire_on_tick)own=0;return !bad_bus;}
 static void tf_fb_stop(void*x){assert(x==&factory_bus);helper_stops++;}
 static int test_guard_acquire(void*x){(void)x;guard_count++;if(bad_guard)return 0;own=1;return 1;}
 static int test_guard_release(void*x){(void)x;if(!own)return 1;release_count++;if(bad_release)return 0;own=0;return 1;}
 static int test_guard_observe(void*x,const char*name){(void)x;return !strcmp(name,"zteSleepBacklight")?lcd:own;}
-static void backlight_set(int value){write_count++;live=bad_level?value+1:value;}
+static void backlight_set(int value){write_count++;live=bad_level?value+1:value;if(cut_after_write&&value>0)cut_on_tick=bus_ticks+1;}
 static int display_read_number(const char*p,int lo,int hi,int*out){(void)p;(void)lo;(void)hi;*out=live;return 1;}
 static void native_failure_note(const char*code){assert(code&&*code);if(!failure_code)failure_code=code;}
 static int display_factory_process(void){return 0;}
 static int wake_sensor_calls,wake_sensor_failed,power_cut_sensor,power_cancel_sensor;
 static int display_runtime_wake_sensor(void){assert(frame_ready&&display_frame_guard&&own&&!factory_bus.resync);wake_sensor_calls++;if(power_cut_sensor){test_oem_on=0;return 0;}return power_cancel_sensor?2:!wake_sensor_failed;}
-static int tf_fb_command(void*x,int type,uint32_t value,int timeout){(void)x;assert(timeout==2500);if(type==TF_BUS_TOUCH){assert(value==1);touch_count++;return !bad_touch;}if(type==TF_BUS_LOGIN){login_value=(int)value;login_count++;if(expire_on_login)own=0;}if(type==TF_BUS_LCD){event_count++;if(bad_event)return 0;if(!bad_observe)lcd=(int)value;}return 1;}
+static int tf_fb_command(void*x,int type,uint32_t value,int timeout){(void)x;assert(timeout==2500);if(type==TF_BUS_TOUCH){assert(value==1);touch_count++;return !bad_touch;}if(type==TF_BUS_LOGIN){login_value=(int)value;login_count++;if(expire_on_login)own=0;}if(type==TF_BUS_LCD){event_count++;if(value)lcd_on_events++;if(bad_event)return 0;if(!bad_observe)lcd=(int)value;}return 1;}
 static void backlight_init(void){}
 #define tf_guard_acquire test_guard_acquire
 #define tf_guard_release test_guard_release
@@ -55,7 +55,7 @@ static void backlight_init(void){}
 '@
 $suffix=@'
 static void reset(void){
- test_oem_on=1;power_cut_sensor=power_cancel_sensor=0;display_startup_dormant=0;
+ test_oem_on=1;bus_ticks=cut_on_tick=cut_after_write=lcd_on_events=0;power_cut_sensor=power_cancel_sensor=0;display_startup_dormant=0;
  memset(&factory_bus,0,sizeof factory_bus);factory_bus.ready=1;factory_bus_active=1;
  tf_guard_io io={NULL,idle_read,idle_write};assert(tf_guard_init(&factory_guard,123,456,io));assert(tf_idle_init(&display_idle_guard,&factory_guard));
  idle_held=idle_writes=idle_releases=idle_fail_read=idle_fail_write=0;idle_expires=0;
@@ -113,6 +113,8 @@ int main(void){
  reset();assert(start_adopt());assert(display_runtime_request(135));test_oem_on=0;int old_touch=touch_count;assert(display_runtime_touch(1,500)&&touch_count==old_touch);assert(display_runtime_request(150)&&!live&&idle_writes==1);live=50;lcd=1;factory_bus.resync=1;assert(start_resync()&&!live&&!lcd&&!display_policy.on&&!wake_sensor_calls&&idle_writes==1&&running);test_oem_on=1;assert(display_runtime_request(90)&&live==90&&lcd==1);
  reset();assert(start_adopt());live=77;lcd=0;factory_bus.resync=1;power_cut_sensor=1;assert(start_resync()&&running&&!live&&!lcd&&!display_policy.on&&wake_sensor_calls==1);
  reset();assert(start_adopt());live=77;lcd=0;factory_bus.resync=1;power_cancel_sensor=1;assert(test_oem_on&&start_resync()&&running&&!live&&!lcd&&!display_policy.on&&!failure_code&&wake_sensor_calls==1);
+ reset();assert(start_adopt());cut_on_tick=bus_ticks+1;assert(display_runtime_request(135)&&running&&!live&&!lcd&&!write_count&&!lcd_on_events&&!display_policy.on);
+ reset();assert(start_adopt());cut_after_write=1;assert(display_runtime_request(135)&&running&&!live&&!lcd&&write_count==2&&!lcd_on_events&&idle_writes==1&&!display_policy.on);
  puts("PASS: actual display runtime receipt/map, guarded adopt and errors; OEM OFF blocks direct adoption, brightness, touch and resync wakes, normal ON restores control; finite idle lease is never renewed during repeated OFF; original locks remain untouched");return 0;
 }
 '@

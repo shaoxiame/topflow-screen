@@ -16,6 +16,8 @@
 typedef struct {
  int fd,ready,failed,power_event,resync,waiting,start_stage;pid_t pid;
  uint32_t sequence,ack_sequence,ack_value;uint64_t ping_ms;
+ uint32_t device_power_sequence,device_power_off_seen,device_quicken_pending,device_poweroff_pending;
+ int device_power_state;
 } tf_factory_bus;
 static uint64_t tf_fb_now(void){struct timespec t;if(clock_gettime(CLOCK_MONOTONIC,&t))return 0;return (uint64_t)t.tv_sec*1000+t.tv_nsec/1000000;}
 static void tf_fb_init(tf_factory_bus*s){memset(s,0,sizeof *s);s->fd=-1;s->pid=-1;}
@@ -34,6 +36,13 @@ static int tf_fb_poll(tf_factory_bus*s){
   case TF_BUS_SLEEP:s->power_event=1;break;
   case TF_BUS_WAKE:s->power_event=2;break;
   case TF_BUS_RESYNC:s->resync=1;break;
+  case TF_BUS_DEVICE_POWER:
+   if(s->device_power_sequence==UINT32_MAX||p.sequence!=s->device_power_sequence+1){s->failed=1;return 0;}
+   s->device_power_sequence=p.sequence;s->device_power_state=p.value==TF_DEVICE_ON?1:2;
+   if(p.value!=TF_DEVICE_ON){if(s->device_power_off_seen==UINT32_MAX){s->failed=1;return 0;}s->device_power_off_seen++;}
+   s->device_quicken_pending=(p.value&TF_DEVICE_QUICK)?p.sequence:0;
+   s->device_poweroff_pending=(p.value&TF_DEVICE_NORMAL)?p.sequence:0;
+   break;
   default:s->failed=1;return 0;
   }
  }return 1;
@@ -55,6 +64,17 @@ static int tf_fb_command(tf_factory_bus*s,uint32_t type,uint32_t value,int timeo
 static int tf_fb_tick(tf_factory_bus*s){
  if(!tf_fb_poll(s))return 0;
  if(!s->waiting&&tf_fb_now()-s->ping_ms>=2000)return tf_fb_command(s,TF_BUS_PING,0,2500);
+ return 1;
+}
+/* One event-bound receipt per fresh, confirmed LCD-off observation. Quick
+ * completion has priority; the normal UI completion follows a fresh readback.
+ * Pending flags come from the helper's OFF-cycle state, never a local button. */
+static int tf_fb_power_complete(tf_factory_bus*s){
+ int quick=s->device_quicken_pending!=0;
+ uint32_t pending=quick?s->device_quicken_pending:s->device_poweroff_pending;if(!pending)return 1;
+ if(!tf_fb_command(s,quick?TF_BUS_QUICKEN_COMPLETE:TF_BUS_POWEROFF_COMPLETE,pending,2500))return 0;
+ uint32_t*slot=quick?&s->device_quicken_pending:&s->device_poweroff_pending;
+ if(*slot==pending)*slot=0;
  return 1;
 }
 static void tf_fb_stop(tf_factory_bus*s){

@@ -16,7 +16,9 @@ static int cell_form_nr;
 static const char*form_label(int i){if(form_kind==5)return i==0?"PCI":i==1?(cell_form_nr?"ARFCN":"EARFCN"):"NR 频段（n）";if(form_kind==4)return traffic_op==2?"每月日期":i?"提醒比例（%）":"容量（字节）";return form_kind==1?(i?"短信内容":"收件号码"):form_kind==2?(i?"新 Wi-Fi 密码":"Wi-Fi 名称"):(i==0?"配置名称":i==1?"APN":i==2?"用户名":"新密码（留空保留）");}
 static size_t form_limit(int i){if(form_kind==5)return i==1?7:i==0?4:3;if(form_kind==4)return 15;return form_kind==1?(i?512:32):form_kind==2?(i?63:32):(i==0?64:i==1?128:256);}
 static int form_secret(int i){return (form_kind==2&&i==1)||(form_kind==3&&i==3);}
-static void form_reset(void){form_is_guest=form_return_page=form_wifi_external=0;form_wifi_sync_after=0;memset(form_values,0,sizeof form_values);memset(form_original,0,sizeof form_original);memset(form_payload,0,sizeof form_payload);form_field=0;keyboard_case=keyboard_symbols=keyboard_chinese=0;tf_pinyin_clear(&keyboard_pinyin);}
+static void sms_session_cleanup(void);
+static void form_reset(void){sms_session_cleanup();form_is_guest=form_return_page=form_wifi_external=0;form_wifi_sync_after=0;memset(form_values,0,sizeof form_values);memset(form_original,0,sizeof form_original);memset(form_payload,0,sizeof form_payload);form_field=0;keyboard_case=keyboard_symbols=keyboard_chinese=0;tf_pinyin_clear(&keyboard_pinyin);}
+#include "sms_session_pages.h"
 #include "apn_pages.h"
 static int form_load_wifi(const char*band){tf_json d;if(!fresh_state(&d))return 0;int array=tf_key(&d,tf_key(&d,0,"wlan"),"bands"),ok=0;if(array>=0&&d.t[array].type=='[')for(int i=array+1;i<d.t[array].next;i=d.t[i].next){char b[16];if(tf_gets(&d,i,"band",b,sizeof b)&&!strcmp(b,band)){char ssid[128],enc[64];if(tf_gets(&d,i,"ssid",ssid,sizeof ssid)&&*ssid&&strlen(ssid)<=32&&tf_gets(&d,i,"enc",enc,sizeof enc)&&tf_wifi_enc_index(enc)>=0){form_reset();form_kind=2;snprintf(form_band,sizeof form_band,"%s",band);snprintf(form_section,sizeof form_section,"%s",band);snprintf(form_values[0],sizeof form_values[0],"%s",ssid);snprintf(form_values[2],sizeof form_values[2],"%s",enc);memcpy(form_original,form_values,sizeof form_values);ok=1;}break;}}tf_free(&d);return ok;}
 #include "cell_form.h"
@@ -46,6 +48,7 @@ static int form_wifi_recheck(void){
  volatile unsigned char*w=(volatile unsigned char*)body;for(int i=0;i<32768;i++)w[i]=0;free(body);if(!okay)form_wifi_external=1;return okay;
 }
 static void form_render(void){
+ if(sms_session_ui.stage){sms_session_render();return;}
  form_wifi_observe();
  if(advanced_page==7){
   advanced_n=0;char value[4096];const char*raw=form_values[form_field];
@@ -80,9 +83,10 @@ static void form_render(void){
  if(form_kind==1)ah("<p class='note'>通过 UFI 面板的现有短信接口，由 5G 主卡发送。正文支持中文拼音、英文、数字与符号，最大 512 字节。确认后仅发送一次。</p>");
  else if(form_kind==2){ah("<div class='card'><b>加密方式</b>");const char*labels[]={"开放网络","WPA2","WPA2 / WPA3","WPA3","WPA / WPA2","WPA2 兼容","WPA 混合"};ah("<table style='width:100%%;table-layout:fixed;border-spacing:5px;margin-top:6px'>");for(int i=0;i<7;i++){if(i%2==0)ah("<tr>");ah("<td style='width:50%%'><a class='button %s' href='act:wifi-enc:%d' style='font-size:11px'>%s</a></td>",!strcmp(form_values[2],tf_wifi_enc[i])?"":"secondary",i,labels[i]);if(i%2==1)ah("</tr>");}ah("<td></td></tr></table>");ah("</div><p class='note'>仅提交变化项。SSID 最多 32 字节，密码 8–63 字节；空密码保留原值。修改会使当前 Wi-Fi 客户端断线。</p>");}
  if(form_kind==3){const char*auth[]={"无认证","PAP","CHAP","PAP + CHAP"},*pdp[]={"IPv4","IPv6","IPv4 / IPv6"};ah("<div class='card'><b>认证方式</b>");ah("<table style='width:100%%;table-layout:fixed;border-spacing:5px;margin-top:6px'>");for(int i=0;i<4;i++){if(i%2==0)ah("<tr>");ah("<td style='width:50%%'><a class='button %s' href='act:apn-auth:%d'>%s</a></td>",atoi(form_values[4])==i?"":"secondary",i,auth[i]);if(i%2==1)ah("</tr>");}ah("</table>");ah("<h3 style='margin-top:12px'>地址类型</h3>");ah("<table style='width:100%%;table-layout:fixed;border-spacing:5px;margin-top:6px'><tr>");for(int i=1;i<=3;i++)ah("<td style='width:33.33%%'><a class='button %s' href='act:apn-pdp:%d' style='font-size:10px'>%s</a></td>",atoi(form_values[5])==i?"":"secondary",i,i==3?"双栈":pdp[i-1]);ah("</tr></table>");ah("</div><a class='button secondary' href='act:apn-clear-password' style='margin-top:7px'>%s原 APN 密码</a><p class='note'>空密码保留原值；如需清除必须明确选择。配置只保存在本次内存草稿。</p>",apn_clear_password?"已选清除 · 点击保留":"点击明确清除");}
- ah("<a class='button' href='act:form-apply' style='margin-top:10px'>检查并确认%s</a>",form_kind==1?"发送":"修改");ah("</div></body></html>");
+ ah("<a class='button' href='act:form-apply' style='margin-top:10px'>检查并确认%s</a>",form_kind==1?"发送":"修改");if(form_kind==1)sms_session_entry();ah("</div></body></html>");
 }
 static int form_action(const char*a){
+ if(sms_session_action(a))return 1;
  if(!strncmp(a,"cell-manual:",12)){if(strlen(a+12)==1&&(a[12]=='0'||a[12]=='1'))return cell_form_open(a[12]-'0');return 1;}
  if(apn_action(a))return 1;
  if(!strcmp(a,"sms-compose")){form_reset();form_kind=1;snprintf(form_parent,sizeof form_parent,"subpages/sms.html");advanced_page=6;scroll_y=0;return 1;}
@@ -104,6 +108,7 @@ static int form_action(const char*a){
   if(!ok){show_notice("输入无效或没有变化，请检查字段要求");memset(form_payload,0,sizeof form_payload);return 1;}strcpy(pending,"@form");scroll_y=0;return 1;}return 0;
 }
 static int form_confirm(void){
+ if(sms_session_confirm())return 1;
  if(cell_form_confirm())return 1;int apn=!strcmp(pending,"@apn");if(!apn&&strcmp(pending,"@form"))return 0;pending[0]=0;
  if(!control_guard()){memset(form_payload,0,sizeof form_payload);return 1;}
  if(apn||form_kind==3){apn_submit();return 1;}
@@ -115,7 +120,7 @@ static int form_confirm(void){
  if(tf_http_cancelled||!control_guard()){memset(form_payload,0,sizeof form_payload);return 1;}
  char response[16384];int accepted=0;
  if(form_kind==1){
-  enum tf_sms_result sent=tf_sms_ufi_submit(form_payload,1);accepted=sent==TF_SMS_SENT;show_notice(tf_sms_result_message(sent));if(accepted)memset(form_values[1],0,sizeof form_values[1]);
+  enum tf_sms_result sent=tf_sms_ufi_submit(form_payload,1);accepted=sent==TF_SMS_SENT;sms_session_observe(sent);show_notice(tf_sms_result_message(sent));if(accepted)memset(form_values[1],0,sizeof form_values[1]);
  }else{
   accepted=tf_http_timeout(9460,"POST","/control",NULL,form_payload,response,sizeof response,10000)==200&&tf_control_success(response,form_payload);
   tf_json d;int verified=0;if(accepted&&tf_parse(&d,response)){verified=tf_bool(&d,tf_key(&d,tf_key(&d,0,"result"),"verified"))==1;tf_free(&d);}

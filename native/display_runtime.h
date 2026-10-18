@@ -193,6 +193,13 @@ static int display_runtime_begin_frame(void){
 static int display_runtime_drive(void){
  while(running){
   if(!tf_fb_tick(&factory_bus)){tf_fl_recover(&factory_lifecycle,TF_FL_PROVIDER_LOST);return display_runtime_fail();}
+  /* An MC OFF may arrive during an already-started wake/brightness transfer.
+   * Consume it before the next output command instead of lighting one frame. */
+  if(factory_lifecycle.target>0&&display_power_on_hook&&!display_power_on_hook()){
+   tf_display_sleep(&display_policy);
+   if(!tf_idle_before_off(&display_idle_guard,factory_lifecycle.brightness,0))return display_runtime_fail();
+   tf_fl_start_transition(&factory_lifecycle,0,tick(),1);
+  }
   tf_fl_tick(&factory_lifecycle,tick(),1);tf_fl_command c=tf_fl_next(&factory_lifecycle);int ok=0,observed=-1;
   if(factory_lifecycle.phase==TF_FL_READY){
    if(factory_lifecycle.brightness>0&&!tf_idle_confirm_on(&display_idle_guard,factory_lifecycle.brightness,tf_guard_observe(&factory_guard,"zteSleepBacklight")))return display_runtime_fail();

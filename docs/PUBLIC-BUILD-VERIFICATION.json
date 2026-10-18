@@ -1,22 +1,20 @@
 {
-  "version": "0.2.7",
-  "edition": "ufi-shell-length-fix",
+  "version": "0.2.8",
+  "edition": "factory-power-and-plugin-sms-session-fix",
   "deviceAccess": true,
   "deviceWrites": false,
   "hardwareVerified": false,
-  "hardwareBoundary": "Build, migration, package and native regression checks ran on the computer. UFI was contacted only for fixed printf/comment probes and the reviewed status action; no files or settings were changed and no screen switch/installation was performed. No new display/touch/sleep hardware acceptance or browser screenshot is claimed.",
+  "hardwareBoundary": "Read-only UFI and SSH snapshots found the original UI running and no installed plugin directory; this was not the photographed shutdown moment. No installation, screen handover, power command, LOGIN, SMS send or setting write was performed. Tests used computer fixtures. Display/touch/charging/quick-boot acceptance remains pending.",
   "sourceBuild": {
     "renderer": "aarch64-linux-musl",
-    "rendererRebuilt": false,
-    "runtimeByteIdenticalToPublic026": [
+    "rendererRebuilt": true,
+    "factoryBusRebuilt": true,
+    "unchangedNativeMembersFromPublic027": [
       "boot-hook.sh",
       "NOTICE.txt",
       "REBUILD.txt",
       "screenctl.sh",
       "supervisor.sh",
-      "topflow-factory-bus-aarch64",
-      "topflow-screen",
-      "topflow-screen.sha256",
       "ui/aggregate.html",
       "ui/apps.html",
       "ui/index.html",
@@ -37,12 +35,21 @@
       "licenses/PolyForm-Noncommercial-1.0.0.txt",
       "licenses/u60pro-devui-MIT.txt"
     ],
-    "changedNativeMembersFromPublic026": [
+    "changedNativeMembersFromPublic027": [
       "boot-integrity.sha256",
-      "build-manifest.json"
+      "build-manifest.json",
+      "topflow-factory-bus-aarch64",
+      "topflow-screen",
+      "topflow-screen.sha256"
     ]
   },
   "checks": {
+    "rootProofValidator": {
+      "tests": 1,
+      "passed": 1,
+      "failed": 0,
+      "skipped": 0
+    },
     "publicJavascript": {
       "tests": 229,
       "passed": 228,
@@ -54,48 +61,72 @@
       ]
     },
     "nativeAndWallpaperMigrationGate": {
-      "tests": 38,
-      "passed": 38,
+      "tests": 47,
+      "passed": 47,
       "failed": 0,
       "skipped": 0,
       "rootProofs": [
-        "tests/native-wifi-integration.test.js",
-        "tests/native-band-state-sync.test.js",
-        "tests/native-page-state-sync.test.js",
-        "tests/manager-wallpaper-migration.test.js",
         "tests/manager-wallpaper-migration-audit.test.js",
+        "tests/native-extra.test.js",
+        "tests/manager-wallpaper-migration.test.js",
         "tests/native-ufi.test.js",
-        "tests/native-power-menu.test.js",
+        "tests/native-page-state-sync.test.js",
+        "tests/native-wallpaper.test.js",
         "tests/native-power-key.test.js",
+        "native/test-device-power-events.ps1",
         "tests/native-wallpaper-files.test.js",
+        "native/test-factory-bus.ps1",
+        "tests/native-band-state-sync.test.js",
+        "tests/native-sms-session-ui.test.js",
+        "tests/native-power-transport.test.js",
         "tests/native-wifi-state.test.js",
-        "tests/native-wallpaper.test.js"
+        "tests/native-sms-session-restore.test.js",
+        "tests/native-sms-ufi.test.js",
+        "tests/native-power-menu.test.js",
+        "tests/native-wifi-integration.test.js"
       ]
     },
-    "historical024Migration": {
-      "tests": 8,
-      "passed": 8,
-      "failed": 0,
-      "skipped": 0,
-      "exactOldArchiveSha256": "e8b51b443aa0207d8384ae9c7fe6408bc77d78dac3e1eade5de989369bcebea0"
-    },
-    "historical025Migration": {
-      "tests": 8,
-      "passed": 8,
-      "failed": 0,
-      "skipped": 0,
-      "exactOldArchiveSha256": "0702ffaf6ff94b0974bf617926e5232dcabc27f7d8770b87b4038c0eb885bc1c"
-    },
-    "historical026Migration": {
-      "tests": 8,
-      "passed": 8,
-      "failed": 0,
-      "skipped": 0,
-      "exactOldArchiveSha256": "9ee81fb2d503aee5222e66ffbfde100a82491bc65e859e202a34d5bca79c140c"
+    "historicalMigration": {
+      "024": {
+        "tests": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "exactOldArchiveSha256": "e8b51b443aa0207d8384ae9c7fe6408bc77d78dac3e1eade5de989369bcebea0"
+      },
+      "025": {
+        "tests": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "exactOldArchiveSha256": "0702ffaf6ff94b0974bf617926e5232dcabc27f7d8770b87b4038c0eb885bc1c"
+      },
+      "026": {
+        "tests": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "exactOldArchiveSha256": "9ee81fb2d503aee5222e66ffbfde100a82491bc65e859e202a34d5bca79c140c"
+      },
+      "027": {
+        "tests": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0,
+        "exactOldArchiveSha256": "542d911f5c01746511b25066f9e4931a3da48f38d21df0996061ff7b43bd8600"
+      }
     },
     "displayPolicySuites": [
       {
         "file": "native/test-factory-power.ps1",
+        "result": "passed"
+      },
+      {
+        "file": "native/test-factory-bus.ps1",
+        "result": "passed"
+      },
+      {
+        "file": "native/test-device-power-events.ps1",
         "result": "passed"
       },
       {
@@ -146,14 +177,90 @@
       "failed": 0,
       "skipped": 0
     },
+    "factoryPower": {
+      "settingIsPowerState": false,
+      "unknownAfterOff": "remain-dark",
+      "eventSource": "zwrt_device_power_state_event",
+      "darkReadbackMilliseconds": 1000,
+      "offEventLatch": "until-mc-on",
+      "resetAck": false,
+      "normalAckPerCycle": 1,
+      "quickenAckPerEvent": 1,
+      "inputDuringOff": "discard",
+      "darkCorrection": "only-if-observed-bright",
+      "writesFactoryMode": false,
+      "quickenAckMethod": "poweroff_quicken_compelte",
+      "field": "mode_main_state",
+      "additionalProcesses": 0,
+      "normalAck": "oem-off-reboot-dark-confirmed",
+      "rebootEvent": "zwrt_mode_lcd_reboot",
+      "section": "mode",
+      "normalAckMethod": "poweroff_compelte",
+      "quickenAck": "quickening-event-only-dark-confirmed",
+      "quickenAckPerCycle": 1,
+      "on": [
+        "mode_power_on",
+        "mode_power_on_charger"
+      ],
+      "hardwareTested": false,
+      "source": "/etc/config/zwrt_zte_mc_tmp",
+      "quickenAckResetFlag": 0,
+      "sourcePriority": "event-before-raw",
+      "off": "mode_power_off*",
+      "subscribesShutdownParticipant": false,
+      "preflight": "effective-uci-read"
+    },
+    "powerRequest": {
+      "longPress": "power-menu-overlay",
+      "authorization": "control_guard",
+      "submissionsPerConfirmation": 1,
+      "outcome": "transport-progress-without-retry",
+      "cancel": "restore-page-and-scroll",
+      "capabilityEndpoint": "http://127.0.0.1:9460/capabilities",
+      "invalidateOldPending": true,
+      "timeoutMilliseconds": 10000,
+      "clearOn": [
+        "sleep",
+        "resync"
+      ],
+      "locked": "menu-visible-actions-disabled",
+      "completeResponse": "framed-response-before-eof",
+      "confirmation": "second-confirmation-and-capability-recheck",
+      "asleep": "existing-wake-before-menu",
+      "thresholdMilliseconds": 1200,
+      "automaticRetry": false,
+      "alreadyAwake": "preserve-unlocked-state",
+      "actions": [
+        "device.poweroff",
+        "device.reboot"
+      ],
+      "controlEndpoint": "http://127.0.0.1:9460/control",
+      "hardwareTested": false
+    },
+    "sms": {
+      "sessionRestorePassword": "memory-only-wiped",
+      "authorization": "existing-UFI-session-with-AD",
+      "sessionRestore": "explicit-UFI-LD-LOGIN",
+      "sessionRestoreCookiePersist": false,
+      "encoding": "UTF16BE-hex",
+      "sessionRestoreResend": false,
+      "confirmedResult": "UFI-result-success",
+      "submitCountPerConfirmation": 1,
+      "sender": "host",
+      "endpoint": "http://127.0.0.1:2333/api/goform/goform_set_cmd_process",
+      "action": "SEND_SMS",
+      "sessionRestoreMaxPerMinute": 3,
+      "deviceSendVerified": false,
+      "automaticRetry": false
+    },
     "shellBudget": {
       "limitBytes": 98304,
-      "actualStatusBytes": 88266,
-      "maximumFullActionBytes": 91913,
-      "utf8CountVerified": true,
+      "actualStatusBytes": 92464,
+      "maximumFullActionBytes": 92890,
       "oversizeRequestsSent": 0,
       "retryOnOversize": false,
-      "realUfiReadonlyStatusVerified": true
+      "currentVersionDeviceExecution": false,
+      "previous027ReadonlyStatusEvidence": "docs/analysis/ufi-status-readonly-027.json"
     },
     "managerUi": {
       "hostCardAlpha": true,
@@ -163,7 +270,7 @@
       "browserVisualValidation": false
     },
     "officialMetadata": {
-      "filename": "topflow-screen-0.2.7.txt.meta.json",
+      "filename": "topflow-screen-0.2.8.txt.meta.json",
       "author": "善恶",
       "device_models": [
         "TOPFLOW"
@@ -181,14 +288,14 @@
     ]
   },
   "artifact": {
-    "file": "topflow-screen-0.2.7.txt",
-    "bytes": 1831139,
-    "sha256": "f47e5396864ad1d4d404c18978a7cf5a061b9fa068527a3ef11303a749a7223c",
-    "metadataFile": "topflow-screen-0.2.7.txt.meta.json",
-    "metadataSha256": "3842c062415305f640091d053389019ce4b42de24f8aa1e068ad8f31856bbe14",
-    "nativeArchiveSha256": "542d911f5c01746511b25066f9e4931a3da48f38d21df0996061ff7b43bd8600",
-    "nativeRendererSha256": "90e42c66e6673ac0991a275916455ee3a112d2844fc3398fc81103baa3271576",
-    "nativeHelperSha256": "662d0e0a99ed2b638837f86d6df776419871e04c8e5d50aa8a5e1599d5265a28"
+    "file": "topflow-screen-0.2.8.txt",
+    "bytes": 1843911,
+    "sha256": "73c0c3ca973234ec91ffb41cd4317a9e3655a70a6434a9e11decc5b2975d9261",
+    "metadataFile": "topflow-screen-0.2.8.txt.meta.json",
+    "metadataSha256": "0be550de92c6f3699da0e9b534468a005a11e045baed7a5002a6da6a3bdf0ceb",
+    "nativeArchiveSha256": "8c1da5c4140f3806d193bbed7d7fdcf73605fce6417f3f30eecba944d75eb8eb",
+    "nativeRendererSha256": "afe0c7830f52e7f4779f64538c3d11ac67fc4e8789232d0e82e7a13a094688e4",
+    "nativeHelperSha256": "4e7c8edb4ddf6f73b16778d03b9b507de4d0f70590e663324830d5067fa9bacc"
   },
-  "checkedAt": "2026-10-18T17:55:45.312Z"
+  "checkedAt": "2026-10-18T18:42:07.540Z"
 }

@@ -24,8 +24,8 @@ static enum tf_sms_result tf_sms_response(int status,const char*body){
 static const char*tf_sms_result_message(enum tf_sms_result result){
  switch(result){
  case TF_SMS_SENT:return "UFI 已确认短信发送成功";
- case TF_SMS_AUTH:return "短信接口拒绝授权，请在 UFI 恢复登录；未自动重试";
- case TF_SMS_SESSION_EXPIRED:return "原厂设备会话已过期，请在 UFI 恢复设备登录后重新确认发送";
+ case TF_SMS_AUTH:return "短信接口拒绝授权，未发送；请稍后在本屏重新确认，现有 UFI 权限将重新读取";
+ case TF_SMS_SESSION_EXPIRED:return "原厂设备会话已过期，请点击本屏“恢复设备登录”；恢复后需重新确认发送";
  case TF_SMS_INVALID:return "短信参数被接口拒绝，请检查号码和内容；未自动重试";
  case TF_SMS_UNSUPPORTED:return "当前设备服务不支持此短信接口，请在 UFI 检查版本";
  case TF_SMS_DEVICE_FAILED:return "主基带报告短信发送失败，请检查 SIM 状态及发件记录；未自动重试";

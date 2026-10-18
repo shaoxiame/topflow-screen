@@ -27,11 +27,13 @@ static struct ubus_context *bus;
 static struct uloop_fd parent_io;
 static struct uloop_timeout watchdog;
 static struct ubus_subscriber sleep_sub;
-static struct ubus_event_handler rereg_event,power_event;
+static struct ubus_event_handler rereg_event,power_event,device_power_event;
 static uint32_t sleep_id;
 static int ui_logged_in,failed,stopping;
 static uint64_t last_parent_ms;
 static uint32_t last_sequence;
+static uint32_t device_power_sequence,quicken_pending,poweroff_pending;
+static int poweroff_needed,quicken_needed,poweroff_done,quicken_done;
 static uint64_t monotonic_ms(void){struct timespec t;if(clock_gettime(CLOCK_MONOTONIC,&t))return 0;return (uint64_t)t.tv_sec*1000+t.tv_nsec/1000000;}
 static int send_packet(uint32_t type,uint32_t sequence,uint32_t value){
  tf_bus_packet p={TF_BUS_MAGIC,type,sequence,value};
@@ -136,6 +138,39 @@ static void reregistered(struct ubus_context*ctx,struct ubus_event_handler*ev,co
  if(!subscribe_sleep()||!send_packet(TF_BUS_RESYNC,0,0))fail();
 }
 static void power_broadcast(struct ubus_context*ctx,struct ubus_event_handler*ev,const char*type,struct blob_attr*msg){(void)ctx;(void)ev;(void)type;power_action(msg,1);}
+static const struct blobmsg_policy device_power_policy[]={
+ {.name="action",.type=BLOBMSG_TYPE_STRING},{.name="parameter",.type=BLOBMSG_TYPE_STRING}
+};
+static void device_power_broadcast(struct ubus_context*ctx,struct ubus_event_handler*ev,const char*type,struct blob_attr*msg){
+ (void)ctx;(void)ev;(void)type;struct blob_attr*fields[2]={NULL,NULL};if(!msg)return;
+ blobmsg_parse(device_power_policy,2,fields,blob_data(msg),blob_len(msg));if(!fields[0]||!fields[1])return;
+ uint32_t state=tf_bus_device_power_action(blobmsg_get_string(fields[0]),blobmsg_get_string(fields[1]));if(!state)return;
+ if(device_power_sequence==UINT32_MAX){fail();return;}device_power_sequence++;
+ if(state==TF_DEVICE_ON){quicken_pending=poweroff_pending=0;poweroff_needed=quicken_needed=poweroff_done=quicken_done=0;}
+ else{
+  if(state&TF_DEVICE_NORMAL)poweroff_needed=1;
+  if(state&TF_DEVICE_QUICK)quicken_needed=1;
+  /* Preserve both required completions across quickening/unreal, but bind
+   * pending work to the latest event so ON/new OFF invalidates old receipts. */
+  poweroff_pending=poweroff_needed&&!poweroff_done?device_power_sequence:0;
+  quicken_pending=quicken_needed&&!quicken_done?device_power_sequence:0;
+  state=TF_DEVICE_OFF|(poweroff_pending?TF_DEVICE_NORMAL:0)|(quicken_pending?TF_DEVICE_QUICK:0);
+ }
+ if(!send_packet(TF_BUS_DEVICE_POWER,device_power_sequence,state))fail();
+}
+static int device_complete(uint32_t event_sequence,int quick){
+ uint32_t*pending=quick?&quicken_pending:&poweroff_pending;int*done=quick?&quicken_done:&poweroff_done;
+ if(!*pending||*pending!=event_sequence||*done)return 1;
+ uint32_t id;if(ubus_lookup_id(bus,"zwrt_mc.device.manager",&id))return 0;
+ /* Lookup may deliver ON/new-cycle events. Never acknowledge a predecessor.
+  * Mark this exact completion attempted before the RPC: no automatic replay. */
+ if(*pending!=event_sequence||*done)return 1;
+ *pending=0;*done=1;
+ struct blob_buf b={0};blob_buf_init(&b,0);blobmsg_add_string(&b,"moduleName","zte_topsw_devui");blobmsg_add_u32(&b,"resetFlag",0);
+ int rc=ubus_invoke(bus,id,quick?"poweroff_quicken_compelte":"poweroff_compelte",b.head,NULL,NULL,1500);
+ blob_buf_free(&b);return rc==0;
+}
+
 static void parent_event(struct uloop_fd*fd,unsigned int events){
  (void)events;
  for(int i=0;i<16;i++){
@@ -146,6 +181,7 @@ static void parent_event(struct uloop_fd*fd,unsigned int events){
   if(p.type==TF_BUS_LCD)ok=lcd_event((int)p.value);
   else if(p.type==TF_BUS_TOUCH)ok=touch_event();
   else if(p.type==TF_BUS_LOGIN)ui_logged_in=(int)p.value;
+  else if(p.type==TF_BUS_QUICKEN_COMPLETE||p.type==TF_BUS_POWEROFF_COMPLETE)ok=device_complete(p.value,p.type==TF_BUS_QUICKEN_COMPLETE);
   else if(p.type==TF_BUS_STOP)stopping=1;
   if(!send_packet(TF_BUS_ACK,p.sequence,ok?1:0)||!ok){fail();return;}
   if(stopping){uloop_end();return;}
@@ -166,12 +202,12 @@ int main(int argc,char**argv){
  bus=ubus_connect(NULL);if(!bus){uloop_done();return 67;}
  bus->connection_lost=lost;ubus_add_uloop(bus);
  sleep_sub.cb=notified;sleep_sub.remove_cb=removed;
- rereg_event.cb=reregistered;power_event.cb=power_broadcast;
+ rereg_event.cb=reregistered;power_event.cb=power_broadcast;device_power_event.cb=device_power_broadcast;
  int rc=!send_packet(TF_BUS_START_STAGE,0,3)||ubus_add_object(bus,&object)||
   !send_packet(TF_BUS_START_STAGE,0,4)||ubus_register_subscriber(bus,&sleep_sub)||
   !send_packet(TF_BUS_START_STAGE,0,5)||!subscribe_sleep()||
   !send_packet(TF_BUS_START_STAGE,0,6)||ubus_register_event_handler(bus,&rereg_event,"zte_sleep_event_re_registration")||
-  !send_packet(TF_BUS_START_STAGE,0,7)||ubus_register_event_handler(bus,&power_event,"zte_sleep_event_go_to_sleep_or_wakeup")||
+  !send_packet(TF_BUS_START_STAGE,0,7)||ubus_register_event_handler(bus,&power_event,"zte_sleep_event_go_to_sleep_or_wakeup")||ubus_register_event_handler(bus,&device_power_event,"zwrt_device_power_state_event")||
   !send_packet(TF_BUS_START_STAGE,0,8)||uloop_fd_add(&parent_io,ULOOP_READ)||!send_packet(TF_BUS_START_STAGE,0,9);
  if(!rc){last_parent_ms=monotonic_ms();watchdog.cb=watchdog_tick;uloop_timeout_set(&watchdog,1000);if(send_packet(TF_BUS_READY,0,0))uloop_run();else failed=1;}
  else failed=1;
